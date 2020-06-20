@@ -6,4 +6,4 @@ backend\web\assets\*.*
 backend\web\files\badge_photos\*.jpg
 backend\web\files\rosters\*.*
 vendor\*.*
-
+composer.lock
