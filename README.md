@@ -10,7 +10,7 @@ yum install composer
 
 git clone ssh://git@github.com:22/sharkbit/BadgeApp.gitc
 
-composre update
+composer update
 
 Apache Setup:
 
