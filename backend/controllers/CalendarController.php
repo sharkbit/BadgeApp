@@ -182,16 +182,15 @@ class CalendarController extends AdminController {
 		$stop = date('H:i', strtotime($stop));
 
 		$model = AgcCal::find()->joinWith(['agcRangeStatus'])
-			->where("facility_id=$facility and event_date='$date' and (".
+			->where("facility_id=$facility AND event_date='$date' AND deleted=0 AND (".
 				"( '$date $start' BETWEEN start_time AND end_time or '$date $stop' BETWEEN start_time AND end_time ) OR ".
 				"( start_time BETWEEN '$date $start' AND '$date $stop' or end_time BETWEEN '$date $start' AND '$date $stop'))")
 			->all();
-yii::$app->controller->createLog(true, 'trex-B_C_CC:189', 'here');
 		$isAval = true;
 		if($model) {
 			$i=0;$lanes_used=0;
 			foreach($model as $key => $item) {
-				if ($item->calendar_id == $id) {yii::$app->controller->createLog(true, 'trex-B_C_CC:194', 'self');continue;}
+				if ($item->calendar_id == $id) {continue;}
 				$found[$i] = new \stdClass();
 				$found[$i]->cal_id = $item->calendar_id;
 				$found[$i]->club = $item->clubs->short_name;
@@ -203,7 +202,6 @@ yii::$app->controller->createLog(true, 'trex-B_C_CC:189', 'here');
 				$found[$i]->lanes = $item->lanes_requested;
 				$lanes_used  += $item->lanes_requested;
 			
-			yii::$app->controller->createLog(false, 'trex-miget:207 '.$i, var_export($found[$i],true));
 				if ($item->range_status_id==2) {$isAval=false;}
 				$i++;
 			}
@@ -220,7 +218,6 @@ yii::$app->controller->createLog(true, 'trex-B_C_CC:189', 'here');
 				}
 			} else {
 				if ($lanes < 1 or $lanes > $range->available_lanes ) {
-					yii::$app->controller->createLog(false, 'trex-B_C_CC_:224', "lanes: $lanes, Avalible: $range->available_lanes");
 					$isAval = false;
 					$returnMsg=['status'=>'error','msg'=>"Please Provide Requested lanes (Up to ".$range->available_lanes.")"];
 				} else {
@@ -235,7 +232,6 @@ yii::$app->controller->createLog(true, 'trex-B_C_CC:189', 'here');
 		} else {
 			$returnMsg=['status'=>'success','msg'=>'Facility is Available','ln'=>236];
 		}
-yii::$app->controller->createLog(true, 'trex-B_C_CC:238', 'here-fin');
 		if (($tst) || (Yii::$app->request->isAjax)) {
 			return json_encode($returnMsg);
 		} elseif ($internal){
@@ -259,13 +255,11 @@ yii::$app->controller->createLog(true, 'trex-B_C_CC:238', 'here-fin');
 
 	public function actionRepublish($id) {
 		$model = AgcCal::find()->where(['calendar_id' => $id])->one();
-//yii::$app->controller->createLog(true, 'trex-B_C_CC:263 index', var_export($model,true));
-		//if ($model->sql != NULL) {
 		if (isset($model->recurrent_calendar_id)) {
 			if ($model->recurrent_calendar_id >0) {
 				if ((int)$model->deleted == 1 ) { return json_encode(['status'=>'error','msg'=>"Event has been deleted, can't republish"]); }
 				$nowTime = yii::$app->controller->getNowTime();
-				$sql = "DELETE from associat_agcnew.agc_calendar where recurrent_calendar_id = ".$id." and  event_date > '".$nowTime."'";
+				$sql = "DELETE from associat_agcnew.agc_calendar where recurrent_calendar_id = ".$id." and  event_date >= '".$nowTime."'";
 				$command = Yii::$app->db->createCommand($sql);
 				$saveOut = $command->execute();
 				yii::$app->controller->createLog(true, 'trex-B_C_CC:272 Delete future:', var_export($saveOut,true));
@@ -290,14 +284,11 @@ yii::$app->controller->createLog(true, 'trex-B_C_CC:238', 'here-fin');
 			
 				$NewID = $this->createRecCalEvent($model,$myEventDates);
 				if ($NewID) {
-					yii::$app->controller->createLog(true, 'trex-B_C_CC:293', "New Cal-ID: ".$NewID);
 					$sql = "UPDATE associat_agcnew.agc_calendar SET recurrent_calendar_id=".$NewID." WHERE recurrent_calendar_id = ".$id;
 					$command = Yii::$app->db->createCommand($sql);
 					$saveOut = $command->execute();
-					yii::$app->controller->createLog(true, 'trex-B_C_CC:298','Update Master ID on '. var_export($saveOut,true));
 					return $this->redirect(['update', 'id' => $NewID]);
 				} else {
-					yii::$app->controller->createLog(true, 'trex-B_C_CC:301', "NO New Cal-ID");
 					return $this->redirect(['update', 'id' => $model->recurrent_calendar_id]);
 				}
 			} else { echo " Not a Recurring Event";}
@@ -352,7 +343,7 @@ yii::$app->controller->createLog(true, 'trex-B_C_CC:238', 'here-fin');
         	if($model->save()) {
 				yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 				Yii::$app->getSession()->setFlash('success', 'Calendar Item has been updated');
-				if(($model->recur_every) && ($model->recurrent_calendar_id == 0)) {
+				if(($model->recur_every) && ($model->recurrent_calendar_id == $model->calendar_id)) {
 					// Master Record!!
 
 					$sql = "UPDATE associat_agcnew.agc_calendar SET club_id=".$model->club_id.", event_name='".$model->event_name."', keywords='".$model->keywords."'"
@@ -368,7 +359,7 @@ yii::$app->controller->createLog(true, 'trex-B_C_CC:238', 'here-fin');
 					$cmd = Yii::$app->getDb()->createCommand($sql)->execute();
 
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
-					yii::$app->controller->createCalLog(true, 'trex-B_C_CC:369', var_export($cmd,true));
+					yii::$app->controller->createCalLog(false, 'trex-B_C_CC:369', var_export($cmd,true));
 
 					if (isset($_POST['republish'])) {
 						Yii::$app->getSession()->setFlash('error', 'Republish Not Built Yet!  Sorry');
