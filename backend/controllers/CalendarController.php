@@ -188,7 +188,7 @@ class CalendarController extends AdminController {
 		if($model) {
 			$i=0;$lanes_used=0;
 			foreach($model as $key => $item) {
-				if ($item->calendar_id == $id) {continue;}
+				if (($item->calendar_id == $id) || ($item->recurrent_calendar_id == $id)) { continue; }
 				$found[$i] = new \stdClass();
 				$found[$i]->cal_id = $item->calendar_id;
 				$found[$i]->club = $item->clubs->short_name;
@@ -260,7 +260,7 @@ class CalendarController extends AdminController {
 				$sql = "DELETE from associat_agcnew.agc_calendar where recurrent_calendar_id = ".$id." and  event_date >= '".$nowTime."'";
 				$command = Yii::$app->db->createCommand($sql);
 				$saveOut = $command->execute();
-				yii::$app->controller->createLog(true, 'trex-B_C_CC:272 Delete future:', var_export($saveOut,true));
+				yii::$app->controller->createCalLog(true, 'trex-B_C_CC:272 Delete future:', var_export($saveOut,true));
 
 				if (strtotime($nowTime) > strtotime(date('Y').'-06-01 00:00:00')) {$myYr= intval(date('Y'))+1;} else {$myYr= date('Y');}
 				echo "$myYr <br />";
@@ -360,7 +360,7 @@ class CalendarController extends AdminController {
 					yii::$app->controller->createCalLog(false, 'trex-B_C_CC:369', var_export($cmd,true));
 
 					if (isset($_POST['republish'])) {
-						Yii::$app->getSession()->setFlash('error', 'Republish Not Built Yet!  Sorry');
+						return $this->redirect(['republish','id' => $id]);
 					}
 				}
 			} else {
@@ -677,8 +677,7 @@ if($eco) { echo "<br>$myYear"; }
 				if ($NewID == false) {
 					$NewID = $model_event->calendar_id;
 				}
-			} else {yii::$app->controller->createLog(true, 'trex-B_C_CC:691', "year: ".substr($eDate,0,4));}
-		
+			}
 		}
 		if ($NewID) { return $NewID; } else { return false; }
 	}

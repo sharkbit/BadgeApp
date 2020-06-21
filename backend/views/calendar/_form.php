@@ -364,6 +364,7 @@ if (($crec==1) && ($model->isNewRecord)) {
             $("#pattern_day").show(); $("#pattern_week").hide(); $("#pattern_month").hide(); $("#pattern_year").hide();
         }
     });
+    $("#pat_daily_n").change(function(e) { document.getElementById("pat_day_x").checked=true; });
 
     $("#weekly").change(function(e) {
         if(document.getElementById("weekly").value=='weekly'){
@@ -376,12 +377,16 @@ if (($crec==1) && ($model->isNewRecord)) {
             $("#pattern_day").hide(); $("#pattern_week").hide(); $("#pattern_month").show(); $("#pattern_year").hide();
         }
     });
+    $("#pat_mon_x").change(function(e) { document.getElementById("pat_mon_a").checked=true; });
+	$("#pat_mon_wk").change(function(e) { document.getElementById("pat_mon_b").checked=true; });
 
     $("#yearly").change(function(e) {
         if(document.getElementById("yearly").value=='yearly'){
             $("#pattern_day").hide(); $("#pattern_week").hide(); $("#pattern_month").hide(); $("#pattern_year").show();
         }
     });
+    $("#pat_yr_mon").change(function(e) { document.getElementById("pat_yr_a").checked=true; });
+    $("#pat_yr_num").change(function(e) { document.getElementById("pat_yr_b").checked=true; });
 
     $("#pat_day_x").change(function(e) {
         document.getElementById("pat_daily_n").disabled=false;
