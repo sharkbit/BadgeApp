@@ -84,9 +84,16 @@ $this->beginBody() ?>
 </div>
 
 <footer class="footer">
-    <div class="container">
-      <p class="pull-right"><button onclick="OverlayOn()">About Version <?php include "version.php" ?></button>  Powered by <a target="_blank" href="http://www.yiiframework.com/" rel="external">Yii</a></p>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-6 col-sm-6">
+        Please use <a href="https://github.com/sharkbit/BadgeApp/issues" target=_blank>GitHub</a> for issues or feature requests.
+	  </div>
+      <div class="col-xs-6 col-sm-6 pull-right">
+        <p class="pull-right"> <button onclick="OverlayOn()">About Version <?php include "version.php" ?></button>  Powered by <a target="_blank" href="http://www.yiiframework.com/" rel="external">Yii</a></p>
+	  </div>
     </div>
+  </div>
 </footer>
 
 <div id="ver_overlay" onclick="OverlayOff()">

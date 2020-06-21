@@ -209,8 +209,9 @@ class SiteController extends AdminController {
 	}
 
 	public function actionLogout($url=false) {
+		if ($_SESSION['privilege'] == 5) {$ReDir=false;} else {$ReDir=true;} 
 		Yii::$app->user->logout();
-		if ($url) {
+		if (($url) && ($ReDir)) {
 			return $this->redirect(['login-member', 'url' => $url]);
 		} else {
 			return $this->goHome();}
