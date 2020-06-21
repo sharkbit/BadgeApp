@@ -15,7 +15,8 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 <?php //}  ?> -->
 
     <li class="<?php if($urlStatus['actionId']=='index')echo'active';?>"><a href="<?=Url::to(['/calendar/index'])?>">  <span class="glyphicon glyphicon-th"></span> Active Events</a></li>
-    <li class="<?php if($urlStatus['actionId']=='recur')echo'active';?>"><a href="<?=Url::to(['/calendar/recur'])?>">  <span class="glyphicon glyphicon-th"></span> Recurring Master Events</a></li>
+<?php if(yii::$app->controller->hasPermission('calendar/recur')) { ?>
+	<li class="<?php if($urlStatus['actionId']=='recur')echo'active';?>"><a href="<?=Url::to(['/calendar/recur'])?>">  <span class="glyphicon glyphicon-th"></span> Recurring Master Events</a></li> <?php } ?>
 	<li class="<?php if($urlStatus['actionId']=='inactive')echo'active';?>"><a href="<?=Url::to(['/calendar/inactive'])?>"> <span class="glyphicon glyphicon-trash"></span> Inactive Events</a></li>
 	<li class="<?php if($urlStatus['actionId']=='conflict')echo'active';?>"><a href="<?=Url::to(['/calendar/conflict'])?>"> <span class="glyphicon glyphicon-cloud"></span> Conflicted Events</a></li>
 <?php if(yii::$app->controller->hasPermission('cal-setup/index')) { ?>

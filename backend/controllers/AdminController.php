@@ -122,7 +122,7 @@ class AdminController extends \yii\web\Controller {
 		'Index' => ['site/index','site/error','site/logout','site/login','site/login-member','site/new-badge'],
 		'Admin'=>['badge/log-error'],
 		'Badges'=>['badges/restrict','badges/api-check','badges/get-badge-details','badges/index','badges/update','badges/view','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
-		'Calendar' =>['calendar/create','calendar/index','calendar/open-range','calendar/update','calendar/view'],
+		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/inactive','calendar/open-range','calendar/update','calendar/view'],
 		'Events' => ['events/index','events/create','events/reg','events/view','badges/get-badge-name'],
 		'Guest' => ['guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/update','guest/out','guest/sticky-form'],
 		'sales' => ['payment/charge','payment/refreshtoken','sales/index','sales/print-rcpt','sales/purchases','badges/api-request-family'],
@@ -142,7 +142,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $calendarPermission = [
 		'Admin'=>['badge/log-error'],
-		'Calendar' =>['calendar/create','calendar/deleted','calendar/index','calendar/open-range','calendar/recur','calendar/update','calendar/view'],
+		'Calendar' =>['calendar/create','calendar/deleted','calendar/conflict','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/update','calendar/view'],
 		'Badges'=>['badges/restrict','badges/api-check','badges/get-badge-details','badges/index','badges/update','badges/view','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Index' => ['site/index','site/error','site/logout','site/login','site/login-member','site/new-badge'],
 		'Guest' => ['guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/update','guest/out','guest/sticky-form'],

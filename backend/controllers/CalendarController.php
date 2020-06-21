@@ -123,9 +123,9 @@ class CalendarController extends AdminController {
 	public function actionConflict() {
 		$searchModel = new AgcCalSearch();
 		$searchModel->conflict = 1;
+		$this->RestoreSession($searchModel);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-		//yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Created New Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 		return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider ]);
@@ -154,9 +154,9 @@ class CalendarController extends AdminController {
 	public function actionInactive() {
 		$searchModel = new AgcCalSearch();
 		$searchModel->deleted = 1;
+		$this->RestoreSession($searchModel);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-		//yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Created New Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 		return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider ]);
@@ -165,9 +165,7 @@ class CalendarController extends AdminController {
     public function actionIndex() {
 		$searchModel = new AgcCalSearch();
 		$searchModel->deleted = 0;
-	//yii::$app->controller->createLog(true, 'trex-B_C_CC:168 index', var_export($_REQUEST,true));
 		$this->RestoreSession($searchModel);
-
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('index', [
