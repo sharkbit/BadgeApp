@@ -23,7 +23,7 @@ class CalendarController extends AdminController {
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                //	'delete' => ['POST'],
                 ],
             ],
         ];
@@ -131,7 +131,7 @@ class CalendarController extends AdminController {
             'dataProvider' => $dataProvider ]);
 	}
 
-	public function actionDelete($id,$redir) {
+	public function actionDelete($id,$redir='i') {
 		$model = $this->findModel($id);
 		if ($model) {
 			if ($model->recurrent_calendar_id > 0) {
@@ -263,8 +263,8 @@ class CalendarController extends AdminController {
 				yii::$app->controller->createCalLog(true, 'trex-B_C_CC:272 Delete future:', var_export($saveOut,true));
 
 				if (strtotime($nowTime) > strtotime(date('Y').'-06-01 00:00:00')) {$myYr= intval(date('Y'))+1;} else {$myYr= date('Y');}
-				echo "$myYr <br />";
-				echo "Start: $model->recurrent_start_date, End: $model->recurrent_end_date <br />";
+		//		echo "$myYr <br />";
+		//		echo "Start: $model->recurrent_start_date, End: $model->recurrent_end_date <br />";
 				$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$myYr);
 				
 				yii::$app->controller->createLog(true, 'trex-B_C_CC:279 Event Dates', var_export($myEventDates,true));
@@ -291,6 +291,7 @@ class CalendarController extends AdminController {
 				}
 			} else { echo " Not a Recurring Event";}
 		} else { echo "Nothing Found";}
+		return $this->redirect(['index']);
 	}
 
     public function actionUpdate($id=1) {

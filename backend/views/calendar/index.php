@@ -183,11 +183,11 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			],
 			[	'header'=>'Action',
 				'class' => 'yii\grid\ActionColumn',
-				'template'=>'  {update} {delete}', // {view} {delete} ',
+				'template'=>' {view} {update} {delete}',
 				'headerOptions' => ['style' => 'width:5%'],
 				'buttons'=>[
 					'view' => function($url,$model) {
-						if ($model->e_date <= date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) {
+						if (yii::$app->controller->hasPermission('calendar/view')) {
 						return  Html::a(' <span class="glyphicon glyphicon-eye-open"></span> ', ['/calendar/view','id'=>$model->calendar_id], [
 							'data-toggle'=>'tooltip',
 							'data-placement'=>'top',

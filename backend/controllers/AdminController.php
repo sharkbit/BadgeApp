@@ -48,7 +48,7 @@ class AdminController extends \yii\web\Controller {
 		'Index' => ['site/index','site/error','site/logout','site/login','site/login-member','site/new-badge'],
 		'Admin' => ['badge/log-error','events/approve','badge/badge-print','badge/index','badge/users-index','badge/edit-user','badge/view-user','badge/create-user','badge/admin-function','badge/work-credit-entry','badge/brows-work-credits','badge/work-credit-menu','badge/club-name-look-up','badge/club-name-create','badge/club-name-edit','badge/work-credit-transfer','badge/create', 'badge/update', 'site/logout','site/login','site/new-badge'],
 		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/api-check','badges/api-request-family','badges/barcode','badges/create','badges/generate-new-sticker','badges/get-badge-details','badges/get-family-badges','badges/index','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update','badges/update-renewal','badges/delete-renewal','badges/view','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
-		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update','calendar/view'],
+		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update','calendar/view'],
 		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/index','fee-structure/create','fee-structure/update','fee-structure/delete-X','fee-structure/view','fee-structure/fees-by-type','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/delete-certificate'],
 		'Clubs' => ['clubs/index','clubs/create','clubs/update','clubs/view','clubs/badge-rosters'],
 		'Events' => ['events/approve','events/index','events/close','events/create','events/delete','events/reg','events/remove-att','events/update','events/view','badges/get-badge-name'],
@@ -142,7 +142,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $calendarPermission = [
 		'Admin'=>['badge/log-error'],
-		'Calendar' =>['calendar/create','calendar/deleted','calendar/conflict','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/update','calendar/view'],
+		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/delete','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/update','calendar/view'],
 		'Badges'=>['badges/restrict','badges/api-check','badges/get-badge-details','badges/index','badges/update','badges/view','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Index' => ['site/index','site/error','site/logout','site/login','site/login-member','site/new-badge'],
 		'Guest' => ['guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/update','guest/out','guest/sticky-form'],

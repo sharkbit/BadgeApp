@@ -157,7 +157,16 @@ if (($crec==1) && ($model->isNewRecord)) {
     </div>
 
     <div class="col-xs-4 col-sm-2" <?php if($model->isNewRecord) {echo 'style="display:none"';} ?>>
-        <?= $form->field($model, 'deleted')->DropDownList(['1'=>'Yes','0'=>'No']) ?>
+<?php 	if(yii::$app->controller->hasPermission('calendar/delete')) {
+			if ($model->deleted=='1') {
+				echo $form->field($model, 'deleted')->DropDownList(['1'=>'Yes','0'=>'No']).PHP_EOL;
+			} else {
+				//echo '<br />'.Html::a('<i class="fa fa-trash" aria-hidden="true"></i> Delete Event', ['delete?id='.$model->calendar_id], ['class' => 'btn btn-warning']).PHP_EOL;
+				echo '<br />'.Html::Button('Delete Event', ['class' => 'btn btn-warning ', 'onclick' => 'delMe();' ]).PHP_EOL;
+			}
+		} else { 
+			if ($model->deleted=='1') { echo "<p style='color:red;'><b>Event is Deleted</b></p>"; }
+		} ?>
     </div>
     <div class="col-xs-4 col-sm-2">
         <?= $form->field($model, 'poc_badge')->textInput(['maxlength'=>true,'readonly'=>yii::$app->controller->hasPermission('calendar/all')? false : true]) ?>
@@ -354,7 +363,6 @@ if (($crec==1) && ($model->isNewRecord)) {
     Recure(true);
     document.getElementById("cal_update_item").disabled=true;
 <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
-
     $("#agccal-facility_id").change(function(e) {
         OpenRange();
     });
@@ -394,6 +402,24 @@ if (($crec==1) && ($model->isNewRecord)) {
     $("#pat_day_e").change(function(e) {
         document.getElementById("pat_daily_n").disabled=true;
     });
+
+    function delMe() {
+		var formData = $("#agccal").serializeArray();
+		jQuery.ajax({
+			method: 'POST',
+			crossDomain: false,
+			data: formData,
+			dataType: 'json',
+			url: '<?=yii::$app->params['rootUrl']?>/calendar/delete?id='+document.getElementById("agccal-calendar_id").value,
+			success: function(responseData, textStatus, jqXHR) {
+				console.log("success ");
+			},
+			error: function (responseData, textStatus, errorThrown) {
+				console.log("error ");
+			},
+		}); 
+		
+	};
 
     function Recure(load=true) {
         console.log("Loading Pattert");
