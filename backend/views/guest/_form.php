@@ -77,11 +77,10 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 
 			if ($model->g_paid==1) {
 				echo "Guest has Paid."; echo $form->field($model, 'g_paid')->hiddenInput()->label(false).PHP_EOL;
-			} else if  (($model->g_paid=='m') || ($model->g_paid=='o') || ($model->g_paid=='s') || ($model->g_paid=='y')) {
-				echo $form->field($model, 'g_paid')->dropDownList(['0'=>'Pay Now','j'=>'Junior Event','m'=>'Minor','s'=>'Spouse','o'=>'Observer']).PHP_EOL;
 			} else {
-				echo $form->field($model, 'g_paid')->hiddenInput()->label(false).PHP_EOL;
-				echo "<b>$$$ ".Html::a('Please Pay Now','/sales/index?badge='.$model->badge_number)." $$$</b>".PHP_EOL;
+				echo $form->field($model, 'g_paid')->dropDownList(['0'=>'Pay Now','y'=>'Junior Event','m'=>'Minor','s'=>'Spouse','o'=>'Observer']).PHP_EOL;
+				if ($model->g_paid=='0') {
+					echo '</div><div class="col-sm-2">'."<b>$$$ ".Html::a('Please Pay Now','/sales/index?badge='.$model->badge_number)." $$$</b>".PHP_EOL;}
 			}
 		} ?>
 

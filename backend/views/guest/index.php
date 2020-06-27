@@ -69,7 +69,7 @@ if(yii::$app->controller->hasPermission('guest/delete')) {
 							case 'm': return "Minor"; break;
 							case 'o': return "Observer"; break;
 							case 's': return "Spouse"; break;
-							case 'y': return "Youth"; break;
+							case 'y': return "Junior Event"; break;
 						}
 						return Html::a('Pay Now'.$p_type,'/sales/index?badge='.$model->badge_number.'&id='.$model->id);
 					} else {

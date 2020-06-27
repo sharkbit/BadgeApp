@@ -90,7 +90,9 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'format' => 'raw',
 				'headerOptions' => ['style' => 'width:20%'],
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
-				'value'=>function ($model) { return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id); },
+				'value'=>function ($model) { 
+					if($model->recurrent_calendar_id>0) {$mas=" *";} else {$mas="";}
+					return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id).$mas; },
 			],
 			[	'attribute'=>'facility_id',
 				'value'=>function($model) { return $model->agcFacility->name; },
@@ -223,6 +225,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 </div>
 </div>
 </div>
+<p>* is a Recurring Event</p>
 
 <script>
 /*$(".formReset").click(function(e) {

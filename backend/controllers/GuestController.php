@@ -159,13 +159,16 @@ class GuestController extends SiteController {
 			$guest->g_yob = $model->g_yob;
 			$guest->tmp_badge = trim($model->tmp_badge);
 			$guest->time_in = date('Y-m-d H:i:s',strtotime($model->time_in));
-			$guest->validate();
-	//yii::$app->controller->createLog(true, 'trex_C_GC:170 ERROR', var_export($model,true));
-			if($guest->save(false)) {
+			if(!isset($guest->guest_count)) $guest->guest_count = 1;
+			if(!isset($guest->payment_type)) $guest->payment_type = 'cash';
+
+			if($guest->save()) {
+				$sql = "update guest set g_paid ='$model->g_paid' where id = $model->id";
+				$cmd = Yii::$app->getDb()->createCommand($sql)->execute();
 				Yii::$app->getSession()->setFlash('success', 'Visitor has been updated');
 				return $this->redirect(['/guest/index']);
 			} else {
-				yii::$app->controller->createLog(true, 'trex_C_GC:70 Save error', var_export($model->errors,true));
+				yii::$app->controller->createLog(true, 'trex_C_GC:171 Save error', var_export($model->errors,true));
 				Yii::$app->getSession()->setFlash('error', 'Failed to update record');
 				return $this->render('update', ['model' => $model,]);
 			}
