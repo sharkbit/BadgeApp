@@ -369,10 +369,13 @@ class CalendarController extends AdminController {
 
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 					yii::$app->controller->createCalLog(false, 'trex-B_C_CC:369', var_export($cmd,true));
+					if ((int)$model->event_status_id==19) { $model->range_status_id = 1; $model->save(); }
 
 					if (isset($_POST['republish'])) {
 						return $this->redirect(['republish','id' => $id]);
 					}
+				} else {
+					if ((int)$model->event_status_id==19) { $model->range_status_id = 1; $model->save(); }
 				}
 			} else {
 				Yii::$app->getSession()->setFlash('error', 'Something Went Wrong');
