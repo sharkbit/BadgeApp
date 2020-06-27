@@ -161,7 +161,6 @@ if (($crec==1) && ($model->isNewRecord)) {
 			if ($model->deleted=='1') {
 				echo $form->field($model, 'deleted')->DropDownList(['1'=>'Yes','0'=>'No']).PHP_EOL;
 			} else {
-				//echo '<br />'.Html::a('<i class="fa fa-trash" aria-hidden="true"></i> Delete Event', ['delete?id='.$model->calendar_id], ['class' => 'btn btn-warning']).PHP_EOL;
 				echo '<br />'.Html::Button('Delete Event', ['class' => 'btn btn-warning ', 'onclick' => 'delMe();' ]).PHP_EOL;
 			}
 		} else { 
@@ -410,7 +409,7 @@ if (($crec==1) && ($model->isNewRecord)) {
 			crossDomain: false,
 			data: formData,
 			dataType: 'json',
-			url: '<?=yii::$app->params['rootUrl']?>/calendar/delete?id='+document.getElementById("agccal-calendar_id").value,
+			url: '<?=yii::$app->params['rootUrl']?>/calendar/delete?id='+document.getElementById("agccal-calendar_id").value<?php if((isset($_SERVER['HTTP_REFERER'])) && (strpos($_SERVER['HTTP_REFERER'],'recu'))) { ?>+'&type=m' <?php } ?>,
 			success: function(responseData, textStatus, jqXHR) {
 				console.log("success ");
 			},
@@ -418,7 +417,6 @@ if (($crec==1) && ($model->isNewRecord)) {
 				console.log("error ");
 			},
 		}); 
-		
 	};
 
     function Recure(load=true) {

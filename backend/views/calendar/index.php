@@ -205,8 +205,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					},
 					'delete' => function($url,$model) {
 						if((yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0)) {
-							//yii::$app->controller->createLog(false, 'trex-url', var_export($_SERVER['REQUEST_URI'],true));exit;
-						return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ',  ['/calendar/delete','id'=>$model->calendar_id,'redir'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'r' : 'i')], [
+							return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ',  ['/calendar/delete','id'=>$model->calendar_id,'type'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'm' : 's'),'redir'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'r' : 'i')], [
 							'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
 							'title'=>'Delete',
