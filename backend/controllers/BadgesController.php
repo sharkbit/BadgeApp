@@ -846,7 +846,6 @@ class BadgesController extends AdminController {
 		$this->UpdateQR($badgeModel);
 		$PgOne = $this->renderPartial('_badge-print-view',['model'=>$badgeModel,'page'=>1,'chk'=>$ty]);
 		$PgThr = $this->renderPartial('_badge-print-view',['model'=>$badgeModel,'page'=>3]);
-
 		$mpdf = new \Mpdf\Mpdf([
 			'mode' => 'c',
 			'margin_left' => 0,
@@ -884,7 +883,7 @@ class BadgesController extends AdminController {
 					$mail->Subject = 'AGC Range Reciept';
 					$EmailBody = $this->renderPartial('print-rcpt',[ 'MyRcpt' => $MyRcpt ] );
 					$mail->Body = "<!DOCTYPE html><html><body>".$EmailBody."</body></html>";
-					//$mail->send();
+					$mail->send();
 					Yii::$app->getSession()->setFlash('success', 'Receipt Emailed');
 					yii::$app->controller->createLog(true, 'Email', "Recept sent to $first','".$badge_number);
 					$responce = [ 'status'=> 'success','msg'=>'Receipt sent via Email.' ];

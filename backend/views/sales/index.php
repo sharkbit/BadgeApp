@@ -315,7 +315,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 
 				},
 				error: function (responseData, textStatus, errorThrown) {
-					$("p#cc_info").html("PHP error:<br>"+responseData.responseText);
+					$("p#cc_info").html("PHP error:<br>"+responseData.message);
                     SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:532');
                     console.log("error "+ responseData.responseText);
 				},

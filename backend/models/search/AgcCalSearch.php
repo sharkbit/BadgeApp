@@ -88,7 +88,7 @@ class AgcCalSearch extends AgcCal {
 			}
 		}
 		
-		if(isset($this->conflict) && $this->conflict==1) { $query->andFilterWhere(['conflict'=>1]); } else	{$query->andFilterWhere(['conflict'=>0]);}
+		if(isset($this->conflict) && $this->conflict==1) { $query->andFilterWhere(['conflict'=>1]); $this->deleted=0; } else	{$query->andFilterWhere(['conflict'=>0]);}
 		if(isset($this->event_name)) { $query->andFilterWhere(['like','event_name',$this->event_name]); }
 		if(isset($this->active)) { $query->andFilterWhere(['agc_calendar.active'=>$this->active]); }
 		if(isset($this->approved)) { $query->andFilterWhere(['approved'=>$this->approved]); }
