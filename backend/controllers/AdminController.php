@@ -376,8 +376,8 @@ class AdminController extends \yii\web\Controller {
 		$mail->Port = 587;
 		$mail->SMTPSecure = 'tls';							// Enable TLS encryption, `ssl` also accepted
 		$mail->SMTPAuth = true;								// Enable SMTP authentication
-		$mail->Username = "noreply@associatedgunclubs.org";	// SMTP username
-		$mail->Password = "GRhKW}{ISl2F";					// SMTP password
+		$mail->Username = "<some@email.com>";				// SMTP username
+		$mail->Password = "<your Password>";				// SMTP password
 		//$mail->Timeout=900;
 
 		$mail->addCustomHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');

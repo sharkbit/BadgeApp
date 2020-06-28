@@ -4,8 +4,8 @@ return [
         'db' => [
             'class' => 'yii\db\Connection',
             'dsn' => 'mysql:host=localhost;dbname=BadgeDB',
-            'username' => 'badge',
-            'password' => 'badgeuserpassword',
+            'username' => '<DB User>',
+            'password' => '<some secure password>',
             'charset' => 'utf8',
         ],
         'mailer' => [
