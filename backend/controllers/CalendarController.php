@@ -185,11 +185,10 @@ class CalendarController extends AdminController {
 
 	public function actionOpenRange($date,$start,$stop,$facility,$lanes=0,$id=0,$internal=false,$tst=false) {
 		$range = agcFacility::find()->where(['facility_id'=>$facility])->one();
-
 		$start= date('H:i', strtotime($start));
 		$stop = date('H:i', strtotime($stop));
 
-		$model = AgcCal::find()->joinWith(['agcRangeStatus'])
+		$model = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
 			->where("facility_id=$facility AND event_date='$date' AND deleted=0 AND (".
 				"( '$date $start' BETWEEN start_time AND end_time or '$date $stop' BETWEEN start_time AND end_time ) OR ".
 				"( start_time BETWEEN '$date $start' AND '$date $stop' or end_time BETWEEN '$date $start' AND '$date $stop'))")
@@ -205,8 +204,10 @@ class CalendarController extends AdminController {
 				$found[$i]->name = $item->event_name;
 				$found[$i]->start = $item->start_time;
 				$found[$i]->stop = $item->end_time;
+				$found[$i]->event_status_id = $item->event_status_id;
+				$found[$i]->eve_status_name = $item->agcEventStatus->name;
 				$found[$i]->range_status_id = $item->range_status_id;
-				$found[$i]->status_name = $item->agcRangeStatus->name;
+				$found[$i]->rng_status_name = $item->agcRangeStatus->name;
 				$found[$i]->lanes = $item->lanes_requested;
 				$lanes_used  += $item->lanes_requested;
 

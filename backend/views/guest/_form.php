@@ -130,7 +130,7 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 <?php } else { echo "<b><font size=+1>";
 					switch ($model->g_paid) {
 						case 'm': echo "is a Minor"; break;
-						case 'o': echo "is a Observer"; break;
+						case 'o': echo "is an Observer"; break;
 						case 's': echo "is a Spouse"; break;
 						case 'y': echo "is a Youth Participant"; break;
 					}; 

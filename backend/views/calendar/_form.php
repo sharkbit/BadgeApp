@@ -608,12 +608,12 @@ if (($crec==1) && ($model->isNewRecord)) {
 
                     if(responseData.data) { //parseInt()
 						if (available_lanes != 0) {var resp_str='<th>Lanes ('+available_lanes+')</th>';} else {var resp_str='';}
-                        $("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=40% border=1><thead><tr><th>ID</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Range Status</th>'+resp_str+'</tr></thead></table></center>');
+                        $("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=40% border=1><thead><tr><th>ID</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th>'+resp_str+'</tr></thead></table></center>');
                         var table = document.getElementById("cal_items");
                         for( var j = 0; j < responseData.data.length; j++ ){
                             var row = table.insertRow();
-                            var cell1 = row.insertCell(0); var cell2 = row.insertCell(1); var cell3 = row.insertCell(2); var cell4 = row.insertCell(3); var cell5 = row.insertCell(4);var cell6 = row.insertCell(5);
-							if (available_lanes != 0) {var cell7 = row.insertCell(6);}
+                            var cell1 = row.insertCell(0); var cell2 = row.insertCell(1); var cell3 = row.insertCell(2); var cell4 = row.insertCell(3); var cell5 = row.insertCell(4);var cell6 = row.insertCell(5);var cell7 = row.insertCell(6);
+							if (available_lanes != 0) {var cell8 = row.insertCell(7);}
 
                             // Add some text to the new cells:
                             cell1.innerHTML = '<a href="/calendar/update?id='+responseData.data[j].cal_id+'" target="_new">'+responseData.data[j].cal_id+'</a>';
@@ -621,8 +621,9 @@ if (($crec==1) && ($model->isNewRecord)) {
                             cell3.innerHTML = responseData.data[j].name;
                             cell4.innerHTML = responseData.data[j].start;
                             cell5.innerHTML = responseData.data[j].stop;
-							cell6.innerHTML = responseData.data[j].status_name;
-                            if (available_lanes != 0) {cell7.innerHTML = responseData.data[j].lanes;}
+							cell6.innerHTML = responseData.data[j].eve_status_name;
+							cell7.innerHTML = responseData.data[j].rng_status_name;
+                            if (available_lanes != 0) {cell8.innerHTML = responseData.data[j].lanes;}
                             //console.log(responseData.data[j].name);
                         }
                     }
