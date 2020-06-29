@@ -156,10 +156,9 @@ if (($crec==1) && ($model->isNewRecord)) {
         <?= $form->field($model, 'approved')->DropDownList(['1'=>'Yes','0'=>'No']) ?>
     </div>
 
-    <div class="col-xs-4 col-sm-2">
 <?php if($model->isNewRecord) {
-		echo $form->field($model, 'deleted')->hiddenInput(['value'=>0]).PHP_EOL;
-	} else {
+		echo $form->field($model, 'deleted')->hiddenInput(['value'=>0])->label(false).PHP_EOL;
+	} else { echo '<div class="col-xs-4 col-sm-2">';
 		if(yii::$app->controller->hasPermission('calendar/delete')) {
 			if ($model->deleted=='1') {
 				echo $form->field($model, 'deleted')->DropDownList(['1'=>'Yes','0'=>'No']).PHP_EOL;
@@ -168,8 +167,8 @@ if (($crec==1) && ($model->isNewRecord)) {
 			}
 		} else { 
 			if ($model->deleted=='1') { echo "<p style='color:red;'><b>Event is Deleted</b></p>"; }
-	} }?>
-    </div>
+	}	echo '</div>';
+	} ?>
     <div class="col-xs-4 col-sm-2">
         <?= $form->field($model, 'poc_badge')->textInput(['maxlength'=>true,'readonly'=>yii::$app->controller->hasPermission('calendar/all')? false : true]) ?>
     </div>
@@ -331,7 +330,11 @@ if (($crec==1) && ($model->isNewRecord)) {
         <?= $form->field($model, 'pattern_type')->textInput(['readonly'=>$recur_disab,'maxlength'=>true]).PHP_EOL ?>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-6 col-lg-4" > <!--style="background-color: silver"> -->
-        <?= $form->field($model, 'recur_week_days')->textInput(['readonly'=>$recur_disab,'maxlength'=>true]).PHP_EOL ?>
+        <?php if(yii::$app->controller->hasPermission('cal-setup/index')) {
+			echo $form->field($model, 'recur_week_days')->textInput(['readonly'=>$recur_disab,'maxlength'=>true]).PHP_EOL;
+		} else {
+			echo $form->field($model, 'recur_week_days')->hiddenInput()->label(false).PHP_EOL;
+		} ?>
     </div>
 </div>
 
@@ -372,6 +375,7 @@ if (($crec==1) && ($model->isNewRecord)) {
     $("#daily").change(function(e) {
         if(document.getElementById("daily").value=='daily'){
             $("#pattern_day").show(); $("#pattern_week").hide(); $("#pattern_month").hide(); $("#pattern_year").hide();
+            document.getElementById("pat_day_x").checked=true;
         }
     });
     $("#pat_daily_n").change(function(e) { document.getElementById("pat_day_x").checked=true; });
@@ -385,6 +389,7 @@ if (($crec==1) && ($model->isNewRecord)) {
     $("#monthly").change(function(e) {
         if(document.getElementById("monthly").value=='monthly'){
             $("#pattern_day").hide(); $("#pattern_week").hide(); $("#pattern_month").show(); $("#pattern_year").hide();
+            document.getElementById("pat_mon_a").checked=true; 
         }
     });
     $("#pat_mon_x").change(function(e) { document.getElementById("pat_mon_a").checked=true; });
@@ -393,6 +398,7 @@ if (($crec==1) && ($model->isNewRecord)) {
     $("#yearly").change(function(e) {
         if(document.getElementById("yearly").value=='yearly'){
             $("#pattern_day").hide(); $("#pattern_week").hide(); $("#pattern_month").hide(); $("#pattern_year").show();
+            document.getElementById("pat_yr_a").checked=true;
         }
     });
     $("#pat_yr_mon").change(function(e) { document.getElementById("pat_yr_a").checked=true; });
