@@ -185,8 +185,8 @@ class CalendarController extends AdminController {
 
 	public function actionOpenRange($date,$start,$stop,$facility,$lanes=0,$id=0,$internal=false,$tst=false) {
 		$range = agcFacility::find()->where(['facility_id'=>$facility])->one();
-		$start= date('H:i', strtotime($start));
-		$stop = date('H:i', strtotime($stop));
+		$start= date('H:i', strtotime($start)+60);
+		$stop = date('H:i',strtotime($stop)-60);
 
 		$model = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
 			->where("facility_id=$facility AND event_date='$date' AND deleted=0 AND (".
@@ -197,7 +197,7 @@ class CalendarController extends AdminController {
 		if($model) {
 			$i=0;$lanes_used=0;
 			foreach($model as $key => $item) {
-				if (($item->calendar_id == $id) || ($item->recurrent_calendar_id == $id)) { continue; }
+				if (($item->calendar_id == $id) || (($id >0 ) && ($item->recurrent_calendar_id == $id))) { continue; }
 				$found[$i] = new \stdClass();
 				$found[$i]->cal_id = $item->calendar_id;
 				$found[$i]->club = $item->clubs->short_name;
@@ -271,9 +271,9 @@ class CalendarController extends AdminController {
 				$sql = "DELETE from associat_agcnew.agc_calendar where recurrent_calendar_id = ".$id." and  event_date >= '".$nowTime."'";
 				$command = Yii::$app->db->createCommand($sql);
 				$saveOut = $command->execute();
-				yii::$app->controller->createCalLog(true, 'trex-B_C_CC:272 Delete future:', var_export($saveOut,true));
 
-				if (strtotime($nowTime) > strtotime(date('Y').'-06-01 00:00:00')) {$myYr= intval(date('Y'))+1;} else {$myYr= date('Y');}
+				yii::$app->controller->createCalLog(true, 'trex-B_C_CC:272 Delete future:', var_export($saveOut,true));
+				if (strtotime($nowTime) > strtotime(date('Y').'-07-01 00:00:00')) {$myYr= intval(date('Y'))+1;} else {$myYr= date('Y');}
 		//		echo "$myYr <br />";
 		//		echo "Start: $model->recurrent_start_date, End: $model->recurrent_end_date <br />";
 				$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$myYr);
