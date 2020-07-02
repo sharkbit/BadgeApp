@@ -162,9 +162,8 @@ class SalesController extends AdminController {
         	if($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Item has been updated');
 			} else { Yii::$app->getSession()->setFlash('success', 'Item update Failed'); }
-
-            return $this->redirect('update',['id'=>$model->item_id,'confParams' => $confParams]);
-        } else {
+				return $this->render('update',['model' => $model]);
+		} else {
             return $this->render('update', [
                 'model' => $model
             ]);
