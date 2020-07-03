@@ -64,8 +64,7 @@ $div_closed=false;
 	<div class="col-xs-8 col-sm-8"><b>Instructors:</b> <?=$model->e_inst?> </div>
 <?php } ?>
 </div><hr />
-<?php if (($model->e_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) && ($model->e_status==0))  {
-if ($model->e_type=='cio' && ($_SESSION['privilege']==3 || $_SESSION['privilege']==6 )) { } else { ?>
+<?php if (($model->e_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) && ($model->e_status==0) && (yii::$app->controller->hasPermission('events/add-att'))) { ?>
 <div class="row">
 <div class="col-xs-12">
 <div class="events-attendees-form">
@@ -93,7 +92,7 @@ if ($model->e_type=='cio' && ($_SESSION['privilege']==3 || $_SESSION['privilege'
 </div></div></div>
 <div id="reg_notes"> </div>
 <hr />
-<?php } } ?>
+<?php } ?>
 
 <div class="row">
 <div class='col-xs-12'>

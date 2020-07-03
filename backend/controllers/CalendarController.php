@@ -193,6 +193,14 @@ class CalendarController extends AdminController {
 				"( '$date $start' BETWEEN start_time AND end_time or '$date $stop' BETWEEN start_time AND end_time ) OR ".
 				"( start_time BETWEEN '$date $start' AND '$date $stop' or end_time BETWEEN '$date $start' AND '$date $stop'))")
 			->all();
+
+	//	$model_sql = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
+	//		->where("facility_id=$facility AND event_date='$date' AND deleted=0 AND (".
+	//			"( '$date $start' BETWEEN start_time AND end_time or '$date $stop' BETWEEN start_time AND end_time ) OR ".
+	//			"( start_time BETWEEN '$date $start' AND '$date $stop' or end_time BETWEEN '$date $start' AND '$date $stop'))")
+	//		->createCommand()->sql; // echo $model_sql->sql; // exit;
+	//	yii::$app->controller->createLog(false, 'trex_C_CC:202', $model_sql);
+
 		$isAval = true;
 		if($model) {
 			$i=0;$lanes_used=0;

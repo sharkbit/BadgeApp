@@ -49,7 +49,7 @@ class Badges extends \yii\db\ActiveRecord {
 	public function rules() {
 		return [
 			[['first_name', 'last_name', 'address', 'city','club_name','state', 'zip', 'gender', 'mem_type', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
-			[['address', 'gender', 'qrcode', 'remarks', 'status','club_name','cc_num','cc_x_id'], 'string'],
+			[['address', 'gender', 'qrcode','status','club_name','cc_num','cc_x_id'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip','club_id', 'mem_type','sticker','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
 			[['badge_fee', 'discounts', 'amt_due'], 'number'],
