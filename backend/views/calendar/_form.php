@@ -603,9 +603,9 @@ if (($crec==1) && ($model->isNewRecord)) {
                         }
 
                     } else {
-                        //console.log('Error:568');
+                        //console.log('Error:621');
                        // console.log(responseData);
-                        $("#error_msg").html('<center><p style="color:red;"><b>'+responseData.msg+'</b></p></center>');
+                        $("#error_msg").html('<center><p style="color:red;"><b>'+responseData.responseText+'</b></p></center>');
 
                         if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
                             document.getElementById("cal_update_item").classList.add('btn-secondary');
@@ -637,7 +637,9 @@ if (($crec==1) && ($model->isNewRecord)) {
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     $("#searchng_cal_animation").hide(500);
-                    console.log(responseData);
+                    console.log('Error:655');
+					$("#error_msg").html('<center><p style="color:red;"><b>'+responseData.responseText+'</b></p></center>');
+                  //  console.log(responseData);
                     if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
                         document.getElementById("cal_update_item").classList.add('btn-secondary');
                         document.getElementById("cal_update_item").classList.remove('btn-success');}

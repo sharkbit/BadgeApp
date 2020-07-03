@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'value'=> function($model, $attribute) {
 					if($model->status==1) {return 'Approved';} 
 					else if($model->status==2) {
-						if($_SESSION['privilege']<3) {
+						if(yii::$app->controller->hasPermission('work-credits/approve')) {
 							return Html::a('Pending Approval','/work-credits/approve?id='.$model->id);} 
 						else {return 'Pending';}
 					} 

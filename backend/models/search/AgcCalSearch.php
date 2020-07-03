@@ -57,7 +57,7 @@ class AgcCalSearch extends AgcCal {
         
             return $dataProvider;
         }
-	
+
     // grid filtering conditions
 		if(isset($this->club_id)) {	$query->andFilterWhere(['like','clubs.club_name',$this->club_id])->orFilterWhere(['like','clubs.short_name',$this->club_id]); }
 		if(!yii::$app->controller->hasPermission('calendar/all')) {
@@ -65,10 +65,8 @@ class AgcCalSearch extends AgcCal {
 		}
 
 		if(isset($this->recur_every)) {
-			//yii::$app->controller->createLog(true, 'dvbjdbgh ','yep yesss');
 			$query->andFilterWhere(['recur_every'=>true]);
 			$query->andWhere('recurrent_calendar_id = calendar_id');
-			
 		} else {
 			if(!isset($this->SearchTime)){// || ($this->SearchTime='')) {
 				$SearchStart = date("Y-m-d 00:00",strtotime(yii::$app->controller->getNowTime()));
@@ -96,7 +94,7 @@ class AgcCalSearch extends AgcCal {
 		if(isset($this->event_status_id)) { $query->andFilterWhere(['event_status.event_status_id'=>$this->event_status_id]); }
 		if(isset($this->range_status_id)) { $query->andFilterWhere(['range_status.range_status_id'=>$this->range_status_id]); }
 
-		//yii::$app->controller->createLog(false, 'trex-B_M_S_AgcCAl Query OK: ', var_export($query->createCommand()->getRawSql(),true));
+	//yii::$app->controller->createLog(false, 'trex-B_M_S_AgcCAl Query OK: ', var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }
 }

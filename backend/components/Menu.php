@@ -154,7 +154,7 @@ class Menu extends Widget{
 			if( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge" )) {
 				$print_menu =  array_merge($this->mainMenu, $this->LastMenu);
 			} elseif ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "calendar" )) {
-				if ($_SESSION['privilege'] == 1) {
+				if (yii::$app->controller->hasPermission('cal-setup/index')) {
 				$print_menu = array_merge($this->mainMenu, $this->mainCalendar, $this->LastMenu);
 				} else {
 					$print_menu = array_merge($this->mainCalendar, $this->LastMenu);

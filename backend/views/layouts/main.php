@@ -38,13 +38,13 @@ AppAsset::register($this);
     <?php $this->head() ?>
 </head>
 <body ng-app="agc"  class="waitMe_body" id="wait-me">
-<?php $ver = file_get_contents('version.php',TRUE);
+<?php $ver = file_get_contents('version.php',TRUE); $srv_name = explode ('.',$_SERVER['HTTP_HOST'])[0];
 $this->beginBody() ?>
 
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Associated Gun Clubs (tmp '.$ver.')',
+        'brandLabel' => "Associated Gun Clubs ($srv_name $ver)",
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -132,7 +132,7 @@ $this->beginBody() ?>
 
 <script type="text/javascript">
     var logsout;
-    <?php if(isset($_SESSION['privilege'])) { ?>
+    <?php if(isset($_SESSION['timeout'])) { ?>
     function addTime(){
         logsout = new Date();
         logsout.setMinutes(logsout.getMinutes() + <?=$_SESSION['timeout']?>);
@@ -383,9 +383,11 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
 
     function collectRenewFee(action,memTypeId,badgeYear) {
         if(action=='fill') {
+            var myUrl = '<?=yii::$app->params['rootUrl']?>/fee-structure/fees-by-type?id='+memTypeId;
+			console.log(myUrl);
             jQuery.ajax({
                 method: 'GET',
-                url: '<?=yii::$app->params['rootUrl']?>/fee-structure/fees-by-type?id='+memTypeId,
+                url: myUrl,
                 crossDomain: false,
                 success: function(responseData, textStatus, jqXHR) {
                     responseData =  JSON.parse(responseData);
@@ -1512,7 +1514,7 @@ $( document ).ready(function() {
     })
 
 
-<?php if(isset($_SESSION['privilege'])) { ?>
+<?php if(isset($_SESSION['timeout'])) { ?>
     var aTags = document.getElementsByTagName("a");
     var searchText = "Clock";
     var foundTag;

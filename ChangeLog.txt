@@ -1,5 +1,8 @@
 AGC Badge Database Changes
 ---------------------------------------
+<b>Now on Github: <a href="https://github.com/sharkbit/BadgeApp" target=_new> BadgeApp </a></b>
+
+Ver 174: Fixed delete button
 
 Ver 169:
 - Calender updates and minor fixes, Composer updates

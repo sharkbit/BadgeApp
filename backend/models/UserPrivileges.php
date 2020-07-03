@@ -52,6 +52,5 @@ class UserPrivileges extends \yii\db\ActiveRecord {
 		$command = Yii::$app->db->createCommand($sql);
 		$privArray= $command->queryAll();
         return ArrayHelper::map($privArray,'id','privilege');
-
     }
 }

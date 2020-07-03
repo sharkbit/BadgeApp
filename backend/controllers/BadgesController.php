@@ -242,16 +242,6 @@ class BadgesController extends AdminController {
 
 		if(isset($_GET['email']) && ($_GET['email']=='true')) {			// /badges/api-check?email=true
 			$mail = yii::$app->controller->emailSetup();
-		/*	$mail = new \PHPMailer\PHPMailer\PHPMailer;
-		*	$mail->IsSMTP();
-		*	$mail->Host = 'associatedgunclubs.org';
-		*	$mail->Port = 587;
-		*	$mail->SMTPSecure =  "tls";  	//  tsl or ssl
-		*	$mail->SMTPAuth = true;
-		*	$mail->Username = "noreply@associatedgunclubs.org";	// SMTP username
-		*	$mail->Password = "GRhKW}{ISl2F";
-		*	$mail->isHTML(true);
-		*/		
 			$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
 			$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/site/no-email?unsubscribe=noclick">');
 			$mail->Subject = 'PHPMailer Test Subject via smtp, basic with authentication';
@@ -419,10 +409,6 @@ class BadgesController extends AdminController {
 		}
 		elseif ($model->load(Yii::$app->request->post())) {
 			$model->created_at = $this->getNowTime();
-			$remarks = [
-				'created_at'=>$this->getNowTime(),
-				'data'=>'New badge issued by '.$_SESSION['user'].'. '.$model->remarks,
-			];
 
 			$model->status ='approved';
 			$model = $this->cleanBadgeData($model,true,true);
@@ -1343,7 +1329,7 @@ class BadgesController extends AdminController {
 	}
 
 	public static function loadDirtyFilds($model) {
-yii::$app->controller->createLog(false, 'trex', var_export($model,true));
+//yii::$app->controller->createLog(false, 'trex', var_export($model,true));
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
 			'club_id' => 'Club',

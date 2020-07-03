@@ -27,7 +27,8 @@
         "kartik-v/yii2-money": "*",
         "kartik-v/yii2-date-range": "*",
         "kartik-v/yii2-export": "@dev",
-	"tejrajs/usps-api": "*",
+
+        "tejrajs/usps-api": "*",
         "quickbooks/v3-php-sdk": ">=4.04",
         "phpmailer/phpmailer": ">=6.0",
         "paypal/rest-api-sdk-php": "*",
