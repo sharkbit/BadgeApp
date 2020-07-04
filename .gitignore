@@ -9,3 +9,4 @@ common\config\main-local.php
 vendor
 composer.lock
 vendor/autoload.php
+common/config/main-local.php
