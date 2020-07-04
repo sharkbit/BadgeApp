@@ -407,3 +407,7 @@ CHANGE COLUMN `recur_every` `recur_every` INT(11) NULL DEFAULT '0' ;
 
 update associat_agcnew.agc_calendar set recurrent_calendar_id = calendar_id where recurrent_calendar_id=0 and recur_every=1;
 update associat_agcnew.agc_calendar set deleted=1 where recurrent_calendar_id = calendar_id and recur_week_days='';
+
+-- Rev 178
+ALTER TABLE `BadgeDB`.`user` 
+CHANGE COLUMN `privilege` `privilege` VARCHAR(45) NOT NULL ;

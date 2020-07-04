@@ -52,6 +52,7 @@ class SignupForm extends Model {
     }
 
     public function signup() {
+//yii::$app->controller->createLog(false, 'trex_F_M_Sf:55', 'Tag-1');
         if (!$this->validate()) {
             return null;
         }
@@ -62,7 +63,7 @@ class SignupForm extends Model {
 		$user->badge_number = $this->badge_number;
 		$user->clubs = json_encode($this->clubs);
         $user->full_name = $this->f_name." ".$this->l_name;
-        $user->privilege = $this->privilege;
+        $user->privilege = str_replace('"',"", json_encode($model->privilege));
         $user->created_at = strtotime($this->getNowTime());
         $user->updated_at = strtotime($this->getNowTime());
         $user->setPassword($this->password);

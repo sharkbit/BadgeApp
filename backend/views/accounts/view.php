@@ -1,7 +1,6 @@
 <?php
 
 use backend\models\clubs;
-use backend\models\UserPrivileges;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -19,7 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p><?php
 	if(!$model->id==0){
-		if(($_SESSION['privilege']>1) & ($model->privilege==1)) {} else {
+		if ((yii::$app->controller->hasPermission('is_root')) ||
+		((yii::$app->controller->hasPermission('accounts/update')) && (!in_array(1,json_decode($model->privilege))))) {
 			echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-success']).PHP_EOL;
 		}
 
@@ -45,8 +45,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' =>'company',
 				'label'=>'Company',
                 'value' => function($model) {
-					if($model->privilege==8) { return $model->company; }},
-				'visible'=> ($model->privilege==8) ? true : false
+					if(in_array(8,json_decode($model->privilege))) { return $model->company; } },
+				'visible'=> (in_array(8,json_decode($model->privilege))) ? true : false,
             ],
 			[
 				'attribute'=>'badge_number',
@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
             [
                 'attribute' =>'privilege',
-                'value' => function($model) { return (new UserPrivileges)->getPriv($model->privilege);},
+                'value' => function($model) { return $model->getPrivilege_Names($model->privilege);},
             ],
 			[
 				'attribute' => 'clubs',

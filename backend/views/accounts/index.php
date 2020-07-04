@@ -1,7 +1,7 @@
 <?php
 
 use backend\models\clubs;
-use backend\models\UserPrivileges;
+use backend\models\User;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -33,8 +33,8 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/accounts/
 		'email:email',
 		'full_name',
 		'privilege' => [   'header'=>'Privilege',
-			'value' => function($model, $attribute){ return (new UserPrivileges)->getPriv($model->privilege); },
-			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'privilege', (new UserPrivileges)->getPrivList(),['class'=>'form-control','prompt' => 'All']),
+			'value' => function($model, $attribute){ return (new User)->getPrivilege_Names($model->privilege); },
+			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'privilege', (new User)->getPrivList(),['class'=>'form-control','prompt' => 'All']),
 		],
 		[
 			'attribute' => 'clubs',
@@ -61,7 +61,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/accounts/
 			'template'=>'{view} {update} {delete} {reset}',
 			'buttons'=> [
 				'reset' => function($url,$model) {
-					if(!$model->id==0){ if(!$model->badge_number) { if($_SESSION['privilege']==1) {
+					if(!$model->id==0){ if(!$model->badge_number) { if(yii::$app->controller->hasPermission('is_root')) {
 					return  Html::a(' <span class="glyphicon glyphicon-refresh"></span> Reset Password <br />', ['/accounts/request-password-reset','id'=>$model->id], [
 						'target'=>'_blank',
 						'data-toggle'=>'tooltip',
@@ -71,7 +71,8 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/accounts/
 				},
 				'update' => function ($url, $model) {
 					if(!$model->id==0){
-						if(($_SESSION['privilege']>1) & ($model->privilege==1)) { } else {
+						if((yii::$app->controller->hasPermission('is_root')) ||
+					((yii::$app->controller->hasPermission('accounts/update')) && (!in_array(1,json_decode($model->privilege))))) {
 					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> Edit <br />', ['/accounts/update','id'=>$model->id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',

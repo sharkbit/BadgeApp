@@ -107,9 +107,24 @@ if (($crec==1) && ($model->isNewRecord)) {
     <div class="col-xs-12 col-sm-3">
     <?php if(yii::$app->controller->hasPermission('calendar/all')) {
             $ary_club = (new clubs)->getClubList();
+			$ary_club_ac =(new clubs)->getClubList();
         } else {
             $ary_club = (new clubs)->getClubList(false,Yii::$app->user->identity->clubs);
-        } echo $form->field($model, 'club_id')->DropDownList($ary_club); ?>
+			$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
+		} 
+		
+/*		$dirty = array();
+		//yii::$app->controller->createLog(false, 'trex', var_export($ary_club_ac,true));
+		foreach($ary_club_ac as $dirt) {
+			echo " $dirt - ";
+			array_push($dirty(), explode(" ",$dirt));
+			yii::$app->controller->createLog(false, 'trex', var_export($dirty,true));
+		}
+		
+		
+		echo "<input type='hidden' id='bad_words' value='".htmlspecialchars(json_encode($ary_club_ac),ENT_QUOTES)."' />";
+		*/
+		echo $form->field($model, 'club_id')->DropDownList($ary_club).PHP_EOL; ?>
     </div>
     <div class="col-xs-12 col-sm-3">
     <?php $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
