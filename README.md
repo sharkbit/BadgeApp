@@ -18,14 +18,15 @@ Steps to install:
  - find \<root Git Dir> -type d -exec chmod 775 {} \;
 
 
-Apache Setup:
-
-1. DocumentRoot "/var/www/badgeApp/" - Test Requirements.php
-2. Test site /Requirements.php and verify green on required items.
-3. Update DocumentRoot to proper launch point:
-  - DocumentRoot "/var/www/badgeApp/backend/web/" - Run App
-4. Configure your DB user and password in:
+5. Apache Setup DocumentRoot 
+ - "/var/www/badgeApp/"
+6. Test site /Requirements.php and verify green on required items.
+7. Update DocumentRoot to proper launch point:
+  - DocumentRoot "/var/www/badgeApp/backend/web/"
+8. Configure your DB user and password in:
   - ./common/config/main-local.php
+9. Run App by going to  /
+
 
 
 
