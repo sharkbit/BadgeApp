@@ -13,9 +13,9 @@ Steps to install:
 3. Run Composer Intstall
  - composer install --prefer-dist --no-progress --no-suggest
 4. Update directory permissions:
- - chown -R www-data.<proper group> <root Git Dir>
- - find <root Git Dir> -type f -exec chmod 664 {} \;
- - find <root Git Dir> -type d -exec chmod 775 {} \;
+ - chown -R www-data.\<proper group> <root Git Dir>
+ - find \<root Git Dir> -type f -exec chmod 664 {} \;
+ - find \<root Git Dir> -type d -exec chmod 775 {} \;
 
 
 Apache Setup:
@@ -24,7 +24,7 @@ Apache Setup:
 2. Test site /Requirements.php and verify green on required items.
 3. Update DocumentRoot to proper launch point:
   - DocumentRoot "/var/www/badgeApp/backend/web/" - Run App
-4. COnfigure your DB user and password in:
+4. Configure your DB user and password in:
   - ./common/config/main-local.php
 
 
