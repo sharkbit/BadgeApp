@@ -14,8 +14,8 @@ Steps to install:
  - composer install --prefer-dist --no-progress --no-suggest
 4. Update directory permissions:
  - chown -R www-data.\<proper group> <root Git Dir>
- - find \<root Git Dir> -type f -exec chmod 664 {} \;
- - find \<root Git Dir> -type d -exec chmod 775 {} \;
+ - find \<root Git Dir> -type f -exec chmod 664 {} \\;
+ - find \<root Git Dir> -type d -exec chmod 775 {} \\;
 
 
 5. Apache Setup DocumentRoot 
