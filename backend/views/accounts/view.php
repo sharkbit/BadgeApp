@@ -1,7 +1,7 @@
 <?php
 
 use backend\models\clubs;
-use backend\models\UserPrivileges;
+use backend\models\Privileges;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
             [
                 'attribute' =>'privilege',
-                'value' => function($model) { return (new UserPrivileges)->getPriv($model->privilege);},
+                'value' => function($model) { return (new Privileges)->getPriv($model->privilege);},
             ],
 			[
 				'attribute' => 'clubs',

@@ -1,7 +1,7 @@
 <?php
 
 use backend\models\clubs;
-use backend\models\UserPrivileges;
+use backend\models\Privileges;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -24,9 +24,9 @@ use yii\helpers\ArrayHelper;
 	<?= $form->field($model, 'badge_number')->textInput(['maxlength' => true]) ?>
 
 <?php if($_SESSION['privilege']==1) {
-		echo $form->field($model, 'privilege')->dropDownList((new UserPrivileges)->getPrivList()).PHP_EOL;
+		echo $form->field($model, 'privilege')->dropDownList((new Privileges)->getPrivList()).PHP_EOL;
 	} else {
-		echo "<b>Privilege: </b> ".(new UserPrivileges)->getPriv($model->privilege)."\n";
+		echo "<b>Privilege: </b> ".(new Privileges)->getPriv($model->privilege)."\n";
 	} ?>
 	
 	<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['prompt'=>'select','id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>

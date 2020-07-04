@@ -5,7 +5,7 @@
 /* @var $model \frontend\models\SignupForm */
 
 use backend\models\clubs;
-use backend\models\UserPrivileges;
+use backend\models\Privileges;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -37,9 +37,9 @@ $randStr = generateRandomString();
 		</div>
 		<div class="col-xs-8 col-sm-9 col-md-5">
 <?php if ($_SESSION['privilege']===1) {
-	echo $form->field($model, 'privilege')->dropDownList((new UserPrivileges)->getPrivList(),['prompt'=>'Select']).PHP_EOL;
+	echo $form->field($model, 'privilege')->dropDownList((new Privileges)->getPrivList(),['prompt'=>'Select']).PHP_EOL;
 } else {
-	echo $form->field($model, 'privilege')->dropDownList((new UserPrivileges)->getPrivList(true),['prompt'=>'Select']).PHP_EOL;
+	echo $form->field($model, 'privilege')->dropDownList((new Privileges)->getPrivList(true),['prompt'=>'Select']).PHP_EOL;
 } ?>
 		</div>
 		<div class="col-xs-12 col-sm-6 col-md-5">

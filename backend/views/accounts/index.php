@@ -1,7 +1,7 @@
 <?php
 
 use backend\models\clubs;
-use backend\models\UserPrivileges;
+use backend\models\Privileges;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -33,8 +33,8 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/accounts/
 		'email:email',
 		'full_name',
 		'privilege' => [   'header'=>'Privilege',
-			'value' => function($model, $attribute){ return (new UserPrivileges)->getPriv($model->privilege); },
-			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'privilege', (new UserPrivileges)->getPrivList(),['class'=>'form-control','prompt' => 'All']),
+			'value' => function($model, $attribute){ return (new Privileges)->getPriv($model->privilege); },
+			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'privilege', (new Privileges)->getPrivList(),['class'=>'form-control','prompt' => 'All']),
 		],
 		[
 			'attribute' => 'clubs',
