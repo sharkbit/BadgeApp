@@ -44,11 +44,9 @@
     },
     "config": {
         "process-timeout": 1800,
-        "fxp-asset":{
-            "installer-paths": {
-                "bower-asset-library": "vendor/bower"
-            }
-		}
+		"asset-installer-paths": {
+			"bower-asset-library": "vendor/bower" 
+		} 
 	},
 	"repositories": [
 		{

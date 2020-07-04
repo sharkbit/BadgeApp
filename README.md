@@ -5,18 +5,28 @@ Running on CentOs with PHP 7.4
 
 Steps to install:
 
-yum install php74 php74-php-fpm php74-php-gd php74-php-json php74-php-mbstring php74-php-mysqlnd php74-php-xml php74-php-xmlrpc php74-php-opcache php-pdo php-mbst* php-intl* php-dom* php-mysq* --skip-broken
-yum install composer
+1. Install proper php modules:
+ - yum install php74 php74-php-fpm php74-php-gd php74-php-json php74-php-mbstring php74-php-mysqlnd php74-php-xml php74-php-xmlrpc php74-php-opcache php-pdo php-mbst* php-intl* php-dom* php-mysq* --skip-broken
+ - yum install composer
+2. Clone Repo:
+ - git clone ssh://git@github.com:22/sharkbit/BadgeApp.git
+3. Run Composer Intstall
+ - composer install --prefer-dist --no-progress --no-suggest
+4. Update directory permissions:
+ - chown -R www-data.<proper group> <root Git Dir>
+ - find <root Git Dir> -type f -exec chmod 664 {} \;
+ - find <root Git Dir> -type d -exec chmod 775 {} \;
 
-git clone ssh://git@github.com:22/sharkbit/BadgeApp.gitc
-
-composer update
 
 Apache Setup:
 
-DocumentRoot "/var/www/badgeApp/" - Test Requirements.php
+1. DocumentRoot "/var/www/badgeApp/" - Test Requirements.php
+2. Test site /Requirements.php and verify green on required items.
+3. Update DocumentRoot to proper launch point:
+  - DocumentRoot "/var/www/badgeApp/backend/web/" - Run App
+4. COnfigure your DB user and password in:
+  - ./common/config/main-local.php
 
-DocumentRoot "/var/www/badgeApp/backend/web/" - Run App
 
 
 Built On: Yii 2 Advanced Project Template
