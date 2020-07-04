@@ -4,8 +4,8 @@ return [
         'db' => [
             'class' => 'yii\db\Connection',
             'dsn' => 'mysql:host=localhost;dbname=BadgeDB',
-            'username' => '<DB User>',
-            'password' => '<some secure password>',
+            'username' => '\<DB User>',
+            'password' => '\<DB Password>',
             'charset' => 'utf8',
         ],
         'mailer' => [
@@ -17,6 +17,10 @@ return [
             'useFileTransport' => true,
         ],
     ],
+	'aliases' => [
+		'@bower' => '@vendor/bower-asset',
+		'@npm'   => '@vendor/npm-asset',
+	],
 ];
 
 

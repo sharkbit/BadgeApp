@@ -5,6 +5,8 @@ backend\runtime\transactions\*.*
 backend\web\assets\*.*
 backend\web\files\badge_photos\*.jpg
 backend\web\files\rosters\*.*
-vendor\*.*
-vendor\*
+common\config\main-local.php
+vendor
 composer.lock
+vendor/autoload.php
+common/config/main-local.php
