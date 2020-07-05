@@ -165,7 +165,7 @@ if (($crec==1) && ($model->isNewRecord)) {
         echo $form->field($model, 'range_status_id')->DropDownList($ary_range);     ?>
     </div>
     <div class="col-xs-4 col-sm-2">
-        <?= $form->field($model, 'active')->DropDownList(['1'=>'Yes','0'=>'No']) ?>
+        <?= $form->field($model, 'active')->DropDownList(['1'=>'Yes','0'=>'No'],['value'=> $model->isNewRecord ? 1 : $model->active ]) ?>
     </div>
     <div class="col-xs-4 col-sm-2" <?php if(!yii::$app->controller->hasPermission('calendar/approve')) {echo 'style="display:none"';} ?> >
         <?= $form->field($model, 'approved')->DropDownList(['1'=>'Yes','0'=>'No']) ?>
