@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "privilege".
@@ -37,7 +38,24 @@ class Privileges extends \yii\db\ActiveRecord {
             'id' => 'ID',
 			'privilege' => 'Privilege Title',
             'priv_sort' => 'Sort Order',
-            'timeout' => 'Time-out'
+            'timeout' => 'Time-out',
+            'privilege' => 'User Privilege',
         ];
+    }
+
+	public function getPriv($level) {
+		$sql = "SELECT privilege FROM user_privileges WHERE id=".$level;
+		$command = Yii::$app->db->createCommand($sql);
+		$privArray= $command->queryAll();
+		return $privArray[0]['privilege'];
+	}
+
+    public function getPrivList($limit=null) {
+		if ($limit) { $where =' where id >2 '; } else { $where =''; }
+		
+		$sql = "SELECT id,privilege FROM user_privileges $where order by priv_sort ASC";
+		$command = Yii::$app->db->createCommand($sql);
+		$privArray= $command->queryAll();
+        return ArrayHelper::map($privArray,'id','privilege');
     }
 }

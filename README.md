@@ -2,7 +2,8 @@ BadgeApp
 ========
 
 Running on CentOs with PHP 7.4
-
+ - Don't forget to enable the PHP repo, a good resource is [remirepo.net](https://blog.remirepo.net/post/2019/12/03/Install-PHP-7.4-on-CentOS-RHEL-or-Fedora)
+ 
 Steps to install:
 
 1. Install proper php modules:
@@ -25,7 +26,9 @@ Steps to install:
   - DocumentRoot "/var/www/badgeApp/backend/web/"
 8. Configure your DB user and password in:
   - ./common/config/main-local.php
-9. Run App by going to  /
+9. Configure Cookie and Debugging in:
+  - ./backend/config/main-local.php
+10. Run App by going to  /
 
 
 

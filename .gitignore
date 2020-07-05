@@ -10,3 +10,4 @@ vendor
 composer.lock
 vendor/autoload.php
 common/config/main-local.php
+backend/config/main-local.php
