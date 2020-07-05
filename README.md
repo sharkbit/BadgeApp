@@ -2,7 +2,7 @@ BadgeApp
 ========
 
 Running on CentOs with PHP 7.4
- - Don't forget to enable the PHP repo.  A good resource is [here}(https://blog.remirepo.net/post/2019/12/03/Install-PHP-7.4-on-CentOS-RHEL-or-Fedora)
+ - Don't forget to enable the PHP repo, a good resource is [remirepo.net](https://blog.remirepo.net/post/2019/12/03/Install-PHP-7.4-on-CentOS-RHEL-or-Fedora)
  
 Steps to install:
 
