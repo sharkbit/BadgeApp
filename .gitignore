@@ -2,11 +2,14 @@ backend\runtime\cache\*.*
 backend\runtime\logs\*.*
 backend\runtime\debug\*.*
 backend\runtime\HTML
+backend/runtime/HTML
 backend\runtime\transactions\*.*
 backend\web\assets\*.*
 backend\web\files\badge_photos\*.jpg
 backend\web\files\rosters\*.*
 backend\config\main-local.php
+backend/config/main-local.php
 common\config\main-local.php
+common/config/main-local.php
 vendor
 composer.lock

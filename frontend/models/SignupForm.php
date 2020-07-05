@@ -30,7 +30,7 @@ class SignupForm extends Model {
         return [
             [['username','f_name','l_name','email','password','confirm_password','privilege'],'required'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-            [['crated_at','updated_at','clubs'],'safe'],
+            [['crated_at','updated_at','clubs','privilege'],'safe'],
             [['username', 'email'], 'trim'],
             ['email', 'email'],
 			[['auth_key'],'string','max'=>100],
@@ -63,7 +63,7 @@ class SignupForm extends Model {
 		$user->badge_number = $this->badge_number;
 		$user->clubs = json_encode($this->clubs);
         $user->full_name = $this->f_name." ".$this->l_name;
-        $user->privilege = str_replace('"',"", json_encode($model->privilege));
+        $user->privilege = $this->privilege;
         $user->created_at = strtotime($this->getNowTime());
         $user->updated_at = strtotime($this->getNowTime());
         $user->setPassword($this->password);

@@ -49,12 +49,11 @@ class AccountsController extends SiteController {
 
     public function actionCreate() {
 		$model = new SignupForm();
-	//yii::$app->controller->createLog(false, 'trex_C_Acc_C:51', var_export(Yii::$app->request->post()),true);
-	yii::$app->controller->createLog(true, 'trex_C_Acc_C:51', 'hi');
+		
 		if ($model->load(Yii::$app->request->post())) {
-
-			exit;
 			$model->full_name= $model->f_name." ".$model->l_name;
+			$model->privilege = str_replace('"',"", json_encode($model->privilege));
+
 			$co_name=$model->auth_key;
 
             if ($user=$model->signup()) {
@@ -72,7 +71,6 @@ class AccountsController extends SiteController {
 			}
         }
 
-//yii::$app->controller->createLog(false, 'trex_C_Acc_C:51', var_export($model->errors),true);
         return $this->render('signup', [
             'model' => $model,
         ]);
