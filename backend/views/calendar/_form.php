@@ -387,6 +387,10 @@ if (($crec==1) && ($model->isNewRecord)) {
         OpenRange();
     });
 
+  $("#re_pub").click(function (e) {
+	  document.getElementById("re_pub").disabled=true;
+  });
+
     $("#daily").change(function(e) {
         if(document.getElementById("daily").value=='daily'){
             $("#pattern_day").show(); $("#pattern_week").hide(); $("#pattern_month").hide(); $("#pattern_year").hide();
