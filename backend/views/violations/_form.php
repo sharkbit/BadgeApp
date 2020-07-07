@@ -94,7 +94,8 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		<div class="col-xs-6">
 			<?= $form->field($model, 'vi_loc')->dropdownList($model->getLocations(),['maxlength'=>true]).PHP_EOL; ?>
 		</div>
-	</div></div>
+		</div>
+	</div>
 		<div class="col-xs-12">
 			<?= $form->field($model, 'vi_rules')->dropDownList((new RuleList)->getRules(), ['value'=>explode(', ',$model->vi_rules),'multiple'=>true]).PHP_EOL; ?>
 		</div>
@@ -119,7 +120,6 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 
 	<?= Html::submitButton($model->isNewRecord ? 'Save' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success done-Violations' : 'btn btn-primary done-Violations']) ?>
     </div>
-</div>
 <?php ActiveForm::end(); ?>
 </div>
 
@@ -134,7 +134,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			if (rep_badge) { document.getElementById("warm").src = "/files/badge_photos/"+("0000"+rep_badge).slice(-5)+".jpg"; }
 			else { document.getElementById("warm").src = "/files/badge_photos/warm.gif"; }
 		}
-	);
+	});
 
     $("#violations-vi_override").change(function() {
         if (document.getElementById("violations-vi_override").checked == true){
