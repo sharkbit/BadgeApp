@@ -67,10 +67,10 @@ class CalendarController extends AdminController {
 					Yii::$app->getSession()->setFlash('error', 'No Recurring range set');
 					return $this->redirect(['create','recur'=>1,'model'=>$model]);
 				}
-	//yii::$app->controller->createLog(false, 'trex-B_C_CC:70 pattern', var_export($model->recur_week_days,true));
+		//yii::$app->controller->createLog(false, 'trex-B_C_CC:70 pattern', var_export($model->recur_week_days,true));
 				if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-07-01 00:00:00')) {$myYr= intval(date('Y'))+1;} else {$myYr= date('Y');}
 				$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$myYr);
-			//yii::$app->controller->createLog(false, 'trex-B_C_CC:73 Request', var_export($myEventDates,true));
+		//yii::$app->controller->createLog(false, 'trex-B_C_CC:73 Request', var_export($myEventDates,true));
 
 				if (is_array($myEventDates) && sizeof($myEventDates) >0) {
 
@@ -615,7 +615,9 @@ if($eco) { echo  "s: ".date('m',$Date_Start). ' e:'. (date('m',$Date_Stop)+1).'<
 				} elseif ($cnt==$skip){ $cnt=0;}
 
 				if($myPat->monthly == 'day') {	// by Day
-					$myMonth = strtotime($myPat->when." ".$myPat->day." $whatYear-".$i);
+					$myMonth = strtotime($myPat->when." ".$myPat->day." $whatYear-".str_pad($i, 2, '0', STR_PAD_LEFT));
+					if (date('d',strtotime("first ".$myPat->day." $whatYear-".str_pad($i, 2, '0', STR_PAD_LEFT)))=='08') {
+						$myMonth = $myMonth-(60*60*24*7); } 
 				} else {	// by Date
 					$myMonth = strtotime($i."/".$myPat->day."/$whatYear");
 				}
