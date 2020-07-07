@@ -91,10 +91,6 @@ if (($crec==1) && ($model->isNewRecord)) {
     <div class="col-12 col-xs-3 col-sm-2" <?php if($model->isNewRecord) {echo 'style="display:none"';} ?>>
         <?= $form->field($model, 'calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]) ?>
     </div>
-<?php if(($model->isNewRecord )&& ($crec)) {
-    echo $form->field($model, 'event_date')->hiddenInput(['value'=>date('y-m-d', strtotime(yii::$app->controller->getNowTime()))])->label(false).PHP_EOL;
-} else { ?>
-
     <div class="col-12 col-xs-6 col-sm-2">
     <?php   echo $form->field($model, 'event_date')->widget(DatePicker::classname(), [
                 'options' => ['placeholder' => 'Event Date'],
@@ -103,7 +99,6 @@ if (($crec==1) && ($model->isNewRecord)) {
                     'format' => 'yyyy-mm-dd',
                     'todayHighlight' => true ] ] ); ?>
     </div>
-<?php } ?>
     <div class="col-xs-12 col-sm-3">
     <?php if(yii::$app->controller->hasPermission('calendar/all')) {
             $ary_club = (new clubs)->getClubList();
