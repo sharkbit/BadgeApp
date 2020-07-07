@@ -57,7 +57,7 @@ if ($model->recur_every && $model->recurrent_calendar_id != 0 ) {
             "<li>Change All: Sponsor, Event Names, Keywords</li>".
             "<li>Only Adjust Future: Facilitys, Lanes Requested, Event Status, Range Status, Event Times, POC info, is Deleted</li></ul><hr />";
     } else {
-        echo " Click to <a href='/calendar/update?id=".$model->recurrent_calendar_id."'>Edit the Series</a> - ";
+        if(yii::$app->controller->hasPermission('calendar/recur')) {echo " Click to <a href='/calendar/update?id=".$model->recurrent_calendar_id."'>Edit the Series</a> - "; }
         $sqlSearch = $model->recurrent_calendar_id;
         $say='';
         $recur_disab=true;

@@ -153,7 +153,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $chairmanPermission = [
-		'extras' => ['calendar/close'],
+		'extras' => ['calendar/close','calendar/recur'],
 	];
 
 	// Used for Importing CVS data
