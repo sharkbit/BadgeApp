@@ -476,7 +476,7 @@ CREATE TABLE `user` (
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `full_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `company` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `privilege` int(1) NOT NULL,
+  `privilege` varchar(45) NOT NULL,
   `status` smallint(6) NOT NULL DEFAULT '10',
   `badge_number` int(5) DEFAULT NULL,
   `auth_key` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
@@ -524,7 +524,7 @@ CREATE TABLE `user_privileges` (
 
 LOCK TABLES `user_privileges` WRITE;
 /*!40000 ALTER TABLE `user_privileges` DISABLE KEYS */;
-INSERT INTO `user_privileges` VALUES (1,'Root',1,60),(2,'Admin',20,30),(3,'RSO',40,20),(4,'View',50,15),(5,'Member',80,2),(6,'RSO Lead',30,20),(7,'Work Credits',60,15),(8,'CIO',70,5),(9,'Calendar_Coordinator',90,10),(10,'Cashier',21,15);
+INSERT INTO `user_privileges` VALUES (1,'Root',1,60),(2,'Admin',20,30),(3,'RSO',40,20),(4,'View',65,15),(5,'Member',80,2),(6,'RSO Lead',30,20),(7,'Work Credits',60,15),(8,'CIO',64,5),(9,'Calendar_Coordinator',50,10),(10,'Cashier',41,15),(11, 'Charemen', 81, 10);
 /*!40000 ALTER TABLE `user_privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 

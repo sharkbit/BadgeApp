@@ -411,4 +411,5 @@ update associat_agcnew.agc_calendar set deleted=1 where recurrent_calendar_id = 
 -- Rev 178 v2.1.1
 ALTER TABLE `BadgeDB`.`user` 
 CHANGE COLUMN `privilege` `privilege` VARCHAR(45) NOT NULL ;
-INSERT INTO BadgeDB.user_privileges VALUES ('11', 'Calendar Close', '81', '10');
+INSERT INTO BadgeDB.user_privileges VALUES (11, 'Charemen', 81, 10);
+ALTER TABLE `BadgeDB`.`user` CHANGE COLUMN `privilege` `privilege` VARCHAR(45) NOT NULL ; update `BadgeDB`.`user` set `privilege`=CONCAT("[",privilege,"]");
