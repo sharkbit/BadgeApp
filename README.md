@@ -28,6 +28,8 @@ Steps to install:
   - ./common/config/main-local.php
 9. Configure Cookie and Debugging in:
   - ./backend/config/main-local.php
+10. Configure mail settings in:
+ - ./backend/config/params.php
 10. Run App by going to  /
 
 

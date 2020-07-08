@@ -93,12 +93,17 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 				$userArray = User::find()->where(['badge_number'=> $model->badge])->one();
 				if($userArray) {
 					// user has privileges
-					$_SESSION['privilege']=$userArray->privilege;
-					$priv = Privileges::find()->where(['id'=> $userArray->privilege])->one();
-					$_SESSION['timeout'] = $priv->timeout;
+					$_SESSION['privilege']=json_decode($userArray->privilege);
+					foreach ($_SESSION['privilege'] as $priv) {
+						$chk_priv = Privileges::find()->where(['id'=>$priv])->one();
+						if (isset($_SESSION['timeout'])) {
+							if ($_SESSION['timeout'] < $chk_priv->timeout) {
+							$_SESSION['timeout'] = $chk_priv->timeout; }
+						} else { $_SESSION['timeout'] = $chk_priv->timeout; }
+					}
 					return Yii::$app->user->login(User::findIdentity($userArray->id), 0);
 				} else {  // Default Privilege for members
-					$_SESSION['privilege']=5;
+					$_SESSION['privilege']=array(5);
 					$priv = Privileges::find()->where(['id'=>5])->one();
 					$_SESSION['timeout'] = $priv->timeout;
 					return Yii::$app->user->login(User::findIdentity(0), 0);
@@ -209,7 +214,7 @@ class SiteController extends AdminController {
 	}
 
 	public function actionLogout($url=false) {
-		if ($_SESSION['privilege'] == 5) {$ReDir=false;} else {$ReDir=true;} 
+		if (in_array(5, $_SESSION['privilege'])) {$ReDir=false;} else {$ReDir=true;} 
 		Yii::$app->user->logout();
 		if (($url) && ($ReDir)) {
 			return $this->redirect(['login-member', 'url' => $url]);

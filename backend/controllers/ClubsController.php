@@ -85,15 +85,17 @@ class ClubsController extends AdminController {
 				if($_GET['email']) {
 					if($clubData->poc_email != '') {
 						$mail = yii::$app->controller->emailSetup();
-						$mail->IsHTML(false);
-						$mail->setFrom('president@associatedgunclubs.org', 'AGC Range');
-						$mail->addAddress($clubData->poc_email);
-						$mail->addBCC('president@associatedgunclubs.org');
-						$mail->Subject = $clubData->short_name."'s active members of AGC";
-						$mail->Body = $clubData->short_name.",\n\nHere is your club roster as of today (".date('M d, Y').").\n\nAGC Range";
-						$mail->addAttachment(Yii::getAlias('@webroot').'/files/rosters/'.$fileName); 
-						$mail->send();
-						$returnArray['Emailed: '.$clubData->club_name] = $fileName;
+						if ($mail) {
+							$mail->IsHTML(false);
+							$mail->setFrom('president@associatedgunclubs.org', 'AGC Range');
+							$mail->addAddress($clubData->poc_email);
+							$mail->addBCC('president@associatedgunclubs.org');
+							$mail->Subject = $clubData->short_name."'s active members of AGC";
+							$mail->Body = $clubData->short_name.",\n\nHere is your club roster as of today (".date('M d, Y').").\n\nAGC Range";
+							$mail->addAttachment(Yii::getAlias('@webroot').'/files/rosters/'.$fileName); 
+							$mail->send();
+							$returnArray['Emailed: '.$clubData->club_name] = $fileName;
+						} else { $returnArray['Email system disabled'] = $fileName; }
 					} else {
 						$returnArray['No Email Found: '.$clubData->club_name] = $fileName;
 					}
@@ -152,16 +154,18 @@ class ClubsController extends AdminController {
 					if($_GET['email']) {
 						if($clubData->poc_email != '') {
 							$mail = yii::$app->controller->emailSetup();
-							$mail->IsHTML(false);
-							$mail->setFrom('president@associatedgunclubs.org', 'AGC Range');
-							$mail->addAddress($clubData->poc_email);
-							$mail->addBCC('president@associatedgunclubs.org');
-							$mail->Subject = $clubData->short_name."'s active members of AGC";
-							$mail->Body = $clubData->short_name.",\n\nHere is your club roster as of today (".date('M d, Y').").\n\nAGC Range";
-							$mail->addAttachment(Yii::getAlias('@webroot').'/files/rosters/'.$fileName); 
-							$mail->send();
-							$returnArray['Emailed: '.$clubData->club_name] = $fileName;
-							yii::$app->controller->createEmailLog(true, 'ClubRoster-Email', $clubData->short_name." sent to ".$clubData->poc_email);
+							if ($mail) {
+								$mail->IsHTML(false);
+								$mail->setFrom('president@associatedgunclubs.org', 'AGC Range');
+								$mail->addAddress($clubData->poc_email);
+								$mail->addBCC('president@associatedgunclubs.org');
+								$mail->Subject = $clubData->short_name."'s active members of AGC";
+								$mail->Body = $clubData->short_name.",\n\nHere is your club roster as of today (".date('M d, Y').").\n\nAGC Range";
+								$mail->addAttachment(Yii::getAlias('@webroot').'/files/rosters/'.$fileName); 
+								$mail->send();
+								$returnArray['Emailed: '.$clubData->club_name] = $fileName;
+								yii::$app->controller->createEmailLog(true, 'ClubRoster-Email', $clubData->short_name." sent to ".$clubData->poc_email);
+							} else { $returnArray['Email system disabled'] = $fileName; }
 						} else {
 							$returnArray['No Email Found: '.$clubData->club_name] = $fileName;
 							yii::$app->controller->createEmailLog(true, 'ClubRoster-Email', $clubData->short_name." No Email Found");

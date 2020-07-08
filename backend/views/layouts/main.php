@@ -80,6 +80,7 @@ $this->beginBody() ?>
         <?= skinka\widgets\gritter\AlertGritterWidget::widget() ?>
         <?= Alert::widget() ?>
         <?= $content ?>
+
     </div>
 </div>
 

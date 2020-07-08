@@ -30,7 +30,7 @@ class SignupForm extends Model {
         return [
             [['username','f_name','l_name','email','password','confirm_password','privilege'],'required'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-            [['crated_at','updated_at','clubs'],'safe'],
+            [['crated_at','updated_at','clubs','privilege'],'safe'],
             [['username', 'email'], 'trim'],
             ['email', 'email'],
 			[['auth_key'],'string','max'=>100],
@@ -52,6 +52,7 @@ class SignupForm extends Model {
     }
 
     public function signup() {
+//yii::$app->controller->createLog(false, 'trex_F_M_Sf:55', 'Tag-1');
         if (!$this->validate()) {
             return null;
         }

@@ -242,22 +242,27 @@ class BadgesController extends AdminController {
 
 		if(isset($_GET['email']) && ($_GET['email']=='true')) {			// /badges/api-check?email=true
 			$mail = yii::$app->controller->emailSetup();
-			$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
-			$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/site/no-email?unsubscribe=noclick">');
-			$mail->Subject = 'PHPMailer Test Subject via smtp, basic with authentication';
-			$mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-			$EmailBody = "This is the Email Body,  Isn't it sexy.  <br/ >From: ".$_SERVER['HTTP_HOST'];
-			$mail->Body  = "<!DOCTYPE html><html><body>".$EmailBody."</body></html>";
-			$mail->addAddress('sharkbit@hotmail.com', 'Marc');
-			$mail->addAddress('president@associatedgunclubs.org', 'Prez');
-			
-			//$mail->Timeout=1000;
-			$mail->SMTPDebug = 4; 			// debugging: 1 = errors and messages, 2 = messages only
-			if($mail->Send()) {
-				Yii::$app->response->data .= "Test Email Sent";
+			if ($mail) {
+				$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
+				$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/site/no-email?unsubscribe=noclick">');
+				$mail->Subject = 'PHPMailer Test Subject via smtp, basic with authentication';
+				$mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+				$EmailBody = "This is the Email Body,  Isn't it sexy.  <br/ >From: ".$_SERVER['HTTP_HOST'];
+				$mail->Body  = "<!DOCTYPE html><html><body>".$EmailBody."</body></html>";
+				$mail->addAddress('sharkbit@hotmail.com', 'Marc');
+				$mail->addAddress('president@associatedgunclubs.org', 'Prez');
+				
+				//$mail->Timeout=1000;
+				$mail->SMTPDebug = 4; 			// debugging: 1 = errors and messages, 2 = messages only
+				if($mail->Send()) {
+					Yii::$app->response->data .= "Test Email Sent";
+				} else {
+					Yii::$app->response->data .= "Test Email failed<br />";
+					Yii::$app->response->data .= 'Mailer Error: ' . $mail->ErrorInfo;
+				}
+				
 			} else {
-				Yii::$app->response->data .= "Test Email failed<br />";
-				Yii::$app->response->data .= 'Mailer Error: ' . $mail->ErrorInfo;
+				Yii::$app->response->data .= "Email system Off";
 			}
 			exit;
 
@@ -863,16 +868,20 @@ class BadgesController extends AdminController {
 			if($email) {
 				if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 					$mail = yii::$app->controller->emailSetup();
-					$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/site/no-email?unsubscribe='.$email.'">');
-					$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
-					$mail->addAddress($email, $first);
-					$mail->Subject = 'AGC Range Reciept';
-					$EmailBody = $this->renderPartial('print-rcpt',[ 'MyRcpt' => $MyRcpt ] );
-					$mail->Body = "<!DOCTYPE html><html><body>".$EmailBody."</body></html>";
-					$mail->send();
-					Yii::$app->getSession()->setFlash('success', 'Receipt Emailed');
-					yii::$app->controller->createLog(true, 'Email', "Recept sent to $first','".$badge_number);
-					$responce = [ 'status'=> 'success','msg'=>'Receipt sent via Email.' ];
+					if ($mail) {
+						$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/site/no-email?unsubscribe='.$email.'">');
+						$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
+						$mail->addAddress($email, $first);
+						$mail->Subject = 'AGC Range Reciept';
+						$EmailBody = $this->renderPartial('print-rcpt',[ 'MyRcpt' => $MyRcpt ] );
+						$mail->Body = "<!DOCTYPE html><html><body>".$EmailBody."</body></html>";
+						$mail->send();
+						Yii::$app->getSession()->setFlash('success', 'Receipt Emailed');
+						yii::$app->controller->createLog(true, 'Email', "Recept sent to $first','".$badge_number);
+						$responce = [ 'status'=> 'success','msg'=>'Receipt sent via Email.' ];
+					} else {
+						$responce = [ 'status'=> 'error','msg'=>'Reciept not Emailed. Email system is disabled.' ];
+					}
 				} else {
 					$responce = [ 'status'=> 'error','msg'=>'No Valid Email, Print Reciept Upon Request.' ];
 				}

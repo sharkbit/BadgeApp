@@ -48,15 +48,18 @@ class AccountsController extends SiteController {
     }
 
     public function actionCreate() {
-        $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post())) {
+		$model = new SignupForm();
+		
+		if ($model->load(Yii::$app->request->post())) {
 			$model->full_name= $model->f_name." ".$model->l_name;
+			$model->privilege = str_replace('"',"", json_encode($model->privilege));
+
 			$co_name=$model->auth_key;
 
             if ($user=$model->signup()) {
 				$user_fix = User::find()->where(['id'=>$user->id])->one();
 				if($user_fix) {
-					if($model->privilege==8) { $user_fix->company = trim($co_name); }
+					if(in_array(8,json_decode($model->privilege))) { $user_fix->company = trim($co_name); }
 					$user_fix->badge_number = (int)$model->badge_number;
 					$user_fix->save(false);
 				}
@@ -78,6 +81,7 @@ class AccountsController extends SiteController {
 
         if ($model->load(Yii::$app->request->post()) ) {
 			$model->clubs=json_encode($model->clubs);
+			$model->privilege= str_replace('"',"", json_encode($model->privilege));
             $model->updated_at = strtotime($this->getNowTime());
             $model->save(false);
             $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Authorized User Updated: '.$model->id);

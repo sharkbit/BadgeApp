@@ -57,7 +57,7 @@ if ($model->recur_every && $model->recurrent_calendar_id != 0 ) {
             "<li>Change All: Sponsor, Event Names, Keywords</li>".
             "<li>Only Adjust Future: Facilitys, Lanes Requested, Event Status, Range Status, Event Times, POC info, is Deleted</li></ul><hr />";
     } else {
-        echo " Click to <a href='/calendar/update?id=".$model->recurrent_calendar_id."'>Edit the Series</a> - ";
+        if(yii::$app->controller->hasPermission('calendar/recur')) {echo " Click to <a href='/calendar/update?id=".$model->recurrent_calendar_id."'>Edit the Series</a> - "; }
         $sqlSearch = $model->recurrent_calendar_id;
         $say='';
         $recur_disab=true;
@@ -91,10 +91,6 @@ if (($crec==1) && ($model->isNewRecord)) {
     <div class="col-12 col-xs-3 col-sm-2" <?php if($model->isNewRecord) {echo 'style="display:none"';} ?>>
         <?= $form->field($model, 'calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]) ?>
     </div>
-<?php if(($model->isNewRecord )&& ($crec)) {
-    echo $form->field($model, 'event_date')->hiddenInput(['value'=>date('y-m-d', strtotime(yii::$app->controller->getNowTime()))])->label(false).PHP_EOL;
-} else { ?>
-
     <div class="col-12 col-xs-6 col-sm-2">
     <?php   echo $form->field($model, 'event_date')->widget(DatePicker::classname(), [
                 'options' => ['placeholder' => 'Event Date'],
@@ -103,13 +99,27 @@ if (($crec==1) && ($model->isNewRecord)) {
                     'format' => 'yyyy-mm-dd',
                     'todayHighlight' => true ] ] ); ?>
     </div>
-<?php } ?>
     <div class="col-xs-12 col-sm-3">
     <?php if(yii::$app->controller->hasPermission('calendar/all')) {
             $ary_club = (new clubs)->getClubList();
+			$ary_club_ac =(new clubs)->getClubList();
         } else {
             $ary_club = (new clubs)->getClubList(false,Yii::$app->user->identity->clubs);
-        } echo $form->field($model, 'club_id')->DropDownList($ary_club); ?>
+			$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
+		} 
+		
+/*		$dirty = array();
+		//yii::$app->controller->createLog(false, 'trex', var_export($ary_club_ac,true));
+		foreach($ary_club_ac as $dirt) {
+			echo " $dirt - ";
+			array_push($dirty(), explode(" ",$dirt));
+			yii::$app->controller->createLog(false, 'trex', var_export($dirty,true));
+		}
+		
+		
+		echo "<input type='hidden' id='bad_words' value='".htmlspecialchars(json_encode($ary_club_ac),ENT_QUOTES)."' />";
+		*/
+		echo $form->field($model, 'club_id')->DropDownList($ary_club).PHP_EOL; ?>
     </div>
     <div class="col-xs-12 col-sm-3">
     <?php $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
@@ -150,7 +160,7 @@ if (($crec==1) && ($model->isNewRecord)) {
         echo $form->field($model, 'range_status_id')->DropDownList($ary_range);     ?>
     </div>
     <div class="col-xs-4 col-sm-2">
-        <?= $form->field($model, 'active')->DropDownList(['1'=>'Yes','0'=>'No']) ?>
+        <?= $form->field($model, 'active')->DropDownList(['1'=>'Yes','0'=>'No'],['value'=> $model->isNewRecord ? 1 : $model->active ]) ?>
     </div>
     <div class="col-xs-4 col-sm-2" <?php if(!yii::$app->controller->hasPermission('calendar/approve')) {echo 'style="display:none"';} ?> >
         <?= $form->field($model, 'approved')->DropDownList(['1'=>'Yes','0'=>'No']) ?>
@@ -371,6 +381,10 @@ if (($crec==1) && ($model->isNewRecord)) {
     $("#agccal-facility_id").change(function(e) {
         OpenRange();
     });
+
+  $("#re_pub").click(function (e) {
+	  document.getElementById("re_pub").disabled=true;
+  });
 
     $("#daily").change(function(e) {
         if(document.getElementById("daily").value=='daily'){

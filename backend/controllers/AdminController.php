@@ -21,7 +21,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $rootAdminPermission = [
 		'Accounts' => ['accounts/index','accounts/create','accounts/update','accounts/view','accounts/delete','accounts/reset-password','accounts/request-password-reset'],
-		'Admin' => ['badge/log-error','badge/badge-print','badge/index','badge/users-index','badge/edit-user','badge/view-user','badge/create-user','badge/admin-function','badge/work-credit-entry','badge/brows-work-credits','badge/work-credit-menu','badge/club-name-look-up','badge/club-name-create','badge/club-name-edit','badge/work-credit-transfer','badge/create', 'badge/update', 'site/logout','site/login','site/new-badge','privileges/create','privileges/delete','privileges/index','privileges/update'],
+		'Admin' => ['is_root','badge/log-error','badge/badge-print','badge/index','badge/users-index','badge/edit-user','badge/view-user','badge/create-user','badge/admin-function','badge/work-credit-entry','badge/brows-work-credits','badge/work-credit-menu','badge/club-name-look-up','badge/club-name-create','badge/club-name-edit','badge/work-credit-transfer','badge/create', 'badge/update', 'site/logout','site/login','site/new-badge','privileges/create','privileges/delete','privileges/index','privileges/update'],
 		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/api-check','badges/api-request-family','badges/barcode','badges/create','badges/delete','badges/generate-new-sticker','badges/get-badge-details','badges/get-family-badges','badges/index','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/rename','badges/scan-badge','badges/test','badges/update','badges/update-renewal','badges/view','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log',],
 		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update','calendar/view'],
 		'CalSetup' => ['cal-setup/index','cal-setup/clubs','cal-setup/updateclu','cal-setup/facility','cal-setup/updatefac','cal-setup/rangestatus','cal-setup/updateran','cal-setup/eventstatus','cal-setup/updateeven'],
@@ -153,7 +153,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $chairmanPermission = [
-		'extras' => ['calendar/close'],
+		'extras' => ['calendar/close','calendar/recur'],
 	];
 
 	// Used for Importing CVS data
@@ -197,35 +197,41 @@ class AdminController extends \yii\web\Controller {
 				$activeUser = $this->getActiveUser();
 				if ($activeUser->badge_number >0 ) {$_SESSION['badge_number'] = $activeUser->badge_number;}
 					else {$_SESSION['badge_number']=0;}
-				$_SESSION['privilege'] = $activeUser->privilege;
+				$_SESSION['privilege'] = json_decode($activeUser->privilege);
 				$_SESSION['user'] = $activeUser->full_name;
 				$_SESSION['names'] = $this->getBadgeList();
-				$priv = Privileges::find()->where(['id'=>$activeUser->privilege])->one();
-				$_SESSION['timeout'] = $priv->timeout;
-			}
-
-			switch($_SESSION['privilege']){
-				case "1": $TestPriv = $this->rootAdminPermission;	break;
-				case "2": $TestPriv = $this->adminPermission;		break;
-				case "3": $TestPriv = $this->rsoPermission;			break;
-				case "4": $TestPriv = $this->viewPermission;		break;
-				case "5": $TestPriv = $this->userPermission; 		break;
-				case "6": $TestPriv = $this->rsoLeadPermission;		break;
-				case "7": $TestPriv = $this->workcreditPermission;	break;
-				case "8": $TestPriv = $this->cioPermission;			break;
-				case "9": $TestPriv = $this->calendarPermission;	break;
-				case "10": $TestPriv = $this->cashierPermission;	break;
-			}
-
-			foreach ($TestPriv as $permission) {
-				if(in_array($event,$permission)) {
-					//yii::$app->controller->createAccessLog(true, 'access root', $event." +");
-					return true;
+				foreach ($_SESSION['privilege'] as $priv) {
+					$chk_priv = Privileges::find()->where(['id'=>$priv])->one();
+					if (isset($_SESSION['timeout'])) {
+						if ($_SESSION['timeout'] < $chk_priv->timeout) {
+						$_SESSION['timeout'] = $chk_priv->timeout; }
+					} else { $_SESSION['timeout'] = $chk_priv->timeout; }
 				}
+				if ((isset($activeUser->clubs)) && (is_array(json_decode($activeUser->clubs)))) {
+					$_SESSION['cal_clubs'] = json_decode($activeUser->clubs); }
+			}
+
+ 			foreach ($_SESSION['privilege'] as $priv) {
+				if ($priv==1)     { if ($this->Check_Privs($event,$this->rootAdminPermission)) return true; }
+				elseif ($priv==2) { if ($this->Check_Privs($event,$this->adminPermission)) return true; }
+				elseif ($priv==6) { if ($this->Check_Privs($event,$this->rsoLeadPermission)) return true; }
+				elseif ($priv==3) { if ($this->Check_Privs($event,$this->rsoPermission)) return true; }
+				elseif ($priv==7) { if ($this->Check_Privs($event,$this->workcreditPermission)) return true; }
+				elseif ($priv==8) { if ($this->Check_Privs($event,$this->cioPermission)) return true; }
+				elseif ($priv==9) { if ($this->Check_Privs($event,$this->calendarPermission)) return true; }
+				elseif ($priv==10){ if ($this->Check_Privs($event,$this->cashierPermission)) return true; }
+				elseif ($priv==4) { if ($this->Check_Privs($event,$this->viewPermission)) return true; }
+				elseif ($priv==5) { if ($this->Check_Privs($event,$this->userPermission)) return true; }
+				elseif ($priv==11) { if ($this->Check_Privs($event,$this->chairmanPermission)) return true; }
 			}
 			return false;
 		}
 	} //.has permission ending
+
+	private function Check_Privs($event,$TestPriv) {
+		foreach ($TestPriv as $permission) { if(in_array($event,$permission)) { return true; } }
+		return false;
+	}
 
 	public function getNowTime($offset = null) {
 		$date = new DateTime();
@@ -376,23 +382,27 @@ class AdminController extends \yii\web\Controller {
 	}
 
 	public function emailSetup() {
-		$mail = new PHPMailer; //(true);  						// Passing `true` enables exceptions
+		$mail = new PHPMailer; //(true);  					// Passing `true` enables exceptions
 
 	//Server settings
-		$mail->isSMTP();									// Set mailer to use SMTP
-	//	$mail->SMTPDebug = 3;								// Enable verbose debug output  2= good,  4 = connection
-		$mail->Host = 'associatedgunclubs.org';
-		$mail->Port = 587;
-		$mail->SMTPSecure = 'tls';							// Enable TLS encryption, `ssl` also accepted
-		$mail->SMTPAuth = true;								// Enable SMTP authentication
-		$mail->Username = "<some@email.com>";				// SMTP username
-		$mail->Password = "<your Password>";				// SMTP password
-		//$mail->Timeout=900;
+		$mail_conf = yii::$app->params['mail'];
+		if ($mail_conf['Enabled']) {
+			
+			$mail->isSMTP();									// Set mailer to use SMTP
+			if($mail_conf['Debug']) {$mail->SMTPDebug = $mail_conf['Debug'];}	// Enable verbose debug output  2= good,  4 = connection
+			$mail->Host = $mail_conf['Host'];
+			$mail->Port = $mail_conf['Port'];
+			$mail->SMTPSecure = $mail_conf['SMTPSecure'];		// Enable TLS encryption, `ssl` also accepted
+			$mail->SMTPAuth = $mail_conf['SMTPAuth'];			// Enable SMTP authentication
+			$mail->Username = $mail_conf['Username'];			// SMTP username
+			$mail->Password = $mail_conf['Password'];			// SMTP password
+			//$mail->Timeout=900;
 
-		$mail->addCustomHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
+			$mail->addCustomHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
 
-		$mail->isHTML(true);								  // Set email format to HTML
-		return $mail;
+			$mail->isHTML(true);								  // Set email format to HTML
+			return $mail;
+		} else { return false; }
 	}
 
 	public function mergeRemarks($old,$nowRemakrs) {
@@ -413,6 +423,7 @@ class AdminController extends \yii\web\Controller {
 			else if ($type=='update') { $welcome = 'Hi '.$model->first_name.','; }
 
 			$mail = $this->emailSetup();
+			if ($mail) {
 			$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/comms.php?unsubscribe='.$email.'>');
 
 		// Only send out email to user after waiting 10 min.
@@ -474,11 +485,10 @@ class AdminController extends \yii\web\Controller {
 				Yii::$app->response->data .= 'Mailer Error: ' . $mail->ErrorInfo;
 				yii::$app->controller->createLog(true, 'trex Verify Email Error: ', var_export($mail->ErrorInfo,true));
 			}
-
 			return true;
-		} else {
-			return false;
+			}
 		}
+		return false;
 	}
 
 }
