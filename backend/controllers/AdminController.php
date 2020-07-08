@@ -382,23 +382,27 @@ class AdminController extends \yii\web\Controller {
 	}
 
 	public function emailSetup() {
-		$mail = new PHPMailer; //(true);  						// Passing `true` enables exceptions
+		$mail = new PHPMailer; //(true);  					// Passing `true` enables exceptions
 
 	//Server settings
-		$mail->isSMTP();									// Set mailer to use SMTP
-	//	$mail->SMTPDebug = 3;								// Enable verbose debug output  2= good,  4 = connection
-		$mail->Host = 'associatedgunclubs.org';
-		$mail->Port = 587;
-		$mail->SMTPSecure = 'tls';							// Enable TLS encryption, `ssl` also accepted
-		$mail->SMTPAuth = true;								// Enable SMTP authentication
-		$mail->Username = "<some@email.com>";				// SMTP username
-		$mail->Password = "<your Password>";				// SMTP password
-		//$mail->Timeout=900;
+		$mail_conf = yii::$app->params['mail'];
+		if ($mail_conf['Enabled']) {
+			
+			$mail->isSMTP();									// Set mailer to use SMTP
+			if($mail_conf['Debug']) {$mail->SMTPDebug = $mail_conf['Debug'];}	// Enable verbose debug output  2= good,  4 = connection
+			$mail->Host = $mail_conf['Host'];
+			$mail->Port = $mail_conf['Port'];
+			$mail->SMTPSecure = $mail_conf['SMTPSecure'];		// Enable TLS encryption, `ssl` also accepted
+			$mail->SMTPAuth = $mail_conf['SMTPAuth'];			// Enable SMTP authentication
+			$mail->Username = $mail_conf['Username'];			// SMTP username
+			$mail->Password = $mail_conf['Password'];			// SMTP password
+			//$mail->Timeout=900;
 
-		$mail->addCustomHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
+			$mail->addCustomHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
 
-		$mail->isHTML(true);								  // Set email format to HTML
-		return $mail;
+			$mail->isHTML(true);								  // Set email format to HTML
+			return $mail;
+		} else { return false; }
 	}
 
 	public function mergeRemarks($old,$nowRemakrs) {
@@ -419,6 +423,7 @@ class AdminController extends \yii\web\Controller {
 			else if ($type=='update') { $welcome = 'Hi '.$model->first_name.','; }
 
 			$mail = $this->emailSetup();
+			if ($mail) {
 			$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/comms.php?unsubscribe='.$email.'>');
 
 		// Only send out email to user after waiting 10 min.
@@ -480,11 +485,10 @@ class AdminController extends \yii\web\Controller {
 				Yii::$app->response->data .= 'Mailer Error: ' . $mail->ErrorInfo;
 				yii::$app->controller->createLog(true, 'trex Verify Email Error: ', var_export($mail->ErrorInfo,true));
 			}
-
 			return true;
-		} else {
-			return false;
+			}
 		}
+		return false;
 	}
 
 }

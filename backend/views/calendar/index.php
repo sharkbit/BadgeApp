@@ -2,6 +2,7 @@
 
 use backend\models\AgcCal;
 use backend\models\agcEventStatus;
+use backend\models\agcFacility;
 use backend\models\agcRangeStatus;
 use kartik\daterange\DateRangePicker;
 use kartik\widgets\ActiveForm;
@@ -97,7 +98,8 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			[	'attribute'=>'facility_id',
 				'value'=>function($model) { return $model->agcFacility->name; },
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
-				'headerOptions' => ['style' => 'width:15%']
+				'headerOptions' => ['style' => 'width:15%'],
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'facility_id', ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name'),['class'=>'form-control','prompt' => 'All']),
 			],
 			[	'attribute'=>'event_date',
 				'visible' => ($searchModel->recur_every) ? false : true,
@@ -174,8 +176,8 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:10%'],
 				'value'=>function($model) {
-					if($model->getIsPublished($model->calendar_id)) { return 'GTG'; } 
 					else { return "<a href='/calendar/republish?id=".$model->recurrent_calendar_id."'>Publish to next Year</a>"; }
+					if($model->getIsPublished($model->calendar_id)) { return ''; } 
 
 				},
 			],

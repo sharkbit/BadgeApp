@@ -1,3 +1,5 @@
+backend\config\params.php
+backend/config/params.php
 backend\runtime\cache\*.*
 backend\runtime\logs\*.*
 backend\runtime\debug\*.*
@@ -14,4 +16,3 @@ common\config\main-local.php
 common/config/main-local.php
 vendor
 composer.lock
-

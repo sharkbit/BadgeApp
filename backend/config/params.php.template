@@ -18,5 +18,15 @@ return [
         'precision' => 2, 
         'allowZero' => false,
         'allowNegative' => false,
-    ]
+    ],
+	'mail' =>[
+		'enabled' => false,					// Turns Mailer on or off
+		'Username' => 'your_username',		// SMTP username
+		'Password' => 'your_password',		// SMTP password
+		'Debug' => false,					 	// Enable verbose debug output: false=off, 2= good, 3=better, 4 = connection
+		'Host' => 'your_mail_server',
+		'Port' => 587,
+		'SMTPSecure' => 'tls',				// Enable TLS encryption, `ssl` also accepted
+		'SMTPAuth' => true,					// Enable SMTP authentication
+	]
 ];
