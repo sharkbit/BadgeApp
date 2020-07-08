@@ -176,9 +176,8 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:10%'],
 				'value'=>function($model) {
-					else { return "<a href='/calendar/republish?id=".$model->recurrent_calendar_id."'>Publish to next Year</a>"; }
 					if($model->getIsPublished($model->calendar_id)) { return ''; } 
-
+					else { return "<a href='/calendar/republish?id=".$model->recurrent_calendar_id."'>Publish to next Year</a>"; }
 				},
 			],
 			[	'attribute'=>'conflict',
