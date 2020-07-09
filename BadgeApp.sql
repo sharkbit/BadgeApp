@@ -524,7 +524,7 @@ CREATE TABLE `user_privileges` (
 
 LOCK TABLES `user_privileges` WRITE;
 /*!40000 ALTER TABLE `user_privileges` DISABLE KEYS */;
-INSERT INTO `user_privileges` VALUES (1,'Root',1,60),(2,'Admin',20,30),(3,'RSO',40,20),(4,'View',65,15),(5,'Member',80,2),(6,'RSO Lead',30,20),(7,'Work Credits',60,15),(8,'CIO',64,5),(9,'Calendar_Coordinator',50,10),(10,'Cashier',41,15),(11, 'Charemen', 81, 10);
+INSERT INTO `user_privileges` VALUES (1,'Root',1,60),(2,'Admin',20,30),(3,'RSO',40,20),(4,'View',65,15),(5,'Member',80,2),(6,'RSO Lead',30,20),(7,'Work Credits',60,15),(8,'CIO',64,5),(9,'Calendar_Coordinator',50,10),(10,'Cashier',41,15),(11, 'Chairmen', 81, 10);
 /*!40000 ALTER TABLE `user_privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 
