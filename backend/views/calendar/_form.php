@@ -335,13 +335,8 @@ if (($crec==1) && ($model->isNewRecord)) {
     <div class="col-xs-1 col-sm-1" style="background-color: silver; display:none">
         <?= $form->field($model, 'pattern_type')->textInput(['readonly'=>$recur_disab,'maxlength'=>true]).PHP_EOL ?>
     </div>
-    <div class="col-xs-12 col-sm-4 col-md-6 col-lg-4" > <!--style="background-color: silver"> -->
-        <?php if(yii::$app->controller->hasPermission('cal-setup/index')) {
-			echo $form->field($model, 'recur_week_days')->textInput(['readonly'=>$recur_disab,'maxlength'=>true]).PHP_EOL;
-		} else {
-			echo $form->field($model, 'recur_week_days')->hiddenInput()->label(false).PHP_EOL;
-		} ?>
-    </div>
+    <?= $form->field($model, 'recur_week_days')->hiddenInput()->label(false).PHP_EOL; ?>
+    
 	<p>* <u>Year is always current Year for Recurrent Start & End Dates</u></p>
 	<p>** <u>Dates can wrap arround: 1 Sep - 31 Mar</u></p>
 </div>
