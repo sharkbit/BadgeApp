@@ -653,10 +653,11 @@ if($eco) { echo "yearly"; }
 			if($myPat->yearly == 'date') {
 				$myYear = $whatYear.'-'.str_pad($myPat->mon, 2, '0', STR_PAD_LEFT).'-'.str_pad($myPat->day, 2, '0', STR_PAD_LEFT);
 			} else {
-				$myYear = date("Y-m-d", strtotime($myPat->on." ".$myPat->day.' '.$whatYear.'-'.str_pad($myPat->of, 2, '0', STR_PAD_LEFT)));
+				$myYear = strtotime($myPat->on." ".$myPat->day.' '.$whatYear.'-'.str_pad($myPat->of, 2, '0', STR_PAD_LEFT));
 				if (date('d',strtotime("first ".$myPat->day." $whatYear-".str_pad($myPat->of, 2, '0', STR_PAD_LEFT)))=='08') {
 					$myYear = $myYear-(60*60*24*7); } 
 			}
+			$myYear = date("Y-m-d",$myYear); 
 			if (strtotime($myYear) >=strtotime(yii::$app->controller->getNowTime())) {
 if($eco) { echo "<br>$myYear"; }
 				array_push($myEventDates,$myYear);
