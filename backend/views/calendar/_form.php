@@ -165,20 +165,6 @@ if (($crec==1) && ($model->isNewRecord)) {
     <div class="col-xs-4 col-sm-2" <?php if(!yii::$app->controller->hasPermission('calendar/approve')) {echo 'style="display:none"';} ?> >
         <?= $form->field($model, 'approved')->DropDownList(['1'=>'Yes','0'=>'No']) ?>
     </div>
-
-<?php if($model->isNewRecord) {
-		echo $form->field($model, 'deleted')->hiddenInput(['value'=>0])->label(false).PHP_EOL;
-	} else { echo '<div class="col-xs-4 col-sm-2">';
-		if(yii::$app->controller->hasPermission('calendar/delete')) {
-			if ($model->deleted=='1') {
-				echo $form->field($model, 'deleted')->DropDownList(['1'=>'Yes','0'=>'No']).PHP_EOL;
-			} else {
-				echo '<br />'.Html::Button('Delete Event', ['class' => 'btn btn-warning ', 'onclick' => 'delMe();' ]).PHP_EOL;
-			}
-		} else { 
-			if ($model->deleted=='1') { echo "<p style='color:red;'><b>Event is Deleted</b></p>"; }
-	}	echo '</div>';
-	} ?>
     <div class="col-xs-4 col-sm-2">
         <?= $form->field($model, 'poc_badge')->textInput(['maxlength'=>true,'readonly'=>yii::$app->controller->hasPermission('calendar/all')? false : true]) ?>
     </div>
@@ -194,6 +180,20 @@ if (($crec==1) && ($model->isNewRecord)) {
     <div class="col-xs-6 col-sm-2">
         <?= $form->field($model, 'date_requested')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
     </div>
+
+<?php if($model->isNewRecord) {
+		echo $form->field($model, 'deleted')->hiddenInput(['value'=>0])->label(false).PHP_EOL;
+	} else { echo '<div class="col-xs-4 col-sm-2">';
+		if(yii::$app->controller->hasPermission('calendar/delete')) {
+			if ($model->deleted=='1') {
+				echo $form->field($model, 'deleted')->DropDownList(['1'=>'Yes','0'=>'No']).PHP_EOL;
+			} else {
+				echo '<br />'.Html::Button('Delete Event', ['class' => 'btn btn-warning ', 'onclick' => 'delMe();' ]).PHP_EOL;
+			}
+		} else { 
+			if ($model->deleted=='1') { echo "<p style='color:red;'><b>Event is Deleted</b></p>"; }
+	}	echo '</div>';
+	} ?>
 </div>
 
 <div class="row">

@@ -54,6 +54,13 @@ class CalendarController extends AdminController {
 			$model->conflict = 0;
 			$model->recurrent_calendar_id = 0;
 			$model->pattern_type = 0;
+			$myRemarks = [
+				'created_at'=>yii::$app->controller->getNowTime(),
+				'data'=>"Event Created",
+				'changed'=> 'Updated by '.$_SESSION['user'],
+			];
+			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
+			
 			//$model->date_requested = yii::$app->controller->getNowTime();
 			if($model->recur_every) {
 				if(isset($model->recurrent_start_date)) {
@@ -404,6 +411,9 @@ class CalendarController extends AdminController {
 		$model->active	= (int)$model->active;
 		$model->approved= (int)$model->approved;
 		$model->deleted = (int)$model->deleted;
+		$model->recur_every = (int)$model->recur_every;
+		$model->recurrent_calendar_id = (int)$model->recurrent_calendar_id;
+		$model->pattern_type = 0;
 		$model->lanes_requested= (int)$model->lanes_requested;
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
@@ -413,9 +423,10 @@ class CalendarController extends AdminController {
 			'conflict' => 'Conflict',
 			'deleted' => 'Deleted',
 			'date_requested' => 'Date Requested',
-			'end_time' => 'End Time',
-			'event_date' => 'Event Date',
 			'event_name' => 'Event Name',
+			'event_date' => 'Event Date',
+			'start_time' => 'Start Time',
+			'end_time' => 'End Time',
 			'event_status_id' => 'Event Status',
 			'facility_id' => 'Facility',
 			'keywords' => 'Key Words',
@@ -427,10 +438,9 @@ class CalendarController extends AdminController {
 			'range_status_id' => 'Range Status',
 			'recur_every' => 'Recure every',
 			'recurrent_calendar_id' => 'Recurrent Parrent ID',
-			'recurrent_end_date' => 'Recure End Date',
 			'recurrent_start_date' => 'Recure Start Date',
+			'recurrent_end_date' => 'Recure End Date',
 			'recur_week_days'=>'recur_week_days',
-			'start_time' => 'Start Time',
 		];
 
 		$responce = [];
