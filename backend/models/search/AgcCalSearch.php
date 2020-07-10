@@ -73,8 +73,7 @@ class AgcCalSearch extends AgcCal {
 			if(isset($this->recur_every)) {
 				$query->andFilterWhere(['recur_every'=>true]);
 				$query->andWhere('recurrent_calendar_id = calendar_id');
-			} else
-			else {
+			} else {
 				if(!isset($this->SearchTime)){// || ($this->SearchTime='')) {
 					$SearchStart = date("Y-m-d 00:00",strtotime(yii::$app->controller->getNowTime()));
 					$SearchEnd = date('Y-m-d 23:59',strtotime('+31 days',strtotime(yii::$app->controller->getNowTime())));
