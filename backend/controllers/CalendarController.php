@@ -279,9 +279,6 @@ class CalendarController extends AdminController {
 	}
 
 	public function actionRepublish($id) {
-	yii::$app->controller->createLog(false, 'trex-xad', 'xz-0');
-	yii::$app->controller->createLog(false, 'trex-xad ref ', $_SERVER['HTTP_REFERER']);
-	yii::$app->controller->createLog(false, 'trex-xad reg ', $_SERVER['REQUEST_URI']);
 		$model = AgcCal::find()->where(['calendar_id' => $id])->one();
 		if (isset($model->recurrent_calendar_id)) {
 			if ($model->recurrent_calendar_id >0) {
