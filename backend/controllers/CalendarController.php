@@ -217,8 +217,8 @@ class CalendarController extends AdminController {
 				$found[$i]->cal_id = $item->calendar_id;
 				$found[$i]->club = $item->clubs->short_name;
 				$found[$i]->name = $item->event_name;
-				$found[$i]->start = $item->start_time;
-				$found[$i]->stop = $item->end_time;
+				$found[$i]->start =  date('Y-m-d h:i A',strtotime($item->start_time));
+				$found[$i]->stop = date('Y-m-d h:i A',strtotime($item->end_time));
 				$found[$i]->event_status_id = $item->event_status_id;
 				$found[$i]->eve_status_name = $item->agcEventStatus->name;
 				$found[$i]->range_status_id = $item->range_status_id;
