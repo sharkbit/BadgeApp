@@ -196,7 +196,7 @@ class CalendarController extends AdminController {
 		$stop = date('H:i',strtotime($stop)-60);
 
 		$model = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
-			->where("facility_id=$facility AND event_date='$date' AND deleted=0 AND (".
+			->where("facility_id=$facility AND event_date='$date' AND deleted=0 AND `associat_agcnew`.`agc_calendar`.`event_status_id` <> 19 AND (".
 				"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
 				"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
 			->all();

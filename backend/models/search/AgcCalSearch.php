@@ -65,29 +65,35 @@ class AgcCalSearch extends AgcCal {
 			$query->andFilterWhere(['in','agc_calendar.club_id',json_decode(Yii::$app->user->identity->clubs)]);
 		}
 
-		if(isset($this->recur_every)) {
-			$query->andFilterWhere(['recur_every'=>true]);
-			$query->andWhere('recurrent_calendar_id = calendar_id');
-		} else {
-			if(!isset($this->SearchTime)){// || ($this->SearchTime='')) {
-				$SearchStart = date("Y-m-d 00:00",strtotime(yii::$app->controller->getNowTime()));
-				$SearchEnd = date('Y-m-d 23:59',strtotime('+31 days',strtotime(yii::$app->controller->getNowTime())));
-				$query->andFilterWhere(['>=','event_date' , $SearchStart ]);
-				$query->andFilterWhere(['<','event_date', $SearchEnd ]);
+		if(isset($this->conflict) && $this->conflict==1) {
+			$query->andFilterWhere(['conflict'=>1]);
+			$this->deleted=0; 
+		} else	{
+			$query->andFilterWhere(['conflict'=>0]);
+			if(isset($this->recur_every)) {
+				$query->andFilterWhere(['recur_every'=>true]);
+				$query->andWhere('recurrent_calendar_id = calendar_id');
+			} else
+			else {
+				if(!isset($this->SearchTime)){// || ($this->SearchTime='')) {
+					$SearchStart = date("Y-m-d 00:00",strtotime(yii::$app->controller->getNowTime()));
+					$SearchEnd = date('Y-m-d 23:59',strtotime('+31 days',strtotime(yii::$app->controller->getNowTime())));
+					$query->andFilterWhere(['>=','event_date' , $SearchStart ]);
+					$query->andFilterWhere(['<','event_date', $SearchEnd ]);
 
-				$this->SearchTime = $SearchStart." - ".$SearchEnd;
-			} else {
-				if(strpos($this->SearchTime,' - ')) {
-				list($SearchStart,$SearchEnd) = explode(' - ',$this->SearchTime);
-				if(strlen($SearchStart)<14) {$SearchStart.=' 00:00';}
-				if(strlen($SearchEnd)<14) {$SearchEnd.=' 23:59';}
-				$query->andFilterWhere(['>=','event_date' , $SearchStart ]);
-				$query->andFilterWhere(['<','event_date', $SearchEnd ]);
-				} 
+					$this->SearchTime = $SearchStart." - ".$SearchEnd;
+				} else {
+					if(strpos($this->SearchTime,' - ')) {
+					list($SearchStart,$SearchEnd) = explode(' - ',$this->SearchTime);
+					if(strlen($SearchStart)<14) {$SearchStart.=' 00:00';}
+					if(strlen($SearchEnd)<14) {$SearchEnd.=' 23:59';}
+					$query->andFilterWhere(['>=','event_date' , $SearchStart ]);
+					$query->andFilterWhere(['<','event_date', $SearchEnd ]);
+					} 
+				}
 			}
 		}
 		
-		if(isset($this->conflict) && $this->conflict==1) { $query->andFilterWhere(['conflict'=>1]); $this->deleted=0; } else	{$query->andFilterWhere(['conflict'=>0]);}
 		if(isset($this->event_name)) { $query->andFilterWhere(['like','event_name',$this->event_name]); }
 		if(isset($this->active)) { $query->andFilterWhere(['agc_calendar.active'=>$this->active]); }
 		if(isset($this->approved)) { $query->andFilterWhere(['approved'=>$this->approved]); }
