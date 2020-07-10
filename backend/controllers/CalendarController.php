@@ -263,6 +263,7 @@ class CalendarController extends AdminController {
 		$searchModel = new AgcCalSearch();
 		$searchModel->recur_every = true;
 		$searchModel->deleted = 0;
+		$this->RestoreSession($searchModel);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('index', [
@@ -643,6 +644,8 @@ if($eco) { echo "yearly"; }
 				$myYear = $whatYear.'-'.str_pad($myPat->mon, 2, '0', STR_PAD_LEFT).'-'.str_pad($myPat->day, 2, '0', STR_PAD_LEFT);
 			} else {
 				$myYear = date("Y-m-d", strtotime($myPat->on." ".$myPat->day.' '.$whatYear.'-'.str_pad($myPat->of, 2, '0', STR_PAD_LEFT)));
+				if (date('d',strtotime("first ".$myPat->day." $whatYear-".str_pad($myPat->of, 2, '0', STR_PAD_LEFT)))=='08') {
+					$myYear = $myYear-(60*60*24*7); } 
 			}
 			if (strtotime($myYear) >=strtotime(yii::$app->controller->getNowTime())) {
 if($eco) { echo "<br>$myYear"; }
