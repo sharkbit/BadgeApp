@@ -91,7 +91,7 @@ if (($crec==1) && ($model->isNewRecord)) {
     <div class="col-12 col-xs-3 col-sm-2" <?php if($model->isNewRecord) {echo 'style="display:none"';} ?>>
         <?= $form->field($model, 'calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]) ?>
     </div>
-    <div class="col-12 col-xs-6 col-sm-2">
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2 col-xl-2 ">
     <?php   echo $form->field($model, 'event_date')->widget(DatePicker::classname(), [
                 'options' => ['placeholder' => 'Event Date'],
                 'pluginOptions' => [
@@ -99,7 +99,7 @@ if (($crec==1) && ($model->isNewRecord)) {
                     'format' => 'yyyy-mm-dd',
                     'todayHighlight' => true ] ] ); ?>
     </div>
-    <div class="col-xs-12 col-sm-3">
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-2">
     <?php if(yii::$app->controller->hasPermission('calendar/all')) {
             $ary_club = (new clubs)->getClubList();
 			$ary_club_ac =(new clubs)->getClubList();
@@ -121,7 +121,7 @@ if (($crec==1) && ($model->isNewRecord)) {
 		*/
 		echo $form->field($model, 'club_id')->DropDownList($ary_club).PHP_EOL; ?>
     </div>
-    <div class="col-xs-12 col-sm-3">
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-2">
     <?php $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
         echo $form->field($model, 'facility_id')->DropDownList($ary_fac);  ?>
     </div>
@@ -212,19 +212,12 @@ if (($crec==1) && ($model->isNewRecord)) {
     </div>
 </div>
 
-<div class="row">
+<div class="row" style="background-color: silver; padding-left: 15px">
 <?php //if ($Div_recur<>'') { echo $form->field($model, 'recur_every')->hiddenInput(['value'=>0])->label(false).PHP_EOL; } ?>
 
 <div id="Div_recur" <?=$Div_recur?>>
 
 <div class="col-xs-12" style="background-color: silver"> <p> Reocurring Event:</p>  </div>
-    <div class="col-xs-6 col-sm-2 col-md-1" style="background-color: silver">
-        <?= $form->field($model, 'recur_every')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
-    </div>
-    <div class="col-xs-6 col-sm-2 col-md-1" style="background-color: silver">
-        <?= $form->field($model, 'recurrent_calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
-    </div>
-
     <div  class="col-xs-12 col-sm-8 col-md-6 col-lg-6 col-xl-4" style="background-color: silver; border:thin solid black;" >
         <div class="row">
 <!--####  Main Select####################### -->
@@ -332,9 +325,12 @@ if (($crec==1) && ($model->isNewRecord)) {
                     'format' => 'd M',
                     'todayHighlight' => true ] ] ).PHP_EOL; ?>
     </div>
-    <div class="col-xs-4 col-sm-1" style="background-color: silver; display:none" >
-        <?= $form->field($model, 'rollover')->textInput(['readonly'=>true,'maxlength'=>true]) ?>
+<?php echo $form->field($model, 'recur_every')->hiddeninput(['readonly'=>true,'maxlength'=>true])->label(false).PHP_EOL;
+	if (in_array(1,$_SESSION['privilege'])) { //(yii::$app->controller->hasPermission('calendar/delete')) { ?>
+    <div class="col-xs-6 col-sm-2 col-md-1" style="background-color: silver">
+        <?= $form->field($model, 'recurrent_calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
     </div>
+<?php } else { echo $form->field($model, 'recurrent_calendar_id')->hiddeninput(['readonly'=>true,'maxlength'=>true])->label(false).PHP_EOL; }?>
 
     <div class="col-xs-1 col-sm-1" style="background-color: silver; display:none">
         <?= $form->field($model, 'pattern_type')->textInput(['readonly'=>$recur_disab,'maxlength'=>true]).PHP_EOL ?>
@@ -346,6 +342,8 @@ if (($crec==1) && ($model->isNewRecord)) {
 			echo $form->field($model, 'recur_week_days')->hiddenInput()->label(false).PHP_EOL;
 		} ?>
     </div>
+	<p>* <u>Year is always current Year for Recurrent Start & End Dates</u></p>
+	<p>** <u>Dates can wrap arround: 1 Sep - 31 Mar</u></p>
 </div>
 
     <div class="col-xs-4 col-sm-1" style="background-color: pink<?php if(((isset($model->conflict)) && ($model->conflict==0)) || ($model->isNewRecord)) {echo '; display:none';} ?>" >
@@ -356,6 +354,7 @@ if (($crec==1) && ($model->isNewRecord)) {
         <?= $form->field($model, 'remarks')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
     </div> -->
 <?php if($model->remarks) { ?>
+</div><div class="row" >
     <div class="col-xs-12">
          <div class="row">
             <div class="col-xs-12">
