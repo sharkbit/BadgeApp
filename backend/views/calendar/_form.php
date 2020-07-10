@@ -318,7 +318,7 @@ if (($crec==1) && ($model->isNewRecord)) {
 
     <div class="col-xs-6 col-sm-4 col-md-4 col-lg-2 col-xl-1" style="background-color: silver">
         <?php   echo $form->field($model, 'recurrent_start_date')->widget(DatePicker::classname(), [
-            'options' => ['value' => '1 Jan'],
+            'options' => ['value' => (isset($model->recurrent_start_date) && $model->recurrent_start_date >0) ? $model->recurrent_start_date : '1 Jan'],
             'pluginOptions' => [
                 'autoclose'=>true,
                 'format' => 'd M',
@@ -326,7 +326,7 @@ if (($crec==1) && ($model->isNewRecord)) {
     </div>
     <div class="col-xs-6 col-sm-4 col-md-4 col-lg-2 col-xl-1" style="background-color: silver">
         <?php   echo $form->field($model, 'recurrent_end_date')->widget(DatePicker::classname(), [
-                'options' => ['value' => '31 Dec'],
+                'options' => ['value' =>  (isset($model->recurrent_end_date) && $model->recurrent_end_date >0) ? $model->recurrent_end_date : '31 Dec'],
                 'pluginOptions' => [
                     'autoclose'=>true,
                     'format' => 'd M',
