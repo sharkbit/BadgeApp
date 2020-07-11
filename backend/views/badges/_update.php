@@ -27,7 +27,7 @@ for ($x = 0; $x <= 90; $x++) {
 $YearList = json_decode(str_replace('}{',',',$YearList));
 
 $confParams  = Params::findOne('1');
-if(yii::$app->controller->hasPermission('badges/restrict')) {$restrict=true;} else {$restrict=false;}
+if(yii::$app->controller->hasPermission('badges/all')) {$restrict=false;} else {$restrict=true;}
 
 $nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
@@ -187,15 +187,15 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
                 <input type="hidden" value='<?php echo date('M d, Y',strtotime($nextExpire)); ?>' id='defDate' />
             </div>
 
-            <div class="col-xs-6 col-sm-4">
-                <?php if(yii::$app->controller->hasPermission('badges/barcode')) {
-					echo $form->field($model, 'qrcode')->textInput(['readOnly'=>$model->qrcode==null ? false : true,'disabled' => true])->label('Barcode'),PHP_EOL;
-				} else  {
-					echo $form->field($model, 'qrcode')->hiddenInput(['readOnly'=>$model->qrcode==null ? false : true,'disabled' => true])->label('Barcode'),PHP_EOL;
-				}
-				?>
+			<?php if(yii::$app->controller->hasPermission('badges/barcode')) {
+			 echo '<div class="col-xs-6 col-sm-4">'.
+			 $form->field($model, 'qrcode')->textInput(['readOnly'=>$model->qrcode==null ? false : true,'disabled' => true])->label('Barcode')."\n".
+			"</div>\n";
+			} else  {
+				echo $form->field($model, 'qrcode')->hiddenInput(['readOnly'=>$model->qrcode==null ? false : true,'disabled' => true])->label(false),PHP_EOL;
+			}
+			?>
 
-            </div>
              <div class="col-xs-6 col-sm-4">
         <?php   $WTDate = strtotime($model->wt_date);
                 $startDate = date('1999-01-01 12:00:00');

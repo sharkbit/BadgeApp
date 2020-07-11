@@ -69,7 +69,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 						'template'=>'{view}{update}{delete}',
 						'buttons'=>[
 						'update' => function ($url, $model) {    
-							if(!yii::$app->controller->hasPermission('badges/restrict')) {
+							if(!yii::$app->controller->hasPermission('badges/delete-renewal')) {
 								return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ',['/badges/update-certificate','membership_id'=>$model->badge_number,'view_id'=>$model->id], [
 									'data-toggle'=>'tooltip',
 									'data-placement'=>'top',

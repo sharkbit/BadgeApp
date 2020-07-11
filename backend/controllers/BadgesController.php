@@ -1030,7 +1030,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionUpdate($badge_number) {
-		if(yii::$app->controller->hasPermission('badges/restrict') && $badge_number!=$_SESSION['badge_number']) {
+		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
 			return $this->redirect(['update', 'badge_number' => $_SESSION['badge_number']]);
 		}
 		$model = Badges::find()->where(['badge_number'=>$badge_number])->one();
@@ -1125,7 +1125,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionView($badge_number) {
-		if(yii::$app->controller->hasPermission('badges/restrict') && $badge_number!=$_SESSION['badge_number']) {
+		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
 			return $this->redirect(['view', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
@@ -1152,7 +1152,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewCertificationsList($badge_number) {
-		if(yii::$app->controller->hasPermission('badges/restrict') && $badge_number!=$_SESSION['badge_number']) {
+		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
 			return $this->redirect(['view-certifications-list', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
@@ -1172,7 +1172,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewRemarksHistory($badge_number) {
-		if(yii::$app->controller->hasPermission('badges/restrict') && $badge_number!=$_SESSION['badge_number']) {
+		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
 			return $this->redirect(['view-remarks-history', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
@@ -1184,7 +1184,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewRenewalHistory($badge_number) {
-		if(yii::$app->controller->hasPermission('badges/restrict') && $badge_number!=$_SESSION['badge_number']) {
+		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
 			return $this->redirect(['view-renewal-history', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
@@ -1215,7 +1215,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewWorkCredits($badge_number) {
-		if(yii::$app->controller->hasPermission('badges/restrict') && $badge_number!=$_SESSION['badge_number']) {
+		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
 			return $this->redirect(['view-work-credits', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
@@ -1236,7 +1236,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewWorkCreditsLog($badge_number) {
-		if(yii::$app->controller->hasPermission('badges/restrict') && $badge_number!=$_SESSION['badge_number']) {
+		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
 			return $this->redirect(['view-work-credits-log', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
