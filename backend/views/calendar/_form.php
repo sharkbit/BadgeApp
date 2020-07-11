@@ -143,10 +143,12 @@ if (($crec==1) && ($model->isNewRecord)) {
           'pluginEvents' => [ "change" => "function(e){ OpenRange(); }", ]]); ?>
     </div>
     <div class="col-xs-4 col-sm-2">
-    <?php if (array_intersect([1,2,8],$_SESSION['privilege'])) {
+    <?php if (array_intersect([1,2],$_SESSION['privilege'])) {	//if Root or admin
 		$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'event_status_id', 'name');
-	} else {
+	} else if (in_array(9,$_SESSION['privilege'])) { 			// if Cal Cord
 		$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['not',['event_status_id'=>4]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'event_status_id', 'name');
+	} else {													// is Only CIO
+		$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['event_status_id'=>4])->orwhere(['event_status_id'=>19])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'event_status_id', 'name');
 	}
         echo $form->field($model, 'event_status_id')->DropDownList($ary_event);     ?>
     </div>
