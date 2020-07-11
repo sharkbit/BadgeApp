@@ -592,7 +592,7 @@ if (($crec==1) && ($model->isNewRecord)) {
             var req_cal_id = $("#agccal-calendar_id").val();
             if (req_cal_id) {reqcal_id = '&id='+req_cal_id;}
             $("#searchng_cal_animation").show(500);
-            var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id;
+            var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&tst=1";
     
 	console.log(myUrl);
 	//console.log('Checking');
@@ -617,7 +617,7 @@ if (($crec==1) && ($model->isNewRecord)) {
                     } else {
                         //console.log('Error:621');
                        // console.log(responseData);
-                        $("#error_msg").html('<center><p style="color:red;"><b>'+responseData.responseText+'</b></p></center>');
+                        $("#error_msg").html('<center><p style="color:red;"><b>'+responseData.msg+'</b></p></center>');
 
                         if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
                             document.getElementById("cal_update_item").classList.add('btn-secondary');
