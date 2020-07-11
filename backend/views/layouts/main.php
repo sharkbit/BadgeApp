@@ -91,39 +91,11 @@ $this->beginBody() ?>
         Please use <a href="https://github.com/sharkbit/BadgeApp/issues" target=_blank>GitHub</a> for issues or feature requests.
 	  </div>
       <div class="col-xs-6 col-sm-6 pull-right">
-        <p class="pull-right"> <button onclick="OverlayOn()">About Version <?php include "version.php" ?></button>  Powered by <a target="_blank" href="http://www.yiiframework.com/" rel="external">Yii</a></p>
+        <p class="pull-right"> <button onclick="window.open('https://github.com/sharkbit/BadgeApp/commits/master')">About Version <?php include "version.php" ?></button>  Powered by <a target="_blank" href="http://www.yiiframework.com/" rel="external">Yii</a></p>
 	  </div>
     </div>
   </div>
 </footer>
-
-<div id="ver_overlay" onclick="OverlayOff()">
-  <div id="overlay_text"><?php echo nl2br( file_get_contents("../../ChangeLog.txt") ); ?></div>
-</div>
-<style>
-#ver_overlay {
-    padding: 70px 15px 20px;
-    overflow-y:auto;
-    position: fixed;
-    display: none;
-    width: 100%;
-    height: 100%;
-    top: 50px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 2;
-    cursor: pointer;
-}
-
-#overlay_text{
-    overflow-y:auto;
-    position: absolute;
-    left: 25%;
-    color: white;
-}
-</style>
 
 <?php $this->endBody() ?>
 
@@ -219,22 +191,6 @@ $this->beginBody() ?>
             url: '<?=yii::$app->params['rootUrl']?>/badge/log-error',
             crossDomain: false
         });
-    }
-
-    function OverlayOn() {
-        document.getElementById("ver_overlay").style.display = "block";
-
-        var divTop, windowHeight, divHeight;
-
-        divTop = jQuery("#ver_overlay").offset().top
-        windowHeight = jQuery(window).height();
-        divHeight = ((windowHeight - divTop) - 50) + "px";
-
-        jQuery("#ver_overlay").css({"height":divHeight});
-    }
-
-    function OverlayOff() {
-        document.getElementById("ver_overlay").style.display = "none";
     }
 
     function run_waitMe(action){
