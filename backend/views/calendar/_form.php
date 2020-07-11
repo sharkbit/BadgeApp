@@ -80,7 +80,6 @@ if (($crec==1) && ($model->isNewRecord)) {
     $model->recur_every=1;
     $model->recurrent_calendar_id=$model->calendar_id;
 }
-
  ?>
  
  <input type="hidden" id="Req_Lanes" name="Req_Lanes" value='<?=json_encode($Req_Lanes )?>' />
@@ -152,19 +151,14 @@ if (($crec==1) && ($model->isNewRecord)) {
 	}
         echo $form->field($model, 'event_status_id')->DropDownList($ary_event);     ?>
     </div>
-    <div class="col-xs-4 col-sm-2">
     <?php 
 	if (yii::$app->controller->hasPermission('calendar/close')) {
 		$ary_range = ArrayHelper::map(agcRangeStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'range_status_id', 'name');
-	} elseif ($model->range_status_id== 2) {
-		$ary_range = ArrayHelper::map(agcRangeStatus::find()->where(['active'=>1,])->andwhere(['not',['range_status_id'=>6]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'range_status_id', 'name');
-	} elseif ($model->range_status_id== 6) {
-		$ary_range = ArrayHelper::map(agcRangeStatus::find()->where(['active'=>1,])->andwhere(['not',['range_status_id'=>2]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'range_status_id', 'name');
+		echo '    <div class="col-xs-4 col-sm-2">'.$form->field($model, 'range_status_id')->DropDownList($ary_range)."\n</div>\n";
 	} else {
-		$ary_range = ArrayHelper::map(agcRangeStatus::find()->where(['active'=>1,])->andwhere(['not',['range_status_id'=>2]])->andwhere(['not',['range_status_id'=>6]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'range_status_id', 'name');
-	}
-        echo $form->field($model, 'range_status_id')->DropDownList($ary_range);     ?>
-    </div>
+		echo $form->field($model, 'range_status_id')->hiddenInput(['value'=>1])->label(false).PHP_EOL;
+	} ?>
+
     <div class="col-xs-4 col-sm-2">
         <?= $form->field($model, 'active')->DropDownList(['1'=>'Yes','0'=>'No'],['value'=> $model->isNewRecord ? 1 : $model->active ]) ?>
     </div>
