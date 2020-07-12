@@ -281,20 +281,26 @@ class CalendarController extends AdminController {
 	public function actionRepublish($id) {
 		$model = AgcCal::find()->where(['calendar_id' => $id])->one();
 		if (isset($model->recurrent_calendar_id)) {
-			if ($model->recurrent_calendar_id >0) {
-				if ((int)$model->deleted == 1 ) { return json_encode(['status'=>'error','msg'=>"Event has been deleted, can't republish"]); }
-				$nowTime = yii::$app->controller->getNowTime();
-				$sql = "DELETE from associat_agcnew.agc_calendar where recurrent_calendar_id = ".$id." and  event_date >= '".$nowTime."'";
-				$command = Yii::$app->db->createCommand($sql);
-				$saveOut = $command->execute();
+			
+			if (Yii::$app->request->isAjax) {
+				// Why is this called via AJAX?  DO nothing...
+			} else {
+				if ($model->recurrent_calendar_id >0) {
+					if ((int)$model->deleted == 1 ) { return json_encode(['status'=>'error','msg'=>"Event has been deleted, can't republish"]); }
+					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','".$model->event_name.'('.$model->calendar_id.')');
+					
+					$nowTime = yii::$app->controller->getNowTime();
+					$sql = "DELETE from associat_agcnew.agc_calendar where recurrent_calendar_id = ".$id." and  event_date >= '".$nowTime."'";
+					$command = Yii::$app->db->createCommand($sql);
+					$saveOut = $command->execute();
 
-				yii::$app->controller->createCalLog(true, 'trex-B_C_CC:272 Delete future:', var_export($saveOut,true));
-				if (strtotime($nowTime) > strtotime(date('Y').'-07-01 00:00:00')) {$myYr= intval(date('Y'))+1;} else {$myYr= date('Y');}
+					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Futuer Events");
+					if (strtotime($nowTime) > strtotime(date('Y').'-07-01 00:00:00')) {$myYr= intval(date('Y'))+1;} else {$myYr= date('Y');}
 		//		echo "$myYr <br />";
 		//		echo "Start: $model->recurrent_start_date, End: $model->recurrent_end_date <br />";
-				$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$myYr);
+					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$myYr);
 
-				yii::$app->controller->createLog(true, 'trex-B_C_CC:279 Event Dates', var_export($myEventDates,true));
+		//			yii::$app->controller->createLog(true, 'trex-B_C_CC:279 Event Dates', var_export($myEventDates,true));
 // Tests **************************
 // w-day		$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,'{"weekly":"1", "days":["mon"]}',2021);
 // m-day		$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,'{"monthly":"day","when":"second","day":"saturday","every":"1"} ',2020);
@@ -307,18 +313,23 @@ class CalendarController extends AdminController {
 	//		var_export($myEventDates); echo "<br />";
 	//		exit;
 
-				$NewID = $this->createRecCalEvent($model,$myEventDates);
-				if ($NewID) {
-					$sql = "UPDATE associat_agcnew.agc_calendar SET recurrent_calendar_id=".$NewID." WHERE recurrent_calendar_id = ".$id;
-					$command = Yii::$app->db->createCommand($sql);
-					$saveOut = $command->execute();
-					return $this->redirect(['update', 'id' => $NewID]);
+					$NewID = $this->createRecCalEvent($model,$myEventDates);
+					if ($NewID) {
+						$sql = "UPDATE associat_agcnew.agc_calendar SET recurrent_calendar_id=".$NewID." WHERE recurrent_calendar_id = ".$id;
+						$command = Yii::$app->db->createCommand($sql);
+						$saveOut = $command->execute();
+						return $this->redirect(['update', 'id' => $NewID]);
+					} else {
+						return $this->redirect(['update', 'id' => $model->recurrent_calendar_id]);
+					}
 				} else {
-					return $this->redirect(['update', 'id' => $model->recurrent_calendar_id]);
+					echo " Not a Recurring Event";
 				}
-			} else { echo " Not a Recurring Event";}
-		} else { echo "Nothing Found";}
-		return $this->redirect(['index']);
+			}
+		} else {
+			echo "Nothing Found";
+		}
+//		return $this->redirect(['index']);
 	}
 
     public function actionUpdate($id=1) {
@@ -385,7 +396,7 @@ class CalendarController extends AdminController {
 					$cmd = Yii::$app->getDb()->createCommand($sql)->execute();
 
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
-					yii::$app->controller->createCalLog(false, 'trex-B_C_CC:369', var_export($cmd,true));
+					//yii::$app->controller->createCalLog(false, 'trex-B_C_CC:369', var_export($cmd,true));
 					if ((int)$model->event_status_id==19) { $model->range_status_id = 1; $model->save(); }
 
 					if (isset($_POST['republish'])) {
@@ -558,7 +569,6 @@ class CalendarController extends AdminController {
 	}
 
 	private function getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco) {
-		yii::$app->controller->createLog(false, 'trex-B_C_CC:510', var_export("GetEventDates: Start: $eStart, End: $eEnd, Pat: $ePat, yr:  $whatYear",true));
 if($eco) { echo "<hr />GetEventDates: Start: $eStart, End: $eEnd, Pat: $ePat, yr:  $whatYear <br />"; }
 		$Date_Start = strtotime(strval($whatYear.'-'.date('m-d',strtotime($eStart))));
 		$Date_Stop  = strtotime(strval($whatYear).'-'.date('m-d',strtotime($eEnd)));
@@ -675,8 +685,7 @@ if($eco) { echo "<br>$myYear"; }
 
 		$model_event = new AgcCal();
 		foreach($myEventDates as $eDate) {
-			if ($eDate== $model->event_date) { continue; }
-//echo "-> $eDate <br>";
+			if ((strtotime(yii::$app->controller->getNowTime()) > strtotime($model->event_date)) && ($eDate== $model->event_date)) { continue; }
 			$model_event->setIsNewRecord(true);
 			$model_event->calendar_id = null;
 			$model_event->recurrent_calendar_id = $model->calendar_id;
@@ -712,7 +721,6 @@ if($eco) { echo "<br>$myYear"; }
 			yii::$app->controller->createCalLog(true, $_SESSION['user'], "Created New Calendar item: ','".$model_event->calendar_id.'->'.$model_event->event_name);
 
 			if (intval(substr($eDate,0,4)) > intval(date('Y'))){
-				//yii::$app->controller->createLog(true, 'trex-B_C_CC:687', "Is next year: ".substr($eDate,0,4));
 				if ($NewID == false) {
 					$NewID = $model_event->calendar_id;
 				}
