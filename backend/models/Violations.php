@@ -38,7 +38,7 @@ class Violations extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-			[['badge_reporter','badge_involved','vi_date','vi_type','vi_sum','vi_loc'], 'required'],
+			[['badge_reporter','badge_involved','vi_date','vi_sum','vi_loc'], 'required'],
 			[['badge_involved','badge_witness','vi_sum','vi_rules','vi_report','vi_action','hear_date','hear_sum','vi_loc'], 'safe'],
 			[['badge_reporter','vi_type','was_guest', 'vi_override'], 'integer'],
 			[['badge_involved','badge_witness','vi_sum'], 'string', 'max' => 255]
