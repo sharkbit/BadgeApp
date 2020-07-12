@@ -95,7 +95,7 @@ class CalendarController extends AdminController {
 					if ($this->actionOpenRange($model->event_date,$model->start_time,$model->end_time,$model->facility_id,$model->lanes_requested,$model->calendar_id,true))
 						{ $model->conflict = 0;  $model->approved=1; } else { $model->conflict = 1; $model->approved=1; }
 					$model->save();
-					$this->createRecCalEvent($model,$myEventDates);
+					$this->createRecCalEvent($model,$myEventDates,true);
 				} else {
 					Yii::$app->getSession()->setFlash('error', 'No events will be created,  Check your dates!');
 					return $this->redirect(['create','recur'=>1,'model'=>$model]);
@@ -685,7 +685,8 @@ if($eco) { echo "<br>$myYear"; }
 
 		$model_event = new AgcCal();
 		foreach($myEventDates as $eDate) {
-			if ((strtotime(yii::$app->controller->getNowTime()) > strtotime($model->event_date)) && ($eDate== $model->event_date)) { continue; }
+			if (((strtotime(yii::$app->controller->getNowTime()) > strtotime($model->event_date)) && ($eDate == $model->event_date)) ||
+				(($is_new) && ($eDate == $model->event_date))) { continue; }
 			$model_event->setIsNewRecord(true);
 			$model_event->calendar_id = null;
 			$model_event->recurrent_calendar_id = $model->calendar_id;
