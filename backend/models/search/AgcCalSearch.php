@@ -46,7 +46,7 @@ class AgcCalSearch extends AgcCal {
 			if(isset($this->recur_every)) {
 				$query->orderBy('month(event_date),day(event_date),time(start_time)');
 			} else {
-				$query->orderBy( ['event_date'=>SORT_ASC,'start_time' => SORT_ASC] );
+				$query->orderBy('event_date,hour(start_time)');
 			}
 		}
 
