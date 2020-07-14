@@ -3,13 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
+use backend\controllers\AdminController;
 use backend\models\AgcCal;
+use backend\models\agcEventStatus;
 use backend\models\agcFacility;
+use backend\models\clubs;
 use backend\models\search\AgcCalSearch;
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use backend\controllers\AdminController;
 
 /**
  * CalendarController implements the CRUD actions for Calendar model.
@@ -165,6 +168,50 @@ class CalendarController extends AdminController {
 			}
 			Yii::$app->getSession()->setFlash('success', 'Event Deleted.');
 			if ($redir=='i'){ return $this->redirect(['/calendar/index']); } else { return $this->redirect(['/calendar/recur']); }
+		}
+	}
+
+	public function actionGetEventTypes($club_id,$internal=false,$is_sel=false,$is_new_rec=false) {
+		//yii::$app->controller->createLog(false, 'trex', var_export($club_id,true));
+		$myClub = (new clubs)::find()->where(['club_id'=>$club_id])->one();
+		if($myClub) {
+			if ($internal) {$coll_a='event_status_id';$coll_b='name';} else {$coll_a='name';$coll_b='event_status_id';}
+			if($myClub->is_club) {
+				if (array_intersect([1,2],$_SESSION['privilege'])) {	//if Root or admin
+					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
+				} else {
+					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['not',['event_status_id'=>4]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
+				}
+			} else { // is CIO
+				if (array_intersect([1,2],$_SESSION['privilege'])) {	//if Root or admin
+					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
+				} else {
+					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['event_status_id'=>4])->orwhere(['event_status_id'=>19])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
+				}
+			}
+			yii::$app->controller->createLog(false, 'trex-ary_event', var_export($is_sel,true));
+		} else {
+			$ary_event=array(['-- no Sponsor --'=>0]);
+		}
+
+		$only_CIO=false; $checked_cnt=0;
+		foreach ($_SESSION['privilege'] as $priv_chk){
+			if (($priv_chk==8) && ($checked_cnt==0)) {$only_CIO=true; } else {$only_CIO=false; }
+			$checked_cnt++;
+		}
+
+		if ($internal) {
+			return $ary_event;
+		} else {
+			$myOpt='';
+			if ((!$is_sel) && ($is_new_rec)) {
+				if($only_CIO) {$is_sel = 4;} else {$is_sel=2;} 
+			}
+			foreach($ary_event as $item => $key) {
+				if($key==$is_sel) {$isSel='Selected';} else {$isSel='';}
+				$myOpt .= "<option value=$key $isSel >$item</option>";
+			}
+			return json_encode($myOpt);
 		}
 	}
 
