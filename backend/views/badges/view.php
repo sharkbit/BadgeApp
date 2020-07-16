@@ -3,6 +3,7 @@
 use backend\models\Badges;
 use backend\models\clubs;
 use backend\models\BadgeCertification;
+use backend\models\User;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
@@ -49,19 +50,15 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 					echo "<b><a href='/badges/photo-crop?badge=".$model->badge_number."'>[ <span class='glyphicon glyphicon-modal-window'></span> Crop ]</a></b>";
 				}
 				echo "<br /><br />\n";
-				$sql="select privilege from user where badge_number=".$model->badge_number;
-				$connection = Yii::$app->getDb();
-				$command = $connection->createCommand($sql);
-				$ChkPriv = $command->queryAll();
-				if (isset($ChkPriv[0]['privilege'])) {
-					if($ChkPriv[0]['privilege']==3) {
-						echo "<b><a href='/badges/print?badge_number=".$model->badge_number."&ty=r' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> RSO ]</a></b>";
-					} elseif($ChkPriv[0]['privilege']==6) {
-						echo "<b><a href='/badges/print?badge_number=".$model->badge_number."&ty=c' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CRSO ]</a></b>";
-					} elseif($ChkPriv[0]['privilege']==8) {
-						echo "<b><a href='/badges/print?badge_number=".$model->badge_number."&ty=i' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CIO ]</a></b>";
-					} else {
-						//echo  "<br /> No Special Badge for Priv:".$ChkPriv[0]['privilege'];
+				$findUser=User::Find()->where(['badge_number'=>$model->badge_number])->one();
+				if ($findUser) {
+					if(in_array(3,json_decode($findUser->privilege))) {
+						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=r' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> RSO ]</a></b>";
+					} elseif(in_array(6,json_decode($findUser->privilege))) {
+						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=c' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CRSO ]</a></b>";
+					}
+					if(in_array(8,json_decode($findUser->privilege))) {
+						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=i' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CIO ]</a></b>";
 					}
 				}
 
