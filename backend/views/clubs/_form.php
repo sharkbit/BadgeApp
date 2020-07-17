@@ -27,7 +27,7 @@ use yii\widgets\ActiveForm;
 	<?= $form->field($model, 'poc_email')->textInput(['maxlength' => true]) ?>
 	</div>
 	<div class="row">
-	<?= $form->field($model, 'is_club')->dropDownList([ '0'=>'CIO Or Other', '1'=>'Yes', ], ['prompt' => 'Choose']) ?>
+	<?= $form->field($model, 'is_club')->dropDownList([ '0'=>'CIO', '1'=>'Club','2'=>"AGC Sponsored" ], ['prompt' => 'Choose']) ?>
 	</div>
 	<div class="row" <?php if($model->isNewRecord){echo 'style="display: none;"';} ?> >
 	<?= $form->field($model, 'status')->dropDownList([ '0'=>'Active', '1'=>'Inactive', ], ['prompt' => 'Status']) ?>

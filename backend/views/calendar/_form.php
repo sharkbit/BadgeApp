@@ -31,6 +31,7 @@ if (isset($Req_Lanes[$model->facility_id])) {
     $allowLanes = false;
     $model->lanes_requested = 0;
 }
+$is_club = ArrayHelper::getColumn(clubs::find()->where(['status'=>0,'is_club'=>1])->orderBy(['club_name'=>SORT_ASC])->asArray()->all(), 'club_id');
 
 $chkMon = $chkTue = $chkWed = $chkThu = $chkFri = $chkSat = $chkSun = '';
 if(isset($model->recur_week_days)) {
@@ -81,8 +82,9 @@ if (($crec==1) && ($model->isNewRecord)) {
     $model->recurrent_calendar_id=$model->calendar_id;
 }
  ?>
- 
+
  <input type="hidden" id="Req_Lanes" name="Req_Lanes" value='<?=json_encode($Req_Lanes )?>' />
+ <input type="hidden" id="is_club" name="is_club" value='<?=json_encode($is_club )?>' />
 
 <div class="calendar-form">
 <?php $form = ActiveForm::begin(); ?>
@@ -142,14 +144,7 @@ if (($crec==1) && ($model->isNewRecord)) {
           'pluginEvents' => [ "change" => "function(e){ OpenRange(); }", ]]); ?>
     </div>
     <div class="col-xs-4 col-sm-2">
-    <?php if (array_intersect([1,2],$_SESSION['privilege'])) {	//if Root or admin
-		$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'event_status_id', 'name');
-	} else if (in_array(9,$_SESSION['privilege'])) { 			// if Cal Cord
-		$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['not',['event_status_id'=>4]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'event_status_id', 'name');
-	} else {													// is Only CIO
-		$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['event_status_id'=>4])->orwhere(['event_status_id'=>19])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'event_status_id', 'name');
-	}
-        echo $form->field($model, 'event_status_id')->DropDownList($ary_event);     ?>
+    <?= $form->field($model, 'event_status_id')->DropDownList($model->isNewRecord ? [0=>'']: yii::$app->controller->actionGetEventTypes($model->club_id,true));     ?>
     </div>
     <?php 
 	if (yii::$app->controller->hasPermission('calendar/close')) {
@@ -370,6 +365,8 @@ if (($crec==1) && ($model->isNewRecord)) {
 </style>
 <script>
     Recure(true);
+	runClub();
+
     document.getElementById("cal_update_item").disabled=true;
 <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
     $("#agccal-facility_id").change(function(e) {
@@ -418,6 +415,30 @@ if (($crec==1) && ($model->isNewRecord)) {
     $("#pat_day_e").change(function(e) {
         document.getElementById("pat_daily_n").disabled=true;
     });
+
+    $("#agccal-club_id").change(function(e) {
+     	runClub();
+    });
+	
+	function runClub() {
+		var my_url = '<?=yii::$app->params['rootUrl']?>/calendar/get-event-types?event_club_id='+document.getElementById("agccal-club_id").value+'&is_sel='+document.getElementById("agccal-event_status_id").value+"&is_new_rec="+<?php if($model->isNewRecord){echo '1';} else {echo '0';} ?>;
+		console.log(my_url);
+		jQuery.ajax({
+			method: 'GET',
+			crossDomain: false,
+			dataType: 'json',
+			url: my_url,
+			success: function(responseData, textStatus, jqXHR) {
+				//console.log("success ");
+				document.getElementById("agccal-event_status_id").innerHTML = responseData;
+			},
+			error: function (responseData, textStatus, errorThrown) {
+				console.log("error ");
+				console.log(responseData.responseText);
+			},
+		}); 
+
+	};
 
     function delMe() {
 		var formData = $("#agccal").serializeArray();
