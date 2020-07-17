@@ -110,7 +110,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 
 				<div class="form-group" >
 				<?php echo Html::label("Club Name"); ?>
-				<?php echo Html::dropDownList("new_club",(new clubs)->getMyClubs($model->badge_number) ,(new clubs)->getClubList(),['id'=>'badges-clubs', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]), PHP_EOL; ?>
+				<?php echo Html::dropDownList("new_club",(new clubs)->getMyClubs($model->badge_number) ,(new clubs)->getClubList(false,false,true),['id'=>'badges-clubs', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]), PHP_EOL; ?>
 				</div>
 			<?php } ?>
             </div>

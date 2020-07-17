@@ -52,11 +52,12 @@ class Clubs extends \yii\db\ActiveRecord {
         ];
     }
 
-    public function getClubList($use_short=false,$restrict=false) {
+    public function getClubList($use_short=false,$restrict=false,$allow_members=false) {
 		if($use_short) {$field='short_name';} else {$field='club_name';}
 		
+		if($allow_members) { $where = ['status'=>'0','is_club'=>'1']; } else { $where = ['status'=>'0']; }		
 		$clubArray = Clubs::find()
-			->where(['status'=>'0'])
+			->where($where )
 			->orderBy(['is_club'=> SORT_DESC,$field => SORT_ASC ])
 			->all();
 		

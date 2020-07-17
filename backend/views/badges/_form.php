@@ -55,7 +55,7 @@ $confParams  = Params::findOne('1');
             </div>
             <div class="col-xs-6 col-sm-6 col-md-4">
                 <?php if($model->isNewRecord) { ?>
-                <?= $form->field($model, 'club_name')->dropDownList((new clubs)->getClubList(), ['prompt'=>'select','id'=>'club-id']).PHP_EOL; ?>
+                <?= $form->field($model, 'club_name')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'select','id'=>'club-id']).PHP_EOL; ?>
                 <?php } else { ?>
                 <?= $form->field($model, 'club_name')->textInput(['readonly' => true]) ?>
                 <?php } ?>
