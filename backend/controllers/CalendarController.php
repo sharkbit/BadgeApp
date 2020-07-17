@@ -171,23 +171,20 @@ class CalendarController extends AdminController {
 		}
 	}
 
-	public function actionGetEventTypes($club_id,$internal=false,$is_sel=false,$is_new_rec=false) {
-		//yii::$app->controller->createLog(false, 'trex', var_export($club_id,true));
-		$myClub = (new clubs)::find()->where(['club_id'=>$club_id])->one();
-		if($myClub) {
+	public function actionGetEventTypes($event_club_id,$internal=false,$is_sel=false,$is_new_rec=false) {
+		$EventClub = (new clubs)::find()->where(['club_id'=>$event_club_id])->one();
+		if($EventClub) {
 			if ($internal) {$coll_a='event_status_id';$coll_b='name';} else {$coll_a='name';$coll_b='event_status_id';}
-			if($myClub->is_club) {
+			if(($EventClub->is_club=='1') || ($EventClub->is_club=='2')) {
 				if (array_intersect([1,2],$_SESSION['privilege'])) {	//if Root or admin
 					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
+				} elseif (in_array(11,$_SESSION['privilege'])) {		//if Chairmen
+					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere('event_status_id not in (4,11,12,18)')->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
 				} else {
-					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['not',['event_status_id'=>4]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
+					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere('event_status_id in (1,2,6,13,14,16,19)')->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
 				}
 			} else { // is CIO
-				if (array_intersect([1,2],$_SESSION['privilege'])) {	//if Root or admin
-					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
-				} else {
-					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['event_status_id'=>4])->orwhere(['event_status_id'=>19])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
-				}
+				$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['event_status_id'=>4])->orwhere(['event_status_id'=>19])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
 			}
 			yii::$app->controller->createLog(false, 'trex-ary_event', var_export($is_sel,true));
 		} else {

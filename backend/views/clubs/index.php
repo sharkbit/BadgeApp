@@ -35,8 +35,8 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/ind
                     'poc_email',
 					
                     'is_club' => [   'attribute'=>'is_club',
-                            'value' => function($model, $attribute){ if($model->is_club==0) {return 'No';} else if($model->is_club==1) {return 'Yes';} },
-                            'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_club', ['0' => 'No', '1' => 'Yes'],['class'=>'form-control','prompt' => 'All']),
+                            'value' => function($model, $attribute) { if($model->is_club==0) {return 'No';} elseif($model->is_club==1){ return 'Yes';} else { return 'AGC Sponsored'; } },
+                            'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_club', ['0' => 'No', '1' => 'Yes' , '2' => 'AGC Sponsored'],['class'=>'form-control','prompt' => 'All']),
                     ],
 					
                     'status' => [   'header'=>'Status',

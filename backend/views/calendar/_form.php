@@ -421,7 +421,7 @@ if (($crec==1) && ($model->isNewRecord)) {
     });
 	
 	function runClub() {
-		var my_url = '<?=yii::$app->params['rootUrl']?>/calendar/get-event-types?club_id='+document.getElementById("agccal-club_id").value+'&is_sel='+document.getElementById("agccal-event_status_id").value+"&is_new_rec="+<?php if($model->isNewRecord){echo '1';} else {echo '0';} ?>;
+		var my_url = '<?=yii::$app->params['rootUrl']?>/calendar/get-event-types?event_club_id='+document.getElementById("agccal-club_id").value+'&is_sel='+document.getElementById("agccal-event_status_id").value+"&is_new_rec="+<?php if($model->isNewRecord){echo '1';} else {echo '0';} ?>;
 		console.log(my_url);
 		jQuery.ajax({
 			method: 'GET',
