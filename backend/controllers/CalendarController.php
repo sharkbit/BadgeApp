@@ -186,7 +186,6 @@ class CalendarController extends AdminController {
 			} else { // is CIO
 				$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere(['event_status_id'=>4])->orwhere(['event_status_id'=>19])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
 			}
-			yii::$app->controller->createLog(false, 'trex-ary_event', var_export($is_sel,true));
 		} else {
 			$ary_event=array(['-- no Sponsor --'=>0]);
 		}
