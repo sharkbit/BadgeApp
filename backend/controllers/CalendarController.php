@@ -379,6 +379,8 @@ class CalendarController extends AdminController {
 		$model = $this->findModel($id);
 		$model->showed_up=$showed;
 		$model->save();
+		if($showed==1) {$showed_up='Yes';} else {$showed_up='No';}
+		yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Event Attendance:','".$model->club_id.' '.$model->event_name.'('.$model->calendar_id.') '.$showed_up);
 		return $this->redirect(['index']);
 	}
 
