@@ -63,7 +63,7 @@ class CalendarController extends AdminController {
 				'changed'=> 'Updated by '.$_SESSION['user'],
 			];
 			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
-			
+
 			//$model->date_requested = yii::$app->controller->getNowTime();
 			if($model->recur_every) {
 				if(isset($model->recurrent_start_date)) {
@@ -290,7 +290,7 @@ class CalendarController extends AdminController {
 				} else {
 					$isAval=true;
 					if(isset($found)) {
-						$returnMsg=['status'=>'success','msg'=>'Range might be in use ','lu'=>$lanes_used, 'data'=>$found];
+						$returnMsg=['status'=>'success','msg'=>'Range has space left: ' .($range->available_lanes-$lanes_used) .' Lanes','lu'=>$lanes_used, 'data'=>$found];
 					} else {
 						$returnMsg=['status'=>'success','msg'=>'No one else reserved range ','lu'=>$lanes_used];
 					}
@@ -324,14 +324,14 @@ class CalendarController extends AdminController {
 	public function actionRepublish($id) {
 		$model = AgcCal::find()->where(['calendar_id' => $id])->one();
 		if (isset($model->recurrent_calendar_id)) {
-			
+
 			if (Yii::$app->request->isAjax) {
 				// Why is this called via AJAX?  DO nothing...
 			} else {
 				if ($model->recurrent_calendar_id >0) {
 					if ((int)$model->deleted == 1 ) { return json_encode(['status'=>'error','msg'=>"Event has been deleted, can't republish"]); }
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','".$model->event_name.'('.$model->calendar_id.')');
-					
+
 					$nowTime = yii::$app->controller->getNowTime();
 					$sql = "DELETE from associat_agcnew.agc_calendar where recurrent_calendar_id = ".$id." and  event_date >= '".$nowTime."'";
 					$command = Yii::$app->db->createCommand($sql);
@@ -681,7 +681,7 @@ if($eco) { echo  "s: ".date('m',$Date_Start). ' e:'. (date('m',$Date_Stop)+1).'<
 				if($myPat->monthly == 'day') {	// by Day
 					$myMonth = strtotime($myPat->when." ".$myPat->day." $whatYear-".str_pad($i, 2, '0', STR_PAD_LEFT));
 					if (date('d',strtotime("first ".$myPat->day." $whatYear-".str_pad($i, 2, '0', STR_PAD_LEFT)))=='08') {
-						$myMonth = $myMonth-(60*60*24*7); } 
+						$myMonth = $myMonth-(60*60*24*7); }
 				} else {	// by Date
 					$myMonth = strtotime($i."/".$myPat->day."/$whatYear");
 				}
