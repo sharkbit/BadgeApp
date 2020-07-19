@@ -93,7 +93,10 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'value'=>function ($model) { 
 					if($model->recurrent_calendar_id>0) {$mas=" *";} else {$mas="";}
-					return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id).$mas; },
+					if (yii::$app->controller->hasPermission('calendar/update')) {
+						return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id).$mas; }
+					else { return $model->event_name.$mas; }
+				},
 			],
 			[	'attribute'=>'facility_id',
 				'value'=>function($model) { return $model->agcFacility->name; },
@@ -129,6 +132,17 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			[	'attribute'=>'end_time',
 				'value'=>function($model) {
 					return substr(substr($model->end_time, -8),0,5);
+				},
+			],
+			[	'attribute'=>'showed_up',
+				'visible' => (yii::$app->controller->hasPermission('calendar/showed')) ? true : false,
+				'format'=>'raw',
+				'value'=>function($model) { //<span class="glyphicon glyphicon-ok"> </span>
+					if ($model->event_date <= yii::$app->controller->getNowTime()) {
+						if ($model->showed_up==1) {$thum='up';} else {$thum='down';}
+						return Html::a('Yes', ['/calendar/showed','id'=>$model->calendar_id,'showed'=>1] ). " / ".
+							Html::a('No', ['/calendar/showed','id'=>$model->calendar_id,'showed'=>0] )." -> <i class='fa fa-thumbs-$thum' ></i>";
+					} else { return "Not Yet"; }
 				},
 			],
 			[	'attribute'=>'event_status_id',
@@ -182,6 +196,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			],
 			[	'attribute'=>'conflict',
 				'value'=>function($model) { if($model->conflict==1) { return 'Yes'; } else { return 'No'; } },
+				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? true : false,
 			],
 			[	'header'=>'Action',
 				'class' => 'yii\grid\ActionColumn',

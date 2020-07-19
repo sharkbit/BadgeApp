@@ -99,6 +99,7 @@ class AgcCalSearch extends AgcCal {
 		if(isset($this->deleted) && $this->deleted==1) { $query->andFilterWhere(['deleted'=>1]); } else	{$query->andFilterWhere(['deleted'=>0]);}
 		if(isset($this->event_status_id)) { $query->andFilterWhere(['event_status.event_status_id'=>$this->event_status_id]); }
 		if(isset($this->range_status_id)) { $query->andFilterWhere(['range_status.range_status_id'=>$this->range_status_id]); }
+		if(isset($this->showed_up)) { $query->andFilterWhere(['showed_up'=>$this->showed_up]); }
 
 	//yii::$app->controller->createLog(false, 'trex-B_M_S_AgcCAl Query OK: ', var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;

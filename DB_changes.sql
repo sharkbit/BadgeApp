@@ -413,3 +413,6 @@ ALTER TABLE `BadgeDB`.`user`
 CHANGE COLUMN `privilege` `privilege` VARCHAR(45) NOT NULL ;
 INSERT INTO BadgeDB.user_privileges VALUES (11, 'Chairmen', 81, 10);
 ALTER TABLE `BadgeDB`.`user` CHANGE COLUMN `privilege` `privilege` VARCHAR(45) NOT NULL ; update `BadgeDB`.`user` set `privilege`=CONCAT("[",privilege,"]");
+
+-- RSO cal status
+ALTER TABLE `associat_agcnew`.`agc_calendar`  ADD COLUMN `showed_up` INT(1) NULL DEFAULT 0 AFTER `active`;

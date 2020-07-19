@@ -375,6 +375,13 @@ class CalendarController extends AdminController {
 //		return $this->redirect(['index']);
 	}
 
+	public function actionShowed($id,$showed){
+		$model = $this->findModel($id);
+		$model->showed_up=$showed;
+		$model->save();
+		return $this->redirect(['index']);
+	}
+
     public function actionUpdate($id=1) {
         $model = $this->findModel($id);
 

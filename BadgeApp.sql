@@ -619,6 +619,7 @@ CREATE TABLE `agc_calendar` (
   `deleted` tinyint(11) NOT NULL DEFAULT '0',
   `approved` tinyint(11) NOT NULL DEFAULT '0',
   `active` tinyint(11) NOT NULL DEFAULT '0',
+  `showed_up` INT(1) NULL DEFAULT 0,
   `rollover` tinyint(11) NOT NULL DEFAULT '0',
   `time_format` tinyint(11) NOT NULL DEFAULT '1',
   `poc_badge` int(5) NOT NULL DEFAULT '0',
