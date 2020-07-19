@@ -66,7 +66,10 @@ class UserSearch extends User {
 		if(isset($this->email)) 		{ $query->andFilterWhere(['like', 'email', $this->email]); }
 		if(isset($this->badge_number))	{ $query->andFilterWhere(['like', 'badge_number', $this->badge_number]); }
 		if(isset($this->full_name))		{ $query->andFilterWhere(['like', 'full_name', $this->full_name]); }
-		if((isset($this->privilege)) && ($this->privilege!=''))		{ $query->andWhere("JSON_CONTAINS(privilege,'".$this->privilege."')"); }
+		if((isset($this->privilege)) && ($this->privilege!=''))		{
+			if (strpos(" ".$_SERVER['SERVER_NAME'],'tmp')) { $query->andWhere("JSON_CONTAINS(privilege,'".$this->privilege."')"); } else
+			{$query->andFilterWhere(['like', 'user.privilege', $this->privilege]); }
+		}
 		if(isset($this->auth_key))		{ $query->andFilterWhere(['like', 'auth_key', $this->auth_key]); }
 		if(isset($this->password_hash))	{ $query->andFilterWhere(['like', 'password_hash', $this->password_hash]); }
 		if(isset($this->password_reset_token))	{ $query->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token]); }
