@@ -708,9 +708,9 @@ if($eco) { echo "yearly"; }
 			} else {
 				$myYear = strtotime($myPat->on." ".$myPat->day.' '.$whatYear.'-'.str_pad($myPat->of, 2, '0', STR_PAD_LEFT));
 				if (date('d',strtotime("first ".$myPat->day." $whatYear-".str_pad($myPat->of, 2, '0', STR_PAD_LEFT)))=='08') {
-					$myYear = $myYear-(60*60*24*7); } 
+					$myYear = $myYear-(60*60*24*7); }
+				$myYear = date("Y-m-d",$myYear);
 			}
-			$myYear = date("Y-m-d",$myYear); 
 			if (strtotime($myYear) >=strtotime(yii::$app->controller->getNowTime())) {
 if($eco) { echo "<br>$myYear"; }
 				array_push($myEventDates,$myYear);
@@ -723,7 +723,7 @@ if($eco) { echo "<br>$myYear"; }
 		return $myEventDates;
 	}
 
-	private function createRecCalEvent($model,$myEventDates) {
+	private function createRecCalEvent($model,$myEventDates,$is_new=false) {
 		$NewID = false;
 
 		$model_event = new AgcCal();
