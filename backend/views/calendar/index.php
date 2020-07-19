@@ -139,9 +139,12 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'format'=>'raw',
 				'value'=>function($model) { //<span class="glyphicon glyphicon-ok"> </span>
 					if ($model->event_date <= yii::$app->controller->getNowTime()) {
-						if ($model->showed_up==1) {$thum='up';} else {$thum='down';}
-						return Html::a('Yes', ['/calendar/showed','id'=>$model->calendar_id,'showed'=>1] ). " / ".
-							Html::a('No', ['/calendar/showed','id'=>$model->calendar_id,'showed'=>0] )." -> <i class='fa fa-thumbs-$thum' ></i>";
+						if ($model->showed_up==1) {
+							$link_y='Yes'; $link_n=Html::a('No', ['/calendar/showed','id'=>$model->calendar_id,'showed'=>0] ); $thum='up';
+						} else {
+							$link_y=Html::a('Yes', ['/calendar/showed','id'=>$model->calendar_id,'showed'=>1] ); $link_n='No'; $thum='down';
+						}
+						return $link_y. " / ".$link_n." - <i class='fa fa-thumbs-$thum' ></i>";
 					} else { return "Not Yet"; }
 				},
 			],
