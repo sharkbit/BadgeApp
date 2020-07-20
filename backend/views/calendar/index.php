@@ -202,6 +202,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? true : false,
 			],
 			[	'header'=>'Action',
+				'visible' => (yii::$app->controller->hasPermission('calendar/view')) ? true : ((yii::$app->controller->hasPermission('calendar/update')) ? true : ((yii::$app->controller->hasPermission('calendar/delete')) ? true : false ) ),
 				'class' => 'yii\grid\ActionColumn',
 				'template'=>' {view} {update} {delete}',
 				'headerOptions' => ['style' => 'width:5%'],

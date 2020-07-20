@@ -20,7 +20,7 @@ class Menu extends Widget{
 	public $mainMenu = [
 		[
 			'label'=>'Add Guest',
-			'url' => 'guest/create',
+			'url' => '/guest/create',
 			'allow' => 'badges/restrict',
 			'color' => 'btn-success',
 		],
@@ -64,17 +64,17 @@ class Menu extends Widget{
 	public $mainCalendar = [
 		[
 			'label'=>'Calender Beta',
-			'url' => 'calendar/index',
+			'url' => '/calendar/index',
 			'color' => 'btn-danger',
 		],
 		[
 			'label'=>'Calender Settings',
-			'url' => 'cal-setup/facility',
+			'url' => '/cal-setup/facility',
 			'color' => 'btn-danger',
 		],
 		[
 			'label'=>'Legislative Emails',
-			'url' => 'legelemail/index',
+			'url' => '/legelemail/index',
 			'color' => 'btn-success',
 		]
 	];
@@ -152,7 +152,11 @@ class Menu extends Widget{
 			$print_menu =  array_merge($this->adminMenu, $this->LastMenu);
 		} else {		
 			if( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge" )) {
-				$print_menu =  array_merge($this->mainMenu, $this->LastMenu);
+				if ((yii::$app->controller->hasPermission('calendar/showed')) && (yii::$app->params['cal_site']<>'')) {
+					$print_menu =  array_merge($this->mainMenu,[['label'=>'Calender Beta','url' => yii::$app->params['cal_site'].'/calendar/index','allow' => 'calendar/index','target'=>'cal','color' => 'btn-danger',],], $this->LastMenu);
+				} else {
+					$print_menu =  array_merge($this->mainMenu, $this->LastMenu);
+				}
 			} elseif ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "calendar" )) {
 				if (yii::$app->controller->hasPermission('cal-setup/index')) {
 				$print_menu = array_merge($this->mainMenu, $this->mainCalendar, $this->LastMenu);
@@ -171,7 +175,7 @@ class Menu extends Widget{
 			if(!isset($menu['target'])) { $menu['target'] = '_self'; }
 			if(yii::$app->controller->hasPermission(ltrim(str_replace("'","",$menu['allow']),'/'))) {
 				$html.='<div class="col-sm-6 col-md-4">';
-				$html.= Html::a('<span> '.$menu['label'].' </span>', [$menu['url']], ['target'=>$menu['target'] ,'class' => $btn_color.' btn-lg btn-block', 'style' => 'margin-bottom: 10px; margin-top: 20px; text-align: center']).'</div><div class="clearfix visible-xs"></div>'.PHP_EOL;
+				$html.= "<a style='margin-bottom: 10px; margin-top: 20px; text-align: center' class='btn-lg btn-block $btn_color' href='".$menu['url']."' target=".$menu['target']."> <span> ".$menu['label']." </span> </a></div><div class='clearfix visible-xs'></div>".PHP_EOL;
 			}
 		}
 		$html .="</div>\n";
