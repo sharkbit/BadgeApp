@@ -87,7 +87,7 @@ if (($crec==1) && ($model->isNewRecord)) {
  <input type="hidden" id="is_club" name="is_club" value='<?=json_encode($is_club )?>' />
 
 <div class="calendar-form">
-<?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin(['id' => 'calendar-form']); ?>
 <div class="row">
     <div class="col-12 col-xs-3 col-sm-2" <?php if($model->isNewRecord) {echo 'style="display:none"';} ?>>
         <?= $form->field($model, 'calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]) ?>
@@ -374,7 +374,10 @@ if (($crec==1) && ($model->isNewRecord)) {
     });
 
   $("#re_pub").click(function (e) {
+	  e.preventDefault();
 	  document.getElementById("re_pub").disabled=true;
+	  var myForm = $("#calendar-form");   
+	  $(myForm).submit();
   });
 
     $("#daily").change(function(e) {
