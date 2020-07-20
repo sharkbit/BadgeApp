@@ -63,7 +63,7 @@ class Menu extends Widget{
 	
 	public $mainCalendar = [
 		[
-			'label'=>'Calender Beta',
+			'label'=>'Calender',
 			'url' => '/calendar/index',
 			'color' => 'btn-danger',
 		],
@@ -153,7 +153,7 @@ class Menu extends Widget{
 		} else {		
 			if( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge" )) {
 				if ((yii::$app->controller->hasPermission('calendar/showed')) && (yii::$app->params['cal_site']<>'')) {
-					$print_menu =  array_merge($this->mainMenu,[['label'=>'Calender Beta','url' => yii::$app->params['cal_site'].'/calendar/index','allow' => 'calendar/index','target'=>'cal','color' => 'btn-danger',],], $this->LastMenu);
+					$print_menu =  array_merge($this->mainMenu,[['label'=>'Calender','url' => yii::$app->params['cal_site'].'/calendar/index','allow' => 'calendar/index','target'=>'cal','color' => 'btn-danger',],], $this->LastMenu);
 				} else {
 					$print_menu =  array_merge($this->mainMenu, $this->LastMenu);
 				}
