@@ -201,7 +201,7 @@ if (($crec==1) && ($model->isNewRecord)) {
         </div>
         <?= Html::Button('Check Availability', ['class' => 'btn btn-primary','id'=>'cal_check_avail', 'onclick' => 'OpenRange();' ]).PHP_EOL ?>
         <?= Html::submitButton($model->isNewRecord ? 'Create':'Update', ['class' => 'btn btn-secondary ','id'=>'cal_update_item']).PHP_EOL ?>
-        <?php if (($isMaster) && (!$model->isNewRecord)) { ?>
+        <?php if (($isMaster) && (!$model->isNewRecord) && (yii::$app->controller->hasPermission('calendar/republish'))){ ?>
         <?= Html::submitButton('RePublish Upcomming', ['class' => 'btn btn-info','id'=>'re_pub','name' => 'republish','value'=>1 ]).PHP_EOL ?>
         <?php } ?>
     </div>

@@ -67,6 +67,7 @@ class AgcCalSearch extends AgcCal {
 
 		if(isset($this->conflict) && $this->conflict==1) {
 			$query->andFilterWhere(['conflict'=>1]);
+			$query->andFilterWhere(['>=','event_date' , date("Y-m-d 00:00",strtotime(yii::$app->controller->getNowTime())) ]);
 			$this->deleted=0; 
 		} else	{
 			$query->andFilterWhere(['conflict'=>0]);
