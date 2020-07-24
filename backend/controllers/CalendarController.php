@@ -435,17 +435,11 @@ class CalendarController extends AdminController {
 				if(($model->recur_every) && ($model->recurrent_calendar_id == $model->calendar_id)) {
 					// Master Record!!
 
-					$sql = "UPDATE associat_agcnew.agc_calendar SET club_id=".$model->club_id.", event_name='".$model->event_name."', keywords='".$model->keywords."'"
-						.", recur_week_days='".$model->recur_week_days."'"
-						." WHERE recurrent_calendar_id = ".$model->calendar_id;
-					$cmd = Yii::$app->getDb()->createCommand($sql)->execute();
+					AgcCal::UpdateAll(['club_id'=>$model->club_id, 'event_name'=>$model->event_name, 'keywords'=>$model->keywords, 'recur_week_days'=>$model->recur_week_days], 'recurrent_calendar_id = '.$model->calendar_id);
 
-					$sql = "UPDATE associat_agcnew.agc_calendar SET facility_id=".$model->facility_id.", lanes_requested=".$model->lanes_requested
-						.", event_status_id=".$model->event_status_id.", range_status_id=".$model->range_status_id
-						.", start_time='".$model->start_time."', end_time='".$model->end_time."', deleted=".$model->deleted
-						.", poc_badge=".$model->poc_badge.", poc_name='".$model->poc_name."', poc_phone='".$model->poc_phone."', poc_email='".$model->poc_email."'"
-						." WHERE recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'";
-					$cmd = Yii::$app->getDb()->createCommand($sql)->execute();
+					AgcCal::UpdateAll(['facility_id'=>$model->facility_id, 'lanes_requested'=>$model->lanes_requested, 'event_status_id'=>$model->event_status_id, 'range_status_id'=>$model->range_status_id,
+						'start_time'=>$model->start_time, 'end_time'=>$model->end_time, 'deleted'=>$model->deleted, 'poc_badge'=>$model->poc_badge, 'poc_name'=>$model->poc_name, 'poc_phone'=>$model->poc_phone, 'poc_email'=>$model->poc_email],
+						"recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
 
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 					//yii::$app->controller->createCalLog(false, 'trex-B_C_CC:369', var_export($cmd,true));
