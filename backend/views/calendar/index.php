@@ -93,7 +93,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'value'=>function ($model) { 
 					if($model->recurrent_calendar_id>0) {$mas=" *";} else {$mas="";}
-					if (yii::$app->controller->hasPermission('calendar/update')) {
+					if ((yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) {
 						return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id).$mas; }
 					else { return $model->event_name.$mas; }
 				},
@@ -216,16 +216,15 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 						]);}
 					},
 					'update' => function($url,$model) {
-						if (yii::$app->controller->hasPermission('calendar/update')) {
-					//	if ($model->e_date < date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) { } else {
+						if ((yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) {
 						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/calendar/update','id'=>$model->calendar_id], [
 							'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
 							'title'=>'Update',
-						]);} //}
+						]);}
 					},
 					'delete' => function($url,$model) {
-						if((yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0)) {
+						if((yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) {
 							return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ',  ['/calendar/delete','id'=>$model->calendar_id,'type'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'm' : 's'),'redir'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'r' : 'i')], [
 							'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
@@ -245,14 +244,3 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 </div>
 </div>
 <p>* is a Recurring Event</p>
-
-<script>
-/*$(".formReset").click(function(e) {
-    e.preventDefault();
-
-	$("#calendarFilter").yiiActiveForm('resetForm');
-
-	$("#calendarFilter")[0].reset()
-	//$("#calendarFilter").submit();
-}); */
-</script>
