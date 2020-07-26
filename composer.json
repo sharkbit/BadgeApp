@@ -31,8 +31,10 @@
         "tejrajs/usps-api": "*",
         "quickbooks/v3-php-sdk": ">=4.04",
         "phpmailer/phpmailer": ">=6.0",
-        "paypal/rest-api-sdk-php": "*",
-        "quickbooks/payments-sdk": "^1.0"
+        "quickbooks/payments-sdk": "^1.0",
+		
+		"league/omnipay": "^3",
+		"markroland/converge-api-php": "^0.4"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

@@ -283,7 +283,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 
 	$("#sales-Process_CC").click(function(e) {
 		e.preventDefault();
-		document.getElementById("sales-Process_CC").disabled=true;
+		 $("#sales-Process_CC").hide();
 		if ($("#sales-badge_number").val() > 0) {
 			$("p#cc_info").html("Processing...");
 
@@ -300,17 +300,17 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 						if(responseData.message.status=="CAPTURED") {
 							$("p#cc_info").html( "Card Captured, Auth Code: "+ responseData.message.authCode);
 							$("#sales-cc_x_id").val(responseData.message.id);
-							$("#sales-Process_CC").hide();
 							$("#HideMySubmit").show();
 							$("#sales-cc_num").val(responseData.message.cardNum);
-							//document.getElementById("SalesForm").submit();
 						} else {
 							$("p#cc_info").html( "Card: "+ responseData.message);
+							$("#sales-Process_CC").show();
 						}
 					} else {
 						console.log("Data error " + JSON.stringify(responseData));
 						SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:532');
 						$("p#cc_info").html(responseData.message);
+						$("#sales-Process_CC").show();
 					}
 
 				},
@@ -318,12 +318,14 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 					$("p#cc_info").html("PHP error:<br>"+responseData.message);
                     SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:532');
                     console.log("error "+ responseData.responseText);
+					$("#sales-Process_CC").show();
 				},
 			});
 		} else {
 			$("p#cc_info").html('Badge number issue!  If non-badge member, Please Check box for guest.');
+			$("#sales-Process_CC").show();
 		}
-		document.getElementById("sales-Process_CC").disabled=false;
+		$("#sales-Process_CC").prop('disabled', false);
 	});
 
 	$("#sales-Process_paypal").click(function() {

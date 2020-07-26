@@ -416,3 +416,15 @@ ALTER TABLE `BadgeDB`.`user` CHANGE COLUMN `privilege` `privilege` VARCHAR(45) N
 
 -- RSO cal status
 ALTER TABLE `associat_agcnew`.`agc_calendar`  ADD COLUMN `showed_up` INT(1) NULL DEFAULT 0 AFTER `active`;
+
+-- Converge
+ALTER TABLE `BadgeDB`.`params` 
+ADD COLUMN `conv_p_merc_id` VARCHAR(7) NULL DEFAULT NULL AFTER `qb_env`,
+ADD COLUMN `conv_p_user_id` VARCHAR(45) NULL DEFAULT NULL AFTER `conv_p_merc_id`,
+ADD COLUMN `conv_p_pin` VARCHAR(64) NULL DEFAULT NULL AFTER `conv_p_user_id`,
+ADD COLUMN `conv_d_merc_id` VARCHAR(7) NULL DEFAULT NULL AFTER `conv_p_pin`,
+ADD COLUMN `conv_d_user_id` VARCHAR(45) NULL DEFAULT NULL AFTER `conv_d_merc_id`,
+ADD COLUMN `conv_d_pin` VARCHAR(65) NULL DEFAULT NULL AFTER `conv_d_user_id`;
+
+ALTER TABLE `BadgeDB`.`cc_receipts` 
+CHANGE COLUMN `id` `id` VARCHAR(48) NOT NULL DEFAULT '' ;

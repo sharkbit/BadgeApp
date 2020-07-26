@@ -634,6 +634,7 @@ console.log('main:631: here');
 	$("#badgecertification-Process_CC").click(function(e) {
 console.log('main:651: here');
 		e.preventDefault();
+		$("#badgecertification-Process_CC").hide();
 		document.getElementById("badgecertification-Process_CC").disabled=true;
 		$("p#cc_info").html("Processing...");
 
@@ -654,11 +655,13 @@ console.log('main:651: here');
 						$("#cert_add").show();
 					} else {
 						$("p#cc_info").html( "Card: "+ responseData.message);
+						$("#badgecertification-Process_CC").show();
 					}
 				} else {
 					console.log("Data error " + JSON.stringify(responseData));
 					SwipeError(JSON.stringify(responseData),'b-v-l-m:788');
 					$("p#cc_info").html(responseData.message);
+					$("#badgecertification-Process_CC").show();
 				}
 
 			},
@@ -666,6 +669,7 @@ console.log('main:651: here');
 				$("p#cc_info").html("PHP error:<br>"+responseData.responseText);
 				SwipeError(JSON.stringify(responseData),'b-v-l-m:795');
 				console.log("error "+ JSON.stringify(responseData));
+				$("#badgecertification-Process_CC").show();
 			},
 		});
 		document.getElementById("badgecertification-Process_CC").disabled=false;

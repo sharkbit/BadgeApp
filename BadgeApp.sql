@@ -142,7 +142,7 @@ DROP TABLE IF EXISTS `cc_receipts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cc_receipts` (
-  `id` varchar(15) NOT NULL DEFAULT '',
+  `id` varchar(48) NOT NULL DEFAULT '',
   `badge_number` int(6) NOT NULL,
   `tx_date` datetime NOT NULL,
   `tx_type` varchar(10) NOT NULL,
@@ -356,6 +356,12 @@ CREATE TABLE `params` (
   `pp_id` varchar(82) DEFAULT NULL,
   `pp_sec` varchar(82) DEFAULT NULL,
   `qb_env` varchar(4) DEFAULT 'dev',
+  `conv_p_merc_id` VARCHAR(7) NULL DEFAULT NULL,
+  `conv_p_user_id` VARCHAR(45) NULL DEFAULT NULL,
+  `conv_p_pin` VARCHAR(64) NULL DEFAULT NULL,
+  `conv_d_merc_id` VARCHAR(7) NULL DEFAULT NULL,
+  `conv_d_user_id` VARCHAR(45) NULL DEFAULT NULL,
+  `conv_d_pin` VARCHAR(65) NULL DEFAULT NULL,
   `qb_realmId` varchar(20) DEFAULT NULL,
   `qb_oauth_cust_key` varchar(50) DEFAULT NULL,
   `qb_oauth_cust_sec` varchar(40) DEFAULT NULL,

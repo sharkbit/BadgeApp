@@ -9,8 +9,8 @@ $token_found=false;
 
 <ul class="nav nav-tabs">
 
-<li class="<?php if($urlStatus['actionId']=='paypalsetup')echo'active';?>"> <a href="<?=Url::to(['/payment/paypalsetup'])?>"><span class="glyphicon glyphicon-eye-open"></span> PayPal Process Test</a></li>
-
+	<li class="<?php if($urlStatus['actionId']=='paypalsetup')echo'active';?>"> <a href="<?=Url::to(['/payment/paypalsetup'])?>"><span class="glyphicon glyphicon-ruble"></span> PayPal Process Test</a></li>
+	<li class="<?php if($urlStatus['actionId']=='converge')echo'active';?>"> <a href="<?=Url::to(['/payment/converge'])?>"><span class="glyphicon glyphicon-tags"></span> Converge Test</a></li>
     <li class="<?php if($urlStatus['actionId']=='index')echo'active';?>"> <a href="<?=Url::to(['/payment/index'])?>"><span class="glyphicon glyphicon-eye-open"></span> oAuth 2</a></li>
 
 <?php if($confParams->qb_token) { $token_found=true; ?>

@@ -465,7 +465,7 @@ app.controller("CreateBadgeController", function($scope) {
         }
 
         $("#badges-Process_CC").click(function() {
-            document.getElementById("badges-Process_CC").disabled=true;
+			$("#badges-Process_CC").hide();
             $("p#cc_info").html("Processing...");
 
             var formData = $("#badgeCreate").serializeArray();
@@ -481,16 +481,17 @@ app.controller("CreateBadgeController", function($scope) {
                         if(responseData.message.status=="CAPTURED") {
                             $("p#cc_info").html( "Card Captured, Auth Code: "+ responseData.message.authCode);
                             $("#badges-cc_x_id").val(responseData.message.id);
-                            $("#badges-Process_CC").hide();
                             $("#HideMySubmit").show();
                             $("#badges-cc_num").val(responseData.message.cardNum);
                         } else {
                             $("p#cc_info").html( "Card: "+ responseData.message);
+							$("#badges-Process_CC").show();
                         }
                     } else {
                         console.log("Data error " + JSON.stringify(responseData));
                         SwipeError(JSON.stringify(responseData),'b-v-l-m:531');
                         $("p#cc_info").html(responseData.message);
+						$("#badges-Process_CC").show();
                     }
 
                 },
@@ -498,9 +499,9 @@ app.controller("CreateBadgeController", function($scope) {
                     $("p#cc_info").html("PHP error:<br>"+responseData.responseText);
                     SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:532');
                     console.log("error "+ responseData.responseText);
+					$("#badges-Process_CC").show();
                 },
             });
-            document.getElementById("badges-Process_CC").disabled=false;
         });
 
         $("#badges-discounts").change(function() {
@@ -736,7 +737,7 @@ app.controller('UpdateBadgeController', function($scope) {
 
         $("#badgesubscriptions-Process_CC").click(function(e) {
             e.preventDefault();
-            document.getElementById("badgesubscriptions-Process_CC").disabled=true;
+			$("#badgesubscriptions-Process_CC").hide();
             $("p#cc_info").html("Processing...");
 
             var formDataB = $("#badgeUpdate,#form_badge_renew").serializeArray();
@@ -752,15 +753,16 @@ app.controller('UpdateBadgeController', function($scope) {
                         if(responseData.message.status=="CAPTURED") {
                             $("p#cc_info").html( "Card Captured, Auth Code: "+ responseData.message.authCode);
                             $("#badgesubscriptions-cc_x_id").val(responseData.message.id);
-                            $("#badgesubscriptions-Process_CC").hide();
                             $("#renew_btn").show();
                         } else {
                             $("p#cc_info").html( "Card: "+ responseData.message);
+							$("#badgesubscriptions-Process_CC").show();
                         }
                     } else {
                         console.log("Data error " + JSON.stringify(responseData));
                         SwipeError(JSON.stringify(responseData),'b-v-l-m:788');
                         $("p#cc_info").html(responseData.message);
+						$("#badgesubscriptions-Process_CC").show();
                     }
 
                 },
@@ -768,9 +770,9 @@ app.controller('UpdateBadgeController', function($scope) {
                     $("p#cc_info").html("PHP error:<br>"+responseData.responseText);
                     SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:802');
                     console.log("error "+ responseData.responseText);
+					$("#badgesubscriptions-Process_CC").show();
                 },
             });
-            document.getElementById("badgesubscriptions-Process_CC").disabled=false;
         });
 
         $("#renew_btn").click(function (e) {

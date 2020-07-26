@@ -140,11 +140,17 @@ $confParams->qb_oa2_refresh_token = $accessTokenObj->getRefreshToken();
 			$confParams = Params::findOne('1');
 
 			if($confParams->qb_env == 'prod') {
-				//$baseURL = "https://api.intuit.com/quickbooks/v4/payments/charges";          // Production
-				$payenv = 'production';
+				$payenv = true; //'production';
+				$URL="https://api.convergepay.com/VirtualMerchant/processxml.do";
+				$merchantID = $confParams->conv_p_merc_id; //Converge 6 or 7-Digit Account ID *Not the 10-Digit Elavon Merchant ID*
+				$merchantUserID = $confParams->conv_p_user_id; //Converge User ID *MUST FLAG AS HOSTED API USER IN CONVERGE UI*
+				$merchantPIN = $confParams->conv_p_pin; //Converge PIN (64 CHAR A/N)
 			} else {
-				//$baseURL = "https://sandbox.api.intuit.com/quickbooks/v4/payments/charges";
-				$payenv = 'sandbox';
+				$payenv = false; //'sandbox';
+				$URL="https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do";
+				$merchantID = $confParams->conv_d_merc_id;
+				$merchantUserID = $confParams->conv_d_user_id;
+				$merchantPIN = $confParams->conv_d_pin;
 			}
 			$err = false;
 			if($UseSub=='update') {	// Update
@@ -215,121 +221,81 @@ $confParams->qb_oa2_refresh_token = $accessTokenObj->getRefreshToken();
 			if($err==false) {
 
 				$model->cc_exp_yr = $model->cc_exp_yr + date('Y',strtotime(yii::$app->controller->getNowTime()));
+				$exp = strval($model->cc_exp_mo) . strval(substr(trim($model->cc_exp_yr),-2));
 				$model->cc_num = preg_replace('/\D/','',$model->cc_num);
 
-				$body = [
-					"amount" => $cc_amount,  				//"44.66",
-					"card" => [
-						"expYear" => $model->cc_exp_yr,		//"2020",
-						"expMonth" =>  $model->cc_exp_mo,	//"02",
-						"address" => [
-							"region" => $cc_state,			//"CA",
-							"postalCode" => $cc_zip,		//"94086",
-							"streetAddress" => $cc_address,	//"1130 Kifer Rd",
-							"country" => "US",
-							"city" => $cc_city				//"Sunnyvale"
-						],
-						"name" => $first_name." ".$last_name, 	//"emulate=0",  Test Credit Card(CC) System
-						//"name" => "emulate=10301",			// Card number is invalid
-						//"name" => "emulate=10401",			// Generic Decline
-						//"name" => "emulate=10201", 			// Payment system error
-						//"name" => "emulate=10501", 			// invalid?
+				$PaymentProcessor = new \markroland\Converge\ConvergeApi( $merchantID, $merchantUserID, $merchantPIN, $payenv);
+				$response = $PaymentProcessor->ccsale(
+					array(
+						'ssl_amount' => 9.56, //$cc_amount,				//'9.99',
+						'ssl_card_number' => $model->cc_num,	//'5000300020003003',
+						'ssl_cvv2cvc2' => $model->cc_cvc,		//'123',
+						'ssl_exp_date' => $exp,					//'1222',
+						'ssl_avs_zip' => $cc_zip,				//'21075',
+						'ssl_avs_address' => $cc_address,		//'123 main',
+						'ssl_city' => $cc_city,					//'Elkridge',
+						'ssl_state' => $cc_state,				//'MD',
+						'ssl_first_name' => $first_name,		//'John',
+						'ssl_last_name' => $last_name			//'Smith'
+					)
+				);
 
-						"cvc" => $model->cc_cvc, 				//"123",
-						"number" => $model->cc_num  			//"4111111111111111"
-					],
-					"currency" => "USD",
-					"context" => [
-						"mobile" => "false",
-						"isEcommerce" => "true"
-					]
-				];
-				$charge = ChargeOperations::buildFrom($body);
-
-				if($_SESSION['_access_token']) { $accessToken = $_SESSION['_access_token'];
-		//		if($confParams->qb_token) {
-		//			$token = unserialize($confParams->qb_token);
-		//			$myOauth = new OAuth1($confParams->qb_oauth_cust_key,$confParams->qb_oauth_cust_sec,$token['oauth_token'],$token['oauth_token_secret']);
-		//			$accessToken = $myOauth->getOAuthHeader($baseURL,  array(), "POST");
-				} else {
-					return json_encode(["status"=>"error","message"=>'Not connected to QuickBooks']);
-				}
-				$client = new PaymentClient([
-					'access_token' => $accessToken,
-					'environment' => $payenv //  or 'environment' => "production"
-				]);
-
-				$LogFolder = Yii::getAlias('@webroot/');
-				$client->addInterceptor("FileInterceptor", new RequestResponseLoggerInterceptor($LogFolder, 'America/New_York'));
-				$client->addInterceptor("LoggerInterceptor", new StackTraceLoggerInterceptor($LogFolder."qb_errorLog.txt"));
-
-				$Response = $client->charge($charge);
-				//yii::$app->controller->createLog(true, 'trex_C_PC Response_Error2',var_export($iResponse,true));
-
-				$iResponse = $Response->getBody();
-				if ($iResponse) {
-
-					if(isset($iResponse->status) && $iResponse->status=='CAPTURED') {
+				if (isset($response['ssl_result_message'])) {
+					if($response['ssl_result_message']=='APPROVAL') {
 						$myrcpt = (object)[];
-						$myrcpt->id = $iResponse->id;
-						$myrcpt->status = $iResponse->status;
-						$myrcpt->authCode = $iResponse->authCode;
-						$myrcpt->cardNum = $iResponse->card->number;
+						$myrcpt->id = $response['ssl_txn_id'];
+						$myrcpt->status = 'CAPTURED';
+						$myrcpt->authCode = $response['ssl_approval_code'];
+						$myrcpt->cardNum = $response['ssl_card_number'];
 
 						$savercpt = new CardReceipt();
-						$savercpt->id = $iResponse->id;
+						$savercpt->id = $response['ssl_txn_id'];
 						$savercpt->badge_number = $model->badge_number;
 						$savercpt->tx_date = $this->getNowTime();
 						$savercpt->tx_type = 'creditnow';
-						$savercpt->status = $iResponse->status;
-						$savercpt->amount = $iResponse->amount;
-						$savercpt->authCode = $iResponse->authCode;
-						$savercpt->name = $iResponse->card->name;
-						$savercpt->cardNum = $iResponse->card->number;
-						$savercpt->cardType = $iResponse->card->cardType;
-						$savercpt->expYear = $iResponse->card->expYear;
-						$savercpt->expMonth = $iResponse->card->expMonth;
+						$savercpt->status = 'APPROVED';
+						$savercpt->amount = $response['ssl_amount'];
+						$savercpt->authCode = $response['ssl_approval_code'];
+						$savercpt->name = $first_name.' '.$last_name;
+						$savercpt->cardNum = $response['ssl_card_number'];
+						$savercpt->cardType = $response['ssl_card_short_description'];
+						$savercpt->expYear = $response['ssl_exp_date'];
+						$savercpt->expMonth = '0';
 						if(is_string($MyCart)) {$savercpt->cart = $MyCart;} else {$savercpt->cart = json_encode($MyCart);}
 						$savercpt->cashier = $_SESSION['user'];
 						if($savercpt->save()) {
 							yii::$app->controller->createLog(true, $_SESSION['user'], 'Processed_CC for '.$savercpt->name.' $'.
 								$savercpt->amount.', AuthCode: '.$savercpt->authCode.', Card: '.$savercpt->cardNum);
 						} else {
-							yii::$app->controller->createLog(true, 'trex_C_PC:290 savercpt', var_export($savercpt->errors,true));
+							yii::$app->controller->createLog(true, 'trex_C_PC:257 savercpt', var_export($savercpt->errors,true));
 						}
-
 						return json_encode(["status"=>"success","message"=>$myrcpt]);
 
-					} elseif(isset($iResponse->status) && $iResponse->status=='DECLINED') {
-						yii::$app->controller->createLog(true, $_SESSION['user'], "CC_Declined: for ".$iResponse->card->name);
-						return json_encode(["status"=>"error","message"=>'Card Declined']);
-
-					} elseif($Response->failed()) {
-						//$code = $Response->getStatusCode();
-						//$iResponse = $Response->getBody();
-						//echo "code is $code \n";
-						//echo "body is $iResponse \n";
-						$ErrMsg = json_decode($iResponse);
-						yii::$app->controller->createLog(true, $_SESSION['user'], "CC_ERROR:318 ".json_encode($ErrMsg->errors));
-						return json_encode(["status"=>"error","message"=>$ErrMsg->errors[0]->message]);
+					} elseif($response['ssl_result_message']<>'') {
+						yii::$app->controller->createLog(false, 'trex-response', var_export($response,true));
+						yii::$app->controller->createLog(true, $_SESSION['user'], "CC_Error: for $first_name $last_name - ".$response['ssl_result_message']);
+						return json_encode(["status"=>"error","message"=>$response['ssl_result_message']]);
 
 					} else {
-						yii::$app->controller->createLog(true, 'trex_C_PC:309 Response', var_export($iResponse,true));
-						return json_encode(["status"=>"error","message"=>$iResponse->mesage]);
+						yii::$app->controller->createLog(true, 'trex_C_PC:286 Response', var_export($response,true));
+						return json_encode(["status"=>"error","message"=>$response]);
 					}
+				} elseif (isset($response['errorCode'])) {
+					yii::$app->controller->createLog(true, $_SESSION['user'], "CC_ERROR:318 ".$response['errorCode']." ".$response['errorName']);
+					return json_encode(["status"=>"error","message"=>$response['errorMessage']]);
 				} else { //real error
-					yii::$app->controller->createLog(true, 'trex_C_PC:313 Response', var_export($iResponse,true));
+					yii::$app->controller->createLog(true, 'trex_C_PC:293 Response', var_export($response,true));
 					return json_encode(["status"=>"error","message"=>"It Broke, Call Marc... (Payment Error Response:291)"]);
 				}
 			} else  {
-				yii::$app->controller->createLog(true, 'trex_C_PayCtl:334 error', 'Form Data missing');
-				yii::$app->controller->createLog(true, 'trex_C_PayCtl:333'," Amount: $cc_amount, Addr: $cc_address, City: $cc_city, State: $cc_state, Zip: $cc_zip, F_Name: $first_name, L_Name: $last_name");
+				yii::$app->controller->createLog(true, 'trex_C_PayCtl:297 error', 'Form Data missing');
+				yii::$app->controller->createLog(true, 'trex_C_PayCtl:298'," Amount: $cc_amount, Addr: $cc_address, City: $cc_city, State: $cc_state, Zip: $cc_zip, F_Name: $first_name, L_Name: $last_name");
 	
 				return json_encode(["status"=>"error","message"=>"Please Verify Form Information."]);
 			}
 
 		} else {
-			yii::$app->controller->createLog(true, 'trex_C_PayCtl:339 ','not post');
+			yii::$app->controller->createLog(true, 'trex_C_PayCtl:304 ','not post');
 			//echo Yii::$app->response->data = "Fail";
 	//		$this->redirect('/');
 		}
@@ -340,6 +306,11 @@ $confParams->qb_oa2_refresh_token = $accessTokenObj->getRefreshToken();
 		return $this->render('chargereq', [
 			'confParams' => $confParams
 		]);
+	}
+
+	public function actionConverge(){
+		$confParams = Params::findOne('1');
+		return $this->render('converge', ['confParams' => $confParams]);
 	}
 
 	public function actionDisconnect() {  //render  disconn
