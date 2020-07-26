@@ -272,7 +272,7 @@ $confParams->qb_oa2_refresh_token = $accessTokenObj->getRefreshToken();
 						return json_encode(["status"=>"success","message"=>$myrcpt]);
 
 					} elseif($response['ssl_result_message']<>'') {
-						yii::$app->controller->createLog(false, 'trex-response', var_export($response,true));
+						//yii::$app->controller->createLog(false, 'trex-response', var_export($response,true));
 						yii::$app->controller->createLog(true, $_SESSION['user'], "CC_Error: for $first_name $last_name - ".$response['ssl_result_message']);
 						return json_encode(["status"=>"error","message"=>$response['ssl_result_message']]);
 
@@ -282,7 +282,7 @@ $confParams->qb_oa2_refresh_token = $accessTokenObj->getRefreshToken();
 					}
 				} elseif (isset($response['errorCode'])) {
 					yii::$app->controller->createLog(true, $_SESSION['user'], "CC_ERROR:318 ".$response['errorCode']." ".$response['errorName']);
-					return json_encode(["status"=>"error","message"=>$response['errorMessage']]);
+					return json_encode(["status"=>"error","message"=>"Error# ".$response['errorCode'].": ".$response['errorMessage']]);
 				} else { //real error
 					yii::$app->controller->createLog(true, 'trex_C_PC:293 Response', var_export($response,true));
 					return json_encode(["status"=>"error","message"=>"It Broke, Call Marc... (Payment Error Response:291)"]);
