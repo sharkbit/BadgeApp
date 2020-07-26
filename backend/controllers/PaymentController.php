@@ -227,7 +227,7 @@ $confParams->qb_oa2_refresh_token = $accessTokenObj->getRefreshToken();
 				$PaymentProcessor = new \markroland\Converge\ConvergeApi( $merchantID, $merchantUserID, $merchantPIN, $payenv);
 				$response = $PaymentProcessor->ccsale(
 					array(
-						'ssl_amount' => 9.56, //$cc_amount,				//'9.99',
+						'ssl_amount' => $cc_amount,				//'9.99',
 						'ssl_card_number' => $model->cc_num,	//'5000300020003003',
 						'ssl_cvv2cvc2' => $model->cc_cvc,		//'123',
 						'ssl_exp_date' => $exp,					//'1222',
