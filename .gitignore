@@ -15,4 +15,3 @@ backend/config/main-local.php
 common\config\main-local.php
 common/config/main-local.php
 vendor
-composer.lock
