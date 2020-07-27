@@ -16,28 +16,24 @@ use yii\helpers\ArrayHelper;
 class AdminController extends \yii\web\Controller {
 
 	public $activeUser;
-// Removed Pages
-// 'badges/import-badges','badges/import-recive','clubs/import-form','work-credits/import'
 
 	public $rootAdminPermission = [
 		'Accounts' => ['accounts/index','accounts/create','accounts/update','accounts/view','accounts/delete','accounts/reset-password','accounts/request-password-reset'],
-		'Admin' => ['badge/badge-print','badge/index','badge/users-index','badge/edit-user','badge/view-user','badge/create-user','badge/admin-function','badge/work-credit-entry','badge/brows-work-credits','badge/work-credit-menu','badge/club-name-look-up','badge/club-name-create','badge/club-name-edit','badge/work-credit-transfer','badge/create', 'badge/update', 'site/logout','site/login','site/new-badge','privileges/create','privileges/delete','privileges/index','privileges/update'],
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log',],
+		'Admin' => ['site/admin-menu','privileges/create','privileges/delete','privileges/index','privileges/update'],
+		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete-certificate','badges/delete','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log',],
 		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/showed','calendar/update','calendar/view'],
 		'CalSetup' => ['cal-setup/index','cal-setup/clubs','cal-setup/updateclu','cal-setup/facility','cal-setup/updatefac','cal-setup/rangestatus','cal-setup/updateran','cal-setup/eventstatus','cal-setup/updateeven'],
 		'Clubs' => ['clubs/index','clubs/create','clubs/delete','clubs/update','clubs/view','clubs/delete-X','clubs/badge-rosters'],
 		'MassEmail' => ['mass-email/create','mass-email/index','mass-email/update','mass-email/send','mass-email/process'],
-		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/return','events/remove-att','events/update','events/view','badges/get-badge-name'],
-		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/index','fee-structure/create','fee-structure/update','fee-structure/delete-X','fee-structure/view','fee-structure/fees-by-type','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/delete-certificate'],
-		'Guest' => ['guest/all','guest/index','guest/view','guest/add','guest/addcredit','guest/create','guest/modify','guest/update','guest/stats','guest/out','guest/delete','guest/sticky-form'],
+		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/return','events/remove-att','events/update','events/view'],
+		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/index','fee-structure/create','fee-structure/update','fee-structure/delete-X','fee-structure/view','fee-structure/fees-by-type'],
+		'Guest' => ['guest/all','guest/modify','guest/update','guest/stats','guest/delete'],
 		'Index' => ['site/no-email','site/verify'],
 		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/import','legelemail/update','legelemail/delete'],
 		'Params' => ['params/update'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
-		'sales' => ['payment/converge','payment/refreshtoken','sales/all','sales/stock','sales/update','payment/oauth','payment/index2','payment/oauth2','payment/disconnect','payment/index','payment/reconnect', // QuickBooks Related
-			'sales/qb-items','payment/oauthopen','payment/refreshtoken','sales/inventory','payment/inventory',
-			'payment/chargereq','payment/info','payment/invoice','payment/process','payment/purchase','payment/page'], // Test Pages
+		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/stock','sales/update','sales/inventory'], // Test Pages
 		'paypal'=> ['payment/paypalsetup','payment/paypal','payment/paypalprocess'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update','work-credits/delete'],
@@ -45,78 +41,78 @@ class AdminController extends \yii\web\Controller {
 
 	public $adminPermission = [
 		'Accounts' => ['accounts/index','accounts/create','accounts/update','accounts/view','accounts/reset-password','accounts/request-password-reset'],
-		'Admin' => ['events/approve','badge/badge-print','badge/index','badge/users-index','badge/edit-user','badge/view-user','badge/create-user','badge/admin-function','badge/work-credit-entry','badge/brows-work-credits','badge/work-credit-menu','badge/club-name-look-up','badge/club-name-create','badge/club-name-edit','badge/work-credit-transfer','badge/create', 'badge/update', 'site/logout','site/login','site/new-badge'],
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Admin' => ['site/admin-menu'],
+		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update'],
-		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/index','fee-structure/create','fee-structure/update','fee-structure/delete-X','fee-structure/view','fee-structure/fees-by-type','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/delete-certificate'],
+		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/index','fee-structure/create','fee-structure/update','fee-structure/delete-X','fee-structure/view','fee-structure/fees-by-type'],
 		'Clubs' => ['clubs/index','clubs/create','clubs/update','clubs/view','clubs/badge-rosters'],
-		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/remove-att','events/update','events/view','badges/get-badge-name'],
-		'Guest' => ['guest/all','guest/index','guest/view','guest/add','guest/addcredit','guest/create','guest/modify','guest/update','guest/out','guest/delete','guest/sticky-form'],
+		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/remove-att','events/update','events/view'],
+		'Guest' => ['guest/all','guest/modify','guest/update','guest/delete'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
-		'sales' => ['payment/refreshtoken','sales/all'],
+		'sales' => ['sales/all'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update'],
 	];
 
 	public $cashierPermission = [
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
-		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/index','fee-structure/create','fee-structure/update','fee-structure/delete-X','fee-structure/view','fee-structure/fees-by-type','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/delete-certificate'],
+		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/index','fee-structure/create','fee-structure/update','fee-structure/delete-X','fee-structure/view','fee-structure/fees-by-type'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
-		'sales' => ['payment/refreshtoken','sales/all'],
-		'Guest' => ['guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/update','guest/out','guest/sticky-form'],
+		'sales' => ['sales/all'],
+		'Guest' => ['guest/update'],
 	];
 
 	public $rsoLeadPermission = [
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/showed','calendar/index'],
-		'Events' => ['events/approve','events/index','events/close','events/create','events/reg','events/return','events/remove-att','events/view','badges/get-badge-name'],
+		'Events' => ['events/approve','events/index','events/close','events/create','events/reg','events/return','events/remove-att','events/view'],
 		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/fees-by-type'],
-		'Guest' => ['guest/all','guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/modify','badges/photo-add','badges/photo-crop','guest/update','guest/out','guest/sticky-form'],
+		'Guest' => ['guest/all','guest/modify','guest/update'],
 		'sales' => ['sales/all'],
 		'violations' => ['violations/all','violations/create','violations/report','violations/update'],
 	];
 
 	public $rsoPermission = [
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/showed','calendar/index'],
-		'Events' => ['events/approve','events/index','events/close','events/create','events/reg','events/return','events/remove-att','events/view','badges/get-badge-name'],
+		'Events' => ['events/approve','events/index','events/close','events/create','events/reg','events/return','events/remove-att','events/view'],
 		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/fees-by-type'],
-		'Guest' => ['guest/all','guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/modify','guest/update','guest/out','guest/sticky-form'],
+		'Guest' => ['guest/all','guest/modify','guest/update'],
 		'sales' => ['sales/all'],
 		'violations' => ['violations/all','violations/create','violations/update'],
 	];
 
 	public $viewPermission = [
-		'Badges'=>['badges/all','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
-		'Events' => ['events/index','events/view','badges/get-badge-name'],
-		'Guest' => ['guest/all','guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/out','guest/sticky-form'],
+		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Events' => ['events/index','events/view'],
+		'Guest' => ['guest/all'],
 		'violations' => ['violations/all'],
 		'Work Credits'=>['work-credits/all'],
 	];
 
 	public $workcreditPermission = [
-		'Badges'=>['badges/all','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
-		'Events' => ['events/create','events/index','events/reg','events/view','badges/get-badge-name'],
-		'Guest' => ['guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/update','guest/out','guest/sticky-form'],
+		'Badges'=>['badges/all','badges/get-badge-name','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Events' => ['events/create','events/index','events/reg','events/view'],
+		'Guest' => ['guest/update'],
 		'Work Credits'=>['work-credits/add'],
 	];
 
 	public $cioPermission = [
-		'Badges'=>['badges/restrict','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/restrict','badges/get-badge-name','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/get-event-types','calendar/inactive','calendar/open-range','calendar/update'],
-		'Events' => ['events/index','events/add-att','events/create','events/reg','events/view','badges/get-badge-name'],
-		'Guest' => ['guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/update','guest/out','guest/sticky-form'],
+		'Events' => ['events/index','events/add-att','events/create','events/reg','events/view'],
+		'Guest' => ['guest/update'],
 	];
 
 	public $userPermission = [
 		'Badges'=>['badges/restrict','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
-		'Guest' => ['guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/update','guest/out','guest/sticky-form'],
+		'Guest' => ['guest/update'],
 	];
 
 	public $calendarPermission = [
 		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update'],
 		'Badges'=>['badges/restrict','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
-		'Guest' => ['guest/index','guest/add','guest/addcredit','guest/view','guest/create','guest/update','guest/out','guest/sticky-form'],
+		'Guest' => ['guest/update'],
 	];
 
 	public $chairmanPermission = [
@@ -124,14 +120,13 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $AllPermission = [
-		'Admin'=>['badge/log-error'],
 		'Badges'=>['badges/api-check','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/view'],
-		'Index' => ['site/index','site/error','site/logout','site/login','site/login-member','site/new-badge'],
+		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'payments'=>['payment/charge'],
 		'sales' => ['sales/index','sales/print-rcpt','sales/purchases'],
+		'Site' => ['site/index','site/error','site/logout','site/login','site/login-member'],
 		'violations' => ['violations/index','violations/view'],
 		'Work Credits'=>['work-credits/create','work-credits/index','work-credits/sticky-form','work-credits/credit-transfer','work-credits/transfer-confirm','work-credits/transfer-form','work-credits/transfer-view','work-credits/view'],
-		
 	];
 
 	// Used for Importing CVS data

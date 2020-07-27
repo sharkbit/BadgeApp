@@ -12,13 +12,15 @@ $this->params['breadcrumbs'][] = ['label'=>$this->title, 'url'=>['/sales']];
 
 $confParams  = Params::findOne('1');
 
+$is_dev=false;
 if(yii::$app->controller->hasPermission('sales/all')) {
-$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card'];
+	$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card'];
 } else {$myList=[];}
-if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->qb_token)>2 || strlen($confParams->qb_oa2_refresh_token)>2))  {
-	if($confParams->qb_env == 'prod') {
+
+if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
+	if($confParams->qb_env == 'prod') { 
 		$myList= array_merge($myList,['creditnow'=>'Credit Card Now!']);
-	} else { $myList= array_merge($myList,['creditnow'=>'TEST CC (Do not use)']); }
+	} else { $myList= array_merge($myList,['creditnow'=>'TEST CC (Do not use)']); $is_dev=true;}
 }
 if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->pp_id)>2 || strlen($confParams->pp_sec)>2))  {
 	$myList= array_merge($myList,['paypal'=>'PayPal']);
@@ -103,12 +105,25 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 					<?= $form->field($model, 'cart')->hiddenInput(['id'=>'sales-cart'])->label(false).PHP_EOL; ?>
 				</div>
 				<div class="col-sm-6">
-					<?= $form->field($model, 'total')->textInput(['id'=>'sales-total','readonly'=>true]).PHP_EOL; ?>
+					<?= $form->field($model, 'total')->textInput(['id'=>'sales-total','readonly'=>($is_dev)?false:true]).PHP_EOL; ?>
 				</div>
 			</div>
 			<div class="help-block" ></div>
 			<div class="row">
-				<div class="col-sm-6"></div>
+				<div class="col-sm-6">
+				<?php if($is_dev) {?>
+					Test Visa: 4159288888888882<br>Test ammounts:
+					<table>
+					<tr><td>$X.13 </td> <td> - Amount Error</td></tr>
+					<tr><td>$X.19 </td> <td> - Decline</td></tr>
+					<tr><td>$X.34 </td> <td> - Expired Card</td></tr>
+					<tr><td>$X.41 </td> <td> - Pick Up Card</td></tr>
+					<tr><td>$X.41 </td> <td> - Expired Card</td></tr>
+					</table>
+				<a href='https://developer.elavon.com/#/api/eb6e9106-0172-4305-bc5a-b3ebe832f823.rcosoomi/versions/5180a9f2-741b-439c-bced-5c84a822f39b.rcosoomi/test_cards' target=cc_number > Cards</a> - 
+				<a href="https://developer.elavon.com/content/home/test_cards/ELAVON%20STP%20Test%20Host%20Pre-programmed%20Responses%20-%20Rev%2004162019.pdf" target=cc_info >Other Test Codes</a>
+				<?php } ?>
+				</div>
 				<div class="col-sm-6">
 				<?= $form->field($model, 'payment_method')->dropdownList($myList,['id'=>'sales-payment_method','class'=>'form-control','prompt'=>'Payment Type'])?>
 				<div id="paypal_form_div" style="display:none">

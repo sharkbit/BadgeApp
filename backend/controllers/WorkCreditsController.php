@@ -122,81 +122,6 @@ class WorkCreditsController extends SiteController {
 		}
     }
 
-    public function actionImport() {
-        if(yii::$app->request->post()) {
-            $activeUser = $this->getActiveUser();
-            ini_set('memory_limit', '-1');
-            ini_set('max_execution_time',6000000000);
-            $workCredits = $_FILES['file']['tmp_name'];
-            $objPHPExcel = new \PHPExcel();
-            $items = Excel::import($workCredits);
-
-            $validateWorkCredits = $this->validateExcell('workcredit',$items);
-            if($validateWorkCredits=='false') {
-                $responce = [
-                    'status'    =>  'error-file',
-                    'remarks'   =>  'Not a valid file. Please click the Download Sample link below for more reference.',
-                ];
-
-                return json_encode($responce,true);
-            }
-
-            $errorArrayNotExist = [];
-            $corrupted = [];
-            $successful = 0;
-            foreach ($items as $key => $item) {
-                if(isset($item['badgenum']) && $item['badgenum']!=null) {
-                    $isExist = $this->badgeIsExist($item['badgenum']);
-                    if($isExist==true) {
-                        $workCreditsModel = new WorkCredits();
-                        $workCreditsModel->badge_number = $item['badgenum'];
-                        $workCreditsModel->work_date = date('Y-m-d',strtotime($item['workdate']));
-                        $workCreditsModel->work_hours = $item['workhours'];
-                        $workCreditsModel->project_name = $item['project'];
-                        $workCreditsModel->status = '0';
-                        $workCreditsModel->remarks = $item['remarks']!=null ? $item['remarks']: '-blank-';
-                        $workCreditsModel->authorized_by = $item['auth'];
-                        $workCreditsModel->created_at = $this->getNowTime();
-                        $workCreditsModel->updated_at = $this->getNowTime();
-                        $workCreditsModel->created_by = $_SESSION['badge_name'];
-                        if($workCreditsModel->save()) {
-                            $badge = Badges::find()->where(['badge_number'=>$workCreditsModel->badge_number])->one();
-                            $badge->work_credits = $badge->work_credits + $workCreditsModel->work_hours;
-                            if($badge->save(false)) {
-                                $workCreditsModel->status = '1';
-                                $workCreditsModel->save();
-                             }
-                        $successful++;
-
-                        }
-                    }
-                    else {
-                        $errorArrayNotExist [] = $item;
-                    }
-
-                }
-                else {
-                    $corrupted [] = $item;
-                }
-
-            }
-
-            $responce = [
-                'status' => 'success',
-                'errorArrayNotExist' => count($errorArrayNotExist),
-                'corrupted' => count($corrupted),
-                'successful' => $successful,
-            ];
-
-            return json_encode($responce,true);
-
-        }
-        else {
-            return $this->render('import-form',[
-            ]);
-        }
-    }
-
     public function actionIndex() {
 		$searchModel = new WorkCreditsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -209,7 +134,6 @@ class WorkCreditsController extends SiteController {
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 		]);
-
 	}
 
     public function actionView($id) {

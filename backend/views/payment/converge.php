@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 $this->title = 'Converge ';
 $this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['badge/admin-function']];
-$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['payment/process']];
+$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['payment/converge']];
 
 echo $this->render('_view-tab-menu', ['confParams' => $confParams]).PHP_EOL;
 

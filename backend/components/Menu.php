@@ -56,7 +56,7 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'Admin Functions',
-			'url' => '/badge/admin-function',
+			'url' => '/site/admin-menu',
 			'color' => 'btn-warning',
 		],
 	];
@@ -107,7 +107,7 @@ class Menu extends Widget{
 			'url' => '/badges/post-print-transactions',
 		],
 		[
-			'label'=>'Quickbooks Payment Setup',
+			'label'=>'Payment Setup',
 			'url' => '/payment/index',
 			'color' => 'btn-success',
 		],

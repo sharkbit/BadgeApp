@@ -156,6 +156,10 @@ class SiteController extends AdminController {
 		];
 	}
 
+	public function actionAdminMenu() {
+		return $this->render('adminMenu');
+	}
+
 	public function actionIndex() {
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
 		$badges = Badges::find()
