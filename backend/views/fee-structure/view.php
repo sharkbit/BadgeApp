@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model backend\models\FeesStructure */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Fees Structure', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

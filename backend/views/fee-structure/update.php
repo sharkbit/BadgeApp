@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model backend\models\FeesStructure */
 
 $this->title = 'Update Fees Structure: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Fees Structures', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';

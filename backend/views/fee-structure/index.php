@@ -10,7 +10,7 @@ $feesStructure = new FeesStructure();
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Fee Schedules';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/fee-structure/index']];
 ?>
 <div class="fees-structure-index">

@@ -8,7 +8,7 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Mass Emails';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => '/badge/admin-function'];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['mass-email/index']];
 
 //if(yii::$app->controller->hasPermission('mass/delete')) {

@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model backend\models\Guest */
 
 $this->title = 'Create Mass Email';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => '/badge/admin-function'];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Mass Emails', 'url' => ['mass-email/index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title];
 ?>

@@ -8,7 +8,6 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Events List';
-//$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/index']];
 ?>
 <div class="events-index">

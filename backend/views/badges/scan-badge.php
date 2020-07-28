@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 */
 /* @var $form yii\widgets\ActiveForm */
 $this->title = 'Scan Badge';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $csrfToken=Yii::$app->request->getCsrfToken();

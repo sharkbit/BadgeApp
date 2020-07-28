@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Print Transactions'; // - '.date('M d, Y',strtotime(yii::$app->controller->getNowTime()));
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/post-print-transactions']];
 ?>
 <h2><?= Html::encode($this->title) ?></h2>

@@ -10,7 +10,7 @@ use backend\models\clubs;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Badge Databases';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = $this->title;
 
 if (isset($_REQUEST['BadgesDatabaseSearch']['pagesize'])) { 

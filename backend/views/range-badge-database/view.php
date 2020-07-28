@@ -9,7 +9,7 @@ use backend\models\clubs;
 /* @var $model backend\models\BadgesDatabase */
 
 $this->title = $model->badge_number;
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Badge Databases', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

@@ -29,7 +29,7 @@ class AdminController extends \yii\web\Controller {
 		'Fees Structure'=>['fee-structure/ajaxmoney-convert','fee-structure/index','fee-structure/create','fee-structure/update','fee-structure/delete-X','fee-structure/view','fee-structure/fees-by-type'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/stats','guest/delete'],
 		'Index' => ['site/no-email','site/verify'],
-		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/import','legelemail/update','legelemail/delete'],
+		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/update','legelemail/delete'],
 		'Params' => ['params/update'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],

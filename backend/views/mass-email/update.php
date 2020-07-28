@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model backend\models\WorkCredits */
 
 $this->title = $model->mass_subject;
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => '/badge/admin-function'];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Mass Emails', 'url' => ['mass-email/index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['mass-email/update?id='.$model->id]];
 

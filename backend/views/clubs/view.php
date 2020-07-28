@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model backend\models\Clubs */
 
 $this->title = $model->club_name;
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Member Club List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

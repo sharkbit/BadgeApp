@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 /* @var $model backend\models\User */
 
 $this->title = $model->full_name;
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Authorized Users', 'url' => ['/accounts/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

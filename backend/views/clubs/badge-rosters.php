@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Create Badge Rosters for Clubs';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url'=>['badge-rosters']];
 ?>
 <div class="clubs-index" ng-controller="clubRosterpage">

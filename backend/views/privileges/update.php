@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model backend\models\Privileges */
 
 $this->title = 'Create Privilege';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Privileges', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

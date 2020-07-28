@@ -11,7 +11,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 
 $this->title = 'Create User';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['/badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Authorized Users', 'url' => ['/accounts/index']];
 $this->params['breadcrumbs'][] = ['label' => 'Create User', 'url' => ['/accounts/create']];
 
