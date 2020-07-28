@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e73baa2803b051c8cc17a47ef4fe7b54",
+    "content-hash": "83d10e767256a03fbfaae126637f813e",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -4715,42 +4715,6 @@
                 "bower-asset/jquery": ">=1.7"
             },
             "type": "bower-asset"
-        },
-        {
-            "name": "codeception/verify",
-            "version": "0.3.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Codeception/Verify.git",
-                "reference": "5d649dda453cd814dadc4bb053060cd2c6bb4b4c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/Verify/zipball/5d649dda453cd814dadc4bb053060cd2c6bb4b4c",
-                "reference": "5d649dda453cd814dadc4bb053060cd2c6bb4b4c",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/Codeception/function.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Bodnarchuk",
-                    "email": "davert.php@mailican.com"
-                }
-            ],
-            "description": "BDD assertion library for PHPUnit",
-            "time": "2017-01-09T10:58:51+00:00"
         },
         {
             "name": "fzaninotto/faker",
