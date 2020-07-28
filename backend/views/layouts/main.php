@@ -22,7 +22,7 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title>AGC <?= Html::encode($this->title) ?></title>
     <!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>  -->
-    <script src="<?=yii::$app->params['rootUrl']?>/js/jquery-3.3.1.min.js"></script>
+    <script src="<?=yii::$app->params['rootUrl']?>/js/jquery-3.5.1.min.js"></script>
     <!--<script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/barcodes/JsBarcode.code128.min.js"></script> -->
     <script src="<?=yii::$app->params['rootUrl']?>/js/JsBarcode.code128.min.js"></script>
     <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>  -->
