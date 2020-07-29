@@ -135,7 +135,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				},
 			],
 			[	'attribute'=>'showed_up',
-				'visible' => (yii::$app->controller->hasPermission('calendar/showed')) ? true : false,
+				'visible' => (yii::$app->controller->hasPermission('calendar/showed')) ? (($urlStatus['actionId']=='index') ? true : false ): false,
 				'format'=>'raw',
 				'value'=>function($model) { //<span class="glyphicon glyphicon-ok"> </span>
 					if ($model->event_date <= yii::$app->controller->getNowTime()) {
@@ -194,7 +194,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'headerOptions' => ['style' => 'width:10%'],
 				'value'=>function($model) {
 					if($model->getIsPublished($model->calendar_id)) { return ''; } 
-					else { return "<a href='/calendar/republish?id=".$model->recurrent_calendar_id."'>Publish to next Year</a>"; }
+					else { return "<a href='/calendar/republish?id=".$model->recurrent_calendar_id."&force_order=1'>Publish to next Year</a>"; }
 				},
 			],
 			[	'attribute'=>'conflict',

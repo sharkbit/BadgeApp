@@ -609,16 +609,26 @@ if (($crec==1) && ($model->isNewRecord)) {
             var reqStart = $("#agccal-start_time").val();
             var reqStop = $("#agccal-end_time").val();
 
+			var req_pat = ''; //encodeURI($("#agccal-recur_week_days").val());
+			var pat_type = document.getElementsByName("pat_type");
+			pat_type.forEach((pType) => {
+				if (pType.checked) {
+					console.log(pType.value);
+					req_pat = pType.value;
+				}
+			});
+
+			var req_stat = $("#agccal-event_status_id").val();
             var req_cal_id = $("#agccal-calendar_id").val();
             if (req_cal_id) {reqcal_id = '&id='+req_cal_id;}
             $("#searchng_cal_animation").show(500);
-            var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&tst=1";
-    
+
+	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat+"&force_order=-1&tst=1";
 	console.log(myUrl);
             jQuery.ajax({
                 method: 'POST',
                 dataType:'json',
-                url: "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id,
+                url: "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat+"&force_order=-1",
                 success: function(responseData, textStatus, jqXHR) {
             //      console.log('success:379');
                     $("#searchng_cal_animation").hide(500);
@@ -645,12 +655,13 @@ if (($crec==1) && ($model->isNewRecord)) {
 
                     if(responseData.data) { //parseInt()
 						if (available_lanes != 0) {var resp_str='<th>Lanes ('+available_lanes+')</th>';} else {var resp_str='';}
-                        $("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=40% border=1><thead><tr><th>ID</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th>'+resp_str+'</tr></thead></table></center>');
+                        $("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=40% border=1><thead><tr><th>ID</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th><th>Type</th>'+resp_str+'</tr></thead></table></center>');
                         var table = document.getElementById("cal_items");
+						console.log(responseData.data);
                         for( var j = 0; j < responseData.data.length; j++ ){
                             var row = table.insertRow();
-                            var cell1 = row.insertCell(0); var cell2 = row.insertCell(1); var cell3 = row.insertCell(2); var cell4 = row.insertCell(3); var cell5 = row.insertCell(4);var cell6 = row.insertCell(5);var cell7 = row.insertCell(6);
-							if (available_lanes != 0) {var cell8 = row.insertCell(7);}
+                            var cell1 = row.insertCell(0); var cell2 = row.insertCell(1); var cell3 = row.insertCell(2); var cell4 = row.insertCell(3); var cell5 = row.insertCell(4);var cell6 = row.insertCell(5);var cell7 = row.insertCell(6);var cell8 = row.insertCell(7);
+							if (available_lanes != 0) {var cell9 = row.insertCell(8);}
 
                             // Add some text to the new cells:
                             cell1.innerHTML = '<a href="/calendar/update?id='+responseData.data[j].cal_id+'" target="_new">'+responseData.data[j].cal_id+'</a>';
@@ -660,7 +671,8 @@ if (($crec==1) && ($model->isNewRecord)) {
                             cell5.innerHTML = responseData.data[j].stop;
 							cell6.innerHTML = responseData.data[j].eve_status_name;
 							cell7.innerHTML = responseData.data[j].rng_status_name;
-                            if (available_lanes != 0) {cell8.innerHTML = responseData.data[j].lanes;}
+							cell8.innerHTML = responseData.data[j].type_n+" " +responseData.data[j].type_i;
+                            if (available_lanes != 0) {cell9.innerHTML = responseData.data[j].lanes;}
                             //console.log(responseData.data[j].name);
                         }
                     }
