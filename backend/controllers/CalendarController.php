@@ -85,7 +85,7 @@ class CalendarController extends AdminController {
 				if (is_array($myEventDates) && sizeof($myEventDates) >0) {
 
 					// Only pass Futuer dates when creating
-					$nowTS = strtotime(yii::$app->controller->getNowTime()); $cdate=0;
+					$nowTS = strtotime($model->event_date); $cdate=0;
 					foreach($myEventDates as $DateCheck){
 						if (strtotime($DateCheck) <= $nowTS) { unset($myEventDates[$cdate]); }
 						$cdate++;
