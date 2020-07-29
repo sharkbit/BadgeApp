@@ -42,7 +42,7 @@ CREATE TABLE `badge_certification` (
   `discount` float(8,2) NOT NULL,
   `amount_due` float(8,2) NOT NULL,
   `is_migrated` enum('0','1') NOT NULL DEFAULT '0',
-  `cc_x_id` varchar(20) DEFAULT NULL,
+  `cc_x_id` varchar(48) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=853 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -69,7 +69,7 @@ CREATE TABLE `badge_subscriptions` (
   `discount` float(8,2) NOT NULL,
   `transaction_type` enum('RENEW','NEW','CERT') DEFAULT NULL,
   `is_migrated` enum('0','1') DEFAULT '0',
-  `cc_x_id` varchar(20) DEFAULT NULL,
+  `cc_x_id` varchar(48) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20817 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

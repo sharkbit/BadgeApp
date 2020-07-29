@@ -32,10 +32,9 @@ echo $this->render('_view-tab-menu', ['confParams' => $confParams]).PHP_EOL;
 // Submit a purchase
 $response = $PaymentProcessor->ccsale(
     array(
-		// 'ssl_amount' => '9.99',		// Approve
-		'ssl_amount' => '9.89',			// Declind
-		// 'ssl_amount' => '9.41',	// Stollen
-		// 'ssl_amount' => '9.53',	// expired
+		'ssl_amount' => '9.99',		// Approve
+		//'ssl_amount' => '9.89',			// Declind
+		//'ssl_amount' => '9.41',	// Pick Up Card
 		// 'ssl_card_number' => '5121212121212124',		//MC
 		// 'ssl_card_number' => '4000000000000002',		// Visa
 		'ssl_card_number' => '4159288888888882', //visa 2

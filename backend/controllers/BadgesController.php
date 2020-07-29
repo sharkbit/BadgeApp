@@ -445,7 +445,7 @@ class BadgesController extends AdminController {
 					} else {
 						yii::$app->controller->createLog(false, 'trex_C_BC savercpt', var_export($savercpt->errors,true));
 					}
-				}
+				} else { $model->payment_method = 'credit';}
 
 				//Email Verify
 				yii::$app->controller->sendVerifyEmail($model->email,'new',$model);

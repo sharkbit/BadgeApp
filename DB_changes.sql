@@ -428,3 +428,9 @@ ADD COLUMN `conv_d_pin` VARCHAR(65) NULL DEFAULT NULL AFTER `conv_d_user_id`;
 
 ALTER TABLE `BadgeDB`.`cc_receipts` 
 CHANGE COLUMN `id` `id` VARCHAR(48) NOT NULL DEFAULT '' ;
+
+--  Converge Fix
+ALTER TABLE `BadgeDB`.`badge_subscriptions` 
+CHANGE COLUMN `cc_x_id` `cc_x_id` VARCHAR(48) NULL DEFAULT NULL ;
+ALTER TABLE `BadgeDB`.`badge_certification` 
+CHANGE COLUMN `cc_x_id` `cc_x_id` VARCHAR(48) NULL DEFAULT NULL ;
