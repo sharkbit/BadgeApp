@@ -318,7 +318,7 @@ class CalendarController extends AdminController {
 				} else if ($lanes+$lanes_used > $range->available_lanes ) {
 					if ($force_order) {
 						foreach ($found as $overwrite) {
-							yii::$app->controller->createLog(true, 'trex_C_CC:321', "** $rng_pri < ".$overwrite->type_i);
+							//yii::$app->controller->createLog(true, 'trex_C_CC:321', "** $rng_pri < ".$overwrite->type_i);
 							if ((int)$rng_pri < (int)$overwrite->type_i) {
 								AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
 								yii::$app->controller->createLog(true, 'trex_C_CC:324', '** Conflict found , overwriting: '.$overwrite->cal_id);
