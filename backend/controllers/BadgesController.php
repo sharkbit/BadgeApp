@@ -397,6 +397,7 @@ class BadgesController extends AdminController {
 			exit;
 		}
 		elseif(isset($_GET['calfix'])) {    //	./badges/api-check?calfix
+			if (in_array(1,$_SESSION['privilege'])) {
 			$sql = "SELECT distinct calendar_id FROM associat_agcnew.agc_calendar where calendar_id = recurrent_calendar_id and event_date>='".date('Y-01-01',strtotime("+1 year"))."'";
 			$FixRecs = Yii::$app->getDb()->createCommand($sql)->queryAll();
 			AgcCal::UpdateAll(['conflict'=>0]);
@@ -406,11 +407,12 @@ class BadgesController extends AdminController {
 				
 				$g_id=$check_cal[0]->calendar_id;
 				yii::$app->controller->createLog(true, 'trex_C_BC CalFix', "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id);
-				echo "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id."<br>";
+				//echo "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id."<br>";
 				AgcCal::UpdateAll(['recurrent_calendar_id'=>$g_id],'recurrent_calendar_id='.$bad_recu['calendar_id']);
 				AgcCal::DeleteAll('recurrent_calendar_id='.$check_cal[0]->calendar_id." AND event_date>='".date('Y-01-01',strtotime("+1 year"))."'");
+			} 
 			}
-			echo "Fin";
+			return $this->redirect(['/calendar/recur']);
 		}
 		else {
 			var_dump($_GET);

@@ -592,7 +592,6 @@ if (($crec==1) && ($model->isNewRecord)) {
         }
         
         if ($("#agccal-deleted").val() != '1') {
-
             document.getElementById("cal_update_item").disabled = true;
     <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
             $("#error_msg").html(''); var reqLanes ='';reqLnN=0; var reqcal_id='';

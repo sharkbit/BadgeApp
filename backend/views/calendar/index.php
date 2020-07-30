@@ -120,7 +120,26 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			],
 			[	'attribute' => 'recur_week_days',
 				'visible' => ($urlStatus['actionId']=='recur') ? true : false,
-				'value'=>function($model) { return str_replace(",",", ",$model->recur_week_days); },
+				'value'=>function($model) {
+					$wtf = json_decode($model->recur_week_days);
+					if (strpos($model->recur_week_days,'daily'))   {
+						if ($wtf->daily=='wd') { return 'Daily, Every WeekDay'; }
+						else {return 'Daily, Every '.$wtf->daily.' days';}
+					}
+					else if (strpos($model->recur_week_days,'weekly'))  {
+						return 'Weekly, '.ucfirst(implode(", ",$wtf->days)).' x '.$wtf->weekly;
+					}
+					else if (strpos($model->recur_week_days,'monthly')) {
+						if ($wtf->monthly=='day') { return 'Monthly, '.ucfirst($wtf->when).' '.substr(ucfirst($wtf->day),0,3).' x '.$wtf->every.'m'; }
+						return 'Monthly ... '.$model->recur_week_days;
+					}
+					else if (strpos($model->recur_week_days,'yearly')) {
+						if ($wtf->yearly=='day') { return 'Yearly, '.ucfirst($wtf->on).' '.ucfirst($wtf->day).' of '.date("M", mktime(0, 0, 0, $wtf->of, 10)); }
+						return 'Yearly ... '.$model->recur_week_days;
+					}
+					else return '';
+
+				},
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:10%'],
 			],
@@ -137,8 +156,11 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			[	'attribute'=>'showed_up',
 				'visible' => (yii::$app->controller->hasPermission('calendar/showed')) ? (($urlStatus['actionId']=='index') ? true : false ): false,
 				'format'=>'raw',
-				'value'=>function($model) { //<span class="glyphicon glyphicon-ok"> </span>
-					if ($model->event_date <= yii::$app->controller->getNowTime()) {
+				'value'=>function($model) {
+					if ($model->event_date <= date('Y-m-d',strtotime("-8 day", strtotime(yii::$app->controller->getNowTime())))) {
+						if ($model->showed_up==1) {return 'Yes';}else {return 'No';}
+					}
+					elseif ($model->event_date <= yii::$app->controller->getNowTime()) {
 						if ($model->showed_up==1) {
 							$link_y='Yes'; $link_n=Html::a('No', ['/calendar/showed','id'=>$model->calendar_id,'showed'=>0] ); $thum='up';
 						} else {
