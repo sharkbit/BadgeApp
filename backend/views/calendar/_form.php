@@ -623,12 +623,12 @@ if (($crec==1) && ($model->isNewRecord)) {
             if (req_cal_id) {reqcal_id = '&id='+req_cal_id;}
             $("#searchng_cal_animation").show(500);
 
-	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat+"&force_order=-1&tst=1";
+	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat+"tst=1";
 	console.log(myUrl);
             jQuery.ajax({
                 method: 'POST',
                 dataType:'json',
-                url: "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat+"&force_order=-1",
+                url: "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat,
                 success: function(responseData, textStatus, jqXHR) {
             //      console.log('success:379');
                     $("#searchng_cal_animation").hide(500);
