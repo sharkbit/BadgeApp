@@ -95,7 +95,7 @@ class CalendarController extends AdminController {
 					if ($this->actionOpenRange($model->event_date,$model->start_time,$model->end_time,$model->facility_id,$model->lanes_requested,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true))
 						{ $model->conflict = 0;  $model->approved=1; } else { $model->conflict = 1; $model->approved=1; }
 					$model->save();
-					$this->createRecCalEvent($model,$myEventDates,false,true);
+					$model = $this->createRecCalEvent($model,$myEventDates,false,true);
 				} else {
 					Yii::$app->getSession()->setFlash('error', 'No events will be created,  Check your dates!');
 					return $this->redirect(['create','recur'=>1,'model'=>$model]);
@@ -301,7 +301,7 @@ class CalendarController extends AdminController {
 						$returnMsg=['status'=>'success','msg'=>'You Have Priority.','data'=>$found];
 						foreach ($found as $overwrite) {
 							AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
-							yii::$app->controller->createLog(true, 'trex_C_CC:304', '*** Conflict found $date, overwriting: '.$overwrite->cal_id);
+							yii::$app->controller->createLog(true, 'trex_C_CC:304', "*** Conflict found $date, overwriting: ".$overwrite->cal_id);
 						}
 					} else {
 						$isAval = false;
@@ -321,7 +321,7 @@ class CalendarController extends AdminController {
 							//yii::$app->controller->createLog(true, 'trex_C_CC:321', "** $rng_pri < ".$overwrite->type_i);
 							if ((int)$rng_pri < (int)$overwrite->type_i) {
 								AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
-								yii::$app->controller->createLog(true, 'trex_C_CC:324', '** Conflict found , overwriting: '.$overwrite->cal_id);
+								yii::$app->controller->createLog(true, 'trex_C_CC:324', "** Conflict found $date, overwriting: ".$overwrite->cal_id);
 							} 
 						}
 						$returnMsg=['status'=>'success','msg'=>"Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.", 'data'=>$found];
@@ -385,17 +385,10 @@ class CalendarController extends AdminController {
 		//		echo "Start: $model->recurrent_start_date, End: $model->recurrent_end_date <br />";
 					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$myYr);
 
-					$NewID = $this->createRecCalEvent($model,$myEventDates,$force_order);
-					if ($NewID) {
-						$sql = "UPDATE associat_agcnew.agc_calendar SET recurrent_calendar_id=".$NewID." WHERE recurrent_calendar_id = ".$id;
-						$command = Yii::$app->db->createCommand($sql);
-						$saveOut = $command->execute();
-						if($force_order) { return $this->redirect(['recur']); } else {
-						return $this->redirect(['update', 'id' => $NewID]); }
-					} else {
-						if($force_order) { return $this->redirect(['recur']); } else {
-						return $this->redirect(['update', 'id' => $model->recurrent_calendar_id]);}
-					}
+					$model = $this->createRecCalEvent($model,$myEventDates,$force_order);
+					if($force_order) { return $this->redirect(['recur']); } else {
+					return $this->redirect(['update', 'id' => $model->recurrent_calendar_id]);}
+					
 				} else {
 					echo " Not a Recurring Event";
 				}
@@ -769,7 +762,7 @@ if($eco) { echo "<br>$myYear"; }
 	}
 
 	private function createRecCalEvent($model,$myEventDates,$force_order=false,$is_new=false) {
-		$NewID = false;
+		$NewID = false; $first_id=false;
 //if ($force_order) {yii::$app->controller->createLog(true, 'trex_C_CC:773','forcing_Order RecCalEvent');}
 		$model_event = new AgcCal();
 		foreach($myEventDates as $eDate) {
@@ -807,6 +800,7 @@ if($eco) { echo "<br>$myYear"; }
 			$model_event->poc_badge 		= $model->poc_badge;
 			$model_event->remarks 			= $model->remarks;
 			$model_event->save();
+			if(!$first_id) {$first_id=$model->calendar_id;}
 			yii::$app->controller->createCalLog(true, $_SESSION['user'], "Created New Calendar item: ','".$model_event->calendar_id.'->'.$model_event->event_name);
 
 			if (intval(substr($eDate,0,4)) > intval(date('Y'))){
@@ -815,7 +809,18 @@ if($eco) { echo "<br>$myYear"; }
 				}
 			}
 		}
-		if ($NewID) { return $NewID; } else { return false; }
+		
+		if(!in_array($model->event_date,$myEventDates)) {
+			yii::$app->controller->createLog(true, 'trex_C_CC:814','date not in array');
+		}
+		
+		if ($NewID) {
+			AgcCal::UpdateAll(['recurrent_calendar_id'=>$NewID],"recurrent_calendar_id = ".$model->recurrent_calendar_id);
+			$model->recurrent_calendar_id=$NewID;
+			$model->save();
+		}
+		return $model;
+		
 	}
 
     protected function findModel($id) {
