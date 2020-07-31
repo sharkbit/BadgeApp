@@ -183,7 +183,7 @@ if (($crec==1) && ($model->isNewRecord)) {
 			if ($model->deleted=='1') {
 				echo $form->field($model, 'deleted')->DropDownList(['1'=>'Yes','0'=>'No']).PHP_EOL;
 			} else {
-				echo '<br />'.Html::Button('Delete Event', ['class' => 'btn btn-warning ', 'onclick' => 'delMe();' ]).PHP_EOL;
+				echo '<br />'.Html::Button(($isMaster)?'Delete all Future Events':'Delete Event', ['class' =>($isMaster)?'btn btn-danger':'btn btn-warning ', 'onclick' => 'delMe();' ]).PHP_EOL;
 			}
 		} else { 
 			if ($model->deleted=='1') { echo "<p style='color:red;'><b>Event is Deleted</b></p>"; }

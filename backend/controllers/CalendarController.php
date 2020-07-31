@@ -141,24 +141,17 @@ class CalendarController extends AdminController {
 		$model = $this->findModel($id);
 		if ($model) {
 			if ($type=='s') {
-					$sql = "UPDATE associat_agcnew.agc_calendar SET deleted=1 WHERE calendar_id = ".$model->calendar_id;
-					$cmd = Yii::$app->getDb()->createCommand($sql)->execute();
-
+					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 
 			} else {
 				if ($model->recurrent_calendar_id > 0) {
-					$sql = "UPDATE associat_agcnew.agc_calendar SET deleted=1"
-							." WHERE recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'";
-					$cmd = Yii::$app->getDb()->createCommand($sql)->execute();
-
-					$sql = "UPDATE associat_agcnew.agc_calendar SET deleted=1 WHERE calendar_id = ".$model->calendar_id;
-					$cmd = Yii::$app->getDb()->createCommand($sql)->execute();
+					AgcCal::UpdateAll(['deleted'=>1], "recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
+					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
-				} else {
-					$sql = "UPDATE associat_agcnew.agc_calendar SET deleted=1 WHERE calendar_id = ".$model->calendar_id;
-					$cmd = Yii::$app->getDb()->createCommand($sql)->execute();
 
+				} else {
+					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 				}
 			}
