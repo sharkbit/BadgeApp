@@ -450,7 +450,8 @@ if (($crec==1) && ($model->isNewRecord)) {
 			crossDomain: false,
 			data: formData,
 			dataType: 'json',
-			url: '<?=yii::$app->params['rootUrl']?>/calendar/delete?id='+document.getElementById("agccal-calendar_id").value<?php if((isset($_SERVER['HTTP_REFERER'])) && (strpos($_SERVER['HTTP_REFERER'],'recu'))) { ?>+'&type=m' <?php } ?>,
+			url: '<?=yii::$app->params['rootUrl']?>/calendar/delete?id='+document.getElementById("agccal-calendar_id").value<?php if(isset($_SERVER['HTTP_REFERER'])) { if(strpos($_SERVER['HTTP_REFERER'],'recu')) { ?>+'&type=m' <?php }
+			if(strpos($_SERVER['HTTP_REFERER'],'recur')) { ?>+'&redir=recur' <?php } elseif(strpos($_SERVER['HTTP_REFERER'],'conflict')) { ?>+'&redir=conflict' <?php }  } ?>,
 			success: function(responseData, textStatus, jqXHR) {
 				console.log("success ");
 			},
@@ -663,7 +664,7 @@ if (($crec==1) && ($model->isNewRecord)) {
 							if (available_lanes != 0) {var cell9 = row.insertCell(8);}
 
                             // Add some text to the new cells:
-                            cell1.innerHTML = '<a href="/calendar/update?id='+responseData.data[j].cal_id+'" target="_new">'+responseData.data[j].cal_id+'</a>';
+                            cell1.innerHTML = '<a href="/calendar/update?id='+responseData.data[j].cal_id+'" target="_blank">'+responseData.data[j].cal_id+'</a>';
                             cell2.innerHTML = responseData.data[j].club;
                             cell3.innerHTML = responseData.data[j].name;
                             cell4.innerHTML = responseData.data[j].start;

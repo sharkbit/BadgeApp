@@ -137,7 +137,7 @@ class CalendarController extends AdminController {
             'dataProvider' => $dataProvider ]);
 	}
 
-	public function actionDelete($id,$type='s',$redir='i') {
+	public function actionDelete($id,$type='s',$redir='index') {
 		$model = $this->findModel($id);
 		if ($model) {
 			if ($type=='s') {
@@ -163,7 +163,7 @@ class CalendarController extends AdminController {
 				}
 			}
 			Yii::$app->getSession()->setFlash('success', 'Event Deleted.');
-			if ($redir=='i'){ return $this->redirect(['/calendar/index']); } else { return $this->redirect(['/calendar/recur']); }
+			return $this->redirect(['/calendar/'.$redir]);
 		}
 	}
 

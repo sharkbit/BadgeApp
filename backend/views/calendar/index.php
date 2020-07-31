@@ -249,7 +249,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					},
 					'delete' => function($url,$model) {
 						if((yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) {
-							return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ',  ['/calendar/delete','id'=>$model->calendar_id,'type'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'm' : 's'),'redir'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'r' : 'i')], [
+							return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ',  ['/calendar/delete','id'=>$model->calendar_id,'type'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'm' : 's'),'redir'=>yii::$app->controller->getCurrentUrl()['actionId']], [
 							'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
 							'title'=>'Delete',
