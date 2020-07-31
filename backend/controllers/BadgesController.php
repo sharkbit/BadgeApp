@@ -400,17 +400,16 @@ class BadgesController extends AdminController {
 			if (in_array(1,$_SESSION['privilege'])) {
 			$sql = "SELECT distinct calendar_id FROM associat_agcnew.agc_calendar where calendar_id = recurrent_calendar_id and event_date>='".date('Y-01-01',strtotime("+1 year"))."'";
 			$FixRecs = Yii::$app->getDb()->createCommand($sql)->queryAll();
-			AgcCal::UpdateAll(['conflict'=>0]);
+			AgcCal::UpdateAll(['conflict'=>0,'approved'=>1,'active'=>1,'deleted'=>0]);
 			foreach ($FixRecs as $bad_recu) {
-				//yii::$app->controller->createLog(false, 'trex', var_export($bad_recu,true));
+				AgcCal::DeleteAll('recurrent_calendar_id='.$bad_recu['calendar_id']." AND event_date>='".date('Y-01-01',strtotime("+1 year"))."'");
 				$check_cal = AgcCal::find()->where(['recurrent_calendar_id'=>$bad_recu['calendar_id']])->andWhere(['>=','event_date', date('Y-01-01',strtotime("+1 hour")) ])->all();
 				
 				$g_id=$check_cal[0]->calendar_id;
 				yii::$app->controller->createLog(true, 'trex_C_BC CalFix', "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id);
 				//echo "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id."<br>";
 				AgcCal::UpdateAll(['recurrent_calendar_id'=>$g_id],'recurrent_calendar_id='.$bad_recu['calendar_id']);
-				AgcCal::DeleteAll('recurrent_calendar_id='.$check_cal[0]->calendar_id." AND event_date>='".date('Y-01-01',strtotime("+1 year"))."'");
-			} 
+			}
 			}
 			return $this->redirect(['/calendar/recur']);
 		}

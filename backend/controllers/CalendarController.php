@@ -32,7 +32,7 @@ class CalendarController extends AdminController {
         ];
     }
 
-	public function actionApprove($id) {
+	public function actionApprove($id,$redir='index') {
 		$model = $this->findModel($id);
 		$model->approved = 1;
 		$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'data'=>$_SESSION['user']." Approved Event"];
@@ -41,7 +41,7 @@ class CalendarController extends AdminController {
 		if($model->save(false)) {
 			Yii::$app->getSession()->setFlash('success', 'Approved event id: '.$id);
 		} else {Yii::$app->getSession()->setFlash('error', 'it didnt save :(');}
-		return $this->redirect(['index']);
+		return $this->redirect([$redir]);
 	}
 
 	public function actionCreate() {
@@ -142,17 +142,17 @@ class CalendarController extends AdminController {
 		if ($model) {
 			if ($type=='s') {
 					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
-					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
+					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Deleted Calendar item (s): ','".$model->event_name.'('.$model->calendar_id.')');
 
 			} else {
-				if ($model->recurrent_calendar_id > 0) {
+				if ((int)$model->recurrent_calendar_id > 0) {
 					AgcCal::UpdateAll(['deleted'=>1], "recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
 					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
-					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
+					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Deleted Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 
 				} else {
 					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
-					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
+					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Deleted Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 				}
 			}
 			Yii::$app->getSession()->setFlash('success', 'Event Deleted.');
@@ -290,11 +290,19 @@ class CalendarController extends AdminController {
 				 $returnMsg=['status'=>'error','msg'=>'Range is Closed due to other event','lu'=>$lanes_used, 'data'=>$found];
 			} else if ($range->available_lanes==0) {
 				if (isset($found)) {
-					if (($isAval) && ($force_order)){
-						$returnMsg=['status'=>'success','msg'=>'You Have Priority.','data'=>$found];
+					if (($isAval) && ($force_order)) {
 						foreach ($found as $overwrite) {
-							AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
-							yii::$app->controller->createLog(true, 'trex_C_CC:304', "*** Conflict found $date, overwriting: ".$overwrite->cal_id);
+							if ((int)$rng_pri < (int)$type_i) {
+								AgcCal::UpdateAll(['conflict'=>1,'approved'=>0],'calendar_id = '.$overwrite->cal_id);
+								yii::$app->controller->createLog(true, 'trex_C_CC:304', "*** Conflict found $date, overwriting: ".$overwrite->cal_id." - $rng_pri < $type_i");
+							} else { $isAval=false; }
+							if ($isAval==true) {
+								$returnMsg=['status'=>'success','msg'=>'You Have Priority.','data'=>$found];
+					//			yii::$app->controller->createLog(true, 'trex_C_CC:304', "+++ You Still Have Priority");
+							} else {
+								$returnMsg=['status'=>'error','msg'=>'You D Not have Priority.','data'=>$found];
+					//			yii::$app->controller->createLog(true, 'trex_C_CC:304', "--- You Dont Have Priority");
+							}
 						}
 					} else {
 						$isAval = false;
@@ -804,7 +812,8 @@ if($eco) { echo "<br>$myYear"; }
 		}
 
 		if(!in_array($model->event_date,$myEventDates)) {
-			yii::$app->controller->createLog(true, 'trex_C_CC:814','date not in array');
+			yii::$app->controller->createLog(true, 'trex_C_CC:814','date: '.$model->event_date.' not in array');
+			yii::$app->controller->createLog(false, 'trex', var_export($myEventDates,true));
 		}
 
 		if ($NewID) {

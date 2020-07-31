@@ -450,7 +450,7 @@ if (($crec==1) && ($model->isNewRecord)) {
 			crossDomain: false,
 			data: formData,
 			dataType: 'json',
-			url: '<?=yii::$app->params['rootUrl']?>/calendar/delete?id='+document.getElementById("agccal-calendar_id").value<?php if(isset($_SERVER['HTTP_REFERER'])) { if(strpos($_SERVER['HTTP_REFERER'],'recu')) { ?>+'&type=m' <?php }
+			url: '<?=yii::$app->params['rootUrl']?>/calendar/delete?id='+document.getElementById("agccal-calendar_id").value<?php if(isset($_SERVER['HTTP_REFERER'])) { if($isMaster) { ?>+'&type=m' <?php }
 			if(strpos($_SERVER['HTTP_REFERER'],'recur')) { ?>+'&redir=recur' <?php } elseif(strpos($_SERVER['HTTP_REFERER'],'conflict')) { ?>+'&redir=conflict' <?php }  } ?>,
 			success: function(responseData, textStatus, jqXHR) {
 				console.log("success ");

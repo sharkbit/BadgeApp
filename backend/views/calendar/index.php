@@ -43,7 +43,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 ]); ?>
 <div class="row">
 
-	<div class="col-xs-12 col-sm-3">
+	<div class="col-xs-12 col-sm-3" <?php if(($urlStatus['actionId']=='recur')||($urlStatus['actionId']=='conflict')) {echo ' style="display: none"'; } ?>>
 		<?=  $form->field($searchModel, 'SearchTime', [
 		'options'=>['class'=>'drp-container form-group']
 		])->widget(DateRangePicker::classname(), [
@@ -196,7 +196,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 						return "True";
 					} else {
 						if (yii::$app->controller->hasPermission('calendar/approve')) {
-							return  Html::a(' <span class="glyphicon glyphicon-ok"> </span> Approve Event', ['/calendar/approve','id'=>$model->calendar_id], [
+							return  Html::a(' <span class="glyphicon glyphicon-ok"> </span> Approve Event', ['/calendar/approve','id'=>$model->calendar_id,'redir'=>yii::$app->controller->getCurrentUrl()['actionId']], [
 							'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
 							'title'=>'Approve',	]);
