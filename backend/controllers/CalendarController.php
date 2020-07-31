@@ -322,7 +322,7 @@ class CalendarController extends AdminController {
 							if ((int)$rng_pri < (int)$overwrite->type_i) {
 								AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
 								yii::$app->controller->createLog(true, 'trex_C_CC:324', "** Conflict found $date, overwriting: ".$overwrite->cal_id);
-							} 
+							}
 						}
 						$returnMsg=['status'=>'success','msg'=>"Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.", 'data'=>$found];
 					} else {
@@ -388,7 +388,7 @@ class CalendarController extends AdminController {
 					$model = $this->createRecCalEvent($model,$myEventDates,$force_order);
 					if($force_order) { return $this->redirect(['recur']); } else {
 					return $this->redirect(['update', 'id' => $model->recurrent_calendar_id]);}
-					
+
 				} else {
 					echo " Not a Recurring Event";
 				}
@@ -410,7 +410,7 @@ class CalendarController extends AdminController {
     public function actionUpdate($id=1) {
 		$model = $this->findModel($id);
 		if (!$model) { return $this->redirect(['index']); }
-		
+
 		if((!yii::$app->controller->hasPermission('calendar/all')) && (!in_array($model->club_id,json_decode(Yii::$app->user->identity->clubs)))) {
 			Yii::$app->getSession()->setFlash('error', 'Not Your Event.');return $this->redirect(['/calendar/index']);
 		}
@@ -481,8 +481,8 @@ class CalendarController extends AdminController {
 			}
 			yii::$app->controller->createCalLog(false, 'trex-B_C_CC:504', 'updated');
 			return $this->redirect(['update','id' => $id]);
-			
-           
+
+
         } else {
 			if(($_SESSION['badge_number']>0) && ($model->poc_badge==0)) { $model->poc_badge=$_SESSION['badge_number']; }
 
@@ -809,18 +809,17 @@ if($eco) { echo "<br>$myYear"; }
 				}
 			}
 		}
-		
+
 		if(!in_array($model->event_date,$myEventDates)) {
 			yii::$app->controller->createLog(true, 'trex_C_CC:814','date not in array');
 		}
-		
+
 		if ($NewID) {
 			AgcCal::UpdateAll(['recurrent_calendar_id'=>$NewID],"recurrent_calendar_id = ".$model->recurrent_calendar_id);
 			$model->recurrent_calendar_id=$NewID;
 			$model->save();
 		}
 		return $model;
-		
 	}
 
     protected function findModel($id) {
@@ -828,7 +827,7 @@ if($eco) { echo "<br>$myYear"; }
             return $model;
         } else {
             Yii::$app->getSession()->setFlash('error', 'Record Moved.');
-			return false; 
+			return false;
         }
     }
 }

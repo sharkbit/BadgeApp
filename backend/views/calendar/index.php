@@ -91,7 +91,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'format' => 'raw',
 				'headerOptions' => ['style' => 'width:20%'],
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
-				'value'=>function ($model) { 
+				'value'=>function ($model) {
 					if($model->recurrent_calendar_id>0) {$mas=" *";} else {$mas="";}
 					if ((yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) {
 						return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id).$mas; }
@@ -215,8 +215,10 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:10%'],
 				'value'=>function($model) {
-					if($model->getIsPublished($model->calendar_id)) { return ''; } 
-					else { return "<a href='/calendar/republish?id=".$model->recurrent_calendar_id."&force_order=1'>Publish to next Year</a>"; }
+					if (($model->recurrent_start_date <> $model->recurrent_end_date) && (strlen($model->recur_week_days)>3))  {
+						if($model->getIsPublished($model->calendar_id)) { return ''; }
+						else { return "<a href='/calendar/republish?id=".$model->recurrent_calendar_id."&force_order=1'>Publish to next Year</a>"; }
+					} else { return "Fix Recuring dates"; }
 				},
 			],
 			[	'attribute'=>'conflict',
