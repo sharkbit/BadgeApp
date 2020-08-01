@@ -383,7 +383,6 @@ sort($dirty);
 
 	Recure(true);
 	runClub();
-	OpenRange();
 
     document.getElementById("cal_update_item").disabled=true;
 <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
@@ -578,8 +577,8 @@ sort($dirty);
 
 		var is_dirty=false; var dirty_word='';
 		var dirty = JSON.parse($('#bad_words').val());
-		var event_name = $("#agccal-event_name").val().toUpperCase().split(" ");
-		event_name.forEach(function(name) {
+		var chk_event_name = $("#agccal-event_name").val().toUpperCase().split(" ");
+		chk_event_name.forEach(function(name) {
 			if(dirty.indexOf(name) >= 0) {
 				dirty_word +=name+', ';
 				is_dirty=true;
@@ -635,7 +634,7 @@ sort($dirty);
             var reqStart = $("#agccal-start_time").val();
             var reqStop = $("#agccal-end_time").val();
 
-			var req_pat = ''; //encodeURI($("#agccal-recur_week_days").val());
+			var req_pat = '';
 			var pat_type = document.getElementsByName("pat_type");
 			pat_type.forEach((pType) => { if (pType.checked) { req_pat = pType.value; } });
 
@@ -644,12 +643,12 @@ sort($dirty);
             if (req_cal_id) {reqcal_id = '&id='+req_cal_id;}
             $("#searchng_cal_animation").show(500);
 
-	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat+"tst=1";
-	console.log(myUrl);
+	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat;
+	console.log(myUrl+"tst=1");
             jQuery.ajax({
                 method: 'POST',
                 dataType:'json',
-                url: "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat,
+                url: myUrl,
                 success: function(responseData, textStatus, jqXHR) {
             //      console.log('success:379');
                     $("#searchng_cal_animation").hide(500);
