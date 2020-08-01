@@ -215,7 +215,8 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:10%'],
 				'value'=>function($model) {
-					if (($model->recurrent_start_date <> $model->recurrent_end_date) && (strlen($model->recur_week_days)>3))  {
+					if ((strlen($model->recur_week_days)<2)) { return "Fix Recuring Pattern"; }
+					elseif ($model->recurrent_start_date <> $model->recurrent_end_date) {
 						if($model->getIsPublished($model->calendar_id)) { return ''; }
 						else { return "<a href='/calendar/republish?id=".$model->recurrent_calendar_id."&force_order=1'>Publish to next Year</a>"; }
 					} else { return "Fix Recuring dates"; }

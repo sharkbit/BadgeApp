@@ -81,8 +81,33 @@ if (($crec==1) && ($model->isNewRecord)) {
     $model->recur_every=1;
     $model->recurrent_calendar_id=$model->calendar_id;
 }
+
+if(yii::$app->controller->hasPermission('calendar/all')) {
+	$ary_club =   (new clubs)->getClubList();
+	$ary_club_ac =(new clubs)->getClubList(true);
+} else {
+	$ary_club =	  (new clubs)->getClubList(false,Yii::$app->user->identity->clubs);
+	$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
+} 
+$dirty = array();
+foreach($ary_club as $dirt) {
+	$dirt = explode(" ",strtoupper ($dirt));
+	foreach($dirt as $item) {
+		if(($item=='AND')||($item=='&')||($item=='CLUB')||($item=='GUN')||($item=='PISTOL')||($item=='RIFLE')) {continue;}
+		if(!in_array($item,$dirty)) { $dirty[]=$item; }
+	}
+}
+foreach($ary_club_ac as $dirt) {
+	$dirt = explode(" ",strtoupper ($dirt));
+	foreach($dirt as $item) {
+		if(($item=='AND')||($item=='&')||($item=='CLUB')||($item=='GUN')||($item=='PISTOL')||($item=='RIFLE')) {continue;}
+		if(!in_array($item,$dirty)) { $dirty[]=$item; }
+	}
+}
+sort($dirty);
  ?>
 
+ <input type='hidden' id='bad_words' value='<?=htmlspecialchars(json_encode($dirty),ENT_QUOTES)?>' />
  <input type="hidden" id="Req_Lanes" name="Req_Lanes" value='<?=json_encode($Req_Lanes )?>' />
  <input type="hidden" id="is_club" name="is_club" value='<?=json_encode($is_club )?>' />
 
@@ -101,26 +126,7 @@ if (($crec==1) && ($model->isNewRecord)) {
                     'todayHighlight' => true ] ] ); ?>
     </div>
     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-2">
-    <?php if(yii::$app->controller->hasPermission('calendar/all')) {
-            $ary_club = (new clubs)->getClubList();
-			$ary_club_ac =(new clubs)->getClubList();
-        } else {
-            $ary_club = (new clubs)->getClubList(false,Yii::$app->user->identity->clubs);
-			$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
-		} 
-		
-/*		$dirty = array();
-		//yii::$app->controller->createLog(false, 'trex', var_export($ary_club_ac,true));
-		foreach($ary_club_ac as $dirt) {
-			echo " $dirt - ";
-			array_push($dirty(), explode(" ",$dirt));
-			yii::$app->controller->createLog(false, 'trex', var_export($dirty,true));
-		}
-		
-		
-		echo "<input type='hidden' id='bad_words' value='".htmlspecialchars(json_encode($ary_club_ac),ENT_QUOTES)."' />";
-		*/
-		echo $form->field($model, 'club_id')->DropDownList($ary_club).PHP_EOL; ?>
+    <?= $form->field($model, 'club_id')->DropDownList($ary_club).PHP_EOL; ?>
     </div>
     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-2">
     <?php $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
@@ -190,7 +196,7 @@ if (($crec==1) && ($model->isNewRecord)) {
 	}	echo '</div>';
 	} ?>
 </div>
-
+<div class="row"><div class="col-xs-12" id="error_name"></div></div>
 <div class="row">
     <div class="col-xs-8" id="error_msg">
 
@@ -366,6 +372,7 @@ if (($crec==1) && ($model->isNewRecord)) {
 <script>
     Recure(true);
 	runClub();
+	CheckDirty();
 
     document.getElementById("cal_update_item").disabled=true;
 <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
@@ -422,7 +429,26 @@ if (($crec==1) && ($model->isNewRecord)) {
     $("#agccal-club_id").change(function(e) {
      	runClub();
     });
-	
+
+	$("#agccal-event_name").change(function(e) {
+        CheckDirty();
+    });
+
+    function CheckDirty() {
+		var is_dirty=false; var dirty_word='';
+		var dirty = JSON.parse($('#bad_words').val());
+		var event_name = $("#agccal-event_name").val().toUpperCase().split(" ");
+		event_name.forEach(function(name) {
+			if(dirty.indexOf(name) >= 0) {
+				dirty_word +=name+', ';
+				is_dirty=true;
+			}
+		});
+		if (is_dirty){
+			$("#error_name").html('<center>Try not to use Club Names or Acronyms in the Event Name. &nbsp;Found: '+dirty_word.slice(0,-2)+'</center>');
+		} else { $("#error_name").html(''); }
+	}
+
 	function runClub() {
 		var my_url = '<?=yii::$app->params['rootUrl']?>/calendar/get-event-types?event_club_id='+document.getElementById("agccal-club_id").value+'&is_sel='+document.getElementById("agccal-event_status_id").value+"&is_new_rec="+<?php if($model->isNewRecord){echo '1';} else {echo '0';} ?>;
 		//console.log(my_url);
