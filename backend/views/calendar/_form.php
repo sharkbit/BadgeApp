@@ -56,7 +56,7 @@ if ($model->recur_every && $model->recurrent_calendar_id != 0 ) {
         $sqlSearch = $model->calendar_id;
         $say="Editing Master Record Will:<ul>".
             "<li>Change All: Sponsor, Event Names, Keywords</li>".
-            "<li>Only Adjust Future: Facilitys, Lanes Requested, Event Status, Range Status, Event Times, POC info, is Deleted</li></ul><hr />";
+            "<li>Only Adjust Future: Facilities, Lanes Requested, Event Status, Range Status, Event Times, POC info, is Deleted</li></ul><hr />";
     } else {
         if(yii::$app->controller->hasPermission('calendar/recur')) {echo " Click to <a href='/calendar/update?id=".$model->recurrent_calendar_id."'>Edit the Series</a> - "; }
         $sqlSearch = $model->recurrent_calendar_id;
@@ -90,7 +90,7 @@ if(yii::$app->controller->hasPermission('calendar/all')) {
 	$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
 }
 $dirty = array();
-$whitelist =['AGC','AND','&','CLUB','GUN','PISTOL','RIFLE'];
+$whitelist =['ACTION','AGC','AND','&','CLUB','GUN','PISTOL','RIFLE','SHOOTING','STATE'];
 foreach($ary_club as $dirt) {
 	$dirt = explode(" ",strtoupper ($dirt));
 	foreach($dirt as $item) {
