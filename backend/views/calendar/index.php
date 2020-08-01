@@ -211,7 +211,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			],
 			[	'attribute' => 'Continue Event',
 				'format' => 'raw',
-				'visible' => ($urlStatus['actionId']=='recur' ? ( strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-07-01 00:00:00') ? true : false ) : false),
+				'visible' => ($urlStatus['actionId']=='recur' ? ( (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00') && strtotime(yii::$app->controller->getNowTime()) < strtotime(date('Y').'-10-15 00:00:00')) ? true : false ) : false),
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:10%'],
 				'value'=>function($model) {

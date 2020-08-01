@@ -88,19 +88,20 @@ if(yii::$app->controller->hasPermission('calendar/all')) {
 } else {
 	$ary_club =	  (new clubs)->getClubList(false,Yii::$app->user->identity->clubs);
 	$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
-} 
+}
 $dirty = array();
+$whitelist =['AGC','AND','&','CLUB','GUN','PISTOL','RIFLE'];
 foreach($ary_club as $dirt) {
 	$dirt = explode(" ",strtoupper ($dirt));
 	foreach($dirt as $item) {
-		if(($item=='AND')||($item=='&')||($item=='CLUB')||($item=='GUN')||($item=='PISTOL')||($item=='RIFLE')) {continue;}
+		if(in_array($item,$whitelist)) {continue;}
 		if(!in_array($item,$dirty)) { $dirty[]=$item; }
 	}
 }
 foreach($ary_club_ac as $dirt) {
 	$dirt = explode(" ",strtoupper ($dirt));
 	foreach($dirt as $item) {
-		if(($item=='AND')||($item=='&')||($item=='CLUB')||($item=='GUN')||($item=='PISTOL')||($item=='RIFLE')) {continue;}
+		if(in_array($item,$whitelist)) {continue;}
 		if(!in_array($item,$dirty)) { $dirty[]=$item; }
 	}
 }
@@ -152,7 +153,7 @@ sort($dirty);
     <div class="col-xs-4 col-sm-2">
     <?= $form->field($model, 'event_status_id')->DropDownList($model->isNewRecord ? [0=>'']: yii::$app->controller->actionGetEventTypes($model->club_id,true));     ?>
     </div>
-    <?php 
+    <?php
 	if (yii::$app->controller->hasPermission('calendar/close')) {
 		$ary_range = ArrayHelper::map(agcRangeStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'range_status_id', 'name');
 		echo '    <div class="col-xs-4 col-sm-2">'.$form->field($model, 'range_status_id')->DropDownList($ary_range)."\n</div>\n";
@@ -191,12 +192,11 @@ sort($dirty);
 			} else {
 				echo '<br />'.Html::Button(($isMaster)?'Delete all Future Events':'Delete Event', ['class' =>($isMaster)?'btn btn-danger':'btn btn-warning ', 'onclick' => 'delMe();' ]).PHP_EOL;
 			}
-		} else { 
+		} else {
 			if ($model->deleted=='1') { echo "<p style='color:red;'><b>Event is Deleted</b></p>"; }
 	}	echo '</div>';
 	} ?>
 </div>
-<div class="row"><div class="col-xs-12" id="error_name"></div></div>
 <div class="row">
     <div class="col-xs-8" id="error_msg">
 
@@ -337,7 +337,7 @@ sort($dirty);
         <?= $form->field($model, 'pattern_type')->textInput(['readonly'=>$recur_disab,'maxlength'=>true]).PHP_EOL ?>
     </div>
     <?= $form->field($model, 'recur_week_days')->hiddenInput()->label(false).PHP_EOL; ?>
-    
+
 	<p>* <u>Year is always current Year for Recurrent Start & End Dates</u></p>
 	<p>** <u>Dates can wrap arround: 1 Sep - 31 Mar</u></p>
 </div>
@@ -370,9 +370,20 @@ sort($dirty);
   td { padding: 10px; white-space: nowrap }
 </style>
 <script>
-    Recure(true);
+    const convertTime12to24 = (time12h) => {
+      const [time, modifier] = time12h.split(' ');
+      let [hours, minutes] = time.split(':');
+      if (hours === '12') { hours = '00'; }
+      if (modifier === 'PM') {
+        hours = parseInt(hours, 10) + 12;
+      }
+
+      return `${hours}:${minutes}`;
+    };
+
+	Recure(true);
 	runClub();
-	CheckDirty();
+	OpenRange();
 
     document.getElementById("cal_update_item").disabled=true;
 <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
@@ -383,7 +394,7 @@ sort($dirty);
   $("#re_pub").click(function (e) {
 	  e.preventDefault();
 	  document.getElementById("re_pub").disabled=true;
-	  var myForm = $("#calendar-form");   
+	  var myForm = $("#calendar-form");
 	  $(myForm).submit();
   });
 
@@ -404,7 +415,7 @@ sort($dirty);
     $("#monthly").change(function(e) {
         if(document.getElementById("monthly").value=='monthly'){
             $("#pattern_day").hide(); $("#pattern_week").hide(); $("#pattern_month").show(); $("#pattern_year").hide();
-            document.getElementById("pat_mon_a").checked=true; 
+            document.getElementById("pat_mon_a").checked=true;
         }
     });
     $("#pat_mon_x").change(function(e) { document.getElementById("pat_mon_a").checked=true; });
@@ -431,23 +442,8 @@ sort($dirty);
     });
 
 	$("#agccal-event_name").change(function(e) {
-        CheckDirty();
+        OpenRange();
     });
-
-    function CheckDirty() {
-		var is_dirty=false; var dirty_word='';
-		var dirty = JSON.parse($('#bad_words').val());
-		var event_name = $("#agccal-event_name").val().toUpperCase().split(" ");
-		event_name.forEach(function(name) {
-			if(dirty.indexOf(name) >= 0) {
-				dirty_word +=name+', ';
-				is_dirty=true;
-			}
-		});
-		if (is_dirty){
-			$("#error_name").html('<center>Try not to use Club Names or Acronyms in the Event Name. &nbsp;Found: '+dirty_word.slice(0,-2)+'</center>');
-		} else { $("#error_name").html(''); }
-	}
 
 	function runClub() {
 		var my_url = '<?=yii::$app->params['rootUrl']?>/calendar/get-event-types?event_club_id='+document.getElementById("agccal-club_id").value+'&is_sel='+document.getElementById("agccal-event_status_id").value+"&is_new_rec="+<?php if($model->isNewRecord){echo '1';} else {echo '0';} ?>;
@@ -465,7 +461,7 @@ sort($dirty);
 				console.log("error ");
 				console.log(responseData.responseText);
 			},
-		}); 
+		});
 
 	};
 
@@ -484,7 +480,7 @@ sort($dirty);
 			error: function (responseData, textStatus, errorThrown) {
 				console.log("error ");
 			},
-		}); 
+		});
 	};
 
     function Recure(load=true) {
@@ -510,7 +506,7 @@ sort($dirty);
                 $("#pattern_week").show();
                 document.getElementById("pat_week_n").value = rec_pat.weekly;
                 //for each -- select
-                for (var i = 0; i < rec_pat.days.length; i++) { 
+                for (var i = 0; i < rec_pat.days.length; i++) {
                     if(rec_pat.days[i]=='mon'){document.getElementById("pat_da_mon").checked=true;}
                     if(rec_pat.days[i]=='tue'){document.getElementById("pat_da_tue").checked=true;}
                     if(rec_pat.days[i]=='wed'){document.getElementById("pat_da_wed").checked=true;}
@@ -519,7 +515,7 @@ sort($dirty);
                     if(rec_pat.days[i]=='sat'){document.getElementById("pat_da_sat").checked=true;}
                     if(rec_pat.days[i]=='sun'){document.getElementById("pat_da_sun").checked=true;}
                 }
-                
+
             }
             else if(rec_pat.monthly){
                 document.getElementById("monthly").checked=true;
@@ -576,21 +572,25 @@ sort($dirty);
         OpenRange();
     });
 
-    const convertTime12to24 = (time12h) => {
-      const [time, modifier] = time12h.split(' ');
-      let [hours, minutes] = time.split(':');
-      if (hours === '12') { hours = '00'; }
-      if (modifier === 'PM') {
-        hours = parseInt(hours, 10) + 12;
-      }
-
-      return `${hours}:${minutes}`;
-    };
-
     function OpenRange() {
-        console.log('Run: OpenRange 484');
+        console.log('Run: OpenRange 576');
 		$("#error_msg").html('');
-        
+
+		var is_dirty=false; var dirty_word='';
+		var dirty = JSON.parse($('#bad_words').val());
+		var event_name = $("#agccal-event_name").val().toUpperCase().split(" ");
+		event_name.forEach(function(name) {
+			if(dirty.indexOf(name) >= 0) {
+				dirty_word +=name+', ';
+				is_dirty=true;
+			}
+		});
+		if (is_dirty){
+			document.getElementById("cal_update_item").disabled=true;
+			$("#error_msg").html('<center><p style="color:red;">Do not to use Club Names or Acronyms in the Event Name. &nbsp;Found: '+dirty_word.slice(0,-2)+'</p></center>');
+			return;
+		}
+
         var facil_id = $("#agccal-facility_id").val();
         var reqLane; var available_lanes=0;
         if (reqLane =  JSON.parse($("#Req_Lanes").val())[facil_id]) {
@@ -602,13 +602,13 @@ sort($dirty);
                 document.getElementById("cal_update_item").disabled=true;
                 $("#error_msg").html('<center><p style="color:red;"><b>Please Choose # of lanes requested. No more than ' + available_lanes + '</b></p></center>');
                 return;
-            }           
+            }
         } else {
             $("#Div_Lanes_Req").hide();
             $("#agccal-lanes_requested").val(0);
         }
-        
-        
+
+
         var reqStart = convertTime12to24($("#agccal-start_time").val());
         var reqStop  = convertTime12to24($("#agccal-end_time").val());
         //console.log('checking start Time:' + reqStart +' - ' + reqStop);
@@ -617,7 +617,7 @@ sort($dirty);
             $("#error_msg").html('<center><p style="color:red;"><b>Event Start Time Must be before End Time.</b></p></center>');
             return;
         }
-        
+
         if ($("#agccal-deleted").val() != '1') {
             document.getElementById("cal_update_item").disabled = true;
     <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
@@ -628,7 +628,7 @@ sort($dirty);
             if (!reqDate) {$("#error_msg").html('<center><p style="color:red;"><b>Please verify Date.</b></p></center>');return;}
             var reqLane = $("#Req_Lanes").val();
             if (reqLane.includes(reqFacl)) {
-                reqLanes = $("#agccal-lanes_requested").val(); 
+                reqLanes = $("#agccal-lanes_requested").val();
                 if (reqLanes) {reqLnN = parseInt(reqLanes); reqLanes = '&lanes='+reqLanes;}
                 else {$("#error_msg").html('<center><p style="color:red;"><b>Please Provie how many Lanes requested.</b></p></center>');return;}
             }
@@ -637,12 +637,7 @@ sort($dirty);
 
 			var req_pat = ''; //encodeURI($("#agccal-recur_week_days").val());
 			var pat_type = document.getElementsByName("pat_type");
-			pat_type.forEach((pType) => {
-				if (pType.checked) {
-					console.log(pType.value);
-					req_pat = pType.value;
-				}
-			});
+			pat_type.forEach((pType) => { if (pType.checked) { req_pat = pType.value; } });
 
 			var req_stat = $("#agccal-event_status_id").val();
             var req_cal_id = $("#agccal-calendar_id").val();
@@ -706,7 +701,7 @@ sort($dirty);
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     $("#searchng_cal_animation").hide(500);
-                    console.log('Error:655');
+                    console.log('Error:704');
 					$("#error_msg").html('<center><p style="color:red;"><b>'+responseData.responseText+'</b></p></center>');
                   //  console.log(responseData);
                     if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
@@ -715,7 +710,7 @@ sort($dirty);
                 },
             });
         } else {
-            console.log('Marked as Deleted:608');
+            console.log('Marked as Deleted:713');
             document.getElementById("cal_update_item").disabled=false;
             if ( document.getElementById("cal_update_item").classList.contains('btn-secondary') ){
                 document.getElementById("cal_update_item").classList.add('btn-success');
@@ -724,7 +719,4 @@ sort($dirty);
         }
     }
 
-    function republish() {
-        console.log('blaa blaa not yet');
-    }
 </script>

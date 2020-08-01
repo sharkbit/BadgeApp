@@ -300,8 +300,8 @@ class CalendarController extends AdminController {
 								$returnMsg=['status'=>'success','msg'=>'You Have Priority.','data'=>$found];
 					//			yii::$app->controller->createLog(true, 'trex_C_CC:304', "+++ You Still Have Priority");
 							} else {
-								$returnMsg=['status'=>'error','msg'=>'You D Not have Priority.','data'=>$found];
-					//			yii::$app->controller->createLog(true, 'trex_C_CC:304', "--- You Dont Have Priority");
+								$returnMsg=['status'=>'error','msg'=>"You Don't have Priority.",'data'=>$found];
+					//			yii::$app->controller->createLog(true, 'trex_C_CC:304', "--- You Don't Have Priority");
 							}
 						}
 					} else {
