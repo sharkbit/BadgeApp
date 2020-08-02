@@ -47,7 +47,7 @@ class CalendarController extends AdminController {
 	public function actionCreate() {
 		$model = new AgcCal();
 		if ($model->load(Yii::$app->request->post())) {
-			//yii::$app->controller->createLog(true, 'trex-B_C_CC:50 post', var_export($_POST,true));
+			//yii::$app->controller->createLog(true, 'trex_B_C_CalC:50 post', var_export($_POST,true));
 			// Save
 			$model->start_time 	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->start_time")) ;
 			$model->end_time	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->end_time")) ;
@@ -66,8 +66,6 @@ class CalendarController extends AdminController {
 
 			if($model->recur_every) {
 				if(isset($model->recurrent_start_date)) {
-					//echo "Why <br>";
-					//exit;
 					$model->recurrent_start_date = date('Y-m-d H:i:s',strtotime(date('Y')." ".$model->recurrent_start_date));
 					$model->recurrent_end_date = date('Y-m-d H:i:s',strtotime(date('Y')." ".$model->recurrent_end_date));
 				}
@@ -76,18 +74,9 @@ class CalendarController extends AdminController {
 					Yii::$app->getSession()->setFlash('error', 'No Recurring range set');
 					return $this->redirect(['create','recur'=>1,'model'=>$model]);
 				}
-				if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-07-01 00:00:00')) {$myYr= intval(date('Y'))+1;} else {$myYr= date('Y');}
-				$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$myYr);
+				$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days);
 
 				if (is_array($myEventDates) && sizeof($myEventDates) >0) {
-
-					// Only pass Future dates when creating
-					$nowTS = strtotime($model->event_date); $cdate=0;
-					foreach($myEventDates as $DateCheck){
-						if (strtotime($DateCheck) <= $nowTS) { unset($myEventDates[$cdate]); }
-						$cdate++;
-					}
-					sort($myEventDates);
 
 					$model->save();
 					$model->recurrent_calendar_id = $model->calendar_id;
@@ -238,7 +227,7 @@ class CalendarController extends AdminController {
 		//		"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
 		//		"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
 		//	->createCommand()->sql; // echo $model_sql->sql; // exit;
-		//yii::$app->controller->createLog(true, 'trex_C_CC:248', $model_sql);
+		//yii::$app->controller->createLog(true, 'trex_B_C_CalC:248', $model_sql);
 		if ((int)$e_status==18) {$rng_pri=1; }
 		else if (($pattern=='daily') || (strpos($pattern,'daily'))) {$rng_pri=5; }
 		else if (($pattern=='weekly') || (strpos($pattern,'weekly')))  {$rng_pri=4; }
@@ -250,7 +239,7 @@ class CalendarController extends AdminController {
 		if ((!$internal) && (isset($_POST['AgcCal']['recur_every'])) && ($_POST['AgcCal']['recur_every']==1)){
 			$real_pattern = $this->GetPattern($_POST);
 			if($real_pattern) {
-				$myEventDates = $this->getEvents($_POST['AgcCal']['recurrent_start_date'],$_POST['AgcCal']['recurrent_end_date'],$real_pattern,date('Y',strtotime($eDate)));
+				$myEventDates = $this->getEvents($_POST['AgcCal']['recurrent_start_date'],$_POST['AgcCal']['recurrent_end_date'],$real_pattern);
 				if(!in_array($eDate,$myEventDates)) {
 					$inPattern=array('chkpat'=>'success','inPattern'=>$eDate.' is not in the pattern scope you specified.');
 				}
@@ -295,7 +284,7 @@ class CalendarController extends AdminController {
 				$i++;
 			}
 
-	//yii::$app->controller->createLog(true, 'trex_C_CC:294', var_export($isAval,true));
+	//yii::$app->controller->createLog(true, 'trex_B_C_CalC:294', var_export($isAval,true));
 
 			if ($isAval==false){
 				 $returnMsg=['status'=>'error','msg'=>'Range is Closed due to other event','lu'=>$lanes_used, 'data'=>$found];
@@ -305,7 +294,7 @@ class CalendarController extends AdminController {
 						foreach ($found as $overwrite) {
 							if ((int)$rng_pri < (int)$type_i) {
 								AgcCal::UpdateAll(['conflict'=>1,'approved'=>0],'calendar_id = '.$overwrite->cal_id);
-								yii::$app->controller->createLog(true, 'trex_C_CC:304', "*** Conflict found $eDate, overwriting: ".$overwrite->cal_id." - $rng_pri < $type_i");
+								yii::$app->controller->createLog(true, 'trex_B_C_CalC:304', "*** Conflict found $eDate, overwriting: ".$overwrite->cal_id." - $rng_pri < $type_i");
 							} else { $isAval=false; }
 							if ($isAval==true) {
 								$returnMsg=['status'=>'success','msg'=>'You Have Priority.','data'=>$found];
@@ -328,10 +317,10 @@ class CalendarController extends AdminController {
 				} else if ($lanes+$lanes_used > $range->available_lanes ) {
 					if ($force_order) {
 						foreach ($found as $overwrite) {
-							//yii::$app->controller->createLog(true, 'trex_C_CC:321', "** $rng_pri < ".$overwrite->type_i);
+							//yii::$app->controller->createLog(true, 'trex_B_C_CalC:321', "** $rng_pri < ".$overwrite->type_i);
 							if ((int)$rng_pri < (int)$overwrite->type_i) {
 								AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
-								yii::$app->controller->createLog(true, 'trex_C_CC:324', "** Conflict found $eDate, overwriting: ".$overwrite->cal_id);
+								yii::$app->controller->createLog(true, 'trex_B_C_CalC:324', "** Conflict found $eDate, overwriting: ".$overwrite->cal_id);
 							}
 						}
 						$returnMsg=['status'=>'success','msg'=>"Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.", 'data'=>$found];
@@ -353,7 +342,7 @@ class CalendarController extends AdminController {
 		}
 
 		if ($inPattern) { $returnMsg = array_merge($returnMsg,$inPattern); }
-		//yii::$app->controller->createLog(false, 'trex_C_CC:345 isAval', var_export($returnMsg,true));
+		//yii::$app->controller->createLog(false, 'trex_B_C_CalC:345 isAval', var_export($returnMsg,true));
 		if (($tst) || (Yii::$app->request->isAjax)) {
 			return json_encode($returnMsg);
 		} elseif ($internal){
@@ -392,9 +381,7 @@ class CalendarController extends AdminController {
 					$saveOut = $command->execute();
 
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Futuer Events");
-					if (strtotime($nowTime) > strtotime(date('Y').'-07-01 00:00:00')) {$myYr= intval(date('Y'))+1;} else {$myYr= date('Y');}
-		//		echo "Start: $model->recurrent_start_date, End: $model->recurrent_end_date <br />";
-					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$myYr);
+					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days);
 
 					$model = $this->createRecCalEvent($model,$myEventDates,$force_order);
 					if($force_order) { return $this->redirect(['recur']); } else {
@@ -477,7 +464,7 @@ class CalendarController extends AdminController {
 						"recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
 
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
-					//yii::$app->controller->createCalLog(false, 'trex-B_C_CC:369', var_export($cmd,true));
+					//yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:369', var_export($cmd,true));
 					if ((int)$model->event_status_id==19) { $model->range_status_id = 1; $model->save(); }
 
 					if (isset($_POST['republish'])) {
@@ -487,10 +474,10 @@ class CalendarController extends AdminController {
 					if ((int)$model->event_status_id==19) { $model->range_status_id = 1; $model->save(); }
 				}
 			} else {
-				yii::$app->controller->createCalLog(false, 'trex-B_C_CC:501', 'save error');
+				yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:501', 'save error');
 				Yii::$app->getSession()->setFlash('error', 'Something Went Wrong');
 			}
-			yii::$app->controller->createCalLog(false, 'trex-B_C_CC:504', 'updated');
+			yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:504', 'updated');
 			return $this->redirect(['update','id' => $id]);
 
 
@@ -594,7 +581,7 @@ class CalendarController extends AdminController {
 	}
 
 	private function GetPattern($post_data) {
-		//yii::$app->controller->createLog(false, 'trex-B_C_CC:593', var_export($post_data,true));
+		//yii::$app->controller->createLog(false, 'trex_B_C_CalC:593', var_export($post_data,true));
 		$myPat=null;
 		if(isset($post_data['pat_type'])){
 			if($post_data['pat_type']=='daily'){
@@ -631,33 +618,36 @@ class CalendarController extends AdminController {
 		return $myPat;
 	}
 
-	public function getEvents($eStart,$eEnd,$ePat,$whatYear, $eco=false) {
+	public function getEvents($eStart, $eEnd, $ePat, $eco=false) {
+		$whatYear= intval(date('Y'))+1;
 
 		if (strtotime($eStart) > strtotime($eEnd)) {
-			if (date('Y') == $whatYear) {
-				if($eco) { echo "Start A";}
-				$myEventDatesA = $this->getEventDates(date('Y').'-01-01',$eEnd,$ePat,$whatYear,$eco);
-				$myEventDatesB = $this->getEventDates($eStart,date('Y').'-12-31',$ePat,$whatYear,$eco);
-				return array_merge($myEventDatesA,$myEventDatesB);
-			} else {
+			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) {
 				if($eco) { echo "Start B";}
 				$myEventDatesA = $this->getEventDates(date('Y').'-01-01',$eEnd,$ePat,date('Y'),$eco);
 				$myEventDatesB = $this->getEventDates($eStart,date('Y').'-12-31',$ePat,date('Y'),$eco);
 				$myEventDatesC = $this->getEventDates($whatYear.'-01-01',$eEnd,$ePat,$whatYear,$eco);
 				$myEventDatesD = $this->getEventDates($eStart,$whatYear.'-12-31',$ePat,$whatYear,$eco);
-				return array_merge($myEventDatesA,$myEventDatesB,$myEventDatesC,$myEventDatesD);
+				$datesFound = array_merge($myEventDatesA,$myEventDatesB,$myEventDatesC,$myEventDatesD);
+			} else {
+				if($eco) { echo "Start A";}
+				$myEventDatesA = $this->getEventDates(date('Y').'-01-01',$eEnd,$ePat,$whatYear,$eco);
+				$myEventDatesB = $this->getEventDates($eStart,date('Y').'-12-31',$ePat,$whatYear,$eco);
+				$datesFound = array_merge($myEventDatesA,$myEventDatesB);
 			}
 		} else {
-			if (date('Y') == $whatYear) {
-				if($eco) { echo "Start C";}
-				return $this->getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco);
-			} else {
+			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) {
 				if($eco) { echo "Start D";}
 				$myEventDatesA = $this->getEventDates($eStart,$eEnd,$ePat,date('Y'),$eco);
 				$myEventDatesB = $this->getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco);
-				return array_merge($myEventDatesA,$myEventDatesB);
+				$datesFound = array_merge($myEventDatesA,$myEventDatesB);
+			} else {
+				if($eco) { echo "Start C";}
+				$datesFound = $this->getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco);
 			}
 		}
+		//yii::$app->controller->createLog(false, 'trex_C_CC:657 datesFound', var_export($datesFound,true));
+		return $datesFound;
 	}
 
 	private function getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco) {
@@ -673,7 +663,7 @@ if($eco) { echo "<hr />GetEventDates: Start: $eStart, End: $eEnd, Pat: $ePat, yr
 if($eco) {
 	echo "Yr: $whatYear <br> Start: ". date('Y-m-d',$Date_Start)." = $Date_Start,<br> Stop: ".date('Y-m-d',$Date_Stop)." = $Date_Stop, <br>Direction: $dayCnt. <hr> Pattern: $ePat <br />";
 	print_r( $myPat);
-	yii::$app->controller->createLog(true, 'trex-B_C_CC:671', var_export($myPat,true));
+	yii::$app->controller->createLog(true, 'trex_B_C_CalC:671', var_export($myPat,true));
 	echo " <hr> <br>"; }
 
 		if (isset($myPat->daily)) {
@@ -753,7 +743,7 @@ if($eco) { echo "else 583<br>"; }
 		}
 
 		elseif (isset($myPat->yearly)) {
-if($eco) { echo "yearly"; }
+if($eco) { echo "yearly <br/>"; }
 			if($myPat->yearly == 'date') {
 				$myYear = $whatYear.'-'.str_pad($myPat->mon, 2, '0', STR_PAD_LEFT).'-'.str_pad($myPat->day, 2, '0', STR_PAD_LEFT);
 			} else {
@@ -762,21 +752,23 @@ if($eco) { echo "yearly"; }
 					$myYear = $myYear-(60*60*24*7); }
 				$myYear = date("Y-m-d",$myYear);
 			}
-			if (strtotime($myYear) >=strtotime($today)) {
-if($eco) { echo "<br>$myYear"; }
+if($eco) { echo "765: $myYear ".strtotime($myYear)." >= ".strtotime($today)." $today <br />";}
+			if (strtotime($myYear) >= strtotime($today)) {
+if($eco) { echo "using $myYear<br/>"; }
 				array_push($myEventDates,$myYear);
 			}
 		}
 		else { echo "broke?? WTF???"; exit; }
 
-//	yii::$app->controller->createLog(true, 'trex-B_C_CC:766', var_export($myEventDates,true));
+//	yii::$app->controller->createLog(true, 'trex_B_C_CalC:766', var_export($myEventDates,true));
 //exit;
 		return $myEventDates;
 	}
 
 	private function createRecCalEvent($model,$myEventDates,$force_order=false,$is_new=false) {
 		$NewID = false; $first_id=false;
-//if ($force_order) {yii::$app->controller->createLog(true, 'trex_C_CC:773','forcing_Order RecCalEvent');}
+//if ($force_order) {yii::$app->controller->createLog(true, 'trex_B_C_CalC:773','forcing_Order RecCalEvent');}
+yii::$app->controller->createLog(false, 'trex_B_C_CalC:779', var_export($myEventDates,true));
 		$model_event = new AgcCal();
 		foreach($myEventDates as $eDate) {
 			if (((strtotime(yii::$app->controller->getNowTime()) > strtotime($model->event_date)) && ($eDate == $model->event_date)) ||
@@ -824,8 +816,8 @@ if($eco) { echo "<br>$myYear"; }
 		}
 
 		if(!in_array($model->event_date,$myEventDates)) {
-			yii::$app->controller->createLog(true, 'trex_C_CC:814','date: '.$model->event_date.' not in array');
-			yii::$app->controller->createLog(false, 'trex', var_export($myEventDates,true));
+			yii::$app->controller->createLog(true, 'trex_B_C_CalC:814','date: '.$model->event_date.' not in array');
+			yii::$app->controller->createLog(false, 'trex_B_C_CalC:828', var_export($myEventDates,true));
 		}
 
 		if ($NewID) {

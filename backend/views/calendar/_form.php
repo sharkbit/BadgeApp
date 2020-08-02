@@ -656,18 +656,17 @@ sort($dirty);
             //      console.log('success:379');
 			//      console.log(responseData);
                     $("#searchng_cal_animation").hide(500);
-					
-					if(responseData.chkpat=='error') { 
+
+					if(responseData.chkpat=='error') {
 						 $("#inpatt_msg").html('<center><p style="color:red;"><b>'+responseData.inPattern+'</b></p></center>');
 						 document.getElementById("cal_update_item").disabled=false;
 					} else {
 						if(responseData.inPattern){
 							 $("#inpatt_msg").html('<center><p style="color:orange;"><b>'+responseData.inPattern+'</b></p></center>');
 						} else {
-							$("#inpatt_msg").html(''); 
+							$("#inpatt_msg").html('');
 						}
-						
-						
+
 						if((responseData.status=='success')&& (responseData.chkpat=='success')) {
 							//console.log('success:530');
 							$("#error_msg").html('<center><p style="color:green;"><b>'+responseData.msg+'</b></p></center>');
