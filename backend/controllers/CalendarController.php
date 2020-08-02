@@ -222,19 +222,19 @@ class CalendarController extends AdminController {
             'dataProvider' => $dataProvider ]);
     }
 
-	public function actionOpenRange($date,$start,$stop,$facility,$lanes=0,$id=0,$pattern,$e_status,$internal=false,$force_order=false,$tst=false) {
+	public function actionOpenRange($eDate,$start,$stop,$facility,$lanes=0,$id=0,$pattern,$e_status,$internal=false,$force_order=false,$tst=false) {
 		$range = agcFacility::find()->where(['facility_id'=>$facility])->one();
 		$start= date('H:i', strtotime($start)+60);
 		$stop = date('H:i',strtotime($stop)-60);
 
 		$model = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
-			->where("facility_id=$facility AND event_date='$date' AND deleted=0 AND `associat_agcnew`.`agc_calendar`.active=1 and approved=1 AND `associat_agcnew`.`agc_calendar`.`event_status_id` <> 19 AND (".
+			->where("facility_id=$facility AND event_date='$eDate' AND deleted=0 AND `associat_agcnew`.`agc_calendar`.active=1 and approved=1 AND `associat_agcnew`.`agc_calendar`.`event_status_id` <> 19 AND (".
 				"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
 				"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
 			->all();
 
 		//$model_sql = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
-		//	->where("facility_id=$facility AND event_date='$date' AND deleted=0 AND (".
+		//	->where("facility_id=$facility AND event_date='$eDate' AND deleted=0 AND (".
 		//		"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
 		//		"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
 		//	->createCommand()->sql; // echo $model_sql->sql; // exit;
@@ -245,6 +245,17 @@ class CalendarController extends AdminController {
 		else if (($pattern=='monthly') || (strpos($pattern,'monthly'))) {$rng_pri=3; }
 		else if (($pattern=='yearly') || (strpos($pattern,'yearly')))  {$rng_pri=2; }
 		else {$rng_pri=6; }
+
+		$inPattern=array('chkpat'=>'success');
+		if ((!$internal) && (isset($_POST['AgcCal']['recur_every'])) && ($_POST['AgcCal']['recur_every']==1)){
+			$real_pattern = $this->GetPattern($_POST);
+			if($real_pattern) {
+				$myEventDates = $this->getEvents($_POST['AgcCal']['recurrent_start_date'],$_POST['AgcCal']['recurrent_end_date'],$real_pattern,date('Y',strtotime($eDate)));
+				if(!in_array($eDate,$myEventDates)) {
+					$inPattern=array('chkpat'=>'success','inPattern'=>$eDate.' is not in the pattern scope you specified.');
+				}
+			} else {$inPattern=array('chkpat'=>'error','inPattern'=>'Please update your Pattern.');}
+		}
 
 		$isAval = true;
 		if($model) {
@@ -294,14 +305,12 @@ class CalendarController extends AdminController {
 						foreach ($found as $overwrite) {
 							if ((int)$rng_pri < (int)$type_i) {
 								AgcCal::UpdateAll(['conflict'=>1,'approved'=>0],'calendar_id = '.$overwrite->cal_id);
-								yii::$app->controller->createLog(true, 'trex_C_CC:304', "*** Conflict found $date, overwriting: ".$overwrite->cal_id." - $rng_pri < $type_i");
+								yii::$app->controller->createLog(true, 'trex_C_CC:304', "*** Conflict found $eDate, overwriting: ".$overwrite->cal_id." - $rng_pri < $type_i");
 							} else { $isAval=false; }
 							if ($isAval==true) {
 								$returnMsg=['status'=>'success','msg'=>'You Have Priority.','data'=>$found];
-					//			yii::$app->controller->createLog(true, 'trex_C_CC:304', "+++ You Still Have Priority");
 							} else {
 								$returnMsg=['status'=>'error','msg'=>"You Don't have Priority.",'data'=>$found];
-					//			yii::$app->controller->createLog(true, 'trex_C_CC:304', "--- You Don't Have Priority");
 							}
 						}
 					} else {
@@ -310,7 +319,7 @@ class CalendarController extends AdminController {
 					}
 				} else {
 					$isAval=true;
-					$returnMsg=['status'=>'success','msg'=>'Facility is available','ln'=>219];
+					$returnMsg=['status'=>'success','msg'=>'Facility is available','ln'=>312];
 				}
 			} else {
 				if ($lanes < 1) {
@@ -322,7 +331,7 @@ class CalendarController extends AdminController {
 							//yii::$app->controller->createLog(true, 'trex_C_CC:321', "** $rng_pri < ".$overwrite->type_i);
 							if ((int)$rng_pri < (int)$overwrite->type_i) {
 								AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
-								yii::$app->controller->createLog(true, 'trex_C_CC:324', "** Conflict found $date, overwriting: ".$overwrite->cal_id);
+								yii::$app->controller->createLog(true, 'trex_C_CC:324', "** Conflict found $eDate, overwriting: ".$overwrite->cal_id);
 							}
 						}
 						$returnMsg=['status'=>'success','msg'=>"Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.", 'data'=>$found];
@@ -340,9 +349,10 @@ class CalendarController extends AdminController {
 				}
 			}
 		} else {
-			$returnMsg=['status'=>'success','msg'=>'Facility is Available','ln'=>236];
+			$returnMsg=['status'=>'success','msg'=>'Facility is Available','ln'=>342];
 		}
 
+		if ($inPattern) { $returnMsg = array_merge($returnMsg,$inPattern); }
 		//yii::$app->controller->createLog(false, 'trex_C_CC:345 isAval', var_export($returnMsg,true));
 		if (($tst) || (Yii::$app->request->isAjax)) {
 			return json_encode($returnMsg);
@@ -652,6 +662,7 @@ class CalendarController extends AdminController {
 
 	private function getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco) {
 if($eco) { echo "<hr />GetEventDates: Start: $eStart, End: $eEnd, Pat: $ePat, yr:  $whatYear <br />"; }
+		$today = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 		$Date_Start = strtotime(strval($whatYear.'-'.date('m-d',strtotime($eStart))));
 		$Date_Stop  = strtotime(strval($whatYear).'-'.date('m-d',strtotime($eEnd)));
 		if ($Date_Start < $Date_Stop) {$dayCnt='N';} else {$dayCnt='R';}
@@ -672,7 +683,7 @@ if($eco) {
 if($eco) { echo '<br>'.strtolower(date('D', $i)) ; }
 						if (!in_array(strtolower(date('D', $i)),['sat','sun'])) {
 if($eco) { echo "** ".date('Y-m-d',$i); }
-							if ($i >=strtotime(yii::$app->controller->getNowTime())) {
+							if ($i >=strtotime($today)) {
 								array_push($myEventDates,date('Y-m-d',$i));
 							}
 						}
@@ -694,7 +705,7 @@ if($eco) { echo "Weekly<br>"; }
 			for ($i = $Date_Start; $i < $Date_Stop; $i = strtotime('+1 day', $i)) {
 				$cnt++; if (($cnt==8) && ($skip>0)) {$skip_now=true;}
 				if ((in_array(strtolower(date('D', $i)),$myPat->days)) && ($skip_now==false)) {
-					if ($i >=strtotime(yii::$app->controller->getNowTime())) {
+					if ($i >=strtotime($today)) {
 						array_push($myEventDates,date('Y-m-d',$i));
 					}
 				} elseif ($skip_now==true) {
@@ -725,11 +736,12 @@ if($eco) { echo  "s: ".date('m',$Date_Start). ' e:'. (date('m',$Date_Stop)+1).'<
 					$myMonth = strtotime($i."/".$myPat->day."/$whatYear");
 				}
 				if (($myMonth >= $Date_Start ) && ($myMonth <= $Date_Stop)  && ($skip_now==false)) {
-					if ($myMonth >=strtotime(yii::$app->controller->getNowTime())) {
+if($eco) { echo "737: ".date("D, d-M-Y", $myMonth)." >= ".$today." <br>"; }
+					if ($myMonth >= strtotime($today)) {
 if($eco) { echo date("D, d-M-Y", $myMonth).":<br>"; }
 						array_push($myEventDates,date('Y-m-d',$myMonth));
 					} else {
-if($eco) { echo "date passed,<br />";}
+if($eco) { echo "742: date passed,<br />";}
 					}
 				} elseif ($skip_now==true) {
 if($eco) { echo "Skipping : ".date("D, d-M-Y", $myMonth).":<br>"; }
@@ -750,7 +762,7 @@ if($eco) { echo "yearly"; }
 					$myYear = $myYear-(60*60*24*7); }
 				$myYear = date("Y-m-d",$myYear);
 			}
-			if (strtotime($myYear) >=strtotime(yii::$app->controller->getNowTime())) {
+			if (strtotime($myYear) >=strtotime($today)) {
 if($eco) { echo "<br>$myYear"; }
 				array_push($myEventDates,$myYear);
 			}

@@ -90,7 +90,7 @@ if(yii::$app->controller->hasPermission('calendar/all')) {
 	$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
 }
 $dirty = array();
-$whitelist =['ACTION','AGC','AND','&','CLUB','GUN','PISTOL','RIFLE','SHOOTING','STATE'];
+$whitelist =['ACTION','AGC','AND','&','CLUB','GUN','MD','PISTOL','RIFLE','SHOOTING','STATE'];
 foreach($ary_club as $dirt) {
 	$dirt = explode(" ",strtoupper ($dirt));
 	foreach($dirt as $item) {
@@ -197,6 +197,7 @@ sort($dirty);
 	}	echo '</div>';
 	} ?>
 </div>
+<div class="row"><div class="col-xs-12" id="inpatt_msg"></div></div>
 <div class="row">
     <div class="col-xs-8" id="error_msg">
 
@@ -643,59 +644,74 @@ sort($dirty);
             if (req_cal_id) {reqcal_id = '&id='+req_cal_id;}
             $("#searchng_cal_animation").show(500);
 
-	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?date="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat;
+	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?eDate="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat;
 	console.log(myUrl+"tst=1");
+			var calendarFormData = $("#calendar-form").serializeArray();
             jQuery.ajax({
                 method: 'POST',
                 dataType:'json',
+				data: calendarFormData,
                 url: myUrl,
                 success: function(responseData, textStatus, jqXHR) {
             //      console.log('success:379');
+			//      console.log(responseData);
                     $("#searchng_cal_animation").hide(500);
-                    if(responseData.status=='success') {
-                        //console.log('success:530');
-                        //console.log(responseData);
-                        $("#error_msg").html('<center><p style="color:green;"><b>'+responseData.msg+'</b></p></center>');
-                        document.getElementById("cal_update_item").disabled=false;
-    <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=false; <?php } ?>
-                        if ( document.getElementById("cal_update_item").classList.contains('btn-secondary') ){
-                            document.getElementById("cal_update_item").classList.add('btn-success');
-                            document.getElementById("cal_update_item").classList.remove('btn-secondary');
-                        }
+					
+					if(responseData.chkpat=='error') { 
+						 $("#inpatt_msg").html('<center><p style="color:red;"><b>'+responseData.inPattern+'</b></p></center>');
+						 document.getElementById("cal_update_item").disabled=false;
+					} else {
+						if(responseData.inPattern){
+							 $("#inpatt_msg").html('<center><p style="color:orange;"><b>'+responseData.inPattern+'</b></p></center>');
+						} else {
+							$("#inpatt_msg").html(''); 
+						}
+						
+						
+						if((responseData.status=='success')&& (responseData.chkpat=='success')) {
+							//console.log('success:530');
+							$("#error_msg").html('<center><p style="color:green;"><b>'+responseData.msg+'</b></p></center>');
+							document.getElementById("cal_update_item").disabled=false;
+		<?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=false; <?php } ?>
+							if ( document.getElementById("cal_update_item").classList.contains('btn-secondary') ){
+								document.getElementById("cal_update_item").classList.add('btn-success');
+								document.getElementById("cal_update_item").classList.remove('btn-secondary');
+							}
 
-                    } else {
-                        //console.log('Error:621');
-                       // console.log(responseData);
-                        $("#error_msg").html('<center><p style="color:red;"><b>'+responseData.msg+'</b></p></center>');
+						} else {
+							//console.log('Error:621');
+						   // console.log(responseData);
+							$("#error_msg").html('<center><p style="color:red;"><b>'+responseData.msg+'</b></p></center>');
 
-                        if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
-                            document.getElementById("cal_update_item").classList.add('btn-secondary');
-                            document.getElementById("cal_update_item").classList.remove('btn-success');}
-                    }
+							if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
+								document.getElementById("cal_update_item").classList.add('btn-secondary');
+								document.getElementById("cal_update_item").classList.remove('btn-success');}
+						}
 
-                    if(responseData.data) { //parseInt()
-						if (available_lanes != 0) {var resp_str='<th>Lanes ('+available_lanes+')</th>';} else {var resp_str='';}
-                        $("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=40% border=1><thead><tr><th>ID</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th><th>Type</th>'+resp_str+'</tr></thead></table></center>');
-                        var table = document.getElementById("cal_items");
-						console.log(responseData.data);
-                        for( var j = 0; j < responseData.data.length; j++ ){
-                            var row = table.insertRow();
-                            var cell1 = row.insertCell(0); var cell2 = row.insertCell(1); var cell3 = row.insertCell(2); var cell4 = row.insertCell(3); var cell5 = row.insertCell(4);var cell6 = row.insertCell(5);var cell7 = row.insertCell(6);var cell8 = row.insertCell(7);
-							if (available_lanes != 0) {var cell9 = row.insertCell(8);}
+						if(responseData.data) { //parseInt()
+							if (available_lanes != 0) {var resp_str='<th>Lanes ('+available_lanes+')</th>';} else {var resp_str='';}
+							$("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=40% border=1><thead><tr><th>ID</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th><th>Type</th>'+resp_str+'</tr></thead></table></center>');
+							var table = document.getElementById("cal_items");
+							console.log(responseData.data);
+							for( var j = 0; j < responseData.data.length; j++ ){
+								var row = table.insertRow();
+								var cell1 = row.insertCell(0); var cell2 = row.insertCell(1); var cell3 = row.insertCell(2); var cell4 = row.insertCell(3); var cell5 = row.insertCell(4);var cell6 = row.insertCell(5);var cell7 = row.insertCell(6);var cell8 = row.insertCell(7);
+								if (available_lanes != 0) {var cell9 = row.insertCell(8);}
 
-                            // Add some text to the new cells:
-                            cell1.innerHTML = '<a href="/calendar/update?id='+responseData.data[j].cal_id+'" target="_blank">'+responseData.data[j].cal_id+'</a>';
-                            cell2.innerHTML = responseData.data[j].club;
-                            cell3.innerHTML = responseData.data[j].name;
-                            cell4.innerHTML = responseData.data[j].start;
-                            cell5.innerHTML = responseData.data[j].stop;
-							cell6.innerHTML = responseData.data[j].eve_status_name;
-							cell7.innerHTML = responseData.data[j].rng_status_name;
-							cell8.innerHTML = responseData.data[j].type_n+" " +responseData.data[j].type_i;
-                            if (available_lanes != 0) {cell9.innerHTML = responseData.data[j].lanes;}
-                            //console.log(responseData.data[j].name);
-                        }
-                    }
+								// Add some text to the new cells:
+								cell1.innerHTML = '<a href="/calendar/update?id='+responseData.data[j].cal_id+'" target="_blank">'+responseData.data[j].cal_id+'</a>';
+								cell2.innerHTML = responseData.data[j].club;
+								cell3.innerHTML = responseData.data[j].name;
+								cell4.innerHTML = responseData.data[j].start;
+								cell5.innerHTML = responseData.data[j].stop;
+								cell6.innerHTML = responseData.data[j].eve_status_name;
+								cell7.innerHTML = responseData.data[j].rng_status_name;
+								cell8.innerHTML = responseData.data[j].type_n+" " +responseData.data[j].type_i;
+								if (available_lanes != 0) {cell9.innerHTML = responseData.data[j].lanes;}
+								//console.log(responseData.data[j].name);
+							}
+						}
+					}
 
                 },
                 error: function (responseData, textStatus, errorThrown) {
