@@ -32,8 +32,6 @@ class ParamsController extends AdminController {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-			yii::$app->controller->createLog(false, 'trex', var_export($model->whitelist,true));
-			//sort($model->whitelist);
 			$model->whitelist = json_encode($model->whitelist);
         	$model->save();
             return $this->redirect(['update']);
