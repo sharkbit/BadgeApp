@@ -429,8 +429,12 @@ ADD COLUMN `conv_d_pin` VARCHAR(65) NULL DEFAULT NULL AFTER `conv_d_user_id`;
 ALTER TABLE `BadgeDB`.`cc_receipts` 
 CHANGE COLUMN `id` `id` VARCHAR(48) NOT NULL DEFAULT '' ;
 
---  Converge Fix
+--  Converge Fix 2.1.2
 ALTER TABLE `BadgeDB`.`badge_subscriptions` 
 CHANGE COLUMN `cc_x_id` `cc_x_id` VARCHAR(48) NULL DEFAULT NULL ;
 ALTER TABLE `BadgeDB`.`badge_certification` 
-CHANGE COLUMN `cc_x_id` `cc_x_id` VARCHAR(48) NULL DEFAULT NULL ;
+
+-- Multiple Facilities v2.1.3
+ALTER TABLE `BadgeDB`.`params` 
+ADD COLUMN `whitelist` TEXT NULL DEFAULT NULL AFTER `log_rotate`;
+UPDATE `BadgeDB`.`params` SET `whitelist` = '[\"&\",\"ACTION\",\"AGC\",\"AND\",\"ARCHERY\",\"CLUB\",\"GUN\",\"MD\",\"PISTOL\",\"RIFLE\"]' WHERE (`id` = '1');

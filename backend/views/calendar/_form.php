@@ -4,6 +4,7 @@ use backend\models\clubs;
 use backend\models\agcFacility;
 use backend\models\agcEventStatus;
 use backend\models\agcRangeStatus;
+use backend\models\Params;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -82,6 +83,7 @@ if (($crec==1) && ($model->isNewRecord)) {
     $model->recurrent_calendar_id=$model->calendar_id;
 }
 
+$confParams  = Params::findOne('1');
 if(yii::$app->controller->hasPermission('calendar/all')) {
 	$ary_club =   (new clubs)->getClubList();
 	$ary_club_ac =(new clubs)->getClubList(true);
@@ -90,18 +92,17 @@ if(yii::$app->controller->hasPermission('calendar/all')) {
 	$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
 }
 $dirty = array();
-$whitelist =['ACTION','AGC','AND','&','CLUB','GUN','MD','PISTOL','RIFLE','SHOOTING','STATE'];
 foreach($ary_club as $dirt) {
 	$dirt = explode(" ",strtoupper ($dirt));
 	foreach($dirt as $item) {
-		if(in_array($item,$whitelist)) {continue;}
+		if(in_array($item,json_decode($confParams->whitelist))) {continue;}
 		if(!in_array($item,$dirty)) { $dirty[]=$item; }
 	}
 }
 foreach($ary_club_ac as $dirt) {
 	$dirt = explode(" ",strtoupper ($dirt));
 	foreach($dirt as $item) {
-		if(in_array($item,$whitelist)) {continue;}
+		if(in_array($item,json_decode($confParams->whitelist))) {continue;}
 		if(!in_array($item,$dirty)) { $dirty[]=$item; }
 	}
 }

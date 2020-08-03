@@ -16,6 +16,7 @@ class Params extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
+	 public $AddWhitelist;
 
     public static function tableName() {
         return 'params';
@@ -33,6 +34,7 @@ class Params extends \yii\db\ActiveRecord {
 			[['qb_oa2_id','qb_oa2_sec','qb_oa2_realmId','qb_oa2_access_token','qb_oa2_access_date','qb_oa2_refresh_token','qb_oa2_refresh_date'], 'string'],
 			[['sell_date'], 'string', 'max' => 5],
 			[['log_rotate'],'integer'],
+			[['whitelist'],'safe'],
         ];
     }
 	

@@ -375,6 +375,7 @@ CREATE TABLE `params` (
   `qb_oa2_refresh_token` varchar(50) DEFAULT NULL,
   `qb_oa2_refresh_date` datetime DEFAULT NULL,
   `log_rotate` int(3) DEFAULT NULL,
+  `whitelist` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -385,7 +386,7 @@ CREATE TABLE `params` (
 
 LOCK TABLES `params` WRITE;
 /*!40000 ALTER TABLE `params` DISABLE KEYS */;
-INSERT INTO `params` VALUES (1,'10-20',460130,50,'active','','','dev',NULL,'','',NULL,NULL,'','','',NULL,NULL,'','2020-08-25 14:28:50',6);
+INSERT INTO `params` VALUES (1,'10-20',460130,50,'active','','','dev',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','',NULL,NULL,'','','',NULL,NULL,'','2020-08-25 14:28:50',6,NULL);
 /*!40000 ALTER TABLE `params` ENABLE KEYS */;
 UNLOCK TABLES;
 
