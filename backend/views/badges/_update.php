@@ -558,7 +558,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			document.getElementById("badgecertification-cert_amount_due").value = '10.00';
 		}else if(selectedText=='Holster') {
 			var testId=1;
-			document.getElementById("badgecertification-cert_amount_due").value = '20.00';
+			document.getElementById("badgecertification-cert_amount_due").value = '30.00';
 		} else {
 	//		console.log('not Steel or Holster');
 			$("#cert_search").hide();
