@@ -18,7 +18,7 @@ class ClubsSearch extends Clubs {
     public function rules() {
         return [
             [['club_id'], 'integer'],
-            [['club_name', 'short_name', 'poc_email', 'status', 'is_club'], 'safe'],
+            [['avoid','club_name', 'short_name', 'poc_email', 'status', 'is_club'], 'safe'],
         ];
     }
 
@@ -58,6 +58,7 @@ class ClubsSearch extends Clubs {
         }
 
         // grid filtering conditions
+		if(isset($this->avoid)) { $query->andFilterWhere(['like','avoid',$this->avoid]); }
 		if(isset($this->club_name)) { $query->andFilterWhere(['like','club_name',$this->club_name]); }
 		if(isset($this->poc_email)) { $query->andFilterWhere(['like','poc_email',$this->poc_email]); }
 		if(isset($this->short_name)) { $query->andFilterWhere(['like','short_name',$this->short_name]); }

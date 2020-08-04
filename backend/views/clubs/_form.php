@@ -24,6 +24,9 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'short_name')->textInput(['maxlength' => true]) ?>
 	</div>
 	<div class="row">
+    <?= $form->field($model, 'avoid')->textInput(['maxlength' => true]) ?>
+	</div>
+	<div class="row">
 	<?= $form->field($model, 'poc_email')->textInput(['maxlength' => true]) ?>
 	</div>
 	<div class="row">

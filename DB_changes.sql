@@ -442,3 +442,6 @@ UPDATE `BadgeDB`.`params` SET `whitelist` = '[\"&\",\"ACTION\",\"AGC\",\"AND\",\
 ALTER TABLE `associat_agcnew`.`agc_calendar` 
 CHANGE COLUMN `facility_id` `facility_id` VARCHAR(100) NOT NULL ;
 UPDATE associat_agcnew.agc_calendar set facility_id=CONCAT("[",facility_id,"]");
+
+ALTER TABLE `BadgeDB`.`clubs` 
+CHANGE COLUMN `avoid` `avoid` VARCHAR(100) NULL DEFAULT NULL ;

@@ -87,23 +87,22 @@ $confParams  = Params::findOne('1');
 if(yii::$app->controller->hasPermission('calendar/all')) {
 	$ary_club =   (new clubs)->getClubList();
 	$ary_club_ac =(new clubs)->getClubList(true);
+	$ary_avoid =  (new clubs)->getAvoid();
 } else {
 	$ary_club =	  (new clubs)->getClubList(false,Yii::$app->user->identity->clubs);
 	$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
+	$ary_avoid =  (new clubs)->getAvoid(Yii::$app->user->identity->clubs);
 }
 $dirty = array();
-foreach($ary_club as $dirt) {
-	$dirt = explode(" ",strtoupper ($dirt));
-	foreach($dirt as $item) {
-		if(in_array($item,json_decode($confParams->whitelist))) {continue;}
-		if(!in_array($item,$dirty)) { $dirty[]=$item; }
-	}
-}
-foreach($ary_club_ac as $dirt) {
-	$dirt = explode(" ",strtoupper ($dirt));
-	foreach($dirt as $item) {
-		if(in_array($item,json_decode($confParams->whitelist))) {continue;}
-		if(!in_array($item,$dirty)) { $dirty[]=$item; }
+$search_all = [$ary_club, $ary_club_ac,$ary_avoid];
+foreach($search_all as $word_search) {
+	foreach($word_search as $dirt) {
+		$dirt = explode(" ",strtoupper ($dirt));
+		foreach($dirt as $item) {
+			if($item==''){continue;}
+			if(in_array($item,json_decode($confParams->whitelist))) {continue;}
+			if(!in_array($item,$dirty)) { $dirty[]=$item; }
+		}
 	}
 }
 sort($dirty);

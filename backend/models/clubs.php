@@ -30,7 +30,7 @@ class Clubs extends \yii\db\ActiveRecord {
         return [
             [['club_name', 'short_name'], 'required'],
             [['club_id', 'status','is_club'],'number'],
-            [['club_name', 'poc_email'], 'string', 'max' => 255],
+            [['avoid','club_name', 'poc_email'], 'string', 'max' => 255],
             [['short_name'], 'string', 'max' => 20],
             [['poc_email'],'safe'],
             ['poc_email', 'email'],
@@ -61,12 +61,10 @@ class Clubs extends \yii\db\ActiveRecord {
 			->orderBy(['is_club'=> SORT_DESC,$field => SORT_ASC ])
 			->all();
 		
-		if($restrict) {
-			$in_clubs = json_decode($restrict);
-			
+		if($restrict) {			
 			$myClubs='';
 			foreach ($clubArray as $key=>$value) {
-				if(in_array($value->club_id,$in_clubs)) {
+				if(in_array($value->club_id,json_decode($restrict))) {
 					$myClubs.= '"'.$value->club_id.'":"'.$value->$field.'",';
 				}
 			}
@@ -74,6 +72,26 @@ class Clubs extends \yii\db\ActiveRecord {
 		}
 		else {
 			return ArrayHelper::map($clubArray,'club_id',$field);
+		}
+    }
+	
+   public function getAvoid($restrict=false) {
+		$clubArray = Clubs::find()
+			->where(['status'=>'0'])
+			->orderBy(['is_club'=> SORT_DESC ])
+			->all();
+		
+		if($restrict) {			
+			$myClubs='';
+			foreach ($clubArray as $key=>$value) {
+				if(in_array($value->club_id,json_decode($restrict))) {
+					$myClubs.= '"'.$value->club_id.'":"'.$value->avoid.'",';
+				}
+			}
+			return json_decode('{'.rtrim($myClubs,',').'}');
+		}
+		else {
+			return ArrayHelper::map($clubArray,'club_id','avoid');
 		}
     }
 

@@ -26,6 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'club_id',
             'club_name',
             'short_name',
+			'avoid',
             'poc_email',
 			[	'attribute' => 'is_club',
                 'value' => function($model) { if($model->is_club==0) return'COI or Other'; else return 'Yes'; },

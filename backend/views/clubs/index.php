@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/ind
                     ],
                     'club_name',
                     'short_name',
+					'avoid',
                     'poc_email',
 					
                     'is_club' => [   'attribute'=>'is_club',
