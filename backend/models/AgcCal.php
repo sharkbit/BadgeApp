@@ -29,9 +29,9 @@ class AgcCal extends \yii\db\ActiveRecord {
     public function rules() {
         return [
 			[['event_name','event_date','poc_badge'], 'required'],
-			[['date_requested','end_time','event_date','recurrent_end_date','recurrent_start_date','start_time','remarks'], 'safe'],
+			[['date_requested','end_time','event_date','facility_id','recurrent_end_date','recurrent_start_date','start_time','remarks'], 'safe'],
 			[['active','approved','calendar_id','conflict','deleted','pattern_type','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
-			[['club_id','event_status_id','facility_id','lanes_requested','poc_badge'], 'integer'],
+			[['club_id','event_status_id','lanes_requested','poc_badge'], 'integer'],
 			[['event_name','keywords','poc_email','poc_name','poc_phone','recur_week_days'], 'string'],
 		//	  [['recurrent_start_date','recurrent_end_date'],  'required', 'when' => function ($model) { 
         //     return $model->recur_every == 1; },]
@@ -52,7 +52,6 @@ class AgcCal extends \yii\db\ActiveRecord {
 			'pattern_type'=>'Pattern',
 			'poc_badge'=>'POC Badge',
 			'recur_week_days'=>'Recurring Pattern',
-
         ];
     }
 
@@ -63,11 +62,18 @@ class AgcCal extends \yii\db\ActiveRecord {
 	public function getAgcEventStatus() {
         return $this->hasOne(agcEventStatus::className(), ['event_status_id' => 'event_status_id']);
     }
-	
-	public function getAgcFacility() {
-        return $this->hasOne(agcFacility::className(), ['facility_id' => 'facility_id']);
-    }
-	
+
+	public function getAgcFacility_Names($id) {
+		if(!is_array($id)) {$id = json_decode($id); }
+		$Facility = (new agcFacility)->find()->all();
+		$found='';
+		foreach ($Facility as $fac) {
+			if (in_array($fac->facility_id,$id))
+				$found .= $fac->name.', ';
+		}
+		return rtrim ($found,", ");
+	}
+
 	public function getAgcRangeStatus() {
         return $this->hasOne(agcRangeStatus::className(), ['range_status_id' => 'range_status_id']);
     }

@@ -116,10 +116,10 @@ sort($dirty);
 <div class="calendar-form">
 <?php $form = ActiveForm::begin(['id' => 'calendar-form']); ?>
 <div class="row">
-    <div class="col-12 col-xs-3 col-sm-2" <?php if($model->isNewRecord) {echo 'style="display:none"';} ?>>
+    <div class="col-xs-6 col-sm-2 col-md-3 col-lg-2 col-xl-1 " <?php if($model->isNewRecord) {echo 'style="display:none"';} ?>>
         <?= $form->field($model, 'calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]) ?>
     </div>
-    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2 col-xl-2 ">
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1 ">
     <?php   echo $form->field($model, 'event_date')->widget(DatePicker::classname(), [
                 'options' => ['placeholder' => 'Event Date'],
                 'pluginOptions' => [
@@ -127,31 +127,32 @@ sort($dirty);
                     'format' => 'yyyy-mm-dd',
                     'todayHighlight' => true ] ] ); ?>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-2">
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3 col-xl-2">
     <?= $form->field($model, 'club_id')->DropDownList($ary_club).PHP_EOL; ?>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-2">
+    <div class="col-xs-9 col-sm-8 col-md-6 col-lg-5 col-xl-5">
     <?php $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
-        echo $form->field($model, 'facility_id')->DropDownList($ary_fac);  ?>
+		echo $form->field($model, 'facility_id')->dropDownList($ary_fac,['value'=>json_decode($model->facility_id),'prompt'=>'Select', 'id'=>'agccal-facility_id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
+	?>
     </div>
-    <div id="Div_Lanes_Req" class="col-xs-2 col-sm-2"<?php if($allowLanes==false) { echo ' style="display: none;"';} ?>>
+    <div class="col-xs-3 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="Div_Lanes_Req" <?php if($allowLanes==false) { echo ' style="display: none;"';} ?>>
         <?= $form->field($model, 'lanes_requested')->textInput(['maxlength'=>true]) ?>
     </div>
-    <div class="col-12 col-xs-6 col-sm-4">
+    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 col-xl-2">
         <?= $form->field($model, 'event_name')->textInput(['maxlength'=>true]) ?>
     </div>
-    <div class="col-12 col-xs-6 col-sm-4">
+    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 col-xl-2">
         <?= $form->field($model, 'keywords')->textInput(['maxlength'=>true]) ?>
     </div>
-    <div class="col-xs-6 col-sm-2">
+    <div class="col-xs-6 col-sm-3 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'start_time')->widget(TimePicker::classname(),['options'=>['class'=>'form-control'],
             'pluginEvents' => [ "change" => "function(e){ OpenRange(); }", ]]); ?>
     </div>
-    <div class="col-xs-6 col-sm-2">
+    <div class="col-xs-6 col-sm-3 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'end_time'  )->widget(TimePicker::classname(), ['options'=>['class'=>'form-control'],
           'pluginEvents' => [ "change" => "function(e){ OpenRange(); }", ]]); ?>
     </div>
-    <div class="col-xs-4 col-sm-2">
+    <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-xl-2">
     <?= $form->field($model, 'event_status_id')->DropDownList($model->isNewRecord ? [0=>'']: yii::$app->controller->actionGetEventTypes($model->club_id,true));     ?>
     </div>
     <?php
@@ -162,25 +163,25 @@ sort($dirty);
 		echo $form->field($model, 'range_status_id')->hiddenInput(['value'=>1])->label(false).PHP_EOL;
 	} ?>
 
-    <div class="col-xs-4 col-sm-2">
+    <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'active')->DropDownList(['1'=>'Yes','0'=>'No'],['value'=> $model->isNewRecord ? 1 : $model->active ]) ?>
     </div>
-    <div class="col-xs-4 col-sm-2" <?php if(!yii::$app->controller->hasPermission('calendar/approve')) {echo 'style="display:none"';} ?> >
+    <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2" <?php if(!yii::$app->controller->hasPermission('calendar/approve')) {echo 'style="display:none"';} ?> >
         <?= $form->field($model, 'approved')->DropDownList(['1'=>'Yes','0'=>'No']) ?>
     </div>
-    <div class="col-xs-4 col-sm-2">
+    <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'poc_badge')->textInput(['maxlength'=>true,'readonly'=>yii::$app->controller->hasPermission('calendar/all')? false : true]) ?>
     </div>
-    <div class="col-xs-6 col-sm-3"  style="display:none">
+    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3 col-xl-3"  style="display:none">
         <?= $form->field($model, 'poc_name')->textInput(['maxlength'=>true,'readonly'=>true]).PHP_EOL ?>
     </div>
-    <div class="col-xs-6 col-sm-3" style="display:none">
+    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3 col-xl-3" style="display:none">
         <?= $form->field($model, 'poc_phone')->textInput(['maxlength'=>true,'readonly'=>true]).PHP_EOL ?>
     </div>
-    <div class="col-xs-6 col-sm-3"  style="display:none">
+    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3 col-xl-3"  style="display:none">
         <?= $form->field($model, 'poc_email')->textInput(['maxlength'=>true]).PHP_EOL ?>
     </div>
-    <div class="col-xs-6 col-sm-2">
+    <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'date_requested')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
     </div>
 
@@ -367,9 +368,11 @@ sort($dirty);
 </div>
 <?php ActiveForm::end(); ?>
 </div>
+<script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
 <style>
   th { padding: 10px; text-align: center;}
   td { padding: 10px; white-space: nowrap }
+  .chosen-container-multi .chosen-choices {padding: 3px; }
 </style>
 <script>
     const convertTime12to24 = (time12h) => {
@@ -388,9 +391,7 @@ sort($dirty);
 
     document.getElementById("cal_update_item").disabled=true;
 <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
-    $("#agccal-facility_id").change(function(e) {
-        OpenRange();
-    });
+	$("#agccal-facility_id").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){ OpenRange(); });	
 
   $("#re_pub").click(function (e) {
 	  e.preventDefault();
@@ -438,13 +439,9 @@ sort($dirty);
         document.getElementById("pat_daily_n").disabled=true;
     });
 
-    $("#agccal-club_id").change(function(e) {
-     	runClub();
-    });
+    $("#agccal-club_id").change(function(e) { runClub(); });
 
-	$("#agccal-event_name").change(function(e) {
-        OpenRange();
-    });
+	$("#agccal-event_name").change(function(e) { OpenRange(); });
 
 	function runClub() {
 		var my_url = '<?=yii::$app->params['rootUrl']?>/calendar/get-event-types?event_club_id='+document.getElementById("agccal-club_id").value+'&is_sel='+document.getElementById("agccal-event_status_id").value+"&is_new_rec="+<?php if($model->isNewRecord){echo '1';} else {echo '0';} ?>;
@@ -592,24 +589,50 @@ sort($dirty);
 			return;
 		}
 
-        var facil_id = $("#agccal-facility_id").val();
-        var reqLane; var available_lanes=0;
-        if (reqLane =  JSON.parse($("#Req_Lanes").val())[facil_id]) {
-			available_lanes =  parseInt(JSON.parse($("#Req_Lanes").val())[facil_id].available_lanes);
-	//		console.log(available_lanes);
-            $("#Div_Lanes_Req").show();
-            var lReq = parseInt($("#agccal-lanes_requested").val());
-            if ( lReq == 0 || lReq > available_lanes) {
-                document.getElementById("cal_update_item").disabled=true;
-                $("#error_msg").html('<center><p style="color:red;"><b>Please Choose # of lanes requested. No more than ' + available_lanes + '</b></p></center>');
-                return;
-            }
-        } else {
-            $("#Div_Lanes_Req").hide();
-            $("#agccal-lanes_requested").val(0);
-        }
+        var OnlyOneLane=0; var available_lanes=0; var fa_name=''; var reqLanes ='';
+		var facil_ids = $("#agccal-facility_id").val();
+		var Req_Lanes = JSON.parse($("#Req_Lanes").val());
+		console.log(facil_ids);
+		if(facil_ids.length < 1) {
+			document.getElementById("cal_update_item").disabled=true;
+			$("#error_msg").html('<center><p style="color:red;">Please Choose a Facility.</p></center>');
+			return;
+		}
+		
+        facil_ids.forEach(function(facil_id) {
+			if ((Req_Lanes[facil_id]) && (Req_Lanes[facil_id].available_lanes > 0)) {
+				OnlyOneLane ++;
+				available_lanes =  parseInt(JSON.parse($("#Req_Lanes").val())[facil_id].available_lanes);
+				console.log(JSON.parse($("#Req_Lanes").val())[facil_id]);
+				fa_name += JSON.parse($("#Req_Lanes").val())[facil_id]['name']+', ';
+				$("#Div_Lanes_Req").show();
+			} else {
+				
+			}
+		});
+		fa_name=fa_name.slice(0, -2);
 
-
+		if(OnlyOneLane > 1) {
+			document.getElementById("cal_update_item").disabled = true;
+            $("#error_msg").html('<center><p style="color:red;"><b>Only allowed one range with lanes. Found: '+fa_name+'</b></p></center>');
+            return;
+		} else if(OnlyOneLane == 1) {
+			var lReq = parseInt($("#agccal-lanes_requested").val());
+			if ( lReq == 0 || lReq > available_lanes) {
+				document.getElementById("cal_update_item").disabled=true;
+				$("#error_msg").html('<center><p style="color:red;"><b>Please Choose # of lanes requested. No more than ' + available_lanes + '</b></p></center>');
+				return;
+			}
+			
+			reqLanes = $("#agccal-lanes_requested").val();
+			if (reqLanes) {reqLnN = parseInt(reqLanes); reqLanes = '&lanes='+reqLanes;}
+			else {$("#error_msg").html('<center><p style="color:red;"><b>Please Provie how many Lanes requested.</b></p></center>');return;}
+		} else {
+			$("#Div_Lanes_Req").hide();
+			$("#agccal-lanes_requested").val(0);
+		}
+	console.log('found: '+OnlyOneLane+' - '+fa_name+', Lanes: '+available_lanes+', Requested: '+reqLanes);
+		
         var reqStart = convertTime12to24($("#agccal-start_time").val());
         var reqStop  = convertTime12to24($("#agccal-end_time").val());
         //console.log('checking start Time:' + reqStart +' - ' + reqStop);
@@ -622,17 +645,11 @@ sort($dirty);
         if ($("#agccal-deleted").val() != '1') {
             document.getElementById("cal_update_item").disabled = true;
     <?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
-            $("#error_msg").html(''); var reqLanes ='';reqLnN=0; var reqcal_id='';
+            $("#error_msg").html('');reqLnN=0; var reqcal_id='';
 
             var reqFacl = $("#agccal-facility_id").val();
             var reqDate = $("#agccal-event_date").val();
             if (!reqDate) {$("#error_msg").html('<center><p style="color:red;"><b>Please verify Date.</b></p></center>');return;}
-            var reqLane = $("#Req_Lanes").val();
-            if (reqLane.includes(reqFacl)) {
-                reqLanes = $("#agccal-lanes_requested").val();
-                if (reqLanes) {reqLnN = parseInt(reqLanes); reqLanes = '&lanes='+reqLanes;}
-                else {$("#error_msg").html('<center><p style="color:red;"><b>Please Provie how many Lanes requested.</b></p></center>');return;}
-            }
             var reqStart = $("#agccal-start_time").val();
             var reqStop = $("#agccal-end_time").val();
 
@@ -645,7 +662,7 @@ sort($dirty);
             if (req_cal_id) {reqcal_id = '&id='+req_cal_id;}
             $("#searchng_cal_animation").show(500);
 
-	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?eDate="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility="+reqFacl+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat;
+	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?eDate="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility=["+reqFacl+']'+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat;
 	console.log(myUrl+"tst=1");
 			var calendarFormData = $("#calendar-form").serializeArray();
             jQuery.ajax({
@@ -690,29 +707,29 @@ sort($dirty);
 
 						if(responseData.data) { //parseInt()
 							if (available_lanes != 0) {var resp_str='<th>Lanes ('+available_lanes+')</th>';} else {var resp_str='';}
-							$("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=40% border=1><thead><tr><th>ID</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th><th>Type</th>'+resp_str+'</tr></thead></table></center>');
+							$("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=40% border=1><thead><tr><th>ID</th><th>Range</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th><th>Type</th>'+resp_str+'</tr></thead></table></center>');
 							var table = document.getElementById("cal_items");
 							console.log(responseData.data);
 							for( var j = 0; j < responseData.data.length; j++ ){
 								var row = table.insertRow();
-								var cell1 = row.insertCell(0); var cell2 = row.insertCell(1); var cell3 = row.insertCell(2); var cell4 = row.insertCell(3); var cell5 = row.insertCell(4);var cell6 = row.insertCell(5);var cell7 = row.insertCell(6);var cell8 = row.insertCell(7);
-								if (available_lanes != 0) {var cell9 = row.insertCell(8);}
+								var cell1 = row.insertCell(0); var cell2 = row.insertCell(1); var cell3 = row.insertCell(2); var cell4 = row.insertCell(3); var cell5 = row.insertCell(4);var cell6 = row.insertCell(5);var cell7 = row.insertCell(6);var cell8 = row.insertCell(7);var cell9 = row.insertCell(8);
+								if (available_lanes != 0) {var cell10 = row.insertCell(9);}
 
 								// Add some text to the new cells:
 								cell1.innerHTML = '<a href="/calendar/update?id='+responseData.data[j].cal_id+'" target="_blank">'+responseData.data[j].cal_id+'</a>';
-								cell2.innerHTML = responseData.data[j].club;
-								cell3.innerHTML = responseData.data[j].name;
-								cell4.innerHTML = responseData.data[j].start;
-								cell5.innerHTML = responseData.data[j].stop;
-								cell6.innerHTML = responseData.data[j].eve_status_name;
-								cell7.innerHTML = responseData.data[j].rng_status_name;
-								cell8.innerHTML = responseData.data[j].type_n+" " +responseData.data[j].type_i;
-								if (available_lanes != 0) {cell9.innerHTML = responseData.data[j].lanes;}
+								cell2.innerHTML = responseData.data[j].fac_name;
+								cell3.innerHTML = responseData.data[j].club;
+								cell4.innerHTML = responseData.data[j].name;
+								cell5.innerHTML = responseData.data[j].start;
+								cell6.innerHTML = responseData.data[j].stop;
+								cell7.innerHTML = responseData.data[j].eve_status_name;
+								cell8.innerHTML = responseData.data[j].rng_status_name;
+								cell9.innerHTML = responseData.data[j].type_n+" " +responseData.data[j].type_i;
+								if (available_lanes != 0) {cell10.innerHTML = responseData.data[j].lanes;}
 								//console.log(responseData.data[j].name);
 							}
 						}
 					}
-
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     $("#searchng_cal_animation").hide(500);

@@ -438,3 +438,7 @@ ALTER TABLE `BadgeDB`.`badge_certification`
 ALTER TABLE `BadgeDB`.`params` 
 ADD COLUMN `whitelist` TEXT NULL DEFAULT NULL AFTER `log_rotate`;
 UPDATE `BadgeDB`.`params` SET `whitelist` = '[\"&\",\"ACTION\",\"AGC\",\"AND\",\"ARCHERY\",\"CLUB\",\"GUN\",\"MD\",\"PISTOL\",\"RIFLE\"]' WHERE (`id` = '1');
+
+ALTER TABLE `associat_agcnew`.`agc_calendar` 
+CHANGE COLUMN `facility_id` `facility_id` VARCHAR(100) NOT NULL ;
+UPDATE associat_agcnew.agc_calendar set facility_id=CONCAT("[",facility_id,"]");

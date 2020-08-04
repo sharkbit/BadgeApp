@@ -53,7 +53,7 @@ class CalendarController extends AdminController {
 			$model->end_time	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->end_time")) ;
 			$model->event_date .= ' 00:00:00';
 			if(!$model->rollover) { $model->rollover = 0; } else { $model->rollover = $model->rollover; }
-
+			$model->facility_id = json_encode($model->facility_id);
 			$model->conflict = 0;
 			$model->recurrent_calendar_id = 0;
 			$model->pattern_type = 0;
@@ -212,18 +212,25 @@ class CalendarController extends AdminController {
     }
 
 	public function actionOpenRange($eDate,$start,$stop,$facility,$lanes=0,$id=0,$pattern,$e_status,$internal=false,$force_order=false,$tst=false) {
-		$range = agcFacility::find()->where(['facility_id'=>$facility])->one();
+		$range = agcFacility::find()->where('facility_id in ('.ltrim(rtrim($facility,"]"),"[").')')->all();
 		$start= date('H:i', strtotime($start)+60);
 		$stop = date('H:i',strtotime($stop)-60);
+		$where_fac='';
+		foreach(json_decode($facility) as $f_id) {
+			$where_fac .="JSON_CONTAINS(associat_agcnew.agc_calendar.facility_id,'$f_id') or ";
+		}
+		$where_fac =rtrim ($where_fac," or ");
 
-		$model = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
-			->where("facility_id=$facility AND event_date='$eDate' AND deleted=0 AND `associat_agcnew`.`agc_calendar`.active=1 and approved=1 AND `associat_agcnew`.`agc_calendar`.`event_status_id` <> 19 AND (".
+		$model = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus']) //->joinWith(['getAgcFacility'])
+			->leftJoin('associat_agcnew.facilities',"JSON_CONTAINS(associat_agcnew.agc_calendar.facility_id, concat('\"',associat_agcnew.facilities.facility_id,'\"'))")
+			->where("($where_fac) AND event_date='$eDate' AND deleted=0 AND `associat_agcnew`.`agc_calendar`.active=1 and approved=1 AND `associat_agcnew`.`agc_calendar`.`event_status_id` <> 19 AND (".
 				"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
 				"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
 			->all();
 
 		//$model_sql = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
-		//	->where("facility_id=$facility AND event_date='$eDate' AND deleted=0 AND (".
+		//	->leftJoin('associat_agcnew.facilities',"JSON_CONTAINS(associat_agcnew.agc_calendar.facility_id, concat('\"',associat_agcnew.facilities.facility_id,'\"'))")
+		//	->where("($where_fac) AND event_date='$eDate' AND deleted=0 AND `associat_agcnew`.`agc_calendar`.active=1 and approved=1 AND `associat_agcnew`.`agc_calendar`.`event_status_id` <> 19 AND (".
 		//		"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
 		//		"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
 		//	->createCommand()->sql; // echo $model_sql->sql; // exit;
@@ -253,6 +260,8 @@ class CalendarController extends AdminController {
 				if (($item->calendar_id == $id) || (($id >0 ) && ($item->recurrent_calendar_id == $id))) { continue; }
 				$found[$i] = new \stdClass();
 				$found[$i]->cal_id = $item->calendar_id;
+				$found[$i]->fac_id = $item->facility_id;
+				$found[$i]->fac_name = (new AgcCal)->getAgcFacility_Names($item->facility_id);
 				$found[$i]->club = $item->clubs->short_name;
 				$found[$i]->name = $item->event_name;
 				$found[$i]->start =  date('h:i A',strtotime($item->start_time));
@@ -284,59 +293,82 @@ class CalendarController extends AdminController {
 				$i++;
 			}
 
-	//yii::$app->controller->createLog(true, 'trex_B_C_CalC:294', var_export($isAval,true));
-
-			if ($isAval==false){
-				 $returnMsg=['status'=>'error','msg'=>'Range is Closed due to other event','lu'=>$lanes_used, 'data'=>$found];
-			} else if ($range->available_lanes==0) {
-				if (isset($found)) {
-					if (($isAval) && ($force_order)) {
-						foreach ($found as $overwrite) {
-							if ((int)$rng_pri < (int)$type_i) {
-								AgcCal::UpdateAll(['conflict'=>1,'approved'=>0],'calendar_id = '.$overwrite->cal_id);
-								yii::$app->controller->createLog(true, 'trex_B_C_CalC:304', "*** Conflict found $eDate, overwriting: ".$overwrite->cal_id." - $rng_pri < $type_i");
-							} else { $isAval=false; }
-							if ($isAval==true) {
-								$returnMsg=['status'=>'success','msg'=>'You Have Priority.','data'=>$found];
+			$full_msg=''; $status=true;
+			foreach($range as $fas) {
+				$msg=''; $Range_available_lanes = $fas->available_lanes;
+			
+				if ($Range_available_lanes==0) {
+					if (isset($found)) {
+						$found_ranges= array_column($found,'fac_id'); $in_use=false;
+						foreach($found_ranges as $tst_rng) {
+							if(in_array($fas->facility_id,json_decode($tst_rng))) {$in_use=true;}
+						}
+			//yii::$app->controller->createLog(false, 'trex_facility:309', 'has 0 lanes & found '.$fas->facility_id);
+						if($in_use) {
+							if ($force_order) {
+								foreach ($found as $overwrite) {
+			//yii::$app->controller->createLog(false, 'trex', var_export($overwrite,true));
+									//if($overwrite->
+									if ((int)$rng_pri < (int)$type_i) {
+	//									AgcCal::UpdateAll(['conflict'=>1,'approved'=>0],'calendar_id = '.$overwrite->cal_id);
+										yii::$app->controller->createLog(true, 'trex_B_C_CalC:304', "*** Conflict found $eDate, overwriting: ".$overwrite->cal_id." - $rng_pri < $type_i");
+									} else { $isAval=false; }
+									if ($isAval==true) {
+										$msg='You Have Priority.';
+									} else {
+										$status=false; $msg="You Don't have Priority.";
+									}
+								}
 							} else {
-								$returnMsg=['status'=>'error','msg'=>"You Don't have Priority.",'data'=>$found];
+								$isAval = false;
+								$status=false; $msg=$fas->name.' is unavailable';
 							}
+						} else {
+							$isAval=true;
+							$msg=$fas->name.' is open';
 						}
 					} else {
-						$isAval = false;
-						$returnMsg=['status'=>'error','msg'=>'Facility is unavailable','data'=>$found];
+						$isAval=true;
+						$msg=$fas->name.' is open';
 					}
 				} else {
-					$isAval=true;
-					$returnMsg=['status'=>'success','msg'=>'Facility is available','ln'=>312];
-				}
-			} else {
-				if ($lanes < 1) {
-					$isAval = false;
-					$returnMsg=['status'=>'error','msg'=>"Please Provide Requested lanes (Up to ".$range->available_lanes.")"];
-				} else if ($lanes+$lanes_used > $range->available_lanes ) {
-					if ($force_order) {
-						foreach ($found as $overwrite) {
-							//yii::$app->controller->createLog(true, 'trex_B_C_CalC:321', "** $rng_pri < ".$overwrite->type_i);
-							if ((int)$rng_pri < (int)$overwrite->type_i) {
-								AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
-								yii::$app->controller->createLog(true, 'trex_B_C_CalC:324', "** Conflict found $eDate, overwriting: ".$overwrite->cal_id);
+					if ($lanes < 1) {
+						$isAval = false;
+						$status=false; $msg="Please Provide Requested lanes (Up to ".$Range_available_lanes.")";
+					} else if ($lanes+$lanes_used > $Range_available_lanes ) {
+			//yii::$app->controller->createLog(false, 'trex_facility:335', 'has lanes!');
+						if ($force_order) {
+							foreach ($found as $overwrite) {
+								//yii::$app->controller->createLog(true, 'trex_B_C_CalC:321', "** $rng_pri < ".$overwrite->type_i);
+								if ((int)$rng_pri < (int)$overwrite->type_i) {
+	//								AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
+									yii::$app->controller->createLog(true, 'trex_B_C_CalC:324', "** Conflict found $eDate, overwriting: ".$overwrite->cal_id);
+								}
 							}
+							$msg="Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.";
+						} else {
+							$isAval = false;
+							$status=false; $msg="Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)";
 						}
-						$returnMsg=['status'=>'success','msg'=>"Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.", 'data'=>$found];
 					} else {
-						$isAval = false;
-						$returnMsg=['status'=>'error','msg'=>"Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)", 'data'=>$found];
-					}
-				} else {
-					$isAval=true;
-					if(isset($found)) {
-						$returnMsg=['status'=>'success','msg'=>'Range has space left: ' .($range->available_lanes-$lanes_used) .' Lanes','lu'=>$lanes_used, 'data'=>$found];
-					} else {
-						$returnMsg=['status'=>'success','msg'=>'No one else reserved range ','lu'=>$lanes_used];
+						$isAval=true;
+						if(isset($found)) {
+							$msg=$fas->name.' has space left: ' .($Range_available_lanes-$lanes_used) .' Lanes';
+						} else {
+							$msg=$fas->name.' is open';
+						}
 					}
 				}
+				$full_msg .= $msg.", ";
 			}
+			
+			//if ($full_msg==
+			if ($status) {
+				$returnMsg=['status'=>'success','msg'=>$full_msg,'lu'=>$lanes_used, 'data'=>$found];
+			} else {
+				$returnMsg=['status'=>'error','msg'=>$full_msg,'lu'=>$lanes_used, 'data'=>$found];
+			}
+			
 		} else {
 			$returnMsg=['status'=>'success','msg'=>'Facility is Available','ln'=>342];
 		}
@@ -420,7 +452,7 @@ class CalendarController extends AdminController {
 
 			$model->club_id = (int)$model->club_id;
 			$model->event_status_id = (int)$model->event_status_id;
-			$model->facility_id = (int)$model->facility_id;
+			$model->facility_id = json_encode($model->facility_id);
 			$model->lanes_requested = (int)$model->lanes_requested;
 			$model->range_status_id = (int)$model->range_status_id;
 
@@ -759,16 +791,12 @@ if($eco) { echo "using $myYear<br/>"; }
 			}
 		}
 		else { echo "broke?? WTF???"; exit; }
-
-//	yii::$app->controller->createLog(true, 'trex_B_C_CalC:766', var_export($myEventDates,true));
-//exit;
 		return $myEventDates;
 	}
 
 	private function createRecCalEvent($model,$myEventDates,$force_order=false,$is_new=false) {
 		$NewID = false; $first_id=false;
 //if ($force_order) {yii::$app->controller->createLog(true, 'trex_B_C_CalC:773','forcing_Order RecCalEvent');}
-yii::$app->controller->createLog(false, 'trex_B_C_CalC:779', var_export($myEventDates,true));
 		$model_event = new AgcCal();
 		foreach($myEventDates as $eDate) {
 			if (((strtotime(yii::$app->controller->getNowTime()) > strtotime($model->event_date)) && ($eDate == $model->event_date)) ||

@@ -99,7 +99,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				},
 			],
 			[	'attribute'=>'facility_id',
-				'value'=>function($model) { return $model->agcFacility->name; },
+				'value'=>function($model) { return (New AgcCal)->getAgcFacility_Names($model->facility_id); },
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:15%'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'facility_id', ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name'),['class'=>'form-control','prompt' => 'All']),

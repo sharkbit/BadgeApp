@@ -30,7 +30,6 @@ class AgcCalSearch extends AgcCal {
     public function search($params) {
         $query = AgcCal::find()
 		->joinWith(['clubs'])
-		->joinWith(['agcFacility'])
 		->joinWith(['agcEventStatus'])
 		->joinWith(['agcRangeStatus']);
 
@@ -60,7 +59,7 @@ class AgcCalSearch extends AgcCal {
 
     // grid filtering conditions
 		if(isset($this->club_id)) {	$query->andFilterWhere(['like','clubs.club_name',$this->club_id])->orFilterWhere(['like','clubs.short_name',$this->club_id]); }
-		if(isset($this->facility_id)) { $query->andFilterWhere(['agc_calendar.facility_id'=>$this->facility_id]); }
+		if(isset($this->facility_id)) { $query->andWhere("JSON_CONTAINS(agc_calendar.facility_id,'".$this->facility_id."')"); }
 		if(!yii::$app->controller->hasPermission('calendar/all')) {
 			$query->andFilterWhere(['in','agc_calendar.club_id',json_decode(Yii::$app->user->identity->clubs)]);
 		}
