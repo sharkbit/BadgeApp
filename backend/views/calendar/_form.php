@@ -26,7 +26,7 @@ if($model->isNewRecord) {
 }
 $Req_Lanes = ArrayHelper::index(agcFacility::find('facility_id')->where(['active'=>1])
                 ->andwhere('available_lanes>0')->orderBy(['name'=>SORT_ASC])->asArray()->all(),'facility_id');
-if (isset($Req_Lanes[$model->facility_id])) {
+if (array_intersect(json_decode($model->facility_id),array_column($Req_Lanes,'facility_id'))) { 
     $allowLanes = true;
 } else {
     $allowLanes = false;
