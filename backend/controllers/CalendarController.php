@@ -53,10 +53,9 @@ class CalendarController extends AdminController {
 			$model->end_time	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->end_time")) ;
 			$model->event_date .= ' 00:00:00';
 			if(!$model->rollover) { $model->rollover = 0; } else { $model->rollover = $model->rollover; }
-			$model->facility_id = json_encode($model->facility_id);
+			$model->facility_id = str_replace('"', '',json_encode($model->facility_id));
 			$model->conflict = 0;
 			$model->recurrent_calendar_id = 0;
-			$model->pattern_type = 0;
 			$myRemarks = [
 				'created_at'=>yii::$app->controller->getNowTime(),
 				'data'=>"Event Created",
@@ -314,27 +313,26 @@ class CalendarController extends AdminController {
 										yii::$app->controller->createLog(true, 'trex_B_C_CalC:304', "*** Conflict found $eDate, overwriting: ".$overwrite->cal_id." - $rng_pri < $type_i");
 									} else { $isAval=false; }
 									if ($isAval==true) {
-										$msg='You Have Priority.';
+										$msg='<b style="color:green;">'.'You Have Priority.</b>';
 									} else {
-										$status=false; $msg="You Don't have Priority.";
+										$isAval = false;
+										$status=false; $msg='<b style="color:red;">'."You Don't have Priority.</b>";
 									}
 								}
 							} else {
 								$isAval = false;
-								$status=false; $msg=$fas->name.' is unavailable';
+								$status=false; $msg='<b style="color:red;">'.$fas->name.' is unavailable</b>';
 							}
 						} else {
-							$isAval=true;
-							$msg=$fas->name.' is open';
+							$msg='<b style="color:green;">'.$fas->name.' is open</b>';
 						}
 					} else {
-						$isAval=true;
-						$msg=$fas->name.' is open';
+						$msg='<b style="color:green;">'.$fas->name.' is open</b>';
 					}
 				} else {
 					if ($lanes < 1) {
 						$isAval = false;
-						$status=false; $msg="Please Provide Requested lanes (Up to ".$Range_available_lanes.")";
+						$status=false; $msg='<b style="color:red;">'."Please Provide Requested lanes (Up to ".$Range_available_lanes.")</b>";
 					} else if ($lanes+$lanes_used > $Range_available_lanes ) {
 			//yii::$app->controller->createLog(false, 'trex_facility:335', 'has lanes!');
 						if ($force_order) {
@@ -345,42 +343,37 @@ class CalendarController extends AdminController {
 									yii::$app->controller->createLog(true, 'trex_B_C_CalC:324', "** Conflict found $eDate, overwriting: ".$overwrite->cal_id);
 								}
 							}
-							$msg="Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.";
+							$msg='<b style="color:red;">'."Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.</b>";
 						} else {
 							$isAval = false;
-							$status=false; $msg="Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)";
+							$status=false; $msg='<b style="color:red;">'."Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)</b>";
 						}
 					} else {
-						$isAval=true;
 						if(isset($found)) {
-							$msg=$fas->name.' has space left: ' .($Range_available_lanes-$lanes_used) .' Lanes';
+							$msg='<b style="color:green;">'.$fas->name.' has space left: ' .($Range_available_lanes-$lanes_used) .' Lanes</b>';
 						} else {
-							$msg=$fas->name.' is open';
+							$msg='<b style="color:green;">'.$fas->name.' is open</b>';
 						}
 					}
 				}
 				$full_msg .= $msg.", ";
 			}
-			
-			//if ($full_msg==
-			if ($status) {
-				$returnMsg=['status'=>'success','msg'=>$full_msg,'lu'=>$lanes_used, 'data'=>$found];
-			} else {
-				$returnMsg=['status'=>'error','msg'=>$full_msg,'lu'=>$lanes_used, 'data'=>$found];
-			}
-			
+
+			$returnMsg=['status'=>($isAval)?'success':'error','msg'=>rtrim($full_msg,", "),'lu'=>$lanes_used, 'data'=>(isset($found))?$found:false];
 		} else {
-			$returnMsg=['status'=>'success','msg'=>'Facility is Available','ln'=>342];
+			$returnMsg=['status'=>'success','msg'=>'<b style="color:green;">Facility is Available</b>','ln'=>365];
 		}
 
-		if ($inPattern) { $returnMsg = array_merge($returnMsg,$inPattern); }
+		$returnMsg = array_merge($returnMsg,$inPattern);
 		//yii::$app->controller->createLog(false, 'trex_B_C_CalC:345 isAval', var_export($returnMsg,true));
-		if (($tst) || (Yii::$app->request->isAjax)) {
-			return json_encode($returnMsg);
-		} elseif ($internal){
-			return $isAval;
-		} else {
-			Yii::$app->getSession()->setFlash($returnMsg['status'], $returnMsg['msg']);
+		if (isset($_REQUEST['tst'])) {
+			print_r($returnMsg);} 
+		elseif (Yii::$app->request->isAjax) {
+			return json_encode($returnMsg); } 
+		elseif ($internal){
+			return $isAval; } 
+		else {
+			//Yii::$app->getSession()->setFlash($returnMsg['status'], $returnMsg['msg']);
 			return $this->render('test');
 		}
 	}
@@ -452,7 +445,7 @@ class CalendarController extends AdminController {
 
 			$model->club_id = (int)$model->club_id;
 			$model->event_status_id = (int)$model->event_status_id;
-			$model->facility_id = json_encode($model->facility_id);
+			$model->facility_id = str_replace('"', '',json_encode($model->facility_id));
 			$model->lanes_requested = (int)$model->lanes_requested;
 			$model->range_status_id = (int)$model->range_status_id;
 
@@ -492,7 +485,7 @@ class CalendarController extends AdminController {
 					AgcCal::UpdateAll(['club_id'=>$model->club_id, 'event_name'=>$model->event_name, 'keywords'=>$model->keywords, 'recur_week_days'=>$model->recur_week_days], 'recurrent_calendar_id = '.$model->calendar_id);
 
 					AgcCal::UpdateAll(['facility_id'=>$model->facility_id, 'lanes_requested'=>$model->lanes_requested, 'event_status_id'=>$model->event_status_id, 'range_status_id'=>$model->range_status_id,
-						'start_time'=>$model->start_time, 'end_time'=>$model->end_time, 'deleted'=>$model->deleted, 'poc_badge'=>$model->poc_badge, 'poc_name'=>$model->poc_name, 'poc_phone'=>$model->poc_phone, 'poc_email'=>$model->poc_email],
+						'start_time'=>$model->start_time, 'end_time'=>$model->end_time, 'deleted'=>$model->deleted, 'poc_badge'=>$model->poc_badge],
 						"recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
 
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
@@ -529,7 +522,6 @@ class CalendarController extends AdminController {
 		$model->deleted = (int)$model->deleted;
 		$model->recur_every = (int)$model->recur_every;
 		$model->recurrent_calendar_id = (int)$model->recurrent_calendar_id;
-		$model->pattern_type = 0;
 		$model->lanes_requested= (int)$model->lanes_requested;
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
@@ -547,10 +539,6 @@ class CalendarController extends AdminController {
 			'facility_id' => 'Facility',
 			'keywords' => 'Key Words',
 			'lanes_requested' => 'lanes Requested',
-			'pattern_type' => 'Patern Type',
-			'poc_email' => 'POC Email',
-			'poc_name' => 'POC Name',
-			'poc_phone'=>'POC Phone',
 			'range_status_id' => 'Range Status',
 			'recur_every' => 'Recure every',
 			'recurrent_calendar_id' => 'Recurrent Parrent ID',
@@ -814,7 +802,6 @@ if($eco) { echo "using $myYear<br/>"; }
 			$model_event->date_requested 	= $model->date_requested;
 			$model_event->lanes_requested 	= $model->lanes_requested;
 			$model_event->recur_every 		= $model->recur_every;
-			$model_event->pattern_type 		= $model->pattern_type;
 			$model_event->recur_week_days 	= $model->recur_week_days;
 			$model_event->recurrent_start_date = $model->recurrent_start_date;
 			$model_event->recurrent_end_date = $model->recurrent_end_date;
@@ -843,10 +830,10 @@ if($eco) { echo "using $myYear<br/>"; }
 			}
 		}
 
-		if(!in_array($model->event_date,$myEventDates)) {
-			yii::$app->controller->createLog(true, 'trex_B_C_CalC:814','date: '.$model->event_date.' not in array');
-			yii::$app->controller->createLog(false, 'trex_B_C_CalC:828', var_export($myEventDates,true));
-		}
+	//	if(!in_array($model->event_date,$myEventDates)) {
+	//		yii::$app->controller->createLog(true, 'trex_B_C_CalC:814','date: '.$model->event_date.' not in array');
+	//		yii::$app->controller->createLog(false, 'trex_B_C_CalC:828', var_export($myEventDates,true));
+	//	}
 
 		if ($NewID) {
 			AgcCal::UpdateAll(['recurrent_calendar_id'=>$NewID],"recurrent_calendar_id = ".$model->recurrent_calendar_id);

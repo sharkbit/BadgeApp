@@ -171,47 +171,8 @@ sort($dirty);
     <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'poc_badge')->textInput(['maxlength'=>true,'readonly'=>yii::$app->controller->hasPermission('calendar/all')? false : true]) ?>
     </div>
-    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3 col-xl-3"  style="display:none">
-        <?= $form->field($model, 'poc_name')->textInput(['maxlength'=>true,'readonly'=>true]).PHP_EOL ?>
-    </div>
-    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3 col-xl-3" style="display:none">
-        <?= $form->field($model, 'poc_phone')->textInput(['maxlength'=>true,'readonly'=>true]).PHP_EOL ?>
-    </div>
-    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3 col-xl-3"  style="display:none">
-        <?= $form->field($model, 'poc_email')->textInput(['maxlength'=>true]).PHP_EOL ?>
-    </div>
     <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'date_requested')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
-    </div>
-
-<?php if($model->isNewRecord) {
-		echo $form->field($model, 'deleted')->hiddenInput(['value'=>0])->label(false).PHP_EOL;
-	} else { echo '<div class="col-xs-4 col-sm-2">';
-		if(yii::$app->controller->hasPermission('calendar/delete')) {
-			if ($model->deleted=='1') {
-				echo $form->field($model, 'deleted')->DropDownList(['1'=>'Yes','0'=>'No']).PHP_EOL;
-			} else {
-				echo '<br />'.Html::Button(($isMaster)?'Delete all Future Events':'Delete Event', ['class' =>($isMaster)?'btn btn-danger':'btn btn-warning ', 'onclick' => 'delMe();' ]).PHP_EOL;
-			}
-		} else {
-			if ($model->deleted=='1') { echo "<p style='color:red;'><b>Event is Deleted</b></p>"; }
-	}	echo '</div>';
-	} ?>
-</div>
-<div class="row"><div class="col-xs-12" id="inpatt_msg"></div></div>
-<div class="row">
-    <div class="col-xs-8" id="error_msg">
-
-    </div>
-    <div class="col-xs-4 form-group ">
-        <div id="searchng_cal_animation" style="display: none">
-            <img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
-        </div>
-        <?= Html::Button('Check Availability', ['class' => 'btn btn-primary','id'=>'cal_check_avail', 'onclick' => 'OpenRange();' ]).PHP_EOL ?>
-        <?= Html::submitButton($model->isNewRecord ? 'Create':'Update', ['class' => 'btn btn-secondary ','id'=>'cal_update_item']).PHP_EOL ?>
-        <?php if (($isMaster) && (!$model->isNewRecord) && (yii::$app->controller->hasPermission('calendar/republish'))){ ?>
-        <?= Html::submitButton('RePublish Upcomming', ['class' => 'btn btn-info','id'=>'re_pub','name' => 'republish','value'=>1 ]).PHP_EOL ?>
-        <?php } ?>
     </div>
 </div>
 
@@ -335,9 +296,6 @@ sort($dirty);
     </div>
 <?php } else { echo $form->field($model, 'recurrent_calendar_id')->hiddeninput(['readonly'=>true,'maxlength'=>true])->label(false).PHP_EOL; }?>
 
-    <div class="col-xs-1 col-sm-1" style="background-color: silver; display:none">
-        <?= $form->field($model, 'pattern_type')->textInput(['readonly'=>$recur_disab,'maxlength'=>true]).PHP_EOL ?>
-    </div>
     <?= $form->field($model, 'recur_week_days')->hiddenInput()->label(false).PHP_EOL; ?>
 
 	<p>* <u>Year is always current Year for Recurrent Start & End Dates</u></p>
@@ -347,13 +305,45 @@ sort($dirty);
     <div class="col-xs-4 col-sm-1" style="background-color: pink<?php if(((isset($model->conflict)) && ($model->conflict==0)) || ($model->isNewRecord)) {echo '; display:none';} ?>" >
         <?= $form->field($model, 'conflict')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
     </div>
+</div>
 
-<!--    <div class="col-xs-12 col-sm-12">
+<?php if($model->isNewRecord) {
+		echo $form->field($model, 'deleted')->hiddenInput(['value'=>0])->label(false).PHP_EOL;
+	} else { echo '<div class="col-xs-4 col-sm-2">';
+		if(yii::$app->controller->hasPermission('calendar/delete')) {
+			if ($model->deleted=='1') {
+				echo $form->field($model, 'deleted')->DropDownList(['1'=>'Yes','0'=>'No']).PHP_EOL;
+			} else {
+				echo '<br />'.Html::Button(($isMaster)?'Delete all Future Events':'Delete Event', ['class' =>($isMaster)?'btn btn-danger':'btn btn-warning ', 'onclick' => 'delMe();' ]).PHP_EOL;
+			}
+		} else {
+			if ($model->deleted=='1') { echo "<p style='color:red;'><b>Event is Deleted</b></p>"; }
+	}	echo '</div>';
+	} ?>
+
+<div class="row"><div class="col-xs-12" id="inpatt_msg"></div></div>
+<div class="row">
+    <div class="col-xs-8" id="error_msg">
+
+    </div>
+    <div class="col-xs-4 form-group ">
+        <div id="searchng_cal_animation" style="display: none">
+            <img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
+        </div>
+        <?= Html::Button('Check Availability', ['class' => 'btn btn-primary','id'=>'cal_check_avail', 'onclick' => 'OpenRange();' ]).PHP_EOL ?>
+        <?= Html::submitButton($model->isNewRecord ? 'Create':'Update', ['class' => 'btn btn-secondary ','id'=>'cal_update_item']).PHP_EOL ?>
+        <?php if (($isMaster) && (!$model->isNewRecord) && (yii::$app->controller->hasPermission('calendar/republish'))){ ?>
+        <?= Html::submitButton('RePublish Upcomming', ['class' => 'btn btn-info','id'=>'re_pub','name' => 'republish','value'=>1 ]).PHP_EOL ?>
+        <?php } ?>
+    </div>
+</div>
+
+<?php if($model->remarks) { ?>
+<div class="row" >
+    <div class="col-xs-12">
+	<!--    <div class="col-xs-12 col-sm-12">
         <?= $form->field($model, 'remarks')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
     </div> -->
-<?php if($model->remarks) { ?>
-</div><div class="row" >
-    <div class="col-xs-12">
          <div class="row">
             <div class="col-xs-12">
                 <h3> Remarks history </h3>
@@ -363,8 +353,9 @@ sort($dirty);
                 <?= $this->render('/badges/_remarks',['remakrs_logs'=>json_decode($model->remarks,true) ] ).PHP_EOL ?>
             </div>
         </div>
-</div> <?php } ?>
+	</div>
 </div>
+<?php } ?>
 <?php ActiveForm::end(); ?>
 </div>
 <script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
@@ -662,7 +653,7 @@ sort($dirty);
             $("#searchng_cal_animation").show(500);
 
 	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?eDate="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility=["+reqFacl+']'+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat;
-	console.log(myUrl+"tst=1");
+	console.log(myUrl+"&tst=1");
 			var calendarFormData = $("#calendar-form").serializeArray();
             jQuery.ajax({
                 method: 'POST',
@@ -686,7 +677,7 @@ sort($dirty);
 
 						if((responseData.status=='success')&& (responseData.chkpat=='success')) {
 							//console.log('success:530');
-							$("#error_msg").html('<center><p style="color:green;"><b>'+responseData.msg+'</b></p></center>');
+							$("#error_msg").html('<center>'+responseData.msg+'</center>');
 							document.getElementById("cal_update_item").disabled=false;
 		<?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=false; <?php } ?>
 							if ( document.getElementById("cal_update_item").classList.contains('btn-secondary') ){
@@ -697,7 +688,7 @@ sort($dirty);
 						} else {
 							//console.log('Error:621');
 						   // console.log(responseData);
-							$("#error_msg").html('<center><p style="color:red;"><b>'+responseData.msg+'</b></p></center>');
+							$("#error_msg").html('<center>'+responseData.msg+'</center>');
 
 							if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
 								document.getElementById("cal_update_item").classList.add('btn-secondary');

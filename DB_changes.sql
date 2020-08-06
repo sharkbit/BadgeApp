@@ -445,3 +445,10 @@ UPDATE associat_agcnew.agc_calendar set facility_id=CONCAT("[",facility_id,"]");
 
 ALTER TABLE `BadgeDB`.`clubs` 
 CHANGE COLUMN `avoid` `avoid` VARCHAR(100) NULL DEFAULT NULL ;
+
+ALTER TABLE `associat_agcnew`.`agc_calendar` 
+DROP COLUMN `display_order`,
+DROP COLUMN `poc_email`,
+DROP COLUMN `poc_phone`,
+DROP COLUMN `poc_name`,
+DROP COLUMN `pattern_type`;

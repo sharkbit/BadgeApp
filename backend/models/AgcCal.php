@@ -30,11 +30,9 @@ class AgcCal extends \yii\db\ActiveRecord {
         return [
 			[['event_name','event_date','poc_badge'], 'required'],
 			[['date_requested','end_time','event_date','facility_id','recurrent_end_date','recurrent_start_date','start_time','remarks'], 'safe'],
-			[['active','approved','calendar_id','conflict','deleted','pattern_type','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
+			[['active','approved','calendar_id','conflict','deleted','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
 			[['club_id','event_status_id','lanes_requested','poc_badge'], 'integer'],
-			[['event_name','keywords','poc_email','poc_name','poc_phone','recur_week_days'], 'string'],
-		//	  [['recurrent_start_date','recurrent_end_date'],  'required', 'when' => function ($model) { 
-        //     return $model->recur_every == 1; },]
+			[['event_name','keywords','recur_week_days'], 'string'],
 		];
     }
 

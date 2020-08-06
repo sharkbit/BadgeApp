@@ -17,7 +17,6 @@ class AgcCalSearch extends AgcCal {
 
     public function rules() {
         return [
-			//[['e_id','e_poc'], 'integer'],
             [['event_name','club_id','active','approved','recur_every','facility_id','event_status_id','range_status_id'], 'safe']
         ];
     }
@@ -59,7 +58,7 @@ class AgcCalSearch extends AgcCal {
 
     // grid filtering conditions
 		if(isset($this->club_id)) {	$query->andFilterWhere(['like','clubs.club_name',$this->club_id])->orFilterWhere(['like','clubs.short_name',$this->club_id]); }
-		if(isset($this->facility_id)) { $query->andWhere("JSON_CONTAINS(agc_calendar.facility_id,'".$this->facility_id."')"); }
+		if((isset($this->facility_id)) && ($this->facility_id!=''))	 { $query->andWhere("JSON_CONTAINS(agc_calendar.facility_id,'".$this->facility_id."')"); }
 		if(!yii::$app->controller->hasPermission('calendar/all')) {
 			$query->andFilterWhere(['in','agc_calendar.club_id',json_decode(Yii::$app->user->identity->clubs)]);
 		}
