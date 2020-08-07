@@ -30,10 +30,9 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 if (isset($_REQUEST['badge'])) {
 	$model->badge_number=$_REQUEST['badge'];
 
-	$sql="SELECT count(*) as cnt from guest WHERE badge_number=".$model->badge_number." AND g_paid='a' or g_paid ='h' or g_paid='0';";
-	$connection = Yii::$app->getDb();
-	$command = $connection->createCommand($sql);
-	$guest_count = $command->queryAll();
+	$sql="SELECT count(*) as cnt from guest WHERE badge_number=".$model->badge_number." AND (g_paid='a' or g_paid ='h' or g_paid='0');";
+	echo "sql: $sql<br>";
+	$guest_count = Yii::$app->getDb()->createCommand($sql)->queryAll();
 	$guest_total = $guest_count[0]['cnt'];
 
 	if (isset($_REQUEST['id'])) {
@@ -56,8 +55,7 @@ if (isset($_REQUEST['badge'])) {
 $curYr = date('Y',strtotime(yii::$app->controller->getNowTime()));
 $ccYear = range($curYr,$curYr+25);
 
-echo $this->render('_view-tab-menu').PHP_EOL ?>
-
+echo $this->render('_view-tab-menu').PHP_EOL; ?>
 
 <?php $form = ActiveForm::begin([ 'id'=>'SalesForm' ]); ?>
 <div class="sales-update">

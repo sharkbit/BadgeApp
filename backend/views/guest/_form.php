@@ -255,7 +255,8 @@ $ccYear = range($curYr,$curYr+25);  ?>
 <script>
 	$("#cert_search").hide();
 	$("#cc_form_div").hide();
-	document.getElementById("guest-amount_due").disabled=true;
+	var g_amount_due = document.getElementById("guest-amount_due");
+	if(g_amount_due){ g_amount_due.disabled=true; }
 
 	if($("#guest-badge_number").val()) {get_member($("#guest-badge_number").val());};
 
