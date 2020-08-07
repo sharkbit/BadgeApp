@@ -184,7 +184,7 @@ $("#massemail-to_users").change(function(event) {
 
 $("#massemail-to_email").change(function(e) {
 	var to_email = $("#massemail-to_email")
-	emails= to_email.val().split(/,|;/);
+	emails= to_email.val().replace(/(;$)/g, "").split(/,|;/);
 	
 	var good_emails = ''; var bad_emails='';
 	emails.forEach(function (addr) {
@@ -195,7 +195,7 @@ $("#massemail-to_email").change(function(e) {
 			bad_emails += addr.trim()+';';
 		}
 	});
-	to_email.val(good_emails);
+	to_email.val(good_emails.slice(0,-1));
 	if (bad_emails != '') {$("#email_err").html('<b  style="color:red;">Email not valid: '+bad_emails.slice(0,-1)+'</b><br><br>');} else {$("#email_err").html('');}
 	console.log("good:"+good_emails+", Bad emailz: "+bad_emails);
 	
