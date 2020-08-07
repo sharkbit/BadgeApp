@@ -452,3 +452,6 @@ DROP COLUMN `poc_email`,
 DROP COLUMN `poc_phone`,
 DROP COLUMN `poc_name`,
 DROP COLUMN `pattern_type`;
+
+ALTER TABLE `BadgeDB`.`mass_email` 
+ADD COLUMN `mass_to_users` VARCHAR(100) NULL DEFAULT '' AFTER `mass_to`;

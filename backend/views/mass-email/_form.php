@@ -1,6 +1,7 @@
 <?php
 
 use backend\controllers\AdminController;
+use backend\models\User;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,6 +11,10 @@ if(strpos(" ".$model->mass_to,'@')) {
 } else {
 	if (strpos(" ".$model->mass_to, '*A')) { $model->to_active=true; }
 	if (strpos(" ".$model->mass_to, '*E')) { $model->to_expired=true; }
+}
+if($model->mass_to_users<>'') {
+	$model->to_users=true;
+	$model->mass_to_users = json_decode($model->mass_to_users);
 }
 
 $form = ActiveForm::begin(['id'=>'email']); ?>
@@ -21,49 +26,49 @@ $form = ActiveForm::begin(['id'=>'email']); ?>
 </div>
 
 <div class="row" style="background-color: AliceBlue;  border: 3px solid black;  border-spacing: 5px;">
-
-
 	<div class="col-xs-12 col-sm-2" >
 		<?=Html::label("Email To:")?>
 	</div>
-	<div class="col-xs-4 col-sm-2" >
+	<div class="col-xs-6 col-sm-2" >
 		<?= $form->field($model, 'to_active')->checkbox() ?>
 	</div>
-	<div class="col-xs-4 col-sm-2" style="background-color: WhiteSmoke;">
+	<div class="col-xs-6 col-sm-2" style="background-color: WhiteSmoke;">
 		<?= $form->field($model, 'to_expired')->checkbox() ?>
 	</div>
-
-	<div class="col-xs-12 col-sm-6" >
+	<div class="col-xs-6 col-sm-2" >
+		<?= $form->field($model, 'to_users')->checkbox() ?>
+	</div>
+	<div class="col-xs-6 col-sm-2" >
 		<?= $form->field($model, 'to_single')->checkbox() ?>
 	</div>
-	<div class="col-xs-12 col-sm-6" >
-		<?= $form->field($model, 'mass_reply_to')->textInput(['placeholder'=>'your.email@agcRange.org']) ?>
+	<div class="col-xs-12 col-sm-6" id="to_usr" >
+		<?=$form->field($model, 'mass_to_users')->dropDownList((new User)->getPrivList(), ['value'=>$model->mass_to_users,'prompt'=>'select','id'=>'mass_to_users', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 	</div>
 	<div class="col-xs-12 col-sm-6" id="to_email_addr" >
-		<?= $form->field($model, 'to_email')->textInput(['placeholder'=>'one@email.com; two@emails.com']) ?>
+		<?= $form->field($model, 'to_email')->textInput(['placeholder'=>'one@email.com; two@emails.com'])->label('To Email(s):  seperated by ;') ?>
 	</div>
-
 </div>
 <p> </p>
 <div class="row">
-
-	<div class="col-xs-12 col-sm-8" >
+	<div class="col-xs-12" id="email_err"> </div>
+	<div class="col-xs-12" >
+		<?= $form->field($model, 'mass_reply_to')->textInput(['placeholder'=>'president@AGCrange.org']) ?>
+	</div>
+	<div class="col-xs-12" >
 	 <?= $form->field($model, 'mass_subject')->textInput(['placeholder'=>'Required']) ?>
 	</div>
 </div>
 
 <div class="row">
-
 	<div class="col-xs-12 col-sm-6" > <!-- style="background-color:grey; padding:10px;" > -->
-<?php if(!$model->mass_body) { $model->mass_body="Hi,
-<p>put email here</p>
+<?php if(!$model->mass_body) { $model->mass_body="<p>put email here</p>
 thanks<br />
 Marc";}
 	echo $form->field($model, 'mass_body')->textarea(['rows' => '9']).PHP_EOL; ?>
 
 	</div>
 	<div class="col-xs-12 col-sm-6" style="width=100%; height=100%; padding:10px; background-color: lightgreen;" >
-		<p><b>Preview:</b></p>
+		<p><b>Preview:</b></p><p>Hello {Member Name},</p>
 		<div id='email_prev' style="margin:8px; background-color:white">
 <?=$model->mass_body?>
 		</div>
@@ -96,6 +101,7 @@ Marc";}
 			echo "<div class='col-xs-6 pull-right'><b>Processing...</b> ". $since_start->h.' hours '.$since_start->i.' minutes'."<div class='help-block' ></div></div>".PHP_EOL;
 		} else {
 			echo "<div class='col-xs-6 pull-right'><b>Message Was Sent</b>: ".$model->mass_finished." <div class='help-block' ></div></div>".PHP_EOL;
+			echo Html::submitButton('<i class="fa fa-envelope "> Save </i>', ['id'=>'email_save','class' => 'btn btn-primary']), PHP_EOL;
 			echo Html::Button('<i class="fa fa-envelope "> Re-Send Emails</i>', ['id'=>'email_resend','class' => 'btn btn-danger']), PHP_EOL;
 		}
 	} ?>
@@ -108,44 +114,91 @@ Marc";}
 </div>
 <?php ActiveForm::end(); ?>
 
+<script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
+<style>
+  .chosen-container-multi .chosen-choices {padding: 3px; }
+</style>
 <script>
-if (!document.getElementById("massemail-to_single").checked) {
-	$("#to_email_addr").hide();
+
+function validateEmail(email) {
+  const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
 }
 
-var area = document.getElementById('massemail-mass_body');
-if (area.addEventListener) {
-  area.addEventListener('input', function() {
-    var ex=document.getElementById('email_prev');
-	ex.innerHTML = $("#massemail-mass_body").val();
-  }, false);
-}
+$("#mass_to_users").chosen({placeholder_text_multiple:'Select User Roll',width: "100%"})
+
+	if (!document.getElementById("massemail-to_single").checked) {$("#to_email_addr").hide(); }
+	if (!document.getElementById("massemail-to_users").checked) {$("#to_usr").hide(); }
+
+	var area = document.getElementById('massemail-mass_body');
+	if (area.addEventListener) {
+	  area.addEventListener('input', function() {
+		var ex=document.getElementById('email_prev');
+		ex.innerHTML = $("#massemail-mass_body").val();
+	  }, false);
+	}
 
 $("#massemail-to_single").change(function(event) {
+	console.log('to_single');
     var checkbox = event.target;
     if (checkbox.checked) {
 		$("#to_email_addr").show();
 		document.getElementById("massemail-to_active").checked=false;
 		document.getElementById("massemail-to_expired").checked=false;
-    }
+    } else {$("#to_email_addr").hide();}
 });
 
 $("#massemail-to_active").change(function(event) {
+	console.log('to_active');
 	var checkbox = event.target;
     if (checkbox.checked) {
 		$("#to_email_addr").hide();
+		$("#to_usr").hide();
 		document.getElementById("massemail-to_single").checked=false;
+		document.getElementById("massemail-to_users").checked=false;
 		document.getElementById("massemail-to_email").value = '';
     }
 });
 
 $("#massemail-to_expired").change(function(event) {
+	console.log('to_expired');
 	var checkbox = event.target;
     if (checkbox.checked) {
 		$("#to_email_addr").hide();
+		$("#to_usr").hide();
 		document.getElementById("massemail-to_single").checked=false;
+		document.getElementById("massemail-to_users").checked=false;
 		document.getElementById("massemail-to_email").value = '';
     }
+});
+
+$("#massemail-to_users").change(function(event) {
+	console.log('to_users');
+    var checkbox = event.target;
+    if (checkbox.checked) {
+		$("#to_usr").show();
+		document.getElementById("massemail-to_active").checked=false;
+		document.getElementById("massemail-to_expired").checked=false;
+    } else {$("#to_usr").hide();}
+});
+
+$("#massemail-to_email").change(function(e) {
+	var to_email = $("#massemail-to_email")
+	emails= to_email.val().split(/,|;/);
+	
+	var good_emails = ''; var bad_emails='';
+	emails.forEach(function (addr) {
+		console.log(addr);
+		if (validateEmail(addr.trim())) {
+			good_emails += addr.trim()+';';
+		} else {
+			bad_emails += addr.trim()+';';
+		}
+	});
+	to_email.val(good_emails);
+	if (bad_emails != '') {$("#email_err").html('<b  style="color:red;">Email not valid: '+bad_emails.slice(0,-1)+'</b><br><br>');} else {$("#email_err").html('');}
+	console.log("good:"+good_emails+", Bad emailz: "+bad_emails);
+	
 });
 
 $("#email_send").click(function() {
@@ -154,6 +207,7 @@ $("#email_send").click(function() {
 		$("p#email_info").html("<b>Check Message Subject.</b>"); return; }
 	if(document.getElementById("massemail-to_active").checked==false && 
 		document.getElementById("massemail-to_expired").checked==false && 
+		document.getElementById("massemail-to_users").checked==false && 
 		document.getElementById("massemail-to_single").checked==false) {
 			$("p#email_info").html("<b>No Email Groupd Selected.</b>"); return; }
 

@@ -102,7 +102,9 @@ $this->beginBody() ?>
 <script src="<?=yii::$app->params['rootUrl']?>/js/sweetalert.min.js"></script>
 <script src="<?=yii::$app->params['rootUrl']?>/js/waitMe.js"></script>
 <script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
-
+<style>
+  .chosen-container-multi .chosen-choices {padding: 3px; }
+</style>
 <script type="text/javascript">
     var logsout;
     <?php if(isset($_SESSION['timeout'])) { ?>

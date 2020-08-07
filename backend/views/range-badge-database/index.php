@@ -22,8 +22,6 @@ if (isset($_REQUEST['BadgesDatabaseSearch']['pagesize'])) {
 	$pagesize=20;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
-
-yii::$app->controller->createLog(false, 'trex-request', var_export($_REQUEST,true));
 ?>
 <div class="badges-database-index">
 

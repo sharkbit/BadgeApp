@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\User;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -11,14 +12,13 @@ $this->title = 'Mass Emails';
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['mass-email/index']];
 
-//if(yii::$app->controller->hasPermission('mass/delete')) {
-	$myTemplate=' {view}  {update}  {delete} ';
-//} elseif(yii::$app->controller->hasPermission('mass/update')) {
-//	$myTemplate=' {view}  {update} ';
-//} else {$myTemplate='{view}';}
-
-//echo $this->render('_view-tab-menu').PHP_EOL;
-//echo $this->render('_search',['model'=>$searchModel,'guestModel'=>$guestModel]).PHP_EOL; ?>
+if (isset($_SESSION['pagesize'])) {
+	$pagesize = $_SESSION['pagesize'];
+} else {
+	$pagesize=20;
+}
+$dataProvider->pagination = ['pageSize' => $pagesize];
+?>
 
 <div class="MassEmail-index">
 <div class="row">
@@ -43,12 +43,14 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['mass-email
 			[
 				'attribute'=>'mass_to',
 				'value'=>function($model) {
-					if (strpos($model->mass_to,"@")) { return $model->mass_to; }
-					else { $str='';
-						if (strpos(" ".$model->mass_to,"*A")) { $str .= "Active, ";}
-						if (strpos(" ".$model->mass_to,"*E")) { $str .= "Expired ";}
-						return $str;
+					$str='';
+					if($model->mass_to_users!='') { $str .= "Users: [".(new User)->getPrivilege_Names($model->mass_to_users)."], "; }
+					if (strpos($model->mass_to,"@")) { $str .= $model->mass_to; }
+					else { 
+						if (strpos(" ".$model->mass_to,"*A")) { $str .= "Active Members, ";}
+						if (strpos(" ".$model->mass_to,"*E")) { $str .= "Expired Members";}
 					}
+					return rtrim($str,", ");
 				},
 			],
 			[
@@ -74,20 +76,6 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['mass-email
 				},
 			],
 			'mass_lastbadge',
-		/*	'tmp_badge',
-
-			[
-				'attribute'=>'time_out',
-				'format' => 'raw',
-				'value'=>function($model) {
-					if (!$model->time_out) {
-						//return 'Check Out';
-						return Html::a('Check Out','/mass/out?id='.$model->id);
-					} else {
-						return yii::$app->controller->pretydtg($model->time_out);
-					}
-				},
-			], */
 			[
 				'header' => 'Actions',
 				'class' => 'yii\grid\ActionColumn',

@@ -14,6 +14,7 @@ class MassEmail extends \yii\db\ActiveRecord{
 	public $to_active;
 	public $to_expired;
 	public $to_single;
+	public $to_users;
 
     public static function tableName() {
         return 'mass_email';
@@ -26,7 +27,8 @@ class MassEmail extends \yii\db\ActiveRecord{
 			[['mass_to','mass_subject','mass_body'], 'safe'],
 			[['id','mass_lastbadge','mass_created_by','mass_updated_by','mass_running'], 'number'],
 			//[['type'], 'string', 'max' => 25],
-			[['mass_start','mass_finished','mass_created','mass_updated','mass_runtime','mass_reply_to','mass_reply_name'],'safe']
+			['mass_reply_to',  'email'],
+			[['mass_to_users','mass_start','mass_finished','mass_created','mass_updated','mass_runtime','mass_reply_name'],'safe']
        ];
     }
 
@@ -35,7 +37,9 @@ class MassEmail extends \yii\db\ActiveRecord{
 			'to_active'=> 'Active Members',
 			'to_expired' => 'Expired Members',
 			'to_single' => 'Specific Address(s)',
+			'to_users' => ' To Users',
 			'mass_to' => 'To',
+			'mass_to_users'=>'Users:',
 			'mass_reply_to' => 'Reply To',
 			'mass_subject' => 'Subject',
 			'mass_body' => 'HTML',
@@ -49,4 +53,5 @@ class MassEmail extends \yii\db\ActiveRecord{
 			'mass_finished' => 'Finished'
        ];
     }
+
 }

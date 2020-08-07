@@ -127,6 +127,9 @@ foreach ($whitelist as $item) {
 
 </div>
 <script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
+<style>
+  .chosen-container-multi .chosen-choices {padding: 3px; }
+</style>
 <script>
 $("#params-whitelist").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"});
 

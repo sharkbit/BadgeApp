@@ -12,6 +12,13 @@ use yii\helpers\ArrayHelper;
 $this->title = 'Authorized Users';
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/accounts/index']];
+
+if (isset($_SESSION['pagesize'])) {
+	$pagesize = $_SESSION['pagesize'];
+} else {
+	$pagesize=20;
+}
+$dataProvider->pagination = ['pageSize' => $pagesize];
 ?>
 <div class="user-index">
 <div class="row">

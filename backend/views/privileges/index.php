@@ -10,6 +10,13 @@ use yii\widgets\Pjax;
 $this->title = 'Privileges';
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/privileges/index']];
+
+if (isset($_SESSION['pagesize'])) {
+	$pagesize = $_SESSION['pagesize'];
+} else {
+	$pagesize=20;
+}
+$dataProvider->pagination = ['pageSize' => $pagesize];
 ?>
 <div class="privileges-index">
     <div class="row">
