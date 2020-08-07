@@ -177,6 +177,7 @@ CREATE TABLE `clubs` (
   `poc_email` varchar(255) DEFAULT NULL,
   `status` int(1) NOT NULL,
   `is_club` int(1) NOT NULL DEFAULT '0',
+  `avoid` VARCHAR(100) NULL DEFAULT '',
   PRIMARY KEY (`club_id`),
   UNIQUE KEY `club_id` (`club_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=latin1;
@@ -608,7 +609,7 @@ CREATE TABLE `agc_calendar` (
   `recurrent_calendar_id` int(11) NOT NULL DEFAULT '0',
   `event_date` date NOT NULL,
   `club_id` int(11) NOT NULL DEFAULT '0',
-  `facility_id` int(11) NOT NULL DEFAULT '0',
+  `facility_id` VARCHAR(100) NOT NULL,
   `event_name` varchar(255) NOT NULL,
   `keywords` text NOT NULL,
   `start_time` datetime DEFAULT NULL,
@@ -616,7 +617,6 @@ CREATE TABLE `agc_calendar` (
   `date_requested` datetime DEFAULT NULL,
   `lanes_requested` int(11) NOT NULL DEFAULT '0',
   `recur_every` int(11) DEFAULT '0',
-  `pattern_type` int(11) NOT NULL DEFAULT '0',
   `recur_week_days` varchar(255) DEFAULT NULL,
   `recurrent_start_date` datetime DEFAULT NULL,
   `recurrent_end_date` datetime DEFAULT NULL,
@@ -630,10 +630,6 @@ CREATE TABLE `agc_calendar` (
   `rollover` tinyint(11) NOT NULL DEFAULT '0',
   `time_format` tinyint(11) NOT NULL DEFAULT '1',
   `poc_badge` int(5) NOT NULL DEFAULT '0',
-  `poc_name` varchar(255) DEFAULT NULL,
-  `poc_phone` varchar(255) DEFAULT NULL,
-  `poc_email` varchar(255) DEFAULT NULL,
-  `display_order` int(11) NOT NULL DEFAULT '0',
   `remarks` text,
   PRIMARY KEY (`calendar_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=43947 DEFAULT CHARSET=latin1;

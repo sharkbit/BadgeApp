@@ -435,6 +435,9 @@ CHANGE COLUMN `cc_x_id` `cc_x_id` VARCHAR(48) NULL DEFAULT NULL ;
 ALTER TABLE `BadgeDB`.`badge_certification` 
 
 -- Multiple Facilities v2.1.3
+ALTER TABLE `BadgeDB`.`clubs` 
+ADD COLUMN `avoid` VARCHAR(100) NULL DEFAULT '' ;
+
 ALTER TABLE `BadgeDB`.`params` 
 ADD COLUMN `whitelist` TEXT NULL DEFAULT NULL AFTER `log_rotate`;
 UPDATE `BadgeDB`.`params` SET `whitelist` = '[\"&\",\"ACTION\",\"AGC\",\"AND\",\"ARCHERY\",\"CLUB\",\"GUN\",\"MD\",\"PISTOL\",\"RIFLE\"]' WHERE (`id` = '1');
@@ -442,9 +445,6 @@ UPDATE `BadgeDB`.`params` SET `whitelist` = '[\"&\",\"ACTION\",\"AGC\",\"AND\",\
 ALTER TABLE `associat_agcnew`.`agc_calendar` 
 CHANGE COLUMN `facility_id` `facility_id` VARCHAR(100) NOT NULL ;
 UPDATE associat_agcnew.agc_calendar set facility_id=CONCAT("[",facility_id,"]");
-
-ALTER TABLE `BadgeDB`.`clubs` 
-ADD COLUMN `avoid` VARCHAR(100) NULL DEFAULT NULL ;
 
 ALTER TABLE `associat_agcnew`.`agc_calendar` 
 DROP COLUMN `display_order`,
