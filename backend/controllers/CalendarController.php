@@ -105,7 +105,7 @@ class CalendarController extends AdminController {
 			$model->deleted = 0;
 
 			$model->event_status_id=2;
-			$model->facility_id=3;
+			$model->facility_id='[3]';
 			if(($_SESSION['badge_number']>0) && ($model->poc_badge==0)) { $model->poc_badge=$_SESSION['badge_number']; }
 			$model->range_status_id = 1; //Open
 		}
