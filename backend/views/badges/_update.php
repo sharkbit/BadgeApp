@@ -567,8 +567,10 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			document.getElementById("cert_add").disabled = false;
 			return;
 		}
-		if(myEmail) {
-			var myUrl = 'https://agcrange.org/comms.php?email='+myEmail+'&id='+testId;
+		var myEmail = $("#badges-email").val();
+		var wp_site = "<?=yii::$app->params['wp_site']?>";
+		if((testId) && (myEmail) && (wp_site.length > 1)) {
+			var myUrl = '<?=yii::$app->params['wp_site']?>/comms.php?email='+myEmail+'&id='+testId;
 			console.log('url: '+myUrl);
 			jQuery.ajax({
 				method: 'GET',
@@ -680,7 +682,7 @@ console.log('main:651: here');
 		var myBadge = $("#badgesubscriptions-badge_number").val();
 		var myLast = $("#badges-last_name").val();
 		if(myBadge) {
-			var myUrl = 'https://agcrange.org/comms.php?online='+myBadge;
+			var myUrl = '<?=yii::$app->params['wp_site']?>/comms.php?online='+myBadge;
 			console.log('url: '+myUrl);
 			jQuery.ajax({
 				method: 'GET',

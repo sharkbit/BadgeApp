@@ -166,12 +166,12 @@ class MassEmailController extends AdminController {
 					//yii::$app->controller->createEmailLog(true, 'Mass-Email', $value['email'].', '.$value['expires'].', '.$value['badge_number']);
 					try {
 						$mail = AdminController::emailSetup();
-						$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/comms.php?unsubscribe='.$value['email'].'>');
+						$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$value['email'].'>');
 
 						if($model->mass_reply_to) {
 							$mail->AddReplyTo($model->mass_reply_to, $model->mass_reply_name);
-						} else { $mail->AddReplyTo('president@agcrange.org', 'AGC President'); }
-						$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
+						} else { $mail->AddReplyTo(yii::$app->params['adminEmail'], 'AGC President'); }
+						$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
 
 						$mail->addAddress($value['email']);
 
@@ -179,7 +179,7 @@ class MassEmailController extends AdminController {
 						
 						$hi = "<p>Hello ".trim($value['first_name']." ".$value['last_name']).",</p>";
 						if($value['subcat']==true) {$foot='';} else {
-						$foot = '<br /><br />< <a href="https://agcrange.org/comms.php?unsubscribe='.$value['email'].'"> UnSubscribe from the AGC mailer</a> >';}
+						$foot = '<br /><br />< <a href="'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$value['email'].'"> UnSubscribe from the AGC mailer</a> >';}
 						$mail->Body = $hi.$model->mass_body.$foot;
 						
 						sleep(3);  // Default 3,  Throttled by cPanel ~ 2000 Emails per Hour

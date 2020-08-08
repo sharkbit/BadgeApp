@@ -1,0 +1,11 @@
+<?php
+define('WP_SITE',                'https://wp.site');    
+define('TMP_SITE',              'https://tmp.site');    
+define('BADGEAPP_SITE',    'https://badgeapp.site'); 
+define('DATABASE_USERNAME',            'user name');
+define('DATABASE_PASSWORD',             'password');
+define('DATABASE_HOST',                'localhost');
+define('DATABASE_NAME',                 'database');
+define('TABLE_PREFIX',                      	'');
+
+?>

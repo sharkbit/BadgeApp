@@ -2,7 +2,10 @@
 $svr=$_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'];
 return [
     'adminEmail' => 'admin@example.com',
-	'cal_site'=>'', // HOST URL of calendar site
+	'badge_site'=>'',						// External BadgeApp address
+	'cal_site'=>'',							// HOST URL of calendar site
+	'wp_site'=>'',							// WordPress Site that hosts quiz
+	'tmp_site'=>'',							// test site
     'timeZone'=>'America/New_York',
 	//rootUrl no slash at end
     'rootUrl'=>$svr,

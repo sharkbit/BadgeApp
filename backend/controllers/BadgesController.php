@@ -244,7 +244,7 @@ class BadgesController extends AdminController {
 			$mail = yii::$app->controller->emailSetup();
 			if ($mail) {
 				$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
-				$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/site/no-email?unsubscribe=noclick">');
+				$mail->addCustomHeader('List-Unsubscribe', yii::$app->params['wp_site'].'/site/no-email?unsubscribe=noclick">');
 				$mail->Subject = 'PHPMailer Test Subject via smtp, basic with authentication';
 				$mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
 				$EmailBody = "This is the Email Body,  Isn't it sexy.  <br/ >From: ".$_SERVER['HTTP_HOST'];
@@ -886,7 +886,7 @@ class BadgesController extends AdminController {
 				if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 					$mail = yii::$app->controller->emailSetup();
 					if ($mail) {
-						$mail->addCustomHeader('List-Unsubscribe', '<https://agcrange.org/site/no-email?unsubscribe='.$email.'">');
+						$mail->addCustomHeader('List-Unsubscribe', yii::$app->params['wp_site'].'/site/no-email?unsubscribe='.$email.'">');
 						$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
 						$mail->addAddress($email, $first);
 						$mail->Subject = 'AGC Range Reciept';

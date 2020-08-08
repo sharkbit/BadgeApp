@@ -235,12 +235,12 @@ class SiteController extends AdminController {
 				echo "<head><title>AGC Unsubscribe</title></head>".PHP_EOL;
 				echo "The Associated Gun Clubs of Baltimore will miss you!<br />".
 				"Your email address: ".$unsubscribe." will be removed promptly.<br /><br />".
-				"<a href='https://agcrange.org/'>The AGC</a></html>";
+				"<a href='".yii::$app->params['wp_site']."/'>The AGC</a></html>";
 			} else { echo "Email Not found in Database."; }
 
 			// Run same Command on other server
 			if( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "tmp" )) {
-				$command = "wget -qO- 'https://badge.agcrange.org/site/no-email?unsubscribe=".$unsubscribe."'";
+				$command = "wget -qO- '".yii::$app->params['badge_site']."/site/no-email?unsubscribe=".$unsubscribe."'";
 				exec('nohup ' . $command . ' > /dev/null 2>&1 &');
 			}
 
@@ -274,12 +274,12 @@ class SiteController extends AdminController {
 				echo "<!DOCTYPE html>\n<html lang='en-US'>".PHP_EOL .
 					"<head><title>AGC Email Validation</title></head>".PHP_EOL .
 					"<body><center><br /><br /><h3>Thank you for validating your email.</h3>\n".
-					"<br /><a href='https://agcrange.org/'>Return to AGC<br/>\n".
+					"<br /><a href='".yii::$app->params['wp_site']."/'>Return to AGC<br/>\n".
 					"<img src='/images/AGC_Logo.jpg' /></a>";
 
 				// Run same Command on other server
 				if( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "tmp" )) {
-					$command = "wget -qO- 'https://badge.agcrange.org/site/verify?email=".$email."'";
+					$command = "wget -qO- '".yii::$app->params['badge_site']."/site/verify?email=".$email."'";
 					exec('nohup ' . $command . ' > /dev/null 2>&1 &');
 				}
 			}

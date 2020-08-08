@@ -115,9 +115,6 @@ Marc";}
 <?php ActiveForm::end(); ?>
 
 <script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
-<style>
-  .chosen-container-multi .chosen-choices {padding: 3px; }
-</style>
 <script>
 
 function validateEmail(email) {

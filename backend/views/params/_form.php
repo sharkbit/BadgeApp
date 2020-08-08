@@ -7,7 +7,6 @@ use yii\widgets\ActiveForm;
 /* @var $model backend\models\Params */
 /* @var $form yii\widgets\ActiveForm */
 
-//$model->whitelist = ['ACTION','AGC','AND','ARCHERY','&','CLUB','GUN','MD','PISTOL','RIFLE','SHOOTING','STATE'];
 $cnt=0;
 $whitelist = json_decode($model->whitelist);
 sort($whitelist);
@@ -103,20 +102,6 @@ foreach ($whitelist as $item) {
 	<?= $form->field($model, 'qb_oa2_refresh_date')->textInput(['disabled'=>true,'maxlength'=>true]) ?>
 	</div>
 </div>
-<!-- 
-<h3> Old QB AUth v1</h3>
-<div class="row">
-	<div class="col-xs-3">
-	<?= $form->field($model, 'qb_realmId')->textInput(['disabled'=>true,'maxlength'=>true]) ?>
-	</div>
-	<div class="col-xs-3">
-	<?= $form->field($model, 'qb_token')->textInput(['disabled'=>true,'maxlength'=>true]) ?>
-	</div>
-	<div class="col-xs-3">
-	<?= $form->field($model, 'qb_token_date')->textInput(['disabled'=>true,'maxlength'=>true]) ?>
-	</div>
-</div>
--->
 <div class="row">    
 	<div class="form-group">
 		<?= Html::submitButton('Update', ['class' => 'btn btn-primary pull-right']) ?>
@@ -137,15 +122,12 @@ $("#params-addwhitelist").change(function(e){
 	var new_word = $("#params-addwhitelist").val().toUpperCase();
 	console.log(new_word);
 	
-	//$("#params-whitelist").append('<option value="'+new_word+'" selected>'+new_word+'</option>').trigger("chosen:updated");
-	  $("#params-whitelist").append($('<option></option>')
+	$("#params-whitelist").append($('<option></option>')
         .val(new_word)
         .attr('selected', '')
         .html(new_word));
 		
 	$("#params-whitelist").trigger('change');
-	//$("#params-whitelist").trigger('chosen:update');
-	//$("#params-whitelist").chosen("update"); //.chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"});
 	$(".chosen-select").trigger("chosen:updated")
 	$("#params-addwhitelist").val('');
 	document.getElementById("paramsform").submit();

@@ -362,7 +362,6 @@ sort($dirty);
 <style>
   th { padding: 10px; text-align: center;}
   td { padding: 10px; white-space: nowrap }
-  .chosen-container-multi .chosen-choices {padding: 3px; }
 </style>
 <script>
     const convertTime12to24 = (time12h) => {

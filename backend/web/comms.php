@@ -40,8 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 	exit(0);
 }
 
-
-
 function GetTestResults($email,$test_id) {
 	global $mysqli;
 	$sql = "SELECT statistic_ref_id, create_time, form_data, ".
@@ -112,6 +110,7 @@ function GetOnlinePaymnets($badge_number) {
 	return json_encode(['status'=>$stat,'data'=>$allData]);
 
 }
+
 function DumpDatabase($tbl_search,$tbl_rows=10) {
 	global $mysqli;
 	$sql = "show databases";
@@ -187,6 +186,8 @@ function PrintTable($tbl,$limit=2) {
 	}
 }
 
+require_once('../../comms_constants.php');
+
 if(isset($_GET['verifyemail'])) {
 	$email=$_GET['verifyemail'];
 	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -194,15 +195,15 @@ if(isset($_GET['verifyemail'])) {
 	echo "<!DOCTYPE html>\n<html lang='en-US'>".PHP_EOL .
 		"<head><title>AGC Email Validation</title></head>".PHP_EOL .
 		"<body><center><br /><br /><h3>Thank you for validating your email.</h3>\n".
-		"<br /><a href='https://agcrange.org/'>Return to AGC<br/>\n".
+		"<br /><a href='".WP_SITE."/'>Return to AGC<br/>\n".
 		"<img src='/agc/images/AGC.gif' /></a>";
 
 	// Run Command on Badge server
-	$command = "wget -qO- 'https://badge.agcrange.org/site/verify?email=".$email."'";
+	$command = "wget -qO- '".BADGEAPP_SITE."/site/verify?email=".$email."'";
 	exec('nohup ' . $command . ' > /dev/null 2>&1 &');
 
 	// Run Command on tmp server
-	$command = "wget -qO- 'https://tmp.agcrange.org/site/verify?email=".$email."'";
+	$command = "wget -qO- '".TMP_SITE."/site/verify?email=".$email."'";
 	exec('nohup ' . $command . ' > /dev/null 2>&1 &');
 	}
 }
@@ -211,18 +212,18 @@ elseif(isset($_GET['unsubscribe'])) {
 	$email=$_GET['unsubscribe'];
 	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 		// Run Command on Badge server
-		$command = "wget -qO- 'https://badge.agcrange.org/site/no-email?unsubscribe=".$email."'";
+		$command = "wget -qO- '".BADGEAPP_SITE."/site/no-email?unsubscribe=".$email."'";
 		exec('nohup ' . $command . ' > /dev/null 2>&1 &');
 
 		// Run Command on tmp server
-		$command = "wget -qO- 'https://tmp.agcrange.org/site/no-email?unsubscribe=".$email."'";
+		$command = "wget -qO- '".TMP_SITE."/site/no-email?unsubscribe=".$email."'";
 		exec('nohup ' . $command . ' > /dev/null 2>&1 &');
 
 		echo "<!DOCTYPE html>\n<html lang='en-US'>".PHP_EOL;
 		echo "<head><title>AGC Unsubscribe</title></head>".PHP_EOL;
 		echo "The Associated Gun Clubs of Baltimore will miss you!<br />".
 		"Your email address: ".$email." will be removed promptly.<br /><br />".
-		"<a href='https://agcrange.org/'>The AGC</a></html>";
+		"<a href='".WP_SITE."/'>The AGC</a></html>";
 	} else { echo " The Email you entered is invalid."; }
 	echo "<br /> Good Bye.";
 }
@@ -233,8 +234,7 @@ else {
 		(strpos(" ".$_SERVER['REMOTE_ADDR'],"72.170.251.9")) ||
 		(strpos(" ".$_SERVER['REMOTE_ADDR'],"2001:470:5:a64"))) {
 
-	$username = 'associat_BadgeApp'; $userpass = 'a#i&f(rR2}[^fkR3q$'; $db = 'associat_gunclubsnew';
-	$mysqli = new mysqli('localhost',$username,$userpass,$db);
+	$mysqli = new mysqli('localhost',DATABASE_USERNAME,DATABASE_PASSWORD,DATABASE_NAME);
 	if(!$mysqli){ die("ERROR: Could not connect. " . $mysqli->connect_error); }
 
 	//echo "koay";

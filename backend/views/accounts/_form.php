@@ -43,9 +43,6 @@ use yii\helpers\ArrayHelper;
 <div id="error_msg"> </div>
 
 <script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
-<style>
-  .chosen-container-multi .chosen-choices {padding: 3px; }
-</style>
 <script>
   $("#privilege").chosen({placeholder_text_multiple:'Select Privilege',width: "100%"}).change(function(){
 	var selectedText = " "+$(this).find("option:selected").text();

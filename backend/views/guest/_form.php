@@ -156,7 +156,7 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 
 <p><b>Guest Safety Acknowledgement:</b></p>
 <ol>
-  <li><b>Guests or Responsible Adult agrees to AGC <a href="https://agcrange.org/waiver" target="_blank">Waiver of Liability</a>.</b></li>
+  <li><b>Guests or Responsible Adult agrees to AGC <a href="<?=yii::$app->params['wp_site']?>/waiver" target="_blank">Waiver of Liability</a>.</b></li>
   <li>Assume every gun is always loaded.</li>
   <li>Never allow your firearm to point in any direction other than downrange (toward your target) or straight up.</li>
   <li>Keep your finger off the trigger until your sights are on the target and you are ready to shoot.</li>
