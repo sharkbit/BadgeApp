@@ -22,11 +22,9 @@ class StoreItems extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            //[['privilege', 'priv_sort','timeout'], 'required'],
             [['item','sku','type','img'], 'string'],
 			[['item_id','paren','stock','active','new_badge'], 'integer'],
 			[['price'], 'number'],
-            //[['timeout'], 'integer', 'min'=>2, 'max' => 60],
         ];
     }
 
@@ -46,16 +44,18 @@ class StoreItems extends \yii\db\ActiveRecord {
         ];
     }
 
+	public function getTypes() {
+		$myTypes = $this::find()->groupBy(['type'])->all();
+		$aryTypes=[];
+		foreach($myTypes as $item){
+			$aryTypes=array_merge($aryTypes,[$item->type=>$item->type]);
+		}
+		return $aryTypes;
+	}
+
 	public function relations() {
-		//return array( 'Cat' => array(self::hasone, 'item', 'item_id') );
 		return $this->hasOne(self::className(), ['item_id' => 'paren'])
             ->from(self::tableName() . ' cat');
 	}
 
-/*	public function getCat() {
-		// return $this->hasone(StoreItems::className(), ['paren' => 'item_id']);
-		$equery= StoreItems::model()->find("paren=$this->item_id"); 
-		$cnm=$equery['item'];
-		return $cnm;
-    }*/
 }

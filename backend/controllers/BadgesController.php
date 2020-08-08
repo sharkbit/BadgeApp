@@ -14,6 +14,7 @@ use backend\models\FeesStructure;
 use backend\models\MembershipType;
 use backend\models\Params;
 use backend\models\PostPrintTransactions;
+use backend\models\StoreItems;
 use backend\models\WorkCredits;
 use backend\models\search\BadgesSearch;
 use backend\models\search\BadgeCertificationSearch;
@@ -62,30 +63,22 @@ class BadgesController extends AdminController {
 
 	public function actionAddCertification($membership_id) {
 		$model = new BadgeCertification();
-
 		if ($model->load(Yii::$app->request->post())) {
+
 			$model->badge_number = $membership_id;
 			$model->created_at = $this->getNowTime();
 			$model->updated_at = $this->getNowTime();
-
-			$feeStructureModel = FeesStructure::findOne($model->certification_type);
-
-			$model->fee = $feeStructureModel->fee;
+			$sku = explode("|",$model->certification_type)[0];
+			$item = (new StoreItems)->find()->where(['sku'=>$sku])->one();
+			$model->certification_type = $item->sku;
+			$model->fee = $item->price;
 			$model->discount= 0.00;
 			$model->amount_due = $model->fee - $model->discount;
- //yii::$app->controller->createLog(false, 'trex_addcert', var_export($model,true));
- //exit;
-
-			//if(!$model->validate())
+ 
 			if($model->save()) {
 				if($model->cert_payment_type <> 'creditnow') {
-					//$MyCart = Badges::GetCart($_POST['cart'],$model->mem_type, $model->badge_fee, $model->badge_fee-$model->discounts);
-					if ($model->certification_type==5) {
-						$MyCart = ["item"=>"Steel Certification","sku"=>410105,"ea"=>10.00 ,"qty"=>"1","price"=> 10.00 ];
-					} elseif ($model->certification_type==6) { 
-						$MyCart = ["item"=>"Holster Certification","sku"=>410100,"ea"=>20.00 ,"qty"=>"1","price"=> 20.00 ];
-					}
-
+					$MyCart = ["item"=>$item->item,"sku"=> $item->sku,"ea"=>$item->price ,"qty"=>"1","price"=> $item->price ];
+					
 					$savercpt = new CardReceipt();
 					$model->cc_x_id = 'x'.rand(100000000,1000000000);
 					$savercpt->id = $model->cc_x_id;

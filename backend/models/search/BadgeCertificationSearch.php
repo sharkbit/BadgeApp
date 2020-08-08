@@ -42,7 +42,7 @@ class BadgeCertificationSearch extends BadgeCertification
      */
     public function search($params)
     {
-        $query = BadgeCertification::find();
+        $query = BadgeCertification::find()->joinWith(['store_items']);
 
         // add conditions that should always apply here
 

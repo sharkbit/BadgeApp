@@ -4,6 +4,7 @@ namespace backend\models;
 
 use Yii;
 use backend\models\FeesStructure;
+use backend\models\StoreItems;
 use backend\models\Badges;
 use yii\helpers\ArrayHelper;
 
@@ -44,8 +45,8 @@ class BadgeCertification extends \yii\db\ActiveRecord
     {
         return [
             [['badge_number', 'created_at', 'updated_at', 'sticker', 'certification_type', 'status'], 'required'],
-            [['certification_type','cc_cvc','cc_exp_yr','cc_exp_mo'], 'integer'],
-            [['created_at', 'updated_at','proc_date','is_migrated','cert_amount_due','cert_payment_type'], 'safe'],
+            [['cc_cvc','cc_exp_yr','cc_exp_mo'], 'integer'],
+            [['certification_type','created_at', 'updated_at','proc_date','is_migrated','cert_amount_due','cert_payment_type'], 'safe'],
             [['status','cc_num','cc_x_id'], 'string'],
             [['sticker'], 'string', 'max' => 255],
             //[['sticker'], 'unique',],
@@ -75,15 +76,17 @@ class BadgeCertification extends \yii\db\ActiveRecord
         ];
     }
     public function getcertificationList() {
-        $feeStructure = FeesStructure::find()
-            ->where(['type'=>'certification', 'status'=>'0'])
-            ->all();
-        return ArrayHelper::map($feeStructure,'id','label');
+		$ItemsList = StoreItems::find()->where(['>',"sku",0])->andWhere(['like', 'item', '%cert%', false])->all();
+		return ArrayHelper::map($ItemsList,
+			function($model) { return $model['sku'].'|'.$model['price']; },'item');
+	}
 
-    }
+	public function getstore_items() {
+		return $this->hasOne(StoreItems::className(),['sku'=>'certification_type']);
+	}
 
     public function getCertificationDetails() {
-       return $this->hasOne(FeesStructure::className(),['id'=>'certification_type']); 
+       return $this->hasOne(StoreItems::className(),['id'=>'certification_type']); 
     }
 
     public function generateSticker() {

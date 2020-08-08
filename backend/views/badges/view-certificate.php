@@ -1,10 +1,6 @@
 <?php 
 
-use backend\models\FeesStructure;
-
-$certificationDetailsModel = FeesStructure::findOne($certificationModel->certification_type);
-
-$this->title = 'Certification - '.$certificationDetailsModel->label;
+$this->title = 'Certification - '.$certificationModel->store_items->item;
 $this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $badgeModel->badge_number, 'url' => ['/badges/view','badge_number'=>$badgeModel->badge_number]];
 $this->params['breadcrumbs'][] = ['label' => 'Certifications', 'url' => ['/badges/view-certifications-list','badge_number'=>$badgeModel->badge_number]];
@@ -17,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
           <ul> 
               <li> Badge Number <span class="pull-right"> <?=$badgeModel->badge_number?>  </span> </li>
               <li> Name <span class="pull-right"> <?= $badgeModel->prefix.' '.$badgeModel->first_name.' '.$badgeModel->last_name.' '.$badgeModel->suffix ?>  </span> </li>
-              <li> Certifcation Label <span class="pull-right"> <?= $certificationDetailsModel->label ?>  </span> </li>
+              <li> Certifcation Label <span class="pull-right"> <?= $certificationModel->store_items->item ?>  </span> </li>
               <li> Sticker <span class="pull-right"> <?= $certificationModel->sticker ?>  </span> </li>
               <li> Fee <span class="pull-right"> <?=  money_format('$%i', $certificationModel->fee)  ?>  </span> </li>
               <li> Discount <span class="pull-right"> <?= money_format('$%i',$certificationModel->discount)  ?>  </span> </li>

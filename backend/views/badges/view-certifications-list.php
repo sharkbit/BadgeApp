@@ -25,7 +25,8 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
                     ['class' => 'yii\grid\SerialColumn'],
                     [
                         'header'=>'Certifications',
-                        'value' => 'certificationDetails.label',
+                        'value' => function($model) {
+						return $model->store_items->item;} ,
                     ],
 					[
 						'attribute'=>'status',

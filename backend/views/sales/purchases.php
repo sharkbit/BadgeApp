@@ -10,6 +10,13 @@ use yii\grid\GridView;
 $this->title = 'Purchases';
 $this->params['breadcrumbs'][] = ['label' => 'Store', 'url' => ['index']];
 
+if (isset($_SESSION['pagesize'])) {
+	$pagesize = $_SESSION['pagesize'];
+} else {
+	$pagesize=20;
+}
+$dataProvider->pagination = ['pageSize' => $pagesize];
+
 echo $this->render('_view-tab-menu').PHP_EOL ?>
 <p> </p>
 
@@ -18,7 +25,6 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 
     </div>
 	<?php if(yii::$app->controller->hasPermission('badges/all')) {
-	//echo $this->render('_search',['model'=>$searchModel,'badgesModel'=>$badgesModel]).PHP_EOL; 
 	} ?>
 </div>
 <div class="row">
@@ -37,11 +43,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 				'contentOptions' =>['style' => 'width:100px'],
 				'format' => 'raw',
 				'value'=>function ($data) {
-				//	if(yii::$app->controller->hasPermission('badge/create')) {
-				//		return Html::a(str_pad($data->badge_number, 5, '0', STR_PAD_LEFT),'/badges/update?badge_number='.$data->badge_number);
-				//	} else {
-						return str_pad($data->badge_number, 5, '0', STR_PAD_LEFT); //,'/badges/view?badge_number='.$data->badge_number);
-				//	}
+					return str_pad($data->badge_number, 5, '0', STR_PAD_LEFT); 
 				}
 			],
 			'name',
@@ -51,13 +53,9 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 				'format' => 'raw',
 				'value' => function($model, $attribute) {
 					$items='';
-			yii::$app->controller->createLog(false, 'trex_V_S_P:41', var_export($model->cart,true));
 					foreach(json_decode($model->cart) as &$item ) {
 						$items .=$item->item.' ['.$item->ea.' x '.$item->qty.'] '.($item->price)."<br/>\n";
 					}
-					
-					//$cart = json_decode($model->cart);
-					//yii::$app->controller->createLog(false, 'trex_V_S_P', var_export($cart,true));
 					return $items;
 				}
 			],
@@ -67,7 +65,6 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
                 'header' => 'Actions',
                 'class' => 'yii\grid\ActionColumn',
 				'template'=>' {print} ',
-				//'template'=>' {view} {update} {print} {delete} ',
 				'buttons'=>[
 					'print' => function($url,$model) {
 						return  Html::a(' <span class="glyphicon glyphicon-print"></span> ', ['print-rcpt','x_id'=>$model->id,'badge_number'=>$model->badge_number], [

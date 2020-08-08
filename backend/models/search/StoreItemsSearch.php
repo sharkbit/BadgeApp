@@ -16,7 +16,7 @@ class StoreItemsSearch extends StoreItems {
      */
     public function rules() {
         return [
-            [['item','sku','img'], 'safe'],
+            [['item','sku','img','type'], 'safe'],
 			[['item_id','stock','active','new_badge'], 'integer'],
 			[['price'], 'number'],
         ];
@@ -52,17 +52,15 @@ class StoreItemsSearch extends StoreItems {
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'sku' => $this->sku,
-			'price'=>$this->price,
-			'stock' => $this->stock,
-			'active' => $this->active,
-			'new_badge' => $this->new_badge,
-			
-        ]);
+		if(isset($this->sku)) 	{ $query->andFilterWhere(['sku' => $this->sku]); }
+		if(isset($this->price)) { $query->andFilterWhere(['price'=>$this->price]); }
+		if(isset($this->stock)) { $query->andFilterWhere(['stock' => $this->stock]); }
+		if(isset($this->active)) { $query->andFilterWhere(['active' => $this->active]); }
+		if(isset($this->new_badge)) { $query->andFilterWhere(['new_badge' => $this->new_badge]); }
+		if(isset($this->type)) { $query->andFilterWhere(['like', 'type', $this->type]); }
+        if(isset($this->item)) { $query->andFilterWhere(['like', 'item', $this->item]); }
 
-        $query->andFilterWhere(['like', 'item', $this->item]);
-
+		//yii::$app->controller->createLog(true, 'trex-m-s-StoreItemsSearch', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }
 }

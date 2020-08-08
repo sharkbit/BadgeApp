@@ -551,16 +551,15 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		document.getElementById("cert_add").disabled = true;
 		$("#cert_search").show();
 		var myCert = document.getElementById("badgecertification-certification_type");
-		var selectedText = myCert.options[myCert.selectedIndex].text;
-		var myEmail = $("#badges-email").val();
-		if(selectedText=='Steel') {
-			var testId=3;
-			document.getElementById("badgecertification-cert_amount_due").value = '10.00';
-		}else if(selectedText=='Holster') {
-			var testId=1;
-			document.getElementById("badgecertification-cert_amount_due").value = '30.00';
+		var selectedIndex = myCert.options[myCert.selectedIndex];
+		document.getElementById("badgecertification-cert_amount_due").value = selectedIndex.value.split("|")[1];
+		
+		var testId=false;
+		if(selectedIndex.text.toLowerCase().includes('steel')) { //like...
+			testId=3;
+		}else if(selectedIndex.text.toLowerCase().includes('holster')) {
+			testId=1;
 		} else {
-	//		console.log('not Steel or Holster');
 			$("#cert_search").hide();
 			$("#cert_search_results").html("No Test Data");
 			document.getElementById("badgecertification-cert_amount_due").value = '';
