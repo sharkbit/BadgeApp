@@ -24,7 +24,6 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 	public $barcode_b;
 	public $barcode_pw;
 	public $badge;
-	public $rememberMe;
 
 	private $_identity;
 
@@ -32,8 +31,6 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 		return [
 			[['barcode', 'barcode_c', 'barcode_t', 'barcode_b', 'barcode_pw', 'badge'], 'required'],
 			[['barcode_c', 'barcode_t', 'barcode_b', 'barcode_pw'], 'string'],
-			[['rememberMe'], 'boolean']
-		   // array('badge', 'authenticate'),
 		];
 	}
 
@@ -45,7 +42,6 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 			'barcode_b' => '',
 			'barcode_pw' => '',
 			'badge' => 'Badge',
-			'rememberMe' => 'Remember me next time'
 		];
 	}
 

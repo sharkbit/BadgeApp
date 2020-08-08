@@ -161,6 +161,29 @@ foreach($agc_event as $an_event){
 		newUPC = '';
 	};
 
+	document.getElementById("loginmemberform-barcode_c").addEventListener("keyup",function(e){
+		if($(this).val().length==2) { $("#loginmemberform-barcode_t").focus(); }
+	});
+
+	document.getElementById("loginmemberform-barcode_t").addEventListener("keyup",function(e){
+		if($(this).val().length==2) { $("#loginmemberform-barcode_b").focus(); }
+		if($(this).val().length == 0 && e.which == 8) { document.getElementById("loginmemberform-barcode_c").focus(); }
+	});
+
+	document.getElementById("loginmemberform-barcode_b").addEventListener("keyup",function(e){
+		if($(this).val().length==5) { $("#loginmemberform-barcode_pw").focus(); }
+		if($(this).val().length == 0 && e.which == 8) { document.getElementById("loginmemberform-barcode_t").focus(); }
+	});
+
+	document.getElementById("loginmemberform-barcode_pw").addEventListener("keyup",function(e){
+		if($(this).val().length==2) { $("#loginmemberform-badge").focus(); }
+		if($(this).val().length == 0 && e.which == 8) { document.getElementById("loginmemberform-barcode_b").focus(); }
+	});
+
+	document.getElementById("loginmemberform-badge").addEventListener("keyup",function(e){
+		if($(this).val().length == 0 && e.which == 8) { document.getElementById("loginmemberform-barcode_pw").focus(); }
+	});
+
 <?php if($agc_event) { ?>
 	$('#event_att-ea_badge').on('input', function() {
 		document.getElementById("event_att-ea_f_name").value='';
@@ -291,32 +314,6 @@ foreach($agc_event as $an_event){
 			modal.style.display = "none";
 		}
 	}
-
-	document.getElementById("loginmemberform-barcode_c").addEventListener("keyup",function(e){
-		var code = e.which;
-        $this=$(this);
-		if($this.val().length==2) { $("#loginmemberform-barcode_t").focus(); }
-	});
-
-	document.getElementById("loginmemberform-barcode_t").addEventListener("keyup",function(e){
-		var code = e.which;
-        $this=$(this);
-		if($this.val().length==2) { $("#loginmemberform-barcode_b").focus(); }
-		if($this.val().length == 0 && code == 8) { document.getElementById("loginmemberform-barcode_c").focus(); }
-	});
-
-	document.getElementById("loginmemberform-barcode_b").addEventListener("keyup",function(e){
-		var code = e.which;
-        $this=$(this);
-		if($this.val().length==5) { $("#loginmemberform-barcode_pw").focus(); }
-		if($this.val().length == 0 && code == 8) { document.getElementById("loginmemberform-barcode_t").focus(); }
-	});
-
-	document.getElementById("loginmemberform-barcode_pw").addEventListener("keyup",function(e){
-		var code = e.which;
-        $this=$(this);
-		if($this.val().length == 0 && code == 8) { document.getElementById("loginmemberform-barcode_b").focus(); }
-	});
 
 	$('#event_att-ea_badge').on('input', function() {
 		var badgeNumber = $(this).val();

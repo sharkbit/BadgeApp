@@ -22,7 +22,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
                 <?= $form->field($model, 'username')->textInput(['autofocus' => true]).PHP_EOL; ?>
                 <?= $form->field($model, 'password')->passwordInput().PHP_EOL; ?>
-                <?= $form->field($model, 'rememberMe')->checkbox().PHP_EOL; ?>
                 <div class="form-group">
                     <?= Html::submitButton('Login', ['class' => 'btn btn-primary pull-right', 'name' => 'login-button']).PHP_EOL; ?>
                 </div>
