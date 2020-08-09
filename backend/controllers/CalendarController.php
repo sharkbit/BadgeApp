@@ -35,7 +35,7 @@ class CalendarController extends AdminController {
 	public function actionApprove($id,$redir='index') {
 		$model = $this->findModel($id);
 		$model->approved = 1;
-		$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'data'=>$_SESSION['user']." Approved Event"];
+		$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'changed'=>'Approved by '.$_SESSION['user'],'data'=>""];
 
 		$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 		if($model->save(false)) {
@@ -58,8 +58,8 @@ class CalendarController extends AdminController {
 			$model->recurrent_calendar_id = 0;
 			$myRemarks = [
 				'created_at'=>yii::$app->controller->getNowTime(),
-				'data'=>"Event Created",
-				'changed'=> 'Updated by '.$_SESSION['user'],
+				'changed'=> "Event Created by ".$_SESSION['user'],
+				'data'=>'New Record',
 			];
 			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 
@@ -405,6 +405,10 @@ class CalendarController extends AdminController {
 					$command = Yii::$app->db->createCommand($sql);
 					$saveOut = $command->execute();
 
+					$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),
+						'changed'=>'Republished by '.$_SESSION['user'],
+						'data'=>($force_order)? 'Forcing Priority':'Normal Priority'];
+					$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Futuer Events");
 					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days);
 
@@ -470,8 +474,8 @@ class CalendarController extends AdminController {
 			if($dirty) {
 				$myRemarks = [
 					'created_at'=>yii::$app->controller->getNowTime(),
-					'data'=>"Updated: ".$dirty,
 					'changed'=> 'Updated by '.$_SESSION['user'],
+					'data'=>"Updated: ".$dirty,
 				];
 				$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 			}
@@ -546,12 +550,13 @@ class CalendarController extends AdminController {
 			'recurrent_end_date' => 'Recure End Date',
 			'recur_week_days'=>'recur_week_days',
 		];
-
 		$responce = [];
 
 		foreach($items as $key => $item) {
 			if(array_key_exists($key,$obejectWithkeys)) {
-				$responce[] = $obejectWithkeys[$key];
+				if($key=='facility_id'){
+					$responce[] = 'Facility ('.(new AgcCal)->getAgcFacility_Names($model->facility_id).')'; }
+				else { $responce[] = $obejectWithkeys[$key]; }
 			}
 		}
 		sort($responce);
