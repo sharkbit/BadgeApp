@@ -64,12 +64,13 @@ class AgcCal extends \yii\db\ActiveRecord {
 	public function getAgcFacility_Names($id) {
 		if(!is_array($id)) {$id = json_decode($id); }
 		$Facility = (new agcFacility)->find()->all();
-		$found='';
+		$found=[];
 		foreach ($Facility as $fac) {
 			if (in_array($fac->facility_id,$id))
-				$found .= $fac->name.', ';
+				{ $found[] = $fac->name; }
 		}
-		return rtrim ($found,", ");
+		sort($found);
+		return implode(", ",$found);
 	}
 
 	public function getAgcRangeStatus() {
