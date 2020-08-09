@@ -31,7 +31,6 @@ if (isset($_REQUEST['badge'])) {
 	$model->badge_number=$_REQUEST['badge'];
 
 	$sql="SELECT count(*) as cnt from guest WHERE badge_number=".$model->badge_number." AND (g_paid='a' or g_paid ='h' or g_paid='0');";
-	echo "sql: $sql<br>";
 	$guest_count = Yii::$app->getDb()->createCommand($sql)->queryAll();
 	$guest_total = $guest_count[0]['cnt'];
 
