@@ -16,10 +16,11 @@ use kartik\widgets\TimePicker;
 /* @var $model backend\models\Calendar */
 /* @var $form yii\widgets\ActiveForm */
 
+$getNowTime = yii::$app->controller->getNowTime();
 if($model->isNewRecord) {
-    $model->start_time=date('h:00 A', strtotime(yii::$app->controller->getNowTime()));
-    $model->end_time=date('h:00 A', strtotime(yii::$app->controller->getNowTime()) + 60*60*2);
-    $model->date_requested = yii::$app->controller->getNowTime();
+    $model->start_time=date('h:00 A', strtotime($getNowTime));
+    $model->end_time=date('h:00 A', strtotime($getNowTime) + 60*60*2);
+    $model->date_requested =$getNowTime;
 } else {
     $model->start_time=date('h:i A', strtotime($model->start_time));
     $model->end_time=date('h:i A', strtotime($model->end_time));
@@ -64,8 +65,8 @@ if ($model->recur_every && $model->recurrent_calendar_id != 0 ) {
         $say='';
         $recur_disab=true;
     }
-    $sql = "select (select count(*) from associat_agcnew.agc_calendar where recurrent_calendar_id=".$sqlSearch." and event_date <'".date('y-m-d', strtotime(yii::$app->controller->getNowTime()))."') as past,".
-        " (select count(*) from associat_agcnew.agc_calendar where recurrent_calendar_id=".$sqlSearch." and event_date >='".date('y-m-d', strtotime(yii::$app->controller->getNowTime()))."') as  fut;";
+    $sql = "select (select count(*) from associat_agcnew.agc_calendar where recurrent_calendar_id=".$sqlSearch." and event_date <'".date('y-m-d', strtotime($getNowTime))."') as past,".
+        " (select count(*) from associat_agcnew.agc_calendar where recurrent_calendar_id=".$sqlSearch." and event_date >='".date('y-m-d', strtotime($getNowTime))."') as  fut;";
 
     $data = Yii::$app->getDb()->createCommand($sql)->queryAll();
     echo " (Past: <B>".$data[0]['past']."</b> Future: <B>".$data[0]['fut'].")</b><hr />";
@@ -669,7 +670,8 @@ sort($dirty);
 						 document.getElementById("cal_update_item").disabled=false;
 					} else {
 						if(responseData.inPattern){
-							 $("#inpatt_msg").html('<center><p style="color:orange;"><b>'+responseData.inPattern+'</b></p></center>');
+							if(reqDate >= '<?=date("Y-m-d",strtotime($getNowTime))?>')  { var msg_never=''; } else { var msg_never='<br>(Dates in the past will never be in scope)'; }
+							$("#inpatt_msg").html('<center><p><b style="color:orange;">'+responseData.inPattern+'</b>'+msg_never+'</p></center>');
 						} else {
 							$("#inpatt_msg").html('');
 						}
