@@ -59,7 +59,7 @@ class CalendarController extends AdminController {
 			$myRemarks = [
 				'created_at'=>yii::$app->controller->getNowTime(),
 				'changed'=> "Event Created by ".$_SESSION['user'],
-				'data'=>'New Record',
+				'data'=>'Facility ('.(new AgcCal)->getAgcFacility_Names($model->facility_id).')';,
 			];
 			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 

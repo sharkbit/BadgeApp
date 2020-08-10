@@ -141,7 +141,7 @@ sort($dirty);
     <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 col-xl-2">
         <?= $form->field($model, 'event_name')->textInput(['maxlength'=>true]) ?>
     </div>
-    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 col-xl-2">
+    <div class="col-xs-6 col-sm-3 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'keywords')->textInput(['maxlength'=>true]) ?>
     </div>
     <div class="col-xs-6 col-sm-3 col-md-2 col-lg-2 col-xl-2">
