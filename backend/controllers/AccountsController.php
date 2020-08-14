@@ -53,6 +53,7 @@ class AccountsController extends SiteController {
 		if ($model->load(Yii::$app->request->post())) {
 			$model->full_name= $model->f_name." ".$model->l_name;
 			$model->privilege = str_replace('"',"", json_encode($model->privilege));
+			 str_replace("\\","", str_replace('"',"", json_encode($model->clubs)));
 
 			$co_name=$model->auth_key;
 
@@ -80,8 +81,10 @@ class AccountsController extends SiteController {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) ) {
+			yii::$app->controller->createLog(false, 'trex-reeeqq', var_export($_REQUEST,true));
 			$model->clubs=json_encode($model->clubs);
 			$model->privilege= str_replace('"',"", json_encode($model->privilege));
+			$model->clubs = str_replace("\\","", str_replace('"',"", json_encode($model->clubs)));
             $model->updated_at = strtotime($this->getNowTime());
             $model->save(false);
             $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Authorized User Updated: '.$model->id);

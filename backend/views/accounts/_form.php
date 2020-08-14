@@ -31,7 +31,6 @@ use yii\helpers\ArrayHelper;
 	<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['prompt'=>'select','id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 	
 <?php if (in_array(8,json_decode($model->privilege))) { echo $form->field($model, 'company')->textInput(['autofocus' => true]).PHP_EOL; } ?>
-	</div>
 
     <div class="form-group pull-right">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success pull-right' : 'btn btn-success pull-right']) ?>
@@ -55,7 +54,7 @@ use yii\helpers\ArrayHelper;
 
   $("#club-id").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){
     var myCom = document.getElementById("user-company");
-    if(!myCom.value) {
+    if((myCom) && (!myCom.value)) {
       var selectedText = $(this).find("option:selected").text();
       myCom.value=selectedText;
     }
