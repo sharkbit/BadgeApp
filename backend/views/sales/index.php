@@ -359,7 +359,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
             console.log('Using '+zipcode);
             jQuery.ajax({
                 method: 'GET',
-                url: '<?=yii::$app->params['rootUrl']?>/badges/api-check?ckh_zip='+zipcode,
+                url: '<?=yii::$app->params['rootUrl']?>/badges/api-zip?zip='+zipcode,
                 crossDomain: false,
                 async: true,
                 success: function(responseData, textStatus, jqXHR) {

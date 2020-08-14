@@ -20,7 +20,7 @@ class AdminController extends \yii\web\Controller {
 	public $rootAdminPermission = [
 		'Accounts' => ['accounts/index','accounts/create','accounts/update','accounts/view','accounts/delete','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu','privileges/create','privileges/delete','privileges/index','privileges/update'],
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete-certificate','badges/delete','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log',],
+		'Badges'=>['badges/all','badges/add-certification','badges/api-check','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete-certificate','badges/delete','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log',],
 		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/showed','calendar/update','calendar/view'],
 		'CalSetup' => ['cal-setup/index','cal-setup/clubs','cal-setup/updateclu','cal-setup/facility','cal-setup/updatefac','cal-setup/rangestatus','cal-setup/updateran','cal-setup/eventstatus','cal-setup/updateeven'],
 		'Clubs' => ['clubs/index','clubs/create','clubs/delete','clubs/update','clubs/view','clubs/delete-X','clubs/badge-rosters'],
@@ -120,7 +120,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $AllPermission = [
-		'Badges'=>['badges/api-check','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/view'],
+		'Badges'=>['badges/api-zip','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/view'],
 		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'payments'=>['payment/charge'],
 		'sales' => ['sales/index','sales/print-rcpt','sales/purchases'],

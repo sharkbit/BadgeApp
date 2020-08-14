@@ -413,6 +413,25 @@ class BadgesController extends AdminController {
 		}
 	}
 
+	public function actionApiZip($zip) {
+		$verify = new USPSCityStateLookup('066ASSOC7994');
+		$verify->addZipCode($zip);
+
+		// Perform the call and print out the results
+
+		$verify->lookup();
+		$response = $verify->getArrayResponse();
+
+		// Check if it was completed
+		if ($verify->isSuccess()) {
+			$myzip = $response['CityStateLookupResponse'];
+			echo json_encode($myzip['ZipCode']);
+		} else {
+			echo json_encode('Error: '.$verify->getErrorMessage());
+		}
+		exit;
+	}
+
 	public function actionCreate() {
 		$confParams  = Params::findOne('1');
 		$model = new Badges();

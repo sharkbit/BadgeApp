@@ -305,7 +305,7 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
             console.log('Using '+zipcode);
             jQuery.ajax({
                 method: 'GET',
-                url: '<?=yii::$app->params['rootUrl']?>/badges/api-check?ckh_zip='+zipcode,
+                url: '<?=yii::$app->params['rootUrl']?>/badges/api-zip?zip='+zipcode,
                 crossDomain: false,
                 async: true,
                 success: function(responseData, textStatus, jqXHR) {
@@ -1313,7 +1313,7 @@ app.controller('GuestFrom', function($scope) {
             console.log('Using '+zipcode);
             jQuery.ajax({
                 method: 'GET',
-                url: '<?=yii::$app->params['rootUrl']?>/badges/api-check?ckh_zip='+zipcode,
+                url: '<?=yii::$app->params['rootUrl']?>/badges/api-zip?zip='+zipcode,
                 crossDomain: false,
                 async: true,
                 success: function(responseData, textStatus, jqXHR) {
