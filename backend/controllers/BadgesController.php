@@ -236,14 +236,14 @@ class BadgesController extends AdminController {
 		if(isset($_GET['email']) && ($_GET['email']=='true')) {			// /badges/api-check?email=true
 			$mail = yii::$app->controller->emailSetup();
 			if ($mail) {
-				$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
+				$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
 				$mail->addCustomHeader('List-Unsubscribe', yii::$app->params['wp_site'].'/site/no-email?unsubscribe=noclick">');
 				$mail->Subject = 'PHPMailer Test Subject via smtp, basic with authentication';
 				$mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
 				$EmailBody = "This is the Email Body,  Isn't it sexy.  <br/ >From: ".$_SERVER['HTTP_HOST'];
 				$mail->Body  = "<!DOCTYPE html><html><body>".$EmailBody."</body></html>";
-				$mail->addAddress('sharkbit@hotmail.com', 'Marc');
-				$mail->addAddress('president@associatedgunclubs.org', 'Prez');
+				//$mail->addAddress('some@email.com', 'Marc');
+				$mail->addAddress(yii::$app->params['adminEmail'], 'Prez');
 				
 				//$mail->Timeout=1000;
 				$mail->SMTPDebug = 4; 			// debugging: 1 = errors and messages, 2 = messages only
@@ -899,7 +899,7 @@ class BadgesController extends AdminController {
 					$mail = yii::$app->controller->emailSetup();
 					if ($mail) {
 						$mail->addCustomHeader('List-Unsubscribe', yii::$app->params['wp_site'].'/site/no-email?unsubscribe='.$email.'">');
-						$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
+						$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
 						$mail->addAddress($email, $first);
 						$mail->Subject = 'AGC Range Reciept';
 						$EmailBody = $this->renderPartial('print-rcpt',[ 'MyRcpt' => $MyRcpt ] );

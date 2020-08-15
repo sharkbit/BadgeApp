@@ -261,7 +261,7 @@ class CalendarController extends AdminController {
 				$found[$i]->cal_id = $item->calendar_id;
 				$found[$i]->fac_id = $item->facility_id;
 				$found[$i]->fac_name = (new AgcCal)->getAgcFacility_Names($item->facility_id);
-				$found[$i]->club = $item->clubs->short_name;
+				$found[$i]->club = (isset($item->clubs->short_name) ? $item->clubs->short_name : $item->club_id);
 				$found[$i]->name = $item->event_name;
 				$found[$i]->start =  date('h:i A',strtotime($item->start_time));
 				$found[$i]->stop = date('h:i A',strtotime($item->end_time));

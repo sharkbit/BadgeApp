@@ -52,7 +52,7 @@ $form = ActiveForm::begin(['id'=>'email']); ?>
 <div class="row">
 	<div class="col-xs-12" id="email_err"> </div>
 	<div class="col-xs-12" >
-		<?= $form->field($model, 'mass_reply_to')->textInput(['placeholder'=>'president@AGCrange.org']) ?>
+		<?= $form->field($model, 'mass_reply_to')->textInput(['placeholder'=>yii::$app->params['adminEmail']]) ?>
 	</div>
 	<div class="col-xs-12" >
 	 <?= $form->field($model, 'mass_subject')->textInput(['placeholder'=>'Required']) ?>

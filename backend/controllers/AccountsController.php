@@ -81,7 +81,6 @@ class AccountsController extends SiteController {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) ) {
-			yii::$app->controller->createLog(false, 'trex-reeeqq', var_export($_REQUEST,true));
 			$model->clubs=json_encode($model->clubs);
 			$model->privilege= str_replace('"',"", json_encode($model->privilege));
 			$model->clubs = str_replace("\\","", str_replace('"',"", json_encode($model->clubs)));

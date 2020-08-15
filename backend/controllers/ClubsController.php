@@ -87,9 +87,9 @@ class ClubsController extends AdminController {
 						$mail = yii::$app->controller->emailSetup();
 						if ($mail) {
 							$mail->IsHTML(false);
-							$mail->setFrom('president@associatedgunclubs.org', 'AGC Range');
+							$mail->setFrom(yii::$app->params['adminEmail'], 'AGC Range');
 							$mail->addAddress($clubData->poc_email);
-							$mail->addBCC('president@associatedgunclubs.org');
+							$mail->addBCC(yii::$app->params['adminEmail']);
 							$mail->Subject = $clubData->short_name."'s active members of AGC";
 							$mail->Body = $clubData->short_name.",\n\nHere is your club roster as of today (".date('M d, Y').").\n\nAGC Range";
 							$mail->addAttachment(Yii::getAlias('@webroot').'/files/rosters/'.$fileName); 
@@ -156,9 +156,9 @@ class ClubsController extends AdminController {
 							$mail = yii::$app->controller->emailSetup();
 							if ($mail) {
 								$mail->IsHTML(false);
-								$mail->setFrom('president@associatedgunclubs.org', 'AGC Range');
+								$mail->setFrom(yii::$app->params['adminEmail'], 'AGC Range');
 								$mail->addAddress($clubData->poc_email);
-								$mail->addBCC('president@associatedgunclubs.org');
+								$mail->addBCC(yii::$app->params['adminEmail']);
 								$mail->Subject = $clubData->short_name."'s active members of AGC";
 								$mail->Body = $clubData->short_name.",\n\nHere is your club roster as of today (".date('M d, Y').").\n\nAGC Range";
 								$mail->addAttachment(Yii::getAlias('@webroot').'/files/rosters/'.$fileName); 

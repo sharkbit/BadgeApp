@@ -420,7 +420,7 @@ class AdminController extends \yii\web\Controller {
 
 			try {
 				//Recipients
-				$mail->setFrom('noreply@associatedgunclubs.org', 'AGC Range');
+				$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
 
 				//$mail->addAddress('contact@example.com');			   // Name is optional
 				//$mail->addReplyTo('info@example.com', 'Information');
