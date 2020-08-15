@@ -19,8 +19,8 @@ class GuestSearch extends Guest {
 	 
     public function rules() {
         return [
-			[['badge_number','tmp_badge','g_yob','g_paid'], 'integer'],
-			[['g_first_name','g_last_name','g_city','g_state','time_in', 'time_out'], 'safe'],
+			[['badge_number','tmp_badge','g_yob'], 'integer'],
+			[['g_first_name','g_last_name','g_city','g_state','time_in', 'time_out','g_paid'], 'safe'],
         ];
     }
 
