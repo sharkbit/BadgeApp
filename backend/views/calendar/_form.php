@@ -715,7 +715,7 @@ sort($dirty);
 								cell6.innerHTML = responseData.data[j].stop;
 								cell7.innerHTML = responseData.data[j].eve_status_name;
 								cell8.innerHTML = responseData.data[j].rng_status_name;
-								cell9.innerHTML = responseData.data[j].type_n+" " +responseData.data[j].type_i;
+								cell9.innerHTML = responseData.data[j].type_n;
 								if (available_lanes != 0) {cell10.innerHTML = responseData.data[j].lanes;}
 								//console.log(responseData.data[j].name);
 							}

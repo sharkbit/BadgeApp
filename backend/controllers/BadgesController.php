@@ -530,7 +530,7 @@ class BadgesController extends AdminController {
 				  //echo'<pre>'; print_r($badgeSubscriptionsModel->getErrors()); die();
 				}
 
-				$this->createLog($this->getNowTime(), $_SESSION['user'], 'Issued new Badge : '.$model->badge_number);
+				$this->createLog($this->getNowTime(), $_SESSION['user'], "Issued new Badge','".$model->badge_number." for ".$model->first_name." ".$model->last_name);
 				Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been created');
 				return $this->redirect(['view', 'badge_number' => $model->badge_number]);
 			} else {
@@ -1031,7 +1031,7 @@ class BadgesController extends AdminController {
 				$badgeRecords->remarks = json_encode($remarksOld,true);
 
 				if($badgeRecords->save(false)) {
-					$this->createLog($this->getNowTime(), $_SESSION['user'], "Membership Renewed','".$badgeRecords->badge_number);
+					$this->createLog($this->getNowTime(), $_SESSION['user'], "Membership Renewed','".$badgeRecords->badge_number." for ".$badgeRecords->first_name." ".$badgeRecords->last_name);
 					Yii::$app->getSession()->setFlash('success', 'Membership has been Renewed');
 					return $this->redirect(['badges/view-subscriptions', 'badge_number' => $model->badge_number]);
 				}
