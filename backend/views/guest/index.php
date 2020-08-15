@@ -60,6 +60,7 @@ if(yii::$app->controller->hasPermission('guest/delete')) {
 			[
 				'attribute'=>'g_paid',
 				'format' => 'raw',
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'g_paid',['a'=>'Cash','h'=>'Check','y'=>'Juniors Event','m'=>'Minor','o'=>'Observer','s'=>'Spouse'],['class'=>'form-control','prompt' => 'All']),
 				'value'=>function($model) {
 					if ($model->g_paid <> 1) {
 						$p_type='';
