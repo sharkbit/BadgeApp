@@ -205,7 +205,7 @@ sort($dirty);
                 <div class="row">
                 <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_mon" name="pat_da_mon" value="mon" <?=$chkMon ?>> Monday</div>
                 <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_tue" name="pat_da_tue" value="tue" <?=$chkTue ?>> Tuesday</div>
-                <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_wed" name="pat_da_wed" value="wed" <?=$chkWed ?>> Wedensday</div>
+                <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_wed" name="pat_da_wed" value="wed" <?=$chkWed ?>> Wednesday</div>
                 <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_thu" name="pat_da_thu" value="thu" <?=$chkThu ?>> Thursday</div>
                 <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_fri" name="pat_da_fri" value="fri" <?=$chkFri ?>> Friday</div>
                 <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_sat" name="pat_da_sat" value="sat" <?=$chkSat ?>> Saturday</div>
