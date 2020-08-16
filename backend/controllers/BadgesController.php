@@ -1428,7 +1428,7 @@ class BadgesController extends AdminController {
 		return $responce;
 	}
 
-	public function saveClub($badge_number, $clubs) {
+	public static function saveClub($badge_number, $clubs) {
 		$connection = Yii::$app->getDb();
 
 		$sql="DELETE FROM `badge_to_club` WHERE badge_number=".$badge_number;
