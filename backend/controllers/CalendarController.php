@@ -829,16 +829,9 @@ if($eco) { echo "using $myYear<br/>"; }
 			yii::$app->controller->createCalLog(true, $_SESSION['user'], "Created New Calendar item: ','".$model_event->calendar_id.'->'.$model_event->event_name);
 
 			if (intval(substr($eDate,0,4)) > intval(date('Y'))){
-				if ($NewID == false) {
-					$NewID = $model_event->calendar_id;
-				}
+				$NewID = $model_event->calendar_id;
 			}
 		}
-
-	//	if(!in_array($model->event_date,$myEventDates)) {
-	//		yii::$app->controller->createLog(true, 'trex_B_C_CalC:814','date: '.$model->event_date.' not in array');
-	//		yii::$app->controller->createLog(false, 'trex_B_C_CalC:828', var_export($myEventDates,true));
-	//	}
 
 		if ($NewID) {
 			AgcCal::UpdateAll(['recurrent_calendar_id'=>$NewID],"recurrent_calendar_id = ".$model->recurrent_calendar_id);
