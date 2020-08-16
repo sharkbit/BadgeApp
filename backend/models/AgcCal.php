@@ -76,16 +76,26 @@ class AgcCal extends \yii\db\ActiveRecord {
 	public function getAgcRangeStatus() {
         return $this->hasOne(agcRangeStatus::className(), ['range_status_id' => 'range_status_id']);
     }
-	
-    public function getIsPublished($id) {
-		$command = Yii::$app->db->createCommand("SELECT count(*) FROM associat_agcnew.agc_calendar where recurrent_calendar_id = $id ".
-			" and event_date > '".date('Y')."-12-31 23:59:00'");
-		$sum = $command->queryScalar();
-		if ($sum >0) {
-			return true;
+
+    public function getIsPublished($id=false) {
+		if ($id) {
+			// If event is in next year
+			$recTest = AgcCal::find()->where(['calendar_id'=>$id])->one();
+			if (strtotime($recTest->event_date) >strtotime(date('Y')."-12-31 23:59:00")) { return true; } else { return false; }
 		} else {
-			return false; 
+			// If allowed to Show republished field?
+			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00') && strtotime(yii::$app->controller->getNowTime()) < strtotime(date('Y').'-10-15 00:00:00')) {
+				if(!yii::$app->controller->hasPermission('calendar/all')) {
+					$where = " club_id in (".ltrim(rtrim(Yii::$app->user->identity->clubs,']'),'[').") AND ";
+				} else { $where = ''; }
+
+				$sql = "SELECT distinct recurrent_calendar_id FROM associat_agcnew.agc_calendar ".
+					" WHERE ".$where."  calendar_id not in (SELECT distinct recurrent_calendar_id FROM associat_agcnew.agc_calendar where calendar_id=recurrent_calendar_id AND recurrent_calendar_id >0 AND deleted=0 AND event_date > '".date('Y')."-12-31 23:59:00') AND ".
+					" calendar_id=recurrent_calendar_id AND recurrent_calendar_id >0 AND deleted=0;";
+				$sum =  Yii::$app->db->createCommand($sql)->queryScalar();
+				if ($sum >0) { return false; } else { return true; }
+			} else { return false; }
 		}
-	}	
+	}
 }
 

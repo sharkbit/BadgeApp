@@ -228,7 +228,7 @@ class BadgesController extends AdminController {
 		return $written;
 	}
 
-	public function actionApiCheck() {		// Test Functions to Fix database issues.  Use  ./badges/api-check
+	public function actionApiCheck($unpub=false) {		// Test Functions to Fix database issues.  Use  ./badges/api-check
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
@@ -389,22 +389,43 @@ class BadgesController extends AdminController {
 			}
 			exit;
 		}
-		elseif(isset($_GET['calfix'])) {    //	./badges/api-check?calfix
-			if (in_array(1,$_SESSION['privilege'])) {
-			$sql = "SELECT distinct calendar_id FROM associat_agcnew.agc_calendar where calendar_id = recurrent_calendar_id and event_date>='".date('Y-01-01',strtotime("+1 year"))."'";
+		elseif(isset($_GET['unpub'])) {    //	./badges/api-check?unpub
+			if($unpub) {$where='club_id='.$unpub.' AND';} else {$where='';}
+			$sql = "SELECT distinct calendar_id FROM associat_agcnew.agc_calendar where $where calendar_id = recurrent_calendar_id and event_date>='".date('Y-01-01',strtotime("+1 year"))."'";
 			$FixRecs = Yii::$app->getDb()->createCommand($sql)->queryAll();
-			AgcCal::UpdateAll(['conflict'=>0,'approved'=>1,'active'=>1,'deleted'=>0]);
+			AgcCal::UpdateAll(['conflict'=>0,'approved'=>1,'active'=>1]); //,'deleted'=>0]);
 			foreach ($FixRecs as $bad_recu) {
-				AgcCal::DeleteAll('recurrent_calendar_id='.$bad_recu['calendar_id']." AND event_date>='".date('Y-01-01',strtotime("+1 year"))."'");
-				$check_cal = AgcCal::find()->where(['recurrent_calendar_id'=>$bad_recu['calendar_id']])->andWhere(['>=','event_date', date('Y-01-01',strtotime("+1 hour")) ])->all();
+				$fixCal = AgcCal::find()->where(['calendar_id'=>$bad_recu['calendar_id']])->one();
+				AgcCal::UpdateAll(['club_id'=>$fixCal->club_id,
+						'facility_id'=>$fixCal->facility_id,
+						'event_name'=>$fixCal->event_name,
+						'keywords'=>$fixCal->keywords,
+						'start_time'=>$fixCal->start_time,
+						'end_time'=>$fixCal->end_time,
+						'lanes_requested'=>$fixCal->lanes_requested,
+						'recur_week_days'=>$fixCal->recur_week_days,
+						'recurrent_start_date'=>$fixCal->recurrent_start_date,
+						'recurrent_end_date'=>$fixCal->recurrent_end_date,
+						'event_status_id'=>$fixCal->event_status_id,
+						'range_status_id'=>$fixCal->range_status_id,
+						'conflict'=>0,
+						'deleted'=>$fixCal->deleted,
+						'approved'=>$fixCal->approved,
+						'active'=>$fixCal->active,
+						'poc_badge'=>$fixCal->poc_badge,
+					],'recurrent_calendar_id='.$bad_recu['calendar_id']);
 				
-				$g_id=$check_cal[0]->calendar_id;
-				yii::$app->controller->createLog(true, 'trex_C_BC CalFix', "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id);
-				//echo "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id."<br>";
-				AgcCal::UpdateAll(['recurrent_calendar_id'=>$g_id],'recurrent_calendar_id='.$bad_recu['calendar_id']);
+				AgcCal::DeleteAll('recurrent_calendar_id='.$bad_recu['calendar_id']." AND event_date>='".date('Y-01-01',strtotime("+1 year"))."'");
+				$check_cal = AgcCal::find()->where(['recurrent_calendar_id'=>$bad_recu['calendar_id'],'deleted'=>0])->orderBy(['calendar_id'=>SORT_DESC])->one(); // ->andWhere(['>=','event_date', date('Y-01-01',strtotime("+1 hour")) ])->all();
+				if($check_cal) {
+					$g_id=$check_cal->calendar_id;
+					yii::$app->controller->createLog(true, 'trex_C_BC CalFix', "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id);
+					echo "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id."<br>";
+					AgcCal::UpdateAll(['recurrent_calendar_id'=>$g_id],'recurrent_calendar_id='.$bad_recu['calendar_id']);
+				} else { echo "Event Needs History - ".$bad_recu['calendar_id']."<br/>"; }
 			}
-			}
-			return $this->redirect(['/calendar/recur']);
+			exit;
+			//return $this->redirect(['/calendar/recur']);
 		}
 		else {
 			var_dump($_GET);
