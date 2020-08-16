@@ -224,7 +224,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			],
 			[	'attribute'=>'conflict',
 				'value'=>function($model) { if($model->conflict==1) { return 'Yes'; } else { return 'No'; } },
-				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? true : false,
+				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? (($urlStatus['actionId']=='index') ? false : true ): false,
 			],
 			[	'header'=>'Action',
 				'visible' => (yii::$app->controller->hasPermission('calendar/view')) ? true : ((yii::$app->controller->hasPermission('calendar/update')) ? true : ((yii::$app->controller->hasPermission('calendar/delete')) ? true : false ) ),
