@@ -11,6 +11,11 @@ use yii\widgets\Breadcrumbs;
 use common\widgets\Alert;
 
 AppAsset::register($this);
+
+header("Expires: Fri, 01 Jan 1990 00:00:00 GMT");
+header("Pragma: no-store, no-cache");
+header("Cache-Control:  max-age=0, private, no-cache, must-revalidate, no-store");
+header("Vary: *");
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -310,9 +315,11 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                 async: true,
                 success: function(responseData, textStatus, jqXHR) {
                     responseData = JSON.parse(responseData);
-                    $mycity=responseData.City.toProperCase()
+                    if(responseData.City) {
+					$mycity=responseData.City.toProperCase()
                     $("#badges-city").val($mycity);
                     $("#badges-state").val(responseData.State);
+					}
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     console.log(responseData);
@@ -453,8 +460,8 @@ app.controller("CreateBadgeController", function($scope) {
             $("#HideMySubmit").hide();
         } else {
             $("#cc_form_div").hide();
-            var myTest = $("#no-primary-error").html()
-            if(!myTest.indexOf("Renew")) {
+            var myTest = $("h4#no-primary-error")[0];
+            if((myTest.style.display==='none') || (myTest.hidden==true)) {
                 $("#HideMySubmit").show();
             }
         }
