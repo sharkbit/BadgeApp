@@ -166,7 +166,7 @@ class PaymentController extends AdminController {
 							yii::$app->controller->createLog(true, $_SESSION['user'], 'Processed_CC for '.$savercpt->name.' $'.
 								$savercpt->amount.', AuthCode: '.$savercpt->authCode.', Card: '.$savercpt->cardNum);
 						} else {
-							yii::$app->controller->createLog(true, 'trex_C_PC:257 savercpt', var_export($savercpt->errors,true));
+							yii::$app->controller->createLog(true, 'trex_C_PayCtl:169 savercpt', var_export($savercpt->errors,true));
 						}
 						return json_encode(["status"=>"success","message"=>$myrcpt]);
 
@@ -176,25 +176,26 @@ class PaymentController extends AdminController {
 						return json_encode(["status"=>"error","message"=>$response['ssl_result_message']]);
 
 					} else {
-						yii::$app->controller->createLog(true, 'trex_C_PC:286 Response', var_export($response,true));
+						yii::$app->controller->createLog(true, 'trex_C_PayCtl:179 Response', var_export($response,true));
 						return json_encode(["status"=>"error","message"=>$response]);
 					}
 				} elseif (isset($response['errorCode'])) {
 					yii::$app->controller->createLog(true, $_SESSION['user'], "CC_ERROR:318 ".$response['errorCode']." ".$response['errorName']);
 					return json_encode(["status"=>"error","message"=>"Error# ".$response['errorCode'].": ".$response['errorMessage']]);
-				} else { //real error
-					yii::$app->controller->createLog(true, 'trex_C_PC:293 Response', var_export($response,true));
-					return json_encode(["status"=>"error","message"=>"It Broke, Call Marc... (Payment Error Response:291)"]);
+				} else { //No Response
+					yii::$app->controller->createLog(true, 'trex_C_PayCtl:186 No Response', var_export($response,true));
+					return json_encode(["status"=>"error","message"=>"No Response or Network Timed Out.  Please use a difrent payment method or try again later."]);
 				}
 			} else  {
-				yii::$app->controller->createLog(true, 'trex_C_PayCtl:297 error', 'Form Data missing');
-				yii::$app->controller->createLog(true, 'trex_C_PayCtl:298'," Amount: $cc_amount, Addr: $cc_address, City: $cc_city, State: $cc_state, Zip: $cc_zip, F_Name: $first_name, L_Name: $last_name");
+				if (isset($_SERVER['HTTP_REFERER'])) {$missing = $_SERVER['HTTP_REFERER'];} else {$missing='null'; }
+				yii::$app->controller->createLog(true, 'trex_C_PayCtl:190 Form Data missing:',$missing);
+				yii::$app->controller->createLog(true, 'trex_C_PayCtl:191 Form Data missing:'," Amount: $cc_amount, Addr: $cc_address, City: $cc_city, State: $cc_state, Zip: $cc_zip, F_Name: $first_name, L_Name: $last_name");
 
 				return json_encode(["status"=>"error","message"=>"Please Verify Form Information."]);
 			}
 
 		} else {
-			yii::$app->controller->createLog(true, 'trex_C_PayCtl:304 ','not post');
+			yii::$app->controller->createLog(true, 'trex_C_PayCtl:196 ','not post');
 			//echo Yii::$app->response->data = "Fail";
 	//		$this->redirect('/');
 		}
