@@ -17,7 +17,7 @@ class AgcCalSearch extends AgcCal {
 
     public function rules() {
         return [
-            [['event_name','club_id','active','approved','recur_every','facility_id','event_status_id','range_status_id'], 'safe']
+            [['event_name','club_id','active','approved','recur_every','recur_week_days','facility_id','event_status_id','range_status_id'], 'safe']
         ];
     }
 
@@ -88,6 +88,15 @@ class AgcCalSearch extends AgcCal {
 				$query->andFilterWhere(['<','event_date', $SearchEnd ]);
 				} 
 			}
+		}
+		if(isset($this->recur_week_days)) {
+			switch ($this->recur_week_days) {
+				case 'd':$likeThis='daily'; break;
+				case 'w':$likeThis='weekly'; break;
+				case 'm':$likeThis='monthly'; break;
+				case 'y':$likeThis='yearly'; break;
+			}
+			if(isset($likeThis)) { $query->andFilterWhere(['like','recur_week_days',$likeThis]); }
 		}
 		
 		if(isset($this->event_name)) { $query->andFilterWhere(['like','event_name',$this->event_name]); }

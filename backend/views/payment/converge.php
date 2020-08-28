@@ -53,7 +53,7 @@ $response = $PaymentProcessor->ccsale(
 echo('ConvergeApi->ccsale Response:' . "<br>");
 print_r($response);
 
-yii::$app->controller->createLog(true, 'B_V_P_Converge_test', print_r($response,true));
+yii::$app->controller->createLog(true, 'B_V_P_Converge_test -> '.$_SESSION['user'], print_r($response,true));
 
 if(isset($response['ssl_result_message'])) {
 echo "<hr>".

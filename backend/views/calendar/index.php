@@ -135,11 +135,12 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					}
 					else if (strpos($model->recur_week_days,'yearly')) {
 						if ($wtf->yearly=='day') { return 'Yearly, '.ucfirst($wtf->on).' '.ucfirst($wtf->day).' of '.date("M", mktime(0, 0, 0, $wtf->of, 10)); }
-						return 'Yearly ... '.$model->recur_week_days;
+						return 'Yearly, on '.date("M", mktime(0, 0, 0, $wtf->mon, 10)).' '.$wtf->day;
 					}
 					else return '';
 
 				},
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'recur_week_days',['d'=>'Daily','w'=>'Weekly','m'=>'Monthly','y'=>'Yearly'],['class'=>'form-control','prompt' => 'All']),
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:10%'],
 			],
