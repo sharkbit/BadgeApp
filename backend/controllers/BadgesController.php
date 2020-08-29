@@ -415,14 +415,17 @@ class BadgesController extends AdminController {
 						'poc_badge'=>$fixCal->poc_badge,
 					],'recurrent_calendar_id='.$bad_recu['calendar_id']);
 				
-				AgcCal::DeleteAll('recurrent_calendar_id='.$bad_recu['calendar_id']." AND event_date>='".date('Y-01-01',strtotime("+1 year"))."'");
-				$check_cal = AgcCal::find()->where(['recurrent_calendar_id'=>$bad_recu['calendar_id'],'deleted'=>0])->orderBy(['calendar_id'=>SORT_DESC])->one(); // ->andWhere(['>=','event_date', date('Y-01-01',strtotime("+1 hour")) ])->all();
-				if($check_cal) {
-					$g_id=$check_cal->calendar_id;
-					yii::$app->controller->createLog(true, 'trex_C_BC CalFix', "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id);
-					echo "bad: ".$bad_recu['calendar_id']." -> good: ".$g_id."<br>";
-					AgcCal::UpdateAll(['recurrent_calendar_id'=>$g_id],'recurrent_calendar_id='.$bad_recu['calendar_id']);
-				} else { echo "Event Needs History - ".$bad_recu['calendar_id']."<br/>"; }
+				$check_cal = AgcCal::find()->where(['recurrent_calendar_id'=>$bad_recu['calendar_id'],'deleted'=>0])->orderBy(['calendar_id'=>SORT_ASC])->one(); // ->andWhere(['>=','event_date', date('Y-01-01',strtotime("+1 minute")) ])->all();
+				if(strtotime($check_cal->event_date) <  strtotime(date('Y-12-31 23:25:00'))) {
+					AgcCal::DeleteAll('recurrent_calendar_id='.$bad_recu['calendar_id']." AND event_date>='".date('Y-01-01',strtotime("+1 year"))."'");
+					AgcCal::UpdateAll(['recurrent_calendar_id'=>$check_cal->calendar_id],'recurrent_calendar_id='.$bad_recu['calendar_id']);
+					yii::$app->controller->createLog(true, 'trex_C_BC unPub', "bad: ".$bad_recu['calendar_id']." -> good: ".$check_cal->calendar_id);
+					echo "bad: ".$bad_recu['calendar_id']." -> good: ".$check_cal->calendar_id."<br>";
+					
+				} else { 
+					yii::$app->controller->createLog(true, 'trex_C_BC unPub', "No events in previous year - ".$bad_recu['calendar_id']);
+					echo "No events in previous year - ".$bad_recu['calendar_id']."<br/>"; 
+				}
 			}
 			exit;
 			//return $this->redirect(['/calendar/recur']);
