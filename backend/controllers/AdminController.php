@@ -34,7 +34,6 @@ class AdminController extends \yii\web\Controller {
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
 		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/stock','sales/update','sales/inventory'], // Test Pages
-		'paypal'=> ['payment/paypalsetup','payment/paypal','payment/paypalprocess'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update','work-credits/delete'],
 	];
@@ -141,13 +140,12 @@ class AdminController extends \yii\web\Controller {
 		} else if (yii::$app->user->isGuest) {
 			// Pages that dont require login
 			if((Yii::$app->controller->id."/".Yii::$app->controller->action->id=='events/reg') ||
-				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/get-badge-name') ||
-				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='payment/info') ||
-				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='payment/paypal') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/verify') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/no-email') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login-member') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/get-badge-name') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='clubs/badge-rosters') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='mass-email/process') ) {
 
 				$myJump = Yii::$app->request->get();

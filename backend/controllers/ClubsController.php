@@ -49,7 +49,7 @@ class ClubsController extends AdminController {
 
 			if (!@mkdir('files/rosters/', 0755)) {
 				$error = error_get_last();
-				yii::$app->controller->createLog(false, 'trex_here', var_export($error,true));
+				if ($error['type']<>2) { yii::$app->controller->createLog(true, 'B_C_ClubCtrl Roster Dir Error:', var_export($error,true)); }
 			}
 
 			if($club_id != null) {
@@ -100,6 +100,7 @@ class ClubsController extends AdminController {
 							$mail->addAttachment(Yii::getAlias('@webroot').'/files/rosters/'.$fileName);
 							$mail->send();
 							$returnArray['Emailed: '.$clubData->club_name] = $fileName;
+							yii::$app->controller->createEmailLog(true, 'ClubRoster-Email', $clubData->short_name." sent to ".$clubData->poc_email);
 						} else { $returnArray['Email system disabled'] = $fileName; }
 					} else {
 						$returnArray['No Email Found: '.$clubData->club_name] = $fileName;
