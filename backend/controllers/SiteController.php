@@ -224,7 +224,7 @@ class SiteController extends AdminController {
 
 	public function actionNoEmail($unsubscribe) {
 		if (filter_var($unsubscribe, FILTER_VALIDATE_EMAIL)) {
-			$sql = "UPDATE badges SET email='' where email='".$unsubscribe."'";
+			$sql = "UPDATE badges SET email='', email_vrfy=0 where email='".$unsubscribe."'";
 			$command = Yii::$app->db->createCommand($sql);
 			$result = $command->execute();
 
@@ -238,8 +238,8 @@ class SiteController extends AdminController {
 				"<a href='".yii::$app->params['wp_site']."/'>The AGC</a></html>";
 			} else { echo "Email Not found in Database."; }
 
-			// Run same Command on other server
-			if( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "tmp" )) {
+			// Run same Command on Main server
+			if( !strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badgeapp" )) {
 				$command = "wget -qO- '".yii::$app->params['badge_site']."/site/no-email?unsubscribe=".$unsubscribe."'";
 				exec('nohup ' . $command . ' > /dev/null 2>&1 &');
 			}
