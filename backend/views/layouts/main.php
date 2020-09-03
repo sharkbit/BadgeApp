@@ -78,7 +78,8 @@ $this->beginBody() ?>
     ?>
 
     <div class="container">
-        <?php if(yii::$app->controller->id.'/'.yii::$app->controller->action->id!='site/index') { echo Html::a( '<i class="fa fa-arrow-left" aria-hidden="true"></i> Go Back', Yii::$app->request->referrer, ['class' => 'btn btn-sm btn-primary pull-right', 'style' => 'margin-top:3px']);}  ?>
+        <?php if((yii::$app->controller->id.'/'.yii::$app->controller->action->id!='site/index') || ((yii::$app->controller->id.'/'.yii::$app->controller->action->id='site/index') && count($_SESSION['back'])>1)) {
+			echo Html::a( '<i class="fa fa-arrow-left" aria-hidden="true"></i> Go Back', '?goBack=true', ['class' => 'btn btn-sm btn-primary pull-right', 'style' => 'margin-top:3px']);}  ?>
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>

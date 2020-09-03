@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model backend\models\Params */
 
 $this->title = 'Configuration';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Function', 'url' => ['badge/admin-function']];
+$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Settings', 'url' => ['params/update']];
 ?>
 <div class="params-update">
