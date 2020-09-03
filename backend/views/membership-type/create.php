@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 $this->title = 'Create Fees Structure';
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
-$this->params['breadcrumbs'][] = ['label' => 'Fees Structures', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Membership Types', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

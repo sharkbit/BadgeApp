@@ -127,10 +127,8 @@ class BadgesController extends AdminController {
 		}
 
 		if(!isset($_SESSION['BasePriFee'])) {
-			$sql="SELECT fee FROM fees_structure where membership_id=50";
-			$command = Yii::$app->getDb()->createCommand($sql);
-			$BasePriFeeTmp = $command->queryAll();
-			$BasePriFee = $BasePriFeeTmp[0]['fee'];
+			$BasePriFeeTmp =  MembershipType::find()->where(['id'=>50])->one();
+			$BasePriFee = $BasePriFeeTmp->fullprice->price;
 			$_SESSION['BasePriFee']=$BasePriFee;
 		} else { $BasePriFee=$_SESSION['BasePriFee']; }
 
@@ -166,9 +164,7 @@ class BadgesController extends AdminController {
 			if(isset($isCurent) && ($isCurent==1)) {$discount = $BaseFee;} else {$discount=0;}
 			$discount = ($workcreditper * $credit) + $discount;
 			if($discount > $badgeFee) {
-				 Yii::$app->response->data  =   json_encode('recalculate',true);
-
-				exit;
+				return json_encode('recalculate',true);
 			} else {
 				$redeemableCredit = $credit;
 			}
@@ -188,7 +184,7 @@ class BadgesController extends AdminController {
 			'amountDue' => $badgeFee - $discount,
 			'redeemableCredit'=> $redeemableCredit,
 		];
-		Yii::$app->response->data = json_encode($responce,true);
+		return json_encode($responce,true);
 	}
 
 	public function actionApiRequestFamily($badge_number) {
@@ -1494,20 +1490,6 @@ class BadgesController extends AdminController {
 	protected function getClubRecord($badge_number) {
 		$badgeArray = Badges::find()->where(['badge_number'=>$badge_number])->one();
 		return $badgeArray;
-	}
-
-	protected function getFees($id) {
-		$url = 'http://associatedgunclub.local/fee-structure/fees-by-type?id='.$id;
-		$cURL = curl_init();
-		curl_setopt($cURL, CURLOPT_URL, $url);
-		curl_setopt($cURL, CURLOPT_HTTPGET, true);
-		curl_setopt($cURL, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/json',
-			'Accept: application/json'
-		));
-		$result = curl_exec($cURL);
-		curl_close($cURL);
-		return $result;
 	}
 
 	protected function getFirstFreeBadge(){

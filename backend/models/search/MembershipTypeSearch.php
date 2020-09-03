@@ -5,44 +5,38 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\FeesStructure;
+use backend\models\MembershipType;
 
 /**
- * FeesStructureSearch represents the model behind the search form about `backend\models\FeesStructure`.
+ * MembershipTypeSearch represents the model behind the search form about `backend\models\MembershipType`.
  */
-class FeesStructureSearch extends FeesStructure
+class MembershipTypeSearch extends MembershipType
 {
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['id'], 'integer'],
-            [['label','membership_id','sku_full','sku_half','status','type'], 'safe'],
-            [['fee'], 'number'],
+            [['status','type'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
     /**
      * Creates data provider instance with search query applied
-     *
      * @param array $params
-     *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
-        $query = FeesStructure::find();
+    public function search($params) {
+        $query = MembershipType::find();
 
         // add conditions that should always apply here
 
@@ -60,20 +54,10 @@ class FeesStructureSearch extends FeesStructure
             return $dataProvider;
         }
 
-       
         // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'membership_id' => $this->membership_id,
-            'fee' => $this->fee,
-        ]);
-
-        $query->andFilterWhere(['like', 'label', $this->label])
-        ->andFilterWhere(['like', 'type', $this->type])
-        ->andFilterWhere(['like', 'status', $this->status]);
-
-        //$query->andFilterWhere(['like','membership_type.type',$this->membership_id]);
-            //->andFilterWhere(['like','membership_type.id', $this->membership_id]);
+        if(isset($this->id)) { $query->andFilterWhere(['id' => $this->id]); }
+		if(isset($this->type)) { $query->andFilterWhere(['like', 'type', $this->type]); }
+		if(isset($this->status)) { $query->andFilterWhere(['like', 'status', $this->status]); }
 
         return $dataProvider;
     }

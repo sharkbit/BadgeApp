@@ -349,7 +349,7 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
 
     function collectRenewFee(action,memTypeId,badgeYear) {
         if(action=='fill') {
-            var myUrl = '<?=yii::$app->params['rootUrl']?>/fee-structure/fees-by-type?id='+memTypeId;
+            var myUrl = '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?type=r&id='+memTypeId;
 			console.log(myUrl);
             jQuery.ajax({
                 method: 'GET',
@@ -556,21 +556,13 @@ app.controller("CreateBadgeController", function($scope) {
                 var responseData;
                 jQuery.ajax({
                     method: 'GET',
-                    url: '<?=yii::$app->params['rootUrl']?>/fee-structure/fees-by-type?id='+memTypeId,
+                    url: '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?type=n&id='+memTypeId,
                     crossDomain: false,
                     success: function(responseData, textStatus, jqXHR) {
                         responseData = JSON.parse(responseData);
                         $scope.fee = responseData;
                         $("#badges-badge_fee").val(parseFloat(Math.round(responseData.badgeFee * 100) / 100).toFixed(2));
 
-                    //** Half-year Discount & no Discount over $300 **
-                        var sub_exp = $("#badges-expires").val();
-                        var check_date = new Date((parseInt(sub_exp.slice(-4))-1),07-1,01);
-                        var TimeNow = new Date();
-                        if((TimeNow >= check_date) && (responseData.badgeFee < 300 )) {
-                            responseData.badgeSpecialFee = responseData.badgeSpecialFee/2;
-                            responseData.discount=responseData.badgeSpecialFee;
-                        } // **
                         $("#badges-discounts-disp").val(responseData.discount);
                         $("#badges-discounts").val(responseData.discount);
                         $("#badges-amt_due-disp").val(responseData.badgeSpecialFee);

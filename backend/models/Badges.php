@@ -156,7 +156,7 @@ class Badges extends \yii\db\ActiveRecord {
 	}
 
 	public function getMemberShipList() {
-		$memberShip = MembershipType::find()->where(['status'=>'0'])->all();
+		$memberShip = MembershipType::find()->where(['status'=>'1'])->all();
 		return ArrayHelper::map($memberShip,'id','type');
 	}
 

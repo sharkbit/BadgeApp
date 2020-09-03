@@ -3,6 +3,8 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
+use backend\models\StoreItems;
 
 /**
  * This is the model class for table "membership_type".
@@ -16,6 +18,7 @@ class MembershipType extends \yii\db\ActiveRecord{
     /**
      * @inheritdoc
      */
+	
     public static function tableName() {
         return 'membership_type';
     }
@@ -36,9 +39,34 @@ class MembershipType extends \yii\db\ActiveRecord{
      */
     public function attributeLabels() {
         return [
-            'id' => 'ID',
-           'type' => 'Type',
-           'status' => 'Status',
+		   'type'=>'Membership Type',        
        ];
+    }
+
+    public function getFullprice() {
+		$sku_data = StoreItems::findOne(['sku'=>$this->sku_full]);
+		if(!isset($sku_data->price)){
+			$sku_data = new \stdClass();
+			$sku_data->price='0.00';
+			$sku_data->item='Free';
+		}
+		return $sku_data;
+    }
+
+    public function getHalfprice() {
+		$sku_data = StoreItems::findOne(['sku'=>$this->sku_half]);
+		if(!isset($sku_data->price)){
+			$sku_data = new \stdClass();
+			$sku_data->price='0.00';
+			$sku_data->item='Free';
+		}
+		return $sku_data;
+    }
+
+    public function getMembershipList() {
+        $MembershipType = MembershipType::find()->all();
+        $membershipList = ArrayHelper::map($MembershipType,'id','type');
+
+        return $membershipList;
     }
 }

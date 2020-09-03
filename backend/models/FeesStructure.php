@@ -31,17 +31,8 @@ class FeesStructure extends \yii\db\ActiveRecord {
             [['fee', 'status'], 'required'],
             [['membership_id'], 'integer'],
             [['type'],'safe'],
-            [['fee'], 'number'],
             [['status','sku_full','sku_half'], 'string'],
             [['label'], 'string', 'max' => 255],
-           // ['membership_id', 'unique', 'targetAttribute' => ['membership_id'], 'message' => 'alredy have a price for this membership type'],
-
-            ['membership_id', 'required', 'when' => function ($model) {
-                    return $model->type == 'badge_fee';},
-                    'whenClient' => "function (attribute, value) {
-                        return $('div#feesstructure-type input:checked').val() == 'badge_fee'; 
-                    }"
-            ],
         ];
     }
 
@@ -52,8 +43,6 @@ class FeesStructure extends \yii\db\ActiveRecord {
         return [
             'id' => 'ID',
             'label' => 'Label',
-            'membership_id' => 'Membership ID',
-            'fee' => 'Fee',
             'status' => 'Status',
             'type'=>'Fee Type',
 			'sku_full' => 'Full Year SKU', 

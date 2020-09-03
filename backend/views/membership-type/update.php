@@ -5,11 +5,11 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\FeesStructure */
 
-$this->title = 'Update Fees Structure: ' . $model->id;
+$this->title = 'Update Membership Type: ' . $model->type. " (".$model->id.")";
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
-$this->params['breadcrumbs'][] = ['label' => 'Fees Structures', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = ['label' => 'Membership Types', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->type. " (".$model->id.")", 'url' => ['update', 'id' => $model->id]];
+
 ?>
 <div class="fees-structure-update">
 

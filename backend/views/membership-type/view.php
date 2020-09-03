@@ -6,9 +6,9 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model backend\models\FeesStructure */
 
-$this->title = $model->id;
+$this->title = $model->type. " (".$model->id.")";
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
-$this->params['breadcrumbs'][] = ['label' => 'Fees Structure', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Membership Types', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="fees-structure-view">
@@ -17,35 +17,32 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
     </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
-			'type',
-            'label',
-			'membership_id',
-            'membershipType.type',
+            'type',
+            
+			'sku_full',
             [
-                'attribute'=>'fee',
+                'attribute'=>'fullprice.price',
                 'value'=>function($model,$attribute) {
-                    return money_format('$%i', $model->fee);
+                    return money_format('$%i', $model->fullprice->price);
                 },
             ],
-			'sku_full',
 			'sku_half',
+			            [
+                'attribute'=>'halfprice.price',
+                'value'=>function($model,$attribute) {
+                    return money_format('$%i', $model->halfprice->price);
+                },
+            ],
             [       
                 'attribute'=>'status',
                 'value'=> function($model,$attribute) {
-                    if($model->status=='0') {
+                    if($model->status=='1') {
                         return 'Active';
                     }
                     else {

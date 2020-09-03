@@ -459,3 +459,21 @@ ADD COLUMN `mass_to_users` VARCHAR(100) NULL DEFAULT '' AFTER `mass_to`;
 -- Cert updates
 update BadgeDB.badge_certification set certification_type='410105' where certification_type=5;
 update BadgeDB.badge_certification set certification_type='410100' where certification_type=6;
+
+-- v2.1.4 Updating fee Schedule
+ALTER TABLE `BadgeDB`.`membership_type` 
+ADD COLUMN `sku_half` VARCHAR(15) NULL AFTER `status`,
+ADD COLUMN `sku_full` VARCHAR(15) NULL AFTER `sku_half`;
+
+UPDATE BadgeDB.membership_type AS t1
+  LEFT JOIN BadgeDB.fees_structure AS t2 ON t1.id = t2.membership_id
+SET t1.sku_half = t2.sku_half, t1.sku_full = t2.sku_full;
+
+ALTER TABLE `BadgeDB`.`membership_type` 
+CHANGE COLUMN `status` `status` INT(1) NOT NULL;
+
+UPDATE BadgeDB.membership_type SET `status` = '1';
+UPDATE BadgeDB.membership_type SET `status` = '0' WHERE id =70;
+
+DROP TABLE `BadgeDB`.`fees_structure`;
+

@@ -90,17 +90,17 @@ class Menu extends Widget{
 			'url' => '/clubs/badge-rosters',
 		],
 		[
-			'label'=>'Fee Schedules',
-			'url' => '/fee-structure/index',
-			'color' => 'btn-success',
-		],
-		[
 			'label'=>'Mass Email',
 			'url' => '/mass-email/index',
 		],		
 		[
 			'label'=>'Member Club List',
 			'url' => '/clubs/index',
+		],
+		[
+			'label'=>'Membership Types',
+			'url' => '/membership-type/index',
+			'color' => 'btn-success',
 		],
 		[
 			'label'=>'Post / Print Transactions',
