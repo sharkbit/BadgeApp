@@ -1,21 +1,16 @@
 <?php 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use backend\models\FeesStructure;
 
-$certificationDetailsModel = FeesStructure::findOne($certificationModel->certification_type);
+yii::$app->controller->createLog(true, 'trex', 'B_V_B_update_cert Still needed');
 
-
-
-$this->title = 'Certification - '.$certificationDetailsModel->label;
+$this->title = 'Certification - ?';
 $this->params['breadcrumbs'][] = ['label' => 'Badges', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $badgeModel->badge_number, 'url' => ['/badges/view','badge_number'=>$badgeModel->badge_number]];
 $this->params['breadcrumbs'][] = ['label' => 'Certifications', 'url' => ['/badges/view-certifications-list','badge_number'=>$badgeModel->badge_number]];
 $this->params['breadcrumbs'][] = $this->title;
 
-
 ?>
-
 
 <div class="row">
     <div class="col-xs-12">
@@ -25,7 +20,6 @@ $this->params['breadcrumbs'][] = $this->title;
               <li> Badge Number <span class="pull-right"> <?=$badgeModel->badge_number?>  </span> </li>
               <li> Name <span class="pull-right"> <?= $badgeModel->prefix.' '.$badgeModel->first_name.' '.$badgeModel->last_name.' '.$badgeModel->suffix ?>  </span> </li>
               <li> Email <span class="pull-right"> <?= $badgeModel->email ?>  </span> </li>
-              <li> Certifcation Label <span class="pull-right"> <?= $certificationDetailsModel->label ?>  </span> </li>
               <li> Sticker <span class="pull-right"> <?= $certificationModel->sticker ?>  </span> </li>
               <li> Fee <span class="pull-right"> <?=  money_format('$%i', $certificationModel->fee)  ?>  </span> </li>
               <li> Discount <span class="pull-right"> <?= money_format('$%i',$certificationModel->discount)  ?>  </span> </li>

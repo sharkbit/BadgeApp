@@ -10,7 +10,6 @@ use backend\models\Badges;
 use backend\models\BadgeSubscriptions;
 use backend\models\CardReceipt;
 use backend\models\Guest;
-use backend\models\FeesStructure;
 use backend\models\MembershipType;
 use backend\models\Params;
 use backend\models\PostPrintTransactions;
@@ -477,7 +476,8 @@ class BadgesController extends AdminController {
 
 			if($saved) {
 				if($model->payment_method <> 'creditnow') {
-					$MyCart = Badges::GetCart($_POST['cart'],$model->mem_type, $model->badge_fee, $model->badge_fee-$model->discounts);
+					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee-$model->discounts ];
+					$MyCart = "[".rtrim( json_encode($MyCart),",")."]";
 
 					$savercpt = new CardReceipt();
 					$model->cc_x_id = 'x'.rand(100000000,1000000000);
@@ -951,12 +951,6 @@ class BadgesController extends AdminController {
 		$badgeRecords = $this->cleanBadgeData($badgeRecords);
 		yii::$app->controller->sendVerifyEmail($badgeRecords->email,'update',$badgeRecords);
 
-		$paymentArray = FeesStructure::find()->where([
-				'membership_id'=>$badgeRecords->mem_type,
-				'type'=>'badge_fee',
-				'status'=>'0'
-			])->one();
-
 		if ($model->load(Yii::$app->request->post())) {
 			$this->expireBadgeSubcription($model->badge_number);
 
@@ -983,7 +977,8 @@ class BadgesController extends AdminController {
 
 			if($model->save()) {
 				if($needRecpt) {
-					$MyCart = Badges::GetCart($_POST['cart'],$badgeRecords->mem_type, $model->badge_fee, $model->badge_fee-$model->discount);
+					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee-$model->discount ];
+					$MyCart = "[".rtrim( json_encode($MyCart),",")."]";
 					$savercpt = new CardReceipt();
 					$savercpt->id = $model->cc_x_id;
 					$savercpt->badge_number = $model->badge_number;
@@ -1065,12 +1060,7 @@ class BadgesController extends AdminController {
 				}
 			}
 		} else {
-
-			return $this->render('renew-membership',[
-			'model'=>$model,
-			'badgeRecords'=>$badgeRecords,
-			'paymentArray'=>$paymentArray,
-			]);
+			return $this->redirect('view?badge_number='.$badgeRecords->badge_number);
 		}
 	}
 
@@ -1160,6 +1150,8 @@ class BadgesController extends AdminController {
 	public function actionUpdateRenewal($id) {
 		$model = BadgeSubscriptions::find()->where(['id'=>$id])->one();
 		if ($model->load(Yii::$app->request->post())) {
+	 yii::$app->controller->createLog(false, 'trex', var_export($_POST,true));
+	 exit;
 			if($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been updated');
 				return $this->redirect(['view-renewal-history', 'badge_number' => $model->badge_number]);
@@ -1368,12 +1360,6 @@ class BadgesController extends AdminController {
 		return $model;
 	}
 
-	public function getFeesByType($id) {
-		$feeArray =  FeesStructure::find()->where(['membership_id'=>$id])->one();
-		$feeOffer = $this->getOfferFee($feeArray);
-		return $feeOffer;
-	}
-
 	public function getStikker() {
 		$badgeCertification = new BadgeCertification();
 		$presmission = true;
@@ -1387,7 +1373,8 @@ class BadgesController extends AdminController {
 	}
 
 	public static function loadDirtyFilds($model) {
-//yii::$app->controller->createLog(false, 'trex', var_export($model,true));
+		$model->club_id=(int)$model->club_id;
+//yii::$app->controller->createLog(true, 'trex_dirty', var_export($model,true));
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
 			'club_id' => 'Club',

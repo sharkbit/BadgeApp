@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\FeesStructure */
+/* @var $model backend\models\MembershipType */
 
 $this->title = $model->type. " (".$model->id.")";
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];

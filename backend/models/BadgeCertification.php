@@ -3,7 +3,6 @@
 namespace backend\models;
 
 use Yii;
-use backend\models\FeesStructure;
 use backend\models\StoreItems;
 use backend\models\Badges;
 use yii\helpers\ArrayHelper;
@@ -49,8 +48,6 @@ class BadgeCertification extends \yii\db\ActiveRecord
             [['certification_type','created_at', 'updated_at','proc_date','is_migrated','cert_amount_due','cert_payment_type'], 'safe'],
             [['status','cc_num','cc_x_id'], 'string'],
             [['sticker'], 'string', 'max' => 255],
-            //[['sticker'], 'unique',],
-            //[['sticker'], 'unique', 'targetClass' => 'backend\models\Badges', 'targetAttribute'=> ['sticker']],
         ];
     }
 
@@ -118,6 +115,4 @@ class BadgeCertification extends \yii\db\ActiveRecord
            return false;
         }
     }
-
-
 }

@@ -4,12 +4,12 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\money\MaskMoney;
 /* @var $this yii\web\View */
-/* @var $model backend\models\FeesStructure */
+/* @var $model backend\models\MembershipType */
 /* @var $form yii\widgets\ActiveForm */
 
 ?>
 
-<div class="fees-structure-form" ng-controller="FeesStructureForm">
+<div class="membership-type-form" ng-controller="MembershipTypeForm">
 
     <?php $form = ActiveForm::begin([
         'enableAjaxValidation' => false,

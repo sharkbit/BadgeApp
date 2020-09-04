@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\FeesStructure */
+/* @var $model backend\models\MembershipType */
 
 $this->title = 'Update Membership Type: ' . $model->type. " (".$model->id.")";
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];

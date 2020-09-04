@@ -6,7 +6,7 @@ use yii\widgets\Pjax;
 use backend\models\MembershipType;
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\search\FeesStructureSearch */
+/* @var $searchModel backend\models\search\MembershipTypeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Membership Types & Prices';

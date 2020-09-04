@@ -23,23 +23,37 @@ class MembershipTypeController extends AdminController {
         return json_encode($responce);
     }
 
-    public function actionFeesByType($type,$id) {
+    public function actionFeesByType($from,$id) {
         $feeArray =  MembershipType::find()->where(['id'=>$id])->one();
-		$Full_Price = $feeArray->fullprice->price;
 		
-		if ((date('Y-m-d', strtotime(yii::$app->controller->getNowTime())) >= date('Y-07-01', strtotime(yii::$app->controller->getNowTime()))) && ($type=='n')) {
-			//discount
-			$Half_Price = $feeArray->halfprice->price;
-			$discount = $feeArray->fullprice->price - $feeArray->halfprice->price;
+		if(isset($feeArray->sku_full)) {
+			$Full_Price = $feeArray->fullprice->price;
+			if (isset($feeArray->sku_half) && (date('Y-m-d', strtotime(yii::$app->controller->getNowTime())) >= date('Y-07-01', strtotime(yii::$app->controller->getNowTime()))) && ($from=='n') && ((int)$feeArray->fullprice->price < 301 )) {
+				//discount
+				$Half_Price = $feeArray->halfprice->price;
+				$discount = $feeArray->fullprice->price - $feeArray->halfprice->price;
+				$item_sku=$feeArray->halfprice->sku;
+				$item_name=$feeArray->halfprice->item;
+			} else {
+				$Half_Price = $Full_Price;
+				$discount = 0;
+				$item_sku=$feeArray->fullprice->sku;
+				$item_name=$feeArray->fullprice->item;
+			}
 		} else {
-			$Half_Price = $Full_Price;
+			$Full_Price=0;
+			$Half_Price = 0;
 			$discount = 0;
+			$item_sku='Free';
+			$item_name="Free $feeArray->type Badge";
 		}
 		
 		$feeOffer = [
             'badgeFee'=>$Full_Price,
             'badgeSpecialFee' =>$Half_Price,
             'discount'=>$discount,
+			'item_sku'=>$item_sku,
+			'item_name'=>$item_name
         ];
 		
         $responce = json_encode($feeOffer,true);

@@ -206,6 +206,8 @@ $confParams  = Params::findOne('1');
 				<div class="col-xs-12 col-sm-12" id="badges-firbadiv" style="display:none" >
 					<?php echo Html::label("Friend's Badge"), PHP_EOL; ?>
 
+					<?php echo Html::hiddenInput("item_name",'',['id'=>'badges-item_name']), PHP_EOL; ?>
+					<?php echo Html::hiddenInput("item_sku",'',['id'=>'badges-item_sku']), PHP_EOL; ?>
 					<?php echo Html::hiddenInput("FriendCredits",'',['id'=>'badges-FriendCredits']), PHP_EOL; ?>
 					<?php echo Html::textinput("FriendBadge" ,'',['class'=>"form-control",'id'=>'badges-FriendBadge']), PHP_EOL; ?>
 					<p id="badges-FrendStatus"> </p>

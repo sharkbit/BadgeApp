@@ -300,6 +300,8 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<div class="container" style="margin-top: -25px; margin-left: 15px">
 		<?= $form1->field($badgeSubscriptions, 'total_credit')->hiddenInput(['value'=>$model->work_credits])->label(false).PHP_EOL; ?>
 		<?= $form1->field($badgeSubscriptions, 'badge_number')->hiddenInput(['value'=>$model->badge_number,])->label(false).PHP_EOL;?>
+		<?php echo Html::hiddenInput("item_name",'',['id'=>'badgesubscriptions-item_name']), PHP_EOL; ?>
+		<?php echo Html::hiddenInput("item_sku",'',['id'=>'badgesubscriptions-item_sku']), PHP_EOL; ?>
 		<?php echo Html::hiddenInput("isCurent",$hide_Renew,['id'=>'badgesubscriptions-isCurent','class'=>'form-control']), PHP_EOL; ?>
 		<?php echo Html::hiddenInput("sell_date",$confParams['sell_date'],['id'=>'badges-sell_date']), PHP_EOL; ?>
 

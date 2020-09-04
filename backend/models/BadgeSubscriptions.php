@@ -27,6 +27,8 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
 	public $cc_exp_mo;
 	public $cc_exp_yr;
 	public $expires;
+	public $item_name;
+	public $item_sku;
     public $mem_id;
     public $mem_type;
     public $redeemable_credit;

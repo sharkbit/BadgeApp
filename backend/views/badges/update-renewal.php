@@ -1,7 +1,6 @@
 <?php 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use backend\models\FeesStructure;
 
 $this->title = 'Subscription - '.$model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Badges', 'url' => ['index']];

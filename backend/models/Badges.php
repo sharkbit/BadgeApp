@@ -5,7 +5,6 @@ use Yii;
 use DateTime;
 use backend\models\BadgeSubscriptions;
 use backend\models\clubs;
-use backend\models\FeesStructure;
 use backend\models\MembershipType;
 use backend\models\Params;
 use backend\models\StoreItems;
@@ -31,6 +30,8 @@ class Badges extends \yii\db\ActiveRecord {
 	public $cc_x_id;
 	public $club_name;
 	public $discounts;
+	public $item_name;
+	public $item_sku;
 	public $pagesize;
 	public $payment_method;
 	public $sticker;
@@ -128,31 +129,6 @@ class Badges extends \yii\db\ActiveRecord {
 		} else {
 			return $this->hasOne(MembershipType::className(),['id'=>'mem_type']);
 		}
-	}
-
-	public static function GetCart($post, $mem_type, $badgeFee, $BadgePrice, $isNew = false) {
-		$sku = FeesStructure::find()->where(['membership_id'=>$mem_type])->one();
-
-		$d_yr = date('Y', strtotime(yii::$app->controller->getNowTime()));
-		$d_today = date('Y-m-d', strtotime(yii::$app->controller->getNowTime()));
-		$d_hump = date('Y-07-01', strtotime(yii::$app->controller->getNowTime()));
-		if($isNew) {
-			$confParams  = Params::findOne('1');
-			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
-			if( $d_today >= $d_hump && $d_today > $DateChk) {
-				$useSku = $sku->sku_half;
-			} else {
-				$useSku = $sku->sku_full;
-			}
-		} else { $useSku = $sku->sku_full; }
-
-		$items = StoreItems::find()->where(['sku'=>$useSku])->one();
-
-		$MyCart = ["item"=>$items->item,"sku"=>$useSku,"ea"=> $badgeFee ,"qty"=>"1","price"=> $BadgePrice ];
-		if(strlen($post) > 4) {
-			$MyCart = "[".json_encode($MyCart) .",".ltrim($post,"[");
-		} else {$MyCart = "[".rtrim( json_encode($MyCart),",")."]";}
-		return $MyCart;
 	}
 
 	public function getMemberShipList() {

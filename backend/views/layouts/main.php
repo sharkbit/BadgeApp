@@ -350,8 +350,8 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
 
     function collectRenewFee(action,memTypeId,badgeYear) {
         if(action=='fill') {
-            var myUrl = '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?type=r&id='+memTypeId;
-			console.log(myUrl);
+            var myUrl = '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?from=r&id='+memTypeId;
+			console.log('collectRenewFee: '+myUrl);
             jQuery.ajax({
                 method: 'GET',
                 url: myUrl,
@@ -365,6 +365,8 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                     var badgeFee = parseInt($("#badgesubscriptions-badge_fee").val());
                     var credit = $("#badgesubscriptions-total_credit").val();
                     var isCurent = $("#badgesubscriptions-isCurent").val();
+					$("#badgesubscriptions-item_name").val(responseData.item_name);
+					$("#badgesubscriptions-item_sku").val(responseData.item_sku);
 
                     jQuery.ajax({
                         method: 'POST',
@@ -380,7 +382,7 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                             $("#badgesubscriptions-redeemable_credit").val(responseData.redeemableCredit);
                             $("#badgesubscriptions-discount").val(parseFloat(Math.round(responseData.discount * 100) / 100).toFixed(2));
                             $("#badgesubscriptions-amount_due").val(responseData.amountDue);
-                            doCalcUp();
+	                        doCalcUp();
                         },
                         error: function (responseData, textStatus, errorThrown) {
                             console.log(responseData);
@@ -400,28 +402,8 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
         }
     }
 
-app.controller("FeesStructureForm", function($scope) {
-    var type = $("div#feesstructure-type input:checked").val();
-    if(type!="") {
-        if(type=="badge_fee") {
-            $(".form-group.field-feesstructure-membership_id").show();
-        }
-        else if (type=="certification") {
-            $("#feesstructure-membership_id").val("");
-            $(".form-group.field-feesstructure-membership_id").hide();
-        }
-    }
+app.controller("MembershipTypeForm", function($scope) {
 
-    $("div#feesstructure-type input").change(function() {
-        var type = $("div#feesstructure-type input:checked").val();
-        if(type=="badge_fee") {
-            $(".form-group.field-feesstructure-membership_id").show();
-        }
-        else if (type=="certification") {
-            $("#feesstructure-membership_id").val("");
-            $(".form-group.field-feesstructure-membership_id").hide();
-        }
-    });
 });
 
 app.controller("CreateBadgeController", function($scope) {
@@ -557,7 +539,7 @@ app.controller("CreateBadgeController", function($scope) {
                 var responseData;
                 jQuery.ajax({
                     method: 'GET',
-                    url: '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?type=n&id='+memTypeId,
+                    url: '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?from=n&id='+memTypeId,
                     crossDomain: false,
                     success: function(responseData, textStatus, jqXHR) {
                         responseData = JSON.parse(responseData);
@@ -566,6 +548,8 @@ app.controller("CreateBadgeController", function($scope) {
 
                         $("#badges-discounts-disp").val(responseData.discount);
                         $("#badges-discounts").val(responseData.discount);
+						$("#badges-item_name").val(responseData.item_name);
+						$("#badges-item_sku").val(responseData.item_sku);
                         $("#badges-amt_due-disp").val(responseData.badgeSpecialFee);
                         $("#badges-amt_due").val(responseData.badgeSpecialFee);
                         console.log(responseData);
