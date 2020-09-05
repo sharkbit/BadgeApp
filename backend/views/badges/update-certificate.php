@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-yii::$app->controller->createLog(true, 'trex', 'B_V_B_update_cert Still needed');
+yii::$app->controller->createLog(true, 'trex_WTF', 'B_V_B_update_cert Still needed');
 
 $this->title = 'Certification - ?';
 $this->params['breadcrumbs'][] = ['label' => 'Badges', 'url' => ['index']];

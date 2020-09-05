@@ -172,7 +172,7 @@ if (isset($_GET['success']) && $_GET['success'] == 'true') {
 	} catch (Exception $ex) {
 		echo " x4 <br />\n";
 		echo "Executed Payment Error: Payment <br>\n";
-		// yii::$app->controller->createLog(false, 'trex', var_export($ex,true));
+		// yii::$app->controller->createLog(false, 'trex_B_V_PP_paypalexec', var_export($ex,true));
 		//echo substr(json_encode($ex),0,500) ;
 		echo TVarDumper::dump($ex,1);
 		exit(1);

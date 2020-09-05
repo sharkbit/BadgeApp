@@ -57,7 +57,7 @@ class SalesController extends AdminController {
 			} else { Yii::$app->response->data .= "failed"; }
 
 			if ($model->badge_number=='99999') {
-				yii::$app->controller->createLog(false, 'trex', var_export($_REQUEST,true));
+				yii::$app->controller->createLog(false, 'trex_C_SC Guest Checkout', var_export($_REQUEST,true));
 			}
 			if($model->payment_method <> 'creditnow') {
 				$savercpt = new CardReceipt();
@@ -96,12 +96,9 @@ class SalesController extends AdminController {
 
 	function CheckGuest($model){
 		$confParams = Params::findOne('1');
-		//yii::$app->controller->createLog(false, 'trex', var_export($model,true));
 		$tst = (string)$confParams->guest_sku;
 		if (strpos($model->cart,  $tst)) {
 			$cart = json_decode($model->cart);
-			
-			yii::$app->controller->createLog(false, 'trex', var_export($cart,true));
 			foreach($cart as $item){
 				if($item->sku == $confParams->guest_sku) {
 					$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND g_paid ='0' or g_paid='a' or g_paid ='h'; LIMIT ".$item->qty;

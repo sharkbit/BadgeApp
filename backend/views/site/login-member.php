@@ -25,7 +25,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 				<h3>Todays Events:</h3><hr /><ul>
 <?php
 foreach($agc_event as $an_event){
- //yii::$app->controller->createLog(false, 'trex', var_export($an_event,true));
+ //yii::$app->controller->createLog(false, 'trex_B_V_Si_Login_mem', var_export($an_event,true));
 	switch ($an_event->e_type) {
 		case 'cio':  $e_type="CIO Sponsored"; break;
 		case 'club': $e_type="Club Sponsored"; break;

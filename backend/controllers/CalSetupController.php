@@ -42,7 +42,6 @@ class CalSetupController extends AdminController {
 			unset($_SESSION['CalSetupBadm']);
 			return $this->redirect(['index']);
 		} else {
-	//		yii::$app->controller->createLog(false, 'trex', var_export($_REQUEST,true));
 			if(isset($_REQUEST['agcClubsSearch']['active'])) { 
 				$searchModel->active = $_REQUEST['agcClubsSearch']['active'];	
 				$_SESSION['CalSetupActive'] = $_REQUEST['agcClubsSearch']['active'];
@@ -208,7 +207,6 @@ class CalSetupController extends AdminController {
 			unset($_SESSION['CalSearchapproved']);
 			return $this->redirect(['index']);
 		} else {
-	//		yii::$app->controller->createLog(false, 'trex', var_export($_REQUEST,true));
 			if(isset($_REQUEST[$search]['active'])) { 
 				$searchModel->active = $_REQUEST[$search]['active'];	
 				$_SESSION['CalSetupActive'] = $_REQUEST[$search]['active'];

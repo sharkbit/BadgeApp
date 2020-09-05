@@ -258,11 +258,6 @@ class EventsController extends AdminController {
 					Yii::$app->getSession()->setFlash('error', 'Not an Active Member');
 				}
 			}
-
-			//yii::$app->controller->createLog(false, 'trex', var_export($view_post,true));
-
-		} else {
-
 		}
 		return $this->render('view', [
 			'model' => $this->findModel($id),

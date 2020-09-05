@@ -73,14 +73,6 @@ class GuestController extends SiteController {
 		}
 	}
 
-	public function actionAddcredit(){
-		//$this->createLog(false, 'trex_C_GC:103', 'Add Guest Credit');
-		yii::$app->controller->createLog(false, 'trex', var_export($_POST,true));
-		echo json_encode(['status'=>'error','msg'=>'C_GC:102']);
-		exit;
-
-	}
-
     public function actionDelete($id) {
 		if($this->findModel($id)->delete()) {
             $this->createLog($this->getNowTime(), $_SESSION['user'], 'Deleted Guest: '.$id);
