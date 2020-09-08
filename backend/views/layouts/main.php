@@ -251,7 +251,7 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
 
     function getPrimaryBadger(req_badgeNumber,type) {
         $("#no-primary-error").hide(500);
-        $("#primary-badge-summary-block").hide(500);
+        $("#primary-badge-summary").hide(500);
 
         if(req_badgeNumber) {
             $("#HideMySubmit").hide(500);
@@ -617,7 +617,7 @@ app.controller("CreateBadgeController", function($scope) {
     else {
     }
     if(primaryRequest==0 || primaryRequest ==null) {
-        $("#primary-badge-summary-block").hide(500);
+        $("#primary-badge-summary").hide(500);
     }
 
     $("#badges-primary").change(function() {
@@ -629,7 +629,7 @@ app.controller("CreateBadgeController", function($scope) {
             //alert("error reporting");
         }
         if(primaryRequest==0 || primaryRequest ==null) {
-            $("#primary-badge-summary-block").hide(500);
+            $("#primary-badge-summary").hide(500);
         }
 
     });
@@ -871,7 +871,7 @@ app.controller('UpdateBadgeController', function($scope) {
             getPrimaryBadger(primaryRequest,'init');
         }
         if(primaryRequest==0 || primaryRequest ==null) {
-            $("#primary-badge-summary-block").hide(500);
+            $("#primary-badge-summary").hide(500);
         }
 
         $("#badges-primary").change(function() {
@@ -883,7 +883,7 @@ app.controller('UpdateBadgeController', function($scope) {
                 //alert("error reporting");
             }
             if(primaryRequest==0 || primaryRequest ==null) {
-                $("#primary-badge-summary-block").hide(500);
+                $("#primary-badge-summary").hide(500);
             }
         });
 

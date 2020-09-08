@@ -67,11 +67,9 @@ $confParams  = Params::findOne('1');
 					<?= $form->field($model, 'primary')->textInput(['value'=>''])->label("Primary Family Member") ?>
 				</div>
 				<div class="col-xs-12 col-sm-9">
-					<div>
-						<h4 class="text-center" id="no-primary-error" style="display: none"> Sorry! could not find a user</h4>
-						<div id="searchng-badge-animation" style="display: none">
-							<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
-						</div>
+					<h4 class="text-center" id="no-primary-error" style="display: none"> Sorry! could not find a user</h4>
+					<div id="searchng-badge-animation" style="display: none">
+						<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
 					</div>
 				</div>
 			</div>
