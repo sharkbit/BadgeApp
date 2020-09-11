@@ -23,14 +23,14 @@ use yii\helpers\ArrayHelper;
 	<?= $form->field($model, 'badge_number')->textInput(['maxlength' => true]) ?>
 
 <?php if(array_intersect([1,2],$_SESSION['privilege'])) {
-		echo $form->field($model, 'privilege')->dropDownList($model->getPrivList(), ['value'=>json_decode($model->privilege),'prompt'=>'select','id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
+		echo $form->field($model, 'privilege')->dropDownList($model->getPrivList(), ['value'=>json_decode($model->privilege),'id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
 	} else {
 		echo "<b>Privilege: </b> ".$model->getPrivilege_Names($model->privilege)."\n<br/><br/>";
 	} ?>
 	
-	<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['prompt'=>'select','id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
+	<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 	
-<?php if (in_array(8,json_decode($model->privilege))) { echo $form->field($model, 'company')->textInput(['autofocus' => true]).PHP_EOL; } ?>
+<?php if (($model->privilege<>'') && (in_array(8,json_decode($model->privilege)))) { echo $form->field($model, 'company')->textInput(['autofocus' => true]).PHP_EOL; } ?>
 
     <div class="form-group pull-right">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success pull-right' : 'btn btn-success pull-right']) ?>
@@ -49,7 +49,11 @@ use yii\helpers\ArrayHelper;
 	if ((selectedText.indexOf("Root")>0) && (selectedText.length > 5)) {
 	  console.log('only root');
       $("#error_msg").html('<center><p style="color:red;"><b>Root should not have any other privilages!.</b></p></center>');
-    } else {$("#error_msg").html('');}
+    } else if (selectedText==" ") {
+	  $("#error_msg").html('<p style="color:red"><b>User Will be Deleted!</b></p>');
+	} else {
+	  $("#error_msg").html('');
+	}
   });
 
   $("#club-id").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){

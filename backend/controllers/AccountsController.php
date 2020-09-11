@@ -64,7 +64,7 @@ class AccountsController extends SiteController {
 					$user_fix->badge_number = (int)$model->badge_number;
 					$user_fix->save(false);
 				}
-                $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'New Authorized User Created : '.$user->id);
+                $this->createLog($this->getNowTime(), $this->getActiveUser()->username, "New Authorized User Created: $user->id: $user->username");
                 Yii::$app->getSession()->setFlash('success', 'Authorized User has been added');
                 return $this->redirect(['/accounts/view','id'=>$user->id]);
             } else {
@@ -81,13 +81,21 @@ class AccountsController extends SiteController {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) ) {
-			$model->clubs=json_encode($model->clubs);
-			$model->privilege= str_replace('"',"", json_encode($model->privilege));
-			$model->clubs = str_replace("\\","", str_replace('"',"", json_encode($model->clubs)));
-            $model->updated_at = strtotime($this->getNowTime());
-            $model->save(false);
-            $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Authorized User Updated: '.$model->id);
-            return $this->redirect(['view', 'id' => $model->id]);
+			
+			if ($model->privilege=='') {
+				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, "Authorized User Deleted: $model->id: $model->username");
+				Yii::$app->getSession()->setFlash('success', $model->username.' has been deleted');
+				User::deleteAll("id = ".$model->id);
+                return $this->redirect(['/accounts/index']);
+			} else {
+				$model->clubs=json_encode($model->clubs);
+				$model->privilege= str_replace('"',"", json_encode($model->privilege));
+				$model->clubs = str_replace("\\","", str_replace('"',"", json_encode($model->clubs)));
+				$model->updated_at = strtotime($this->getNowTime());
+				$model->save(false);
+				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, "Authorized User Updated: $model->id: $model->username");
+				return $this->redirect(['view', 'id' => $model->id]);
+			}
         } else {
 			$model->clubs=json_decode($model->clubs);
             return $this->render('update', [
@@ -130,7 +138,7 @@ class AccountsController extends SiteController {
 
     public function actionDelete($id) {
         if($this->findModel($id)->delete()) {
-            $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Authorized User Deleted : '.$id);
+            $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Authorized User Deleted: '.$id);
         }
 
         return $this->redirect(['index']);
