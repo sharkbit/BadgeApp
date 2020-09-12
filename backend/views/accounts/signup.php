@@ -39,9 +39,10 @@ $randStr = generateRandomString();
 			<?php if (in_array(1, json_decode(yii::$app->user->identity->privilege))) { $limit=false; } else { $limit=true; }
 			echo $form->field($model, 'privilege')->dropDownList((new User)->getPrivList($limit),['id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
-		<div class="col-xs-12 col-sm-6 col-md-5">
+		<div class="col-xs-12 col-sm-6 col-md-5" id="need_cal" style="display: none;" 
 			<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
+		<div id='dont_need_cal' ><input type='hidden' id="club-id" value=''> </div>
 	</div>
 	<div class="row">
 		<div class="col-xs-12 col-sm-6 col-md-3">
@@ -56,16 +57,16 @@ $randStr = generateRandomString();
 
 		<div id="pass_hide" style="display: none;" >
 		<div class="col-xs-12 col-sm-6 col-md-3" >
-		<?=$form->field($model, 'password')->passwordInput().PHP_EOL;?>
+			<?=$form->field($model, 'password')->passwordInput().PHP_EOL;?>
 		</div><div class="col-xs-12 col-sm-6 col-md-3" >
-		<?=$form->field($model, 'confirm_password')->passwordInput().PHP_EOL;?>
+			<?=$form->field($model, 'confirm_password')->passwordInput().PHP_EOL;?>
 		</div></div>
 		<div id="pass_hide_rev" >
 			<input type="hidden" id="signupform-password"  name="SignupForm[password]" value='<?=$randStr ?>' />
 			<input type="hidden" id="signupform-confirm_password"  name="SignupForm[confirm_password]" value='<?=$randStr ?>' />
 		</div>
 		<div class="col-xs-12 col-sm-6 col-md-3" id="cio_hide" style="display: none;" >
-		<?= $form->field($model, 'auth_key')->textInput(['autofocus' => true])->label('Company').PHP_EOL ?>
+			<?= $form->field($model, 'auth_key')->textInput(['autofocus' => true])->label('Company').PHP_EOL ?>
 		</div>
 
 		<div class="col-xs-12 col-sm-6 col-md-3">
@@ -84,7 +85,8 @@ $randStr = generateRandomString();
 </p>
 <script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
 <script>
-
+  $("#need_cal").hide();$("#dont_need_cal").show();
+  
   $("#privilege").chosen({placeholder_text_multiple:'Select Privilege',width: "100%"}).change(function(){
     var selectedText = " "+$(this).find("option:selected").text();
     if (selectedText.indexOf("Root")>0) {
@@ -94,12 +96,25 @@ $randStr = generateRandomString();
 	  $("#pass_hide").show(); $("#pass_hide_rev").hide();
       $("#signupform-password").val('');
       $("#signupform-confirm_password").val('')
+	} else if (selectedText.indexOf("Chairmen")>0) {
+		if (selectedText.indexOf("Calendar")>0) {} else {
+			$("#my_error_msg").html('<p style="color:red"><b>Must also be Calendar Cordinator</b></p>');
+		}
 	} else {
       $("#pass_hide").hide(); $("#pass_hide_rev").show();
       $("#signupform-password").val('<?=$randStr ?>');
       $("#signupform-confirm_password").val('<?=$randStr ?>');
 	}
-    buildUsername();
+
+	if ((selectedText.indexOf("CIO")>0) || (selectedText.indexOf("Calendar")>0)) {
+		if (selectedText.indexOf("CIO")>0) { $("#cio_hide").show(); console.log('hii');}
+		$("#need_cal").show(); $("#dont_need_cal").hide();
+	} else {
+		$("#cio_hide").hide();
+		$("#need_cal").hide();$ ("#dont_need_cal").show();
+	}
+	
+    if(selectedText != ' ') { buildUsername();}
   });
 
   $("#club-id").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){
@@ -159,19 +174,18 @@ $randStr = generateRandomString();
     var fname = $("#signupform-f_name").val().replace(/ |\./g,"");
     var lname = $("#signupform-l_name").val().replace(/ |\./g,"");
     var priv = '';
-    $("#cio_hide").hide();
-    var sel_opt = document.getElementById("privilege").options;
-  
-    if (sel_opt[1].selected === true) {priv = 'root'; }
-    else if (sel_opt[2].selected === true) { priv = 'adm'; }
-    else if (sel_opt[3].selected === true) { priv = 'rsol'; }
-    else if (sel_opt[4].selected === true) { priv = 'rso';}
-    else if (sel_opt[5].selected === true) { priv = 'cash'; }
-    else if (sel_opt[6].selected === true) { priv = 'cal'; }
-    else if (sel_opt[7].selected === true) { priv = 'wc';}
-    else if (sel_opt[8].selected === true) { priv = 'cio';  $("#cio_hide").show(); }
-    else if (sel_opt[9].selected === true) { priv = 'view'; }
-    else if (sel_opt[10].selected === true) { alert('Do not use Member'); priv = 'Do not use Member'; }
+   
+	var sel_opt =document.getElementById("privilege").value;
+	 if (sel_opt==1) {priv = 'root'; }
+    else if (sel_opt==2) { priv = 'adm'; }
+    else if (sel_opt==6) { priv = 'rsol'; }
+    else if (sel_opt==3) { priv = 'rso';}
+    else if (sel_opt==10) { priv = 'cash'; }
+    else if (sel_opt==9) { priv = 'cal'; }
+    else if (sel_opt==7) { priv = 'wc';}
+    else if (sel_opt==8) { priv = 'cio';  }
+    else if (sel_opt==4) { priv = 'view'; }
+    else if (sel_opt==5) { alert('Do not use Member'); priv = 'Do not use Member'; }
 
     $("#signupform-username").val(priv+'.'+fname+'.'+lname);
   }

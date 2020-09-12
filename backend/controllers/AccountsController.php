@@ -42,8 +42,12 @@ class AccountsController extends SiteController {
     }
 
     public function actionView($id) {
+		$model = $this->findModel($id);
+		if ((!in_array(1, json_decode(yii::$app->user->identity->privilege))) && (in_array(1,json_decode($model->privilege)))) {
+			$this->redirect('index'); }
+			
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model
         ]);
     }
 
@@ -80,6 +84,8 @@ class AccountsController extends SiteController {
     public function actionUpdate($id) {
         $model = $this->findModel($id);
 
+		if ((!in_array(1, json_decode(yii::$app->user->identity->privilege))) && (array_intersect([1,2],json_decode($model->privilege)))) {
+			$this->redirect('index'); }
         if ($model->load(Yii::$app->request->post()) ) {
 			
 			if ($model->privilege=='') {

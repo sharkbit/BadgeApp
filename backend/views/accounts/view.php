@@ -18,8 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p><?php
 	if(!$model->id==0){
-		if ((yii::$app->controller->hasPermission('is_root')) ||
-		((yii::$app->controller->hasPermission('accounts/update')) && (!in_array(1,json_decode($model->privilege))))) {
+		if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||
+		((yii::$app->controller->hasPermission('accounts/update')) && (!array_intersect([1,2],json_decode($model->privilege))))) {
 			echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-success']).PHP_EOL;
 		}
 

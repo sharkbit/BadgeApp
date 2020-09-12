@@ -8,6 +8,8 @@ use yii\helpers\ArrayHelper;
 /* @var $this yii\web\View */
 /* @var $model backend\models\User */
 /* @var $form yii\widgets\ActiveForm */
+
+if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } else { $need_cal=false;}
 ?>
 
 <div class="user-form">
@@ -27,9 +29,10 @@ use yii\helpers\ArrayHelper;
 	} else {
 		echo "<b>Privilege: </b> ".$model->getPrivilege_Names($model->privilege)."\n<br/><br/>";
 	} ?>
-	
+	<div id="need_cal" <?php if(!$need_cal) {?> style="display: none;" <?php } ?>>
 	<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
-	
+	</div>
+	<div id='dont_need_cal'<?php if($need_cal) {?> style="display: none;" <?php } ?>><input type='hidden' id="club-id" value=''> </div>
 <?php if (($model->privilege<>'') && (in_array(8,json_decode($model->privilege)))) { echo $form->field($model, 'company')->textInput(['autofocus' => true]).PHP_EOL; } ?>
 
     <div class="form-group pull-right">
@@ -51,8 +54,20 @@ use yii\helpers\ArrayHelper;
       $("#error_msg").html('<center><p style="color:red;"><b>Root should not have any other privilages!.</b></p></center>');
     } else if (selectedText==" ") {
 	  $("#error_msg").html('<p style="color:red"><b>User Will be Deleted!</b></p>');
+	} else if (selectedText.indexOf("Chairmen")>0) {
+		if (selectedText.indexOf("Calendar")>0) {} else {
+			$("#error_msg").html('<p style="color:red"><b>Must also be Calendar Cordinator</b></p>');
+		}
 	} else {
 	  $("#error_msg").html('');
+	}
+	
+	if ((selectedText.indexOf("CIO")>0) || (selectedText.indexOf("Calendar")>0)) {
+		if (selectedText.indexOf("CIO")>0) { $("#cio_hide").show(); console.log('hii');}
+		$("#need_cal").show(); $("#dont_need_cal").hide();
+	} else {
+		$("#cio_hide").hide();
+		$("#need_cal").hide();$ ("#dont_need_cal").show();
 	}
   });
 
