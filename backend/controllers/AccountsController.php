@@ -111,12 +111,9 @@ class AccountsController extends SiteController {
             return $this->redirect(['/accounts/reset-password','token'=>$resetToken]);
         }
         else {
-
             Yii::$app->session->setFlash('error', 'Could not complete your request please try again later.!');
             return $this->redirect([Yii::$app->request->referrer ?: Yii::$app->homeUrl]);
         }
-
-
     }
 
     public function actionResetPassword($token) {

@@ -36,11 +36,8 @@ $randStr = generateRandomString();
 		<?= $form->field($model, 'badge_number').PHP_EOL ?>
 		</div>
 		<div class="col-xs-8 col-sm-9 col-md-5">
-<?php if (in_array(1, $_SESSION['privilege'])) {
-	echo $form->field($model, 'privilege')->dropDownList((new User)->getPrivList(),['prompt'=>'Select', 'id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
-} else {
-	echo $form->field($model, 'privilege')->dropDownList((new User)->getPrivList(true),['prompt'=>'Select', 'id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
-} ?>
+			<?php if (in_array(1, json_decode(yii::$app->user->identity->privilege))) { $limit=false; } else { $limit=true; }
+			echo $form->field($model, 'privilege')->dropDownList((new User)->getPrivList($limit),['id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
 		<div class="col-xs-12 col-sm-6 col-md-5">
 			<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>

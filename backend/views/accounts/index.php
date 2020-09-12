@@ -78,8 +78,8 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				},
 				'update' => function ($url, $model) {
 					if(!$model->id==0){
-						if((yii::$app->controller->hasPermission('is_root')) ||
-					((yii::$app->controller->hasPermission('accounts/update')) && (!in_array(1,json_decode($model->privilege))))) {
+						if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||
+					((yii::$app->controller->hasPermission('accounts/update')) && (!array_intersect([1,2],json_decode($model->privilege))))) {
 					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> Edit <br />', ['/accounts/update','id'=>$model->id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',

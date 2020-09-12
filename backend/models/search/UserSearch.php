@@ -50,6 +50,10 @@ class UserSearch extends User {
 
 		if(!isset($params['sort'])) { $query->orderBy( ['username' => SORT_ASC] ); }
 
+		if (!in_array(1, json_decode(yii::$app->user->identity->privilege))) {
+			$query->andWhere(" NOT JSON_CONTAINS(privilege,'1')");
+		}
+
 		if (!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
@@ -71,6 +75,7 @@ class UserSearch extends User {
 		if(isset($this->password_hash))	{ $query->andFilterWhere(['like', 'password_hash', $this->password_hash]); }
 		if(isset($this->password_reset_token))	{ $query->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token]); }
 
+//yii::$app->controller->createLog(true, 'trex-b-m-s-us', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
 	return $dataProvider;
 	}
 }

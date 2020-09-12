@@ -92,11 +92,13 @@ class User extends \yii\db\ActiveRecord {
 	}
 
     public function getPrivList($limit=null) {
-		if ($limit) { $where =' where id >2 '; } else { $where =''; }
-		
+		if (in_array(1, json_decode(yii::$app->user->identity->privilege))) { $where =''; } 
+		else {
+			if ($limit) { $where =' where id >2 '; }
+			else { $where =' where id >=2 '; }
+		}
 		$sql = "SELECT id,privilege FROM user_privileges $where order by priv_sort ASC";
-		$command = Yii::$app->db->createCommand($sql);
-		$privArray= $command->queryAll();
+		$privArray= Yii::$app->db->createCommand($sql)->queryAll();
         return ArrayHelper::map($privArray,'id','privilege');
     }
 }
