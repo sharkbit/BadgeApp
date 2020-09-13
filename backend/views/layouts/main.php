@@ -243,15 +243,18 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
     function family_badge_view(action) {
         if(action=='show') {
             $("#primary-badge-summary").show(500);
+			$("#no-primary-error").show(500);
         }
         else if(action=='hide') {
             $("#primary-badge-summary").hide(500);
+			$("#no-primary-error").hide(500);
         }
     }
 
     function getPrimaryBadger(req_badgeNumber,type) {
-        $("#no-primary-error").hide(500);
-        $("#primary-badge-summary").hide(500);
+		family_badge_view('show');
+//$("#no-primary-error").hide(500);
+//        $("#primary-badge-summary").hide(500);
 
         if(req_badgeNumber) {
             $("#HideMySubmit").hide(500);
@@ -298,7 +301,7 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     $("#searchng-badge-animation").hide(500);
-                    $("#no-primary-error").hide(500);
+                   // $("#no-primary-error").hide(500);
                     console.log(responseData);
                 },
             });
@@ -617,7 +620,7 @@ app.controller("CreateBadgeController", function($scope) {
     else {
     }
     if(primaryRequest==0 || primaryRequest ==null) {
-        $("#primary-badge-summary").hide(500);
+//        $("#primary-badge-summary").hide(500);
     }
 
     $("#badges-primary").change(function() {
@@ -629,7 +632,7 @@ app.controller("CreateBadgeController", function($scope) {
             //alert("error reporting");
         }
         if(primaryRequest==0 || primaryRequest ==null) {
-            $("#primary-badge-summary").hide(500);
+ //           $("#primary-badge-summary").hide(500);
         }
 
     });
@@ -871,7 +874,7 @@ app.controller('UpdateBadgeController', function($scope) {
             getPrimaryBadger(primaryRequest,'init');
         }
         if(primaryRequest==0 || primaryRequest ==null) {
-            $("#primary-badge-summary").hide(500);
+//            $("#primary-badge-summary").hide(500);
         }
 
         $("#badges-primary").change(function() {
@@ -883,7 +886,7 @@ app.controller('UpdateBadgeController', function($scope) {
                 //alert("error reporting");
             }
             if(primaryRequest==0 || primaryRequest ==null) {
-                $("#primary-badge-summary").hide(500);
+//                family_badge_view('hide');
             }
         });
 

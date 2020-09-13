@@ -34,9 +34,7 @@ $confParams  = Params::findOne('1');
             <div class="col-xs-6 col-sm-2">
                 <?= $form->field($model, 'badge_number')->textInput(['readonly'=>true, 'value' =>str_pad($model->badge_number, 5, '0', STR_PAD_LEFT) ]) ?>
             </div>
-
-
-<div class="help-block"></div>
+			<div class="help-block"></div>
   
             <div class="col-xs-6 col-sm-2">
 				<?= $form->field($model, 'prefix')->dropDownList(['Mr'=>'Mr','Ms'=>'Ms','Miss'=>'Miss','Mrs'=>'Mrs','Master'=>'Master','Fr'=>'Father (Fr)','Rev'=>'Reverend (Rev)','Dr'=>'Doctor (Dr)','Atty'=>'Attorney (Atty)','Hon'=>'Honorable (Hon)','Prof'=>'Professor (Prof)','Pres'=>'President (Pres)','VP'=>'Vice President (VP)','Gov'=>'Governor (Gov)','Ofc'=>'Officer (Ofc)'],['readonly'=> $model->isNewRecord ? false : true,]) ?>
@@ -61,19 +59,19 @@ $confParams  = Params::findOne('1');
                 <?php } ?>
                 <?= $form->field($model, 'club_id')->hiddenInput(['readonly' => true])->label(false) ?>
             </div>
-
-			<div  id="primary-badge-summary">
-				<div class="col-xs-6">
-					<?= $form->field($model, 'primary')->textInput(['value'=>''])->label("Primary Family Member") ?>
-				</div>
-				<div class="col-xs-12 col-sm-9">
-					<h4 class="text-center" id="no-primary-error" style="display: none"> Sorry! could not find a user</h4>
-					<div id="searchng-badge-animation" style="display: none">
-						<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
-					</div>
+			<div  class="col-xs-12" id="primary-badge-summary">
+			<div class="row">
+			<div class="col-xs-6 col-sm-3" >
+				<?= $form->field($model, 'primary')->textInput(['value'=>''])->label("Primary Family Member") ?>
+			</div>
+			<div class="col-xs-12 col-sm-9">
+				<h4 class="text-center" id="no-primary-error" ><br> <p>Please Enter Primary badge Holder</p> <br> </h4>
+				<div id="searchng-badge-animation" style="display: none">
+					<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
 				</div>
 			</div>
- 
+			</div>
+			</div>
             <div class="col-xs-12 col-sm-6">
                 <?= $form->field($model, 'address')->textarea(['rows' => '1']).PHP_EOL; ?>
             </div>

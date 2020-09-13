@@ -114,25 +114,27 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				</div>
 			<?php } ?>
             </div>
-        <div  id="primary-badge-summary">
-            <div class="col-xs-3">
-                <?php if($model->primary==null) { ?>
+			<div  class="col-xs-12" id="primary-badge-summary">
+				<div class="row">
+					<div class="col-xs-6 col-sm-3" >
+						<?php if($model->primary==null) { ?>
 
-                  <?= $form->field($model, 'primary')->textInput(['value'=>'']).PHP_EOL; ?>
+						  <?= $form->field($model, 'primary')->textInput(['value'=>'']).PHP_EOL; ?>
 
-                <?php } else {?>
-                 <?= $form->field($model, 'primary')->textInput(['readonly' => true ]).PHP_EOL; ?>
-                <?php } ?>
-            </div>
-            <div class="col-xs-12 col-sm-9">
-                <div>
-                    <h4 class="text-center" id="no-primary-error" style="display: none"> Sorry! could not find a user</h4>
-                    <div id="searchng-badge-animation" style="display: none">
-                        <img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
+						<?php } else {?>
+						 <?= $form->field($model, 'primary')->textInput(['readonly' => true ]).PHP_EOL; ?>
+						<?php } ?>
+					</div>
+					<div class="col-xs-12 col-sm-9">
+						<div>
+							<h4 class="text-center" id="no-primary-error" style="display: none"> Sorry! could not find a user</h4>
+							<div id="searchng-badge-animation" style="display: none">
+								<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
         
             <div class="col-xs-12 col-sm-6">
                 <?= $form->field($model, 'address')->textarea(['rows' => '1']).PHP_EOL; ?>
