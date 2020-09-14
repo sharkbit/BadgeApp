@@ -17,36 +17,39 @@ use kartik\money\MaskMoney;
         'id' => 'ajax'
         ]); ?>
 <div class="row">
-    <div class="col-xs-6 col-sm-6">
+    <div class="col-xs-6 col-sm-3">
 		<?= $form->field($model, 'id')->textInput(['readonly'=>$model->isNewRecord ? false:true,'maxlength' => true]) ?>
 	</div>
-	<div class="col-xs-6 col-sm-6">
+	<div class="col-xs-6 col-sm-5">
 		<?= $form->field($model, 'type')->textInput()?>
 	</div>
-	<div class="col-xs-6 col-sm-6">
+	<div class="col-xs-12 col-sm-4">
+	<?= $form->field($model, 'self_service')->dropDownList([ '1'=>'Visible', '0'=>'Not Visible', ],['value'=>$model->isNewRecord ? 1: $model->self_service]) ?>
+	</div>
+	<div class="col-xs-5 col-sm-6">
 	<?= $form->field($model, 'sku_full')->textInput(['maxlength' => true]) ?>
 	</div>
-	<div class="col-xs-6 col-sm-6"><br >
+	<div class="col-xs-7 col-sm-6"><br >
 <?php if((!$model->isNewRecord) && (isset($model->fullprice->item_id))) { 
 		$h_price = '$ '.$model->fullprice->price; $lnk = "update?id=".$model->fullprice->item_id;
 		} else { $h_price=''; $lnk='stock'; } ?>
 		<b><?=$h_price?></b> <p>Prices can be edited on the <a href="/sales/<?=$lnk?>">Store Stock page </a> <br></p>
 		<br /> <p class="help-block Top_space_qr_block"></p>
  	</div>
-	<div class="col-xs-6 col-sm-6">
+	<div class="col-xs-5 col-sm-6">
 	<?= $form->field($model, 'sku_half')->textInput(['maxlength' => true]) ?>
 	</div>
-	<div class="col-xs-6 col-sm-6"><br >
+	<div class="col-xs-7 col-sm-6"><br >
 	<?php if((!$model->isNewRecord) && (isset($model->halfprice->item_id))) { 
 		$h_price = '$ '.$model->halfprice->price; $lnk = "update?id=".$model->halfprice->item_id;
 		} else { $h_price=''; $lnk='stock'; } ?>
 		<b><?=$h_price?></b> <p>Prices can be edited on the <a href="/sales/<?=$lnk?>">Store Stock page </a> <br></p>
 		<br /> <p class="help-block Top_space_qr_block"></p>
 	</div>
-	<div class="col-xs-6 col-sm-6">
+	<div class="col-xs-12 col-sm-6">
     <?= $form->field($model, 'status')->dropDownList([ '1'=>'Active', '0'=>'Inactive', ],['value'=>$model->isNewRecord ? 1: $model->status]) ?>
 	</div>
-	<div class="col-xs-6 col-sm-6">
+	<div class="col-xs-12 col-sm-6">
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         <?= Html::resetButton('Reset <i class="fa fa-eraser"> </i>', ['class' => 'btn btn-danger']) ?>

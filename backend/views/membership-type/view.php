@@ -24,7 +24,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'type',
-            
+			[	'attribute'=>'self_service',
+				'value'=>function($model) { if($model->self_service=='1') {return 'Visible'; } else {return 'Not Visible'; } },
+			],            
 			'sku_full',
             [
                 'attribute'=>'fullprice.price',

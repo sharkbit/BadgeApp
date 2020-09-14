@@ -477,3 +477,9 @@ UPDATE BadgeDB.membership_type SET `status` = '0' WHERE id =70;
 
 DROP TABLE `BadgeDB`.`fees_structure`;
 
+-- v2.1.5 Self Service Kiosk
+ALTER TABLE `BadgeDB`.`membership_type` 
+ADD COLUMN `self_service` INT(1) NOT NULL DEFAULT 1 AFTER `type`;
+UPDATE `BadgeDB`.`membership_type` SET `self_service` = '0' WHERE (`id` = '88');
+UPDATE `BadgeDB`.`membership_type` SET `self_service` = '0' WHERE (`id` = '99');
+
