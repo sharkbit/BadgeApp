@@ -104,6 +104,9 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'headerOptions' => ['style' => 'width:15%'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'facility_id', ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name'),['class'=>'form-control','prompt' => 'All']),
 			],
+			[	'attribute'=>'lanes_requested',
+				'value'=>function($model) { if($model->lanes_requested ==0) { return '';} else { return $model->lanes_requested; } },
+			],
 			[	'attribute'=>'event_date',
 				'visible' => ($searchModel->recur_every) ? false : true,
 				'value'=>function($model) {
