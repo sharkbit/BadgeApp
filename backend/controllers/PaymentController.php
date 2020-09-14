@@ -8,6 +8,7 @@ use backend\controllers\AdminController;
 use backend\models\Badges;
 use backend\models\Guest;
 use backend\models\Sales;
+use backend\models\StoreItems;
 use backend\models\BadgeSubscriptions;
 use backend\models\BadgeCertification;
 use backend\models\Params;
@@ -17,12 +18,12 @@ use backend\models\CardReceipt;
 class PaymentController extends AdminController {
 
 	public function actionCharge() {  // Process charge
-		if(isset($_POST['BadgeSubscriptions']['badge_fee'])) {
-			$model = new BadgeSubscriptions();
-			$UseSub = 'update';
-		} elseif(isset($_POST['BadgeCertification']['certification_type'])) {
+		if(isset($_POST['BadgeCertification']['certification_type'])) {
 			$model = new BadgeCertification();
 			$UseSub = 'cert';
+		} elseif(isset($_POST['BadgeSubscriptions']['badge_fee'])) {
+			$model = new BadgeSubscriptions();
+			$UseSub = 'update';
 		} elseif(isset($_POST['Sales']['first_name'])) {
 			$model = new Sales();
 			$UseSub = 'sales';
@@ -63,7 +64,7 @@ class PaymentController extends AdminController {
 				if($myPost['first_name']=='') {$err=true;}  else { $first_name=trim($myPost['first_name']); }
 				if($myPost['last_name']=='') { $err=true;}  else { $last_name=trim($myPost['last_name']); }
 				if($myPost['mem_type']=='') { $err=true;}  else  { $memType=trim($myPost['mem_type']); }
-				$MyCart = Badges::GetCart($_POST['cart'],$memType, $model->badge_fee, $Badge_price);
+				$MyCart = ["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ];
 
 			} elseif($UseSub=='cert') {	// Certificate
 				$myPost=$_POST['Badges'];
@@ -74,11 +75,10 @@ class PaymentController extends AdminController {
 				if($myPost['city']=='') { $err = true; }    else { $cc_city = $myPost['city']; }
 				if($myPost['first_name']=='') {$err=true;}  else { $first_name=trim($myPost['first_name']); }
 				if($myPost['last_name']=='') { $err=true;}  else { $last_name=trim($myPost['last_name']); }
-				if ($model->certification_type==5) {
-					$MyCart = ["item"=>"Steel Certification","sku"=>410105,"ea"=>10.00 ,"qty"=>"1","price"=> 10.00 ];
-				} elseif ($model->certification_type==6) {
-					$MyCart = ["item"=>"Holster Certification","sku"=>410100,"ea"=>20.00 ,"qty"=>"1","price"=> 20.00 ];
-				}
+				$model->badge_number = $_REQUEST['BadgeSubscriptions']['badge_number'];
+				$sku = explode("|",$model->certification_type)[0];
+				$myCert = StoreItems::find()->where(['sku'=>$sku])->one();
+				$MyCart = ["item"=>$myCert->item,"sku"=>$sku,"ea"=>$myCert->price ,"qty"=>"1","price"=>$myCert->price ];
 
 			} elseif($UseSub=='sales') {
 				if($model->total=='') { $err = true; } 		else { $cc_amount = $model->total; }
@@ -111,7 +111,7 @@ class PaymentController extends AdminController {
 				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
 				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
 				if($model->mem_type=='') { $err = true; } 	else { $memType=trim($model->mem_type); }
-				$MyCart=Badges::GetCart( $_REQUEST['cart'],$memType, $model->badge_fee, $Badge_price,true );
+				$MyCart = ["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ];
 			}
 
 			if($model->cc_cvc=='') { $err = true; }
