@@ -643,7 +643,7 @@ console.log('main:651: here');
 		document.getElementById("badgecertification-Process_CC").disabled=true;
 		$("p#cc_info").html("Processing...");
 
-		var formDataB = $("#badgeUpdate,#form_badge_cert").serializeArray();
+		var formDataB = $("#badgeUpdate,#form_badge_cert,#form_badge_renew").serializeArray();
 		jQuery.ajax({
 			method: 'POST',
 			crossDomain: false,
