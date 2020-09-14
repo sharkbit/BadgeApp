@@ -121,7 +121,7 @@ $confParams  = Params::findOne('1');
             <div class="col-xs-6 col-sm-6">
                 <?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A')]) ?>
             </div>
-            <div class="col-xs-6 col-sm-6">
+            <div class="col-xs-6 col-sm-4">
                 <?php $model->expires = date('M d, Y',strtotime($nextExpire)); ?>
                 <?= $form->field($model, 'expires')->textInput(['readOnly'=>true]) ?>
                 <input type="hidden" value='<?php echo date('M d, Y',strtotime($nextExpire)); ?>' id='defDate' />
@@ -151,15 +151,13 @@ $confParams  = Params::findOne('1');
 			</div>
 		</div>
 		<div class="row">
-            <div class="form-group">
-            <div class="col-sm-2" id="HideMySubmit">
-				<?= Html::submitButton($model->isNewRecord ? '<i class="fa fa-save"> </i> SAVE' : 'Update', ['id'=>'badges_submin_btn','class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-            </div>
-			<div class="col-sm-2">
-				<?= Html::a('<i class="fa fa-eraser"> </i> Clear',['/badges/create'],['class' => 'btn btn-danger']) ?>
-            </div>
-            </div>
-        </div>
+		<div class="col-xs-3" id="HideMySubmit">
+			<?= Html::submitButton($model->isNewRecord ? '<i class="fa fa-save"> </i> SAVE' : 'Update', ['id'=>'badges_submin_btn','class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+		</div>
+		<div class="col-sm-3">
+			<?= Html::a('<i class="fa fa-eraser"> </i> Clear',['/badges/create'],['class' => 'btn btn-danger']) ?>
+		</div>
+		</div>
         <div class="row">
             <div class="col-xs-12 col-sm-3" ng-if="membershipType=='2'">
 			</div>

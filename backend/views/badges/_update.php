@@ -183,20 +183,11 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 			<?php $model->incep = date('M d, Y h:i:s A',strtotime($model->incep)); ?>
             <?= $form->field($model, 'incep')->textInput(['disabled' => true,'value'=>date('M d, Y',strtotime($model->incep))]).PHP_EOL; ?>
             </div>
-            <div class="col-xs-6 col-sm-6">
+            <div class="col-xs-6 col-sm-4">
                 <?php $model->expires = date('M d, Y',strtotime($model->expires)); ?>
                 <?= $form->field($model, 'expires')->textInput(['readOnly'=>true]).PHP_EOL; ?>
                 <input type="hidden" value='<?php echo date('M d, Y',strtotime($nextExpire)); ?>' id='defDate' />
             </div>
-
-			<?php if(yii::$app->controller->hasPermission('badges/barcode')) {
-			 echo '<div class="col-xs-6 col-sm-4">'.
-			 $form->field($model, 'qrcode')->textInput(['readOnly'=>$model->qrcode==null ? false : true,'disabled' => true])->label('Barcode')."\n".
-			"</div>\n";
-			} else  {
-				echo $form->field($model, 'qrcode')->hiddenInput(['readOnly'=>$model->qrcode==null ? false : true,'disabled' => true])->label(false),PHP_EOL;
-			}
-			?>
 
              <div class="col-xs-6 col-sm-4">
         <?php   $WTDate = strtotime($model->wt_date);
@@ -222,6 +213,13 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
              <div class="col-xs-6 col-sm-4">
                 <?= $form->field($model, 'wt_instru')->textInput(['disabled' => yii::$app->controller->hasPermission('badges/delete') ? false : true,]).PHP_EOL; ?>
             </div>
+			<?php if(yii::$app->controller->hasPermission('badges/barcode')) {
+			 echo '<div class="col-xs-6 col-sm-4">'.
+			 $form->field($model, 'qrcode')->textInput(['readOnly'=>$model->qrcode==null ? false : true,'disabled' => true])->label('Barcode')."\n".
+			"</div>\n";
+			} else  {
+				echo $form->field($model, 'qrcode')->hiddenInput(['readOnly'=>$model->qrcode==null ? false : true,'disabled' => true])->label(false),PHP_EOL;
+			} ?>
         </div>
         <div class="row">
             <div class="col-xs-12">
