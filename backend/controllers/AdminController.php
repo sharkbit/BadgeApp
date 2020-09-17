@@ -48,7 +48,7 @@ class AdminController extends \yii\web\Controller {
 		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/remove-att','events/update','events/view'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/delete'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
-		'sales' => ['sales/all','sales/create'],
+		'sales' => ['sales/all','sales/create','sales/stock'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update'],
 	];
