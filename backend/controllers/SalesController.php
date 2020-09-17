@@ -36,6 +36,26 @@ class SalesController extends AdminController {
         ];
     }
 
+    public function actionCreate() {
+		$model = new StoreItems();
+        if ($model->load(Yii::$app->request->post())){
+			
+			if ($model->save()) {
+				$this->createLog($this->getNowTime(), $_SESSION['user'], 'New Store Item Created: '.$model->item);
+				Yii::$app->getSession()->setFlash('success', $model->item.' has been created');
+				return $this->redirect(['view', 'id' => $model->item_id]);
+			} else {
+				return $this->render('create', [
+					'model' => $model,
+				]);
+			}
+		} else {
+			return $this->render('create', [
+				'model' => $model,
+			]);
+		}
+    }
+
     public function actionIndex() {
 		$model = new Sales;
 

@@ -131,6 +131,10 @@ class Menu extends Widget{
 			'label'=>'Settings',
 			'url' => '/params/update',
 		],
+		[
+			'label'=>'Store Items',
+			'url' => '/sales/stock',
+		],
 	];
 
 	public $LastMenu = [

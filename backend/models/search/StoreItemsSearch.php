@@ -17,7 +17,7 @@ class StoreItemsSearch extends StoreItems {
     public function rules() {
         return [
             [['item','sku','img','type'], 'safe'],
-			[['item_id','stock','active','new_badge'], 'integer'],
+			[['item_id','stock','active','new_badge','paren'], 'integer'],
 			[['price'], 'number'],
         ];
     }
@@ -53,6 +53,7 @@ class StoreItemsSearch extends StoreItems {
 
         // grid filtering conditions
 		if(isset($this->sku)) 	{ $query->andFilterWhere(['sku' => $this->sku]); }
+		if(isset($this->paren)) 	{ $query->andFilterWhere(['paren' => $this->paren]); }
 		if(isset($this->price)) { $query->andFilterWhere(['price'=>$this->price]); }
 		if(isset($this->stock)) { $query->andFilterWhere(['stock' => $this->stock]); }
 		if(isset($this->active)) { $query->andFilterWhere(['active' => $this->active]); }

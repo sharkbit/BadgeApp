@@ -2,13 +2,15 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use backend\models\StoreItems;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\BadgesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Store';
-$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['index']];
+$this->title = 'Store Items';
+$this->params['breadcrumbs'][] = ['label' => 'Store', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['sales/stock']];
 
 if (isset($_SESSION['pagesize'])) {
 	$pagesize = $_SESSION['pagesize'];
@@ -31,6 +33,12 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 <div class="row">
 
     <div class="col-xs-12">
+	<?php if(yii::$app->controller->hasPermission('sales/create')) { ?>
+	<div class="btn-group pull-right">
+	<?= Html::a('<i class="fa fa-plus-square" aria-hidden="true"></i> Add Store Item', ['create'], ['class' => 'btn btn-success ']) ?>
+
+	</div>
+<?php } ?>
         <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -41,6 +49,11 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		'columns' => [
 			[	'attribute' => 'type',
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'type',$searchModel->getTypes(),['class'=>'form-control','prompt' => 'All']),
+			],
+			[	'header' => 'Group',
+				'attribute' => 'paren',
+				'value' => function($model, $attribute) { return (new StoreItems)->getParen($model->paren); },
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'paren',$searchModel->getGroups(),['class'=>'form-control','prompt' => 'All']),
 			],
 			'item',
             'sku',

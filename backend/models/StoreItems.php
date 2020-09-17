@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
@@ -44,10 +45,11 @@ class StoreItems extends \yii\db\ActiveRecord {
         ];
     }
 
-	public function getTypes() {
+	public function getTypes($limit=false) {
 		$myTypes = $this::find()->groupBy(['type'])->all();
 		$aryTypes=[];
 		foreach($myTypes as $item){
+			if(($limit) && ($item->type=='Category')) { continue; }
 			$aryTypes=array_merge($aryTypes,[$item->type=>$item->type]);
 		}
 		return $aryTypes;
@@ -58,4 +60,15 @@ class StoreItems extends \yii\db\ActiveRecord {
             ->from(self::tableName() . ' cat');
 	}
 
+	public function getParen($item_id=null) {
+		if (isset($item_id) && ($item_id >0)) {
+			$storeitem = $this::find()->where(['item_id'=>$item_id])->one();
+			return $storeitem->item;
+		} else { return "-";}
+	}
+
+	public function getGroups($item_id=null) {
+		$storeitem = $this::find()->where(['type'=>'Category'])->all();
+		return ArrayHelper::map($storeitem, 'item_id', 'item');
+	}
 }
