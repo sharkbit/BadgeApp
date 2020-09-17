@@ -6,8 +6,6 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Params */
 /* @var $form yii\widgets\ActiveForm */
-
-yii::$app->controller->createLog(false, 'trex', var_export($model->getTypes(),true));
 ?>
 
 <div class="params-form">
