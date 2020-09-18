@@ -70,7 +70,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			],
 			[   'header' => 'Actions',
                 'class' => 'yii\grid\ActionColumn',
-				'template'=>' {view} {update} {print} {delete} ',
+				'template'=>(yii::$app->controller->hasPermission('sales/update'))? (yii::$app->controller->hasPermission('sales/delete'))?' {update} {delete} ' : ' {update} ': '',
 			]
         ],
     ]); ?>

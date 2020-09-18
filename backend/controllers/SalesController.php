@@ -56,6 +56,14 @@ class SalesController extends AdminController {
 		}
     }
 
+	public function actionDelete($id) {
+		$del_item = StoreItems::find()->where(['item_id'=>$id])->one();
+		$this->createLog($this->getNowTime(), $_SESSION['user'], "Store Item Deleted: ($id) ".$del_item->item);
+		Yii::$app->getSession()->setFlash('success', "Store Item Deleted: ($id) ".$del_item->item);
+		$del_item->delete();
+		return $this->redirect('index');
+	}
+
     public function actionIndex() {
 		$model = new Sales;
 
