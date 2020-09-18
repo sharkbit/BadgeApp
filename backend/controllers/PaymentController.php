@@ -64,7 +64,7 @@ class PaymentController extends AdminController {
 				if($myPost['first_name']=='') {$err=true;}  else { $first_name=trim($myPost['first_name']); }
 				if($myPost['last_name']=='') { $err=true;}  else { $last_name=trim($myPost['last_name']); }
 				if($myPost['mem_type']=='') { $err=true;}  else  { $memType=trim($myPost['mem_type']); }
-				$MyCart = ["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ];
+				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ])."]";
 
 			} elseif($UseSub=='cert') {	// Certificate
 				$myPost=$_POST['Badges'];
@@ -78,7 +78,7 @@ class PaymentController extends AdminController {
 				$model->badge_number = $_REQUEST['BadgeSubscriptions']['badge_number'];
 				$sku = explode("|",$model->certification_type)[0];
 				$myCert = StoreItems::find()->where(['sku'=>$sku])->one();
-				$MyCart = ["item"=>$myCert->item,"sku"=>$sku,"ea"=>$myCert->price ,"qty"=>"1","price"=>$myCert->price ];
+				$MyCart = "[".json_encode(["item"=>$myCert->item,"sku"=>$sku,"ea"=>$myCert->price ,"qty"=>"1","price"=>$myCert->price ])."]";
 
 			} elseif($UseSub=='sales') {
 				if($model->total=='') { $err = true; } 		else { $cc_amount = $model->total; }
@@ -111,7 +111,7 @@ class PaymentController extends AdminController {
 				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
 				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
 				if($model->mem_type=='') { $err = true; } 	else { $memType=trim($model->mem_type); }
-				$MyCart = ["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ];
+				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ])."]";
 			}
 
 			if($model->cc_cvc=='') { $err = true; }

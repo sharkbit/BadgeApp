@@ -54,7 +54,9 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 				'value' => function($model, $attribute) {
 					$items='';
 					foreach(json_decode($model->cart) as &$item ) {
+						if(isset($item) && isset($item->item)){
 						$items .=$item->item.' ['.$item->ea.' x '.$item->qty.'] '.($item->price)."<br/>\n";
+						}
 					}
 					return $items;
 				}
