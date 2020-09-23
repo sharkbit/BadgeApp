@@ -337,33 +337,38 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_has_lanes:334', 'Has
 if($tst) { yii::$app->controller->createCalLog(false, 'trex_lanes_xx:334', 'Lanes not privided?'); }
 						$isAval=false;
 						$msg='<b style="color:red;">'."Please Provide Requested lanes (Up to ".$Range_available_lanes.")</b>";
-					} else if ($lanes+$lanes_used >= $Range_available_lanes ) {
-if($tst) { yii::$app->controller->createCalLog(false, 'trex_facility:335', 'has lanes!'); }
-						if ($force_order) {
-							$opened_lanes=0;
-							foreach ($found as $overwrite) {
+					} else if ($lanes+$lanes_used > $Range_available_lanes ) {
+						$HeavyCheck = $this->HeavyCheck($start,$stop,$found,$lanes,$Range_available_lanes);
+						if ($HeavyCheck['status']=='Full') {
+if($tst) { yii::$app->controller->createCalLog(false, 'trex_facility:341', 'All Full!'); }
+							if ($force_order) {
+								$opened_lanes=0;
+								foreach ($found as $overwrite) {
 if($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:338', "** $rng_pri < ".$overwrite->type_i); }
-								if ((int)$rng_pri < (int)$overwrite->type_i) {
-									AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
-									yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:341', "** Conflict found $eDate, overwriting: ".$overwrite->cal_id);
-									$opened_lanes += $overwrite->req_lanes;
+									if ((int)$rng_pri < (int)$overwrite->type_i) {
+										AgcCal::UpdateAll(['conflict'=>1],'calendar_id = '.$overwrite->cal_id);
+										yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:341', "** Conflict found $eDate, overwriting: ".$overwrite->cal_id);
+										$opened_lanes += $overwrite->req_lanes;
+									}
+									if ($lanes+$lanes_used-$opened_lanes <= $Range_available_lanes ) { break; }
 								}
-								if ($lanes+$lanes_used-$opened_lanes <= $Range_available_lanes ) { break; }
-							}
-							if ($lanes+$lanes_used-$opened_lanes <= $Range_available_lanes ) {
-								$msg='<b style="color:blue;">'."Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.</b>";
+								if ($lanes+$lanes_used-$opened_lanes <= $Range_available_lanes ) {
+									$msg='<b style="color:blue;">'."Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)<br> But you have Priority.</b>";
+								} else {
+									$isAval=false;
+									$msg='<b style="color:red;">'."Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!).</b>";
+								}
 							} else {
 								$isAval=false;
-								$msg='<b style="color:red;">'."Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!).</b>";
+								$msg='<b style="color:red;">'.$fas->name.' Full, ('.$HeavyCheck['msg'].")</b>";
 							}
 						} else {
-							$isAval=false;
-							$msg='<b style="color:red;">'."Not Enough Free Lanes or All lanes have been reserved! (".($lanes_used)." used!)</b>";
+							$msg='<b style="color:green;">'.$fas->name.' has space left (' .$HeavyCheck['msg'] .' Lanes free)</b>';
 						}
 					} else {
-if($tst) { yii::$app->controller->createCalLog(false, 'trex_facility:335', 'has lanes!'); }
+if($tst) { yii::$app->controller->createCalLog(false, 'trex_facility:364', 'has lanes!'); }
 						if(isset($found)) {
-							$msg='<b style="color:green;">'.$fas->name.' has space left: ' .($Range_available_lanes-$lanes_used) .' Lanes</b>';
+							$msg='<b style="color:green;">'.$fas->name.' has space left, (' .($Range_available_lanes-$lanes_used-$lanes) .' Lanes free)</b>';
 						} else {
 							$msg='<b style="color:green;">'.$fas->name.' is open</b>';
 						}
@@ -389,6 +394,38 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:367 isAval'
 			return $this->render('test',['pattern'=>$pattern,'returnMsg'=>$returnMsg,'rng_pri'=>$rng_pri]);
 		}
 	}
+
+	private function HeavyCheck($start,$stop,$found, $rng_requ, $rng_limit){  //True = full!  (bad)
+		$chk_time = substr($start,0,2);
+		$max_used=$rng_requ;
+		while($chk_time <= substr($stop,0,2)) {
+//yii::$app->controller->createLog(false, 'trex-Heavy', $chk_time);
+			
+			foreach([':01',':16',':31',':46'] as $min) {
+				$chk_lns_used = $rng_requ;
+				$checking = $chk_time.$min;
+				
+				if (strtotime($checking) < strtotime($start) ) {continue;}
+				foreach ($found as $recheck) {
+					$tst_start = strtotime($recheck->start);
+					$tst_stop  = strtotime($recheck->stop);
+					if (($tst_start < strtotime($checking)) && (strtotime($checking) < $tst_stop )) {
+						$chk_lns_used += (int)$recheck->req_lanes;
+//yii::$app->controller->createLog(false, 'trex-Heavy_Req: ',$recheck->req_lanes );
+					}
+				}
+
+				if ($max_used < $chk_lns_used) { $max_used = $chk_lns_used;}
+				if($chk_lns_used > $rng_limit) {
+					return ['status'=>'Full','msg'=>$chk_lns_used-$rng_limit.' lanes over at '.date('h:i A',strtotime($checking.' - 1 minute'))]; 
+				}
+			}
+			$chk_time++;
+		}
+//yii::$app->controller->createLog(false, 'trex-Heavy_st', 'Space! '.$max_used );
+		return ['status'=>'Open','msg'=> ($rng_limit-$max_used).' Lanes'];
+	}
+	
 
 	public function actionRecur() {
 		$searchModel = new AgcCalSearch();
