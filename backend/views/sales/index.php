@@ -175,7 +175,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 	<?php
 		$sql="SELECT s1.item_id,s2.item AS cat,s1.item,s1.sku,s1.price,s1.`type`".
 			" FROM store_items AS s1 JOIN store_items AS s2 ON (s1.paren=s2.item_id)".
-			" WHERE s2.item !='Dues'".
+			" WHERE s1.active=1".
 			" ORDER BY `cat`,`type`,item;";
 			$command = Yii::$app->db->createCommand($sql);
 			$ItemsList = $command->queryAll();

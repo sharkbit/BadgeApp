@@ -316,7 +316,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<div class="form-group" id="extras_store_div" style="display:none" > <!-- class="col-xs-12 col-sm-12"  -->
 		<table id='store_items' border=1 width="100%">
 		<tr><th>Item</th><th>Ea</th><th>Qty #</th><th>Price</th></tr>
-<?php $ItemsList = StoreItems::find()->where(['like','type','inventory'])->all();
+<?php $ItemsList = StoreItems::find()->where(['like','type','inventory'])->andWhere(['active'=>1])->all();
 		foreach($ItemsList as $item){
 			echo '<tr><td><input type="hidden" name="item" value="'.$item['item'].'" />'.$item['item'].
 				'<input type=hidden name="sku" value="'.$item['sku'].'" /></td>'.

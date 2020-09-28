@@ -37,6 +37,7 @@ class StoreItems extends \yii\db\ActiveRecord {
             'item_id' => 'ID',
 			'item' => 'Item',
             'sku' => 'SKU',
+			'paren' => 'Group',
             'price' => 'Price',
 			'stock' => 'Stock',
 			'img' => 'img',
@@ -68,7 +69,7 @@ class StoreItems extends \yii\db\ActiveRecord {
 	}
 
 	public function getGroups($item_id=null) {
-		$storeitem = $this::find()->where(['type'=>'Category'])->all();
+		$storeitem = $this::find()->where(['type'=>'Category'])->orderBy('item')->all();
 		return ArrayHelper::map($storeitem, 'item_id', 'item');
 	}
 }

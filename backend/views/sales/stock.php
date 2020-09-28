@@ -68,10 +68,37 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'active',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All']),
 				'value' => function($model, $attribute) { if($model->active) {return 'Yes';} else { Return 'No';} },
 			],
-			[   'header' => 'Actions',
+			[
+                'header' => 'Actions',
                 'class' => 'yii\grid\ActionColumn',
-				'template'=>(yii::$app->controller->hasPermission('sales/update'))? (yii::$app->controller->hasPermission('sales/delete'))?' {update} {delete} ' : ' {update} ': '',
-			]
+				'template'=>' {update} {delete} ',
+				'buttons'=>[
+					'update' => function ($url, $model) {
+						if(yii::$app->controller->hasPermission('sales/update')) {
+						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/sales/update','id'=>$model->item_id], [
+							'data-toggle'=>'tooltip',
+							'data-placement'=>'top',
+							'title'=>'Edit',
+							'class'=>'edit_item',
+						]); }
+					},
+					'delete' => function($url,$model) {
+						if(yii::$app->controller->hasPermission('sales/delete')) {
+							$chk_sub = StoreItems::find()->where(['paren'=>$model->item_id])->all();
+							if(!$chk_sub) {
+						return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', $url, [
+							'data-toggle'=>'tooltip',
+							'data-placement'=>'top',
+							'title'=>'Delete',
+							'data' => [
+								'confirm' => 'Are you sure you want to delete '.$model->item.'?',
+								'method' => 'post',
+							],
+						]); } }
+					},
+				],
+            ],
+	
         ],
     ]); ?>
     </div>

@@ -39,7 +39,11 @@ class SalesController extends AdminController {
     public function actionCreate() {
 		$model = new StoreItems();
         if ($model->load(Yii::$app->request->post())){
-			
+			if ($model->type=='Category') {
+				$model->paren=NULL;
+				$model->sku=NULL;
+			}
+
 			if ($model->save()) {
 				$this->createLog($this->getNowTime(), $_SESSION['user'], 'New Store Item Created: '.$model->item);
 				Yii::$app->getSession()->setFlash('success', $model->item.' has been created');
@@ -61,7 +65,7 @@ class SalesController extends AdminController {
 		$this->createLog($this->getNowTime(), $_SESSION['user'], "Store Item Deleted: ($id) ".$del_item->item);
 		Yii::$app->getSession()->setFlash('success', "Store Item Deleted: ($id) ".$del_item->item);
 		$del_item->delete();
-		return $this->redirect('index');
+		return $this->redirect('stock');
 	}
 
     public function actionIndex() {
@@ -184,6 +188,11 @@ class SalesController extends AdminController {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
+			if ($model->type=='Category') {
+				$model->paren=NULL;
+				$model->sku=NULL;
+			}
+			
         	if($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Item has been updated');
 			} else { Yii::$app->getSession()->setFlash('success', 'Item update Failed'); }
