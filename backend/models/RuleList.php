@@ -55,6 +55,6 @@ class RuleList extends \yii\db\ActiveRecord {
 		$connection = Yii::$app->getDb();
 		$command = $connection->createCommand($sql);
 		$rules = $command->queryAll(); 
-		return implode(ArrayHelper::map($rules,'rule_ab','rul_name'),", ");
+		return implode(", ",ArrayHelper::map($rules,'rule_ab','rul_name'));
 	}
 }
