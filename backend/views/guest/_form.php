@@ -351,6 +351,7 @@ $('#GuestForm').on('submit', function() {
 			} else {
 				alert(" Please Check Year Of Birth ");
 				document.getElementById("guest-isMinor").checked = false;
+				document.getElementById("guest-isShooter").checked = true;
 			}
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
