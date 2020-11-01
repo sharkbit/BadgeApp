@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\MembershipType;
+use backend\models\Params;
 use backend\models\search\MembershipTypeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -28,7 +29,9 @@ class MembershipTypeController extends AdminController {
 		
 		if(isset($feeArray->sku_full)) {
 			$Full_Price = $feeArray->fullprice->price;
-			if (isset($feeArray->sku_half) && (date('Y-m-d', strtotime(yii::$app->controller->getNowTime())) >= date('Y-07-01', strtotime(yii::$app->controller->getNowTime()))) && ($from=='n') && ((int)$feeArray->fullprice->price < 301 )) {
+			$confParams  = Params::findOne('1');
+			$nowNumbers = strtotime(yii::$app->controller->getNowTime());
+			if (isset($feeArray->sku_half) && (date('Y-m-d', $nowNumbers) >= date('Y-07-01', $nowNumbers)) && (date('Y-m-d', $nowNumbers) <= date('Y-'.$confParams->sell_date, $nowNumbers)) && ($from=='n') && ((int)$feeArray->fullprice->price < 301 )) {
 				//discount
 				$Half_Price = $feeArray->halfprice->price;
 				$discount = $feeArray->fullprice->price - $feeArray->halfprice->price;
