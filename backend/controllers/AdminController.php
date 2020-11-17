@@ -116,6 +116,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $chairmanPermission = [
 		'Calendar' => ['calendar/close','calendar/recur'],
+		'Events' => ['events/add-att','events/index','events/create','events/reg','events/return','events/view'],
 	];
 
 	public $AllPermission = [
