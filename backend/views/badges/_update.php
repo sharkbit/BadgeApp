@@ -48,13 +48,13 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	if ($DateExpires >= $nextExpire){ // Show Renew?
 		$hide_Renew=true;
 	} else {
-		if ($model->status=='approved' || $model->status=='pending' ) {
+		if ($model->canRenew($model->status)) {
 			$hide_Renew=false; } else { $hide_Renew=true; }
 	}
 
 	// Show Certifications?
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }
-	if ($model->status=='approved' || $model->status=='pending') {} else { $hide_Cert=true; }
+	if ($model->canRenew($model->status)) {} else { $hide_Cert=true; }
 	if ($nowDate > $DateExpires ) { $hide_Cert=true; }
 ?>
 <div class="badges-form">

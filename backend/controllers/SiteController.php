@@ -79,7 +79,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 			if($badgeArray){
 				// Is Badge Suspended - Revoked - Retired
 				if ($badgeArray->status=='suspended' || $badgeArray->status =='revoked' || $badgeArray->status == 'retired') {
-					Yii::$app->getSession()->setFlash('error', 'Please See Staff.');
+					Yii::$app->getSession()->setFlash('error', 'Badge '.$badgeArray->status.', Please See Staff.');
 					return false;
 				}
 				// does member have privileges?

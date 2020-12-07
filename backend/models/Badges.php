@@ -154,6 +154,13 @@ class Badges extends \yii\db\ActiveRecord {
 			return ['approved'=>'Approved','pending'=>'Pending','prob'=>'Probation','suspended'=>'Suspended','revoked'=>'Revoked','retired'=>'Retired'];
 		}
 	}
+	
+	public function canRenew($status) {
+		if ($status=='approved' || $status=='pending' || $status=='prob') {
+			return true; }
+		else { return false; }
+		
+	}
 
 	public function gtActiveSubscriptionModel() {
 		return $this->hasOne(BadgeSubscriptions::className(),['id'=>'badge_subscription_id']);
