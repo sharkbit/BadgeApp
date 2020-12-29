@@ -61,7 +61,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=cio' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CIO ]</a></b>";
 					}
 					if(in_array(12,json_decode($findUser->privilege))) {
-						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=rso_a' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CIO A.S. ]</a></b>";
+						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=rso_a' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> RSO A.S. ]</a></b>";
 					}
 				}
 
