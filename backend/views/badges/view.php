@@ -53,12 +53,15 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 				$findUser=User::Find()->where(['badge_number'=>$model->badge_number])->one();
 				if ($findUser) {
 					if(in_array(3,json_decode($findUser->privilege))) {
-						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=r' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> RSO ]</a></b>";
+						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=rso' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> RSO ]</a></b>";
 					} elseif(in_array(6,json_decode($findUser->privilege))) {
-						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=c' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CRSO ]</a></b>";
+						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=rso_c' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CRSO ]</a></b>";
 					}
 					if(in_array(8,json_decode($findUser->privilege))) {
-						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=i' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CIO ]</a></b>";
+						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=cio' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CIO ]</a></b>";
+					}
+					if(in_array(12,json_decode($findUser->privilege))) {
+						echo " <b><a href='/badges/print?badge_number=".$model->badge_number."&ty=rso_a' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> CIO A.S. ]</a></b>";
 					}
 				}
 

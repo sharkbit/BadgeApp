@@ -879,7 +879,7 @@ class BadgesController extends AdminController {
 		return $this->render('photo-crop');
 	}
 
-	public function actionPrint($badge_number,$ty=null) {
+	public function actionPrint($badge_number,$ty='') {
 		set_time_limit(380);
 		$badgeModel = Badges::find()->where(['badge_number'=>$badge_number])->one();
 
@@ -900,7 +900,7 @@ class BadgesController extends AdminController {
 		$mpdf->AddPage('L');
 		$mpdf->WriteHTML($PgThr);
 
-		$mpdf->Output();
+		$mpdf->Output($badge_number.'_'.$ty,'I');
 	}
 
 	public function actionPrintRcpt ($x_id,$badge_number,$email=false,$first=null) {  //Reciept Email or Print

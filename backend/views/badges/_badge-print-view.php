@@ -68,17 +68,22 @@ td { margin: 0px; padding: 0px; }
 <?php	$Badge_bar ='<div class="row" style="background-color: black; color: white; font-weight: bold; height:30px;">'.
 		'<div class="col-xs-2" style="font-size: 24px; text-align:center; ">';
 
-	if($chk=='r') { //RSO Badge 
+	if($chk=='rso') { //RSO Badge 
 	echo $Badge_bar.$model->last_name."</div>\n</div>\n"; ?>
 	<div class="row" style="background-color: white; color: black; font-weight: bold; height:169px;
 		background-image: url('<?php echo Yii::$app->params['rootUrl'];?>/images/rso.jpg'); background-size: 575px 490px; ">
 	</div>
-<?php } elseif($chk=='c') { //CRSO Badge 
+<?php } elseif($chk=='rso_c') { //CRSO Badge 
 	echo $Badge_bar.$model->last_name."</div>\n</div>\n"; ?>
 	<div class="row" style="background-color: white; color: black; font-weight: bold; height:169px;
 		background-image: url('<?php echo Yii::$app->params['rootUrl'];?>/images/crso.jpg'); background-size: 575px 490px; ">
 	</div>
-<?php } elseif($chk=='i') { //CIO Badge ?>
+<?php } elseif($chk=='rso_a') { //RSO A.S. Badge 
+	echo $Badge_bar.$model->last_name."</div>\n</div>\n"; ?>
+	<div class="row" style="background-color: white; color: black; font-weight: bold; height:169px;
+		background-image: url('<?php echo Yii::$app->params['rootUrl'];?>/images/action.jpg'); background-size: 575px 490px; ">
+	</div>
+<?php } elseif($chk=='cio') { //CIO Badge ?>
 	<div class="row" style="font-weight: bold; height:20px;"> </div>
 	<div class="row" style="font-weight: bold; height:30px;">
 		<div class="col-xs-2" style="font-size: 20px; text-align:center; ">CIO&nbsp; INSTRUCTOR</div>
