@@ -222,6 +222,15 @@ class SiteController extends AdminController {
 			return $this->goHome();}
 	}
 
+	public function actionNewMember() {
+		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
+		$model = New Badges;
+
+		return $this->render('new-member',[
+			'model'=> $model
+		]);
+	}
+
 	public function actionNoEmail($unsubscribe) {
 		if (filter_var($unsubscribe, FILTER_VALIDATE_EMAIL)) {
 			$sql = "UPDATE badges SET email='', email_vrfy=0 where email='".$unsubscribe."'";

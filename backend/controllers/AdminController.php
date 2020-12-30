@@ -28,7 +28,7 @@ class AdminController extends \yii\web\Controller {
 		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/return','events/remove-att','events/update','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/delete-X','membership-type/view','membership-type/fees-by-type'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/stats','guest/delete'],
-		'Index' => ['site/no-email','site/verify'],
+		'Index' => ['site/new-member','site/no-email','site/verify'],
 		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/update','legelemail/delete'],
 		'Params' => ['params/update'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
@@ -151,6 +151,7 @@ class AdminController extends \yii\web\Controller {
 			// Pages that dont require login
 			if((Yii::$app->controller->id."/".Yii::$app->controller->action->id=='events/reg') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/verify') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/new-member') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/no-email') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login-member') ||

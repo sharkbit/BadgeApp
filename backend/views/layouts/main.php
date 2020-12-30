@@ -230,10 +230,51 @@ $this->beginBody() ?>
 
 var app = angular.module('agc', []);
 <?php
-if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUEST_URI'], 'badges/update'))) {
+if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUEST_URI'], 'badges/update')) || (strpos($_SERVER['REQUEST_URI'], 'site/new-member'))) {
 ?>
 
     $(".chosen_select").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"});
+
+	function get_fees(memTypeId) {
+		if (memTypeId!='') {
+			run_waitMe('show');
+			var responseData;
+			jQuery.ajax({
+				method: 'GET',
+				url: '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?from=n&id='+memTypeId,
+				crossDomain: false,
+				success: function(responseData, textStatus, jqXHR) {
+					responseData = JSON.parse(responseData);
+					$("#badges-badge_fee").val(parseFloat(Math.round(responseData.badgeFee * 100) / 100).toFixed(2));
+
+					$("#badges-discounts-disp").val(responseData.discount);
+					$("#badges-discounts").val(responseData.discount);
+					$("#badges-item_name").val(responseData.item_name);
+					$("#badges-item_sku").val(responseData.item_sku);
+					$("#badges-amt_due-disp").val(responseData.badgeSpecialFee);
+					$("#badges-amt_due").val(responseData.badgeSpecialFee);
+					console.log(responseData);
+					doCalcNew();
+				},
+				error: function (responseData, textStatus, errorThrown) {
+					console.log(responseData);
+				},
+			});
+			run_waitMe('hide');
+			fillBarcode()
+		}
+	};
+
+    function fillBarcode() {
+        var ranText="";
+        var possible = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        for (var ri = 0; ri < 2; ri++)
+           ranText += possible.charAt(Math.floor(Math.random() * possible.length));
+        var barcodeData = ("00" + $('#badges-club_id').val()).slice(-2)+' '+("00" + $('#badges-mem_type').val()).slice(-2)+' '+$('#badges-badge_number').val()+' '+ranText;
+        $('#badges-qrcode').val(barcodeData);
+        barcodeGenerate(barcodeData);
+        $(".barcode").show(300);
+    };
 
     function barcodeGenerate(newData) {
         $("svg.barcode").attr('jsbarcode-value',newData);
@@ -411,17 +452,6 @@ app.controller("MembershipTypeForm", function($scope) {
 
 app.controller("CreateBadgeController", function($scope) {
 
-    function fillBarcode() {
-        var ranText="";
-        var possible = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-        for (var ri = 0; ri < 2; ri++)
-           ranText += possible.charAt(Math.floor(Math.random() * possible.length));
-        var barcodeData = ("00" + $('#badges-club_id').val()).slice(-2)+' '+("00" + $('#badges-mem_type').val()).slice(-2)+' '+$('#badges-badge_number').val()+' '+ranText;
-        $('#badges-qrcode').val(barcodeData);
-        barcodeGenerate(barcodeData);
-        $(".barcode").show(300);
-    };
-
     var qrcode = $("#badges-qrcode").val();
 
     if(qrcode=='') {
@@ -537,34 +567,7 @@ app.controller("CreateBadgeController", function($scope) {
             document.getElementById('badges-expires').readOnly = true;
             fillBarcode();
 
-            if (memTypeId!='') {
-                run_waitMe('show');
-                var responseData;
-                jQuery.ajax({
-                    method: 'GET',
-                    url: '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?from=n&id='+memTypeId,
-                    crossDomain: false,
-                    success: function(responseData, textStatus, jqXHR) {
-                        responseData = JSON.parse(responseData);
-                        $scope.fee = responseData;
-                        $("#badges-badge_fee").val(parseFloat(Math.round(responseData.badgeFee * 100) / 100).toFixed(2));
-
-                        $("#badges-discounts-disp").val(responseData.discount);
-                        $("#badges-discounts").val(responseData.discount);
-						$("#badges-item_name").val(responseData.item_name);
-						$("#badges-item_sku").val(responseData.item_sku);
-                        $("#badges-amt_due-disp").val(responseData.badgeSpecialFee);
-                        $("#badges-amt_due").val(responseData.badgeSpecialFee);
-                        console.log(responseData);
-                        doCalcNew();
-                    },
-                    error: function (responseData, textStatus, errorThrown) {
-                        console.log(responseData);
-                    },
-                });
-                run_waitMe('hide');
-                fillBarcode()
-            }
+			get_fees(memTypeId);
         });
     });
 
@@ -587,7 +590,6 @@ app.controller("CreateBadgeController", function($scope) {
                 url: '<?=yii::$app->params['rootUrl']?>/badges/api-generate-renaval-fee?friend_badge='+friendBadge+'&BadgeFee='+BadgeFee+'&badgeYear='+badgeYear,
                 crossDomain: false,
                 success: function(responseData, textStatus, jqXHR) {
-                    $scope.fee = responseData;
                     console.log(responseData);
                     //$("#badges-badge_fee-disp").val(responseData.BadgeFee);
                     //$("#badges-badge_fee").val(responseData.badgeFee);

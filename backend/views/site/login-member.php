@@ -19,8 +19,8 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 ?>
 <div class="site-login">
     <div class="row ">
-<?php if($agc_event) { ?>
 		<div class="col-xs-12 col-sm-4" >
+<?php if($agc_event) { ?>
 			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<h3>Todays Events:</h3><hr /><ul>
 <?php
@@ -36,11 +36,9 @@ foreach($agc_event as $an_event){
 } ?>
 			</div>
 		<p> </p> <br />
+<?php } ?>
 		</div>
         <div class="col-xs-12 col-sm-4" >
-<?php } else { ?>
-        <div class="col-xs-12" >
-<?php } ?>
             <div class="login-box">
 			<?= $this->render('_login-tab-menu',['model'=>$model]).PHP_EOL; ?>
 				<p class="help-block help-block-error"></p>
@@ -66,8 +64,15 @@ foreach($agc_event as $an_event){
                 <?php ActiveForm::end(); ?>
             </div>
         </div>
+        <div class="col-xs-12 col-sm-4" >
+			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
+			<p> </p> <center><h3><a href="/site/new-member">New Member Signup</a></h3></center>
+			</div>
+		</div>
     </div>
 </div>
+
+
 <?php if($agc_event) {
 	$event_model = New Event_Att;
 ?>
