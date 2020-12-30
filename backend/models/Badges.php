@@ -96,7 +96,7 @@ class Badges extends \yii\db\ActiveRecord {
 			'ice_phone' => 'Emergency Contact Phone',
 			'club_name' => 'Club Name',
 			'club_id' => 'Clubs',
-			'mem_type' => 'Membership Type',
+			'mem_type' => 'Badge Type',
 			'primary' => 'Primary',
 			'incep' => 'Incep',
 			'expires' => 'Expires',
