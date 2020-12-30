@@ -39,7 +39,7 @@ class MembershipType extends \yii\db\ActiveRecord{
      */
     public function attributeLabels() {
         return [
-		   'type'=>'Membership Type',        
+		   'type'=>'Badge Type',        
        ];
     }
 
