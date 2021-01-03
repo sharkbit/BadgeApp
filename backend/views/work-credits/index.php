@@ -46,8 +46,9 @@ if(yii::$app->controller->hasPermission('work-credits/delete')) {
 		'columns' => [
 			[
 				'attribute' => 'badge_number',
+				'format' => 'raw',
 				'value' => function($model) {
-					return str_pad($model->badge_number, 5, '0', STR_PAD_LEFT).' - '.yii::$app->controller->decodeBadgeName((int)$model->badge_number);
+					return str_pad($model->badge_number, 5, '0', STR_PAD_LEFT).' - '.Html::a(yii::$app->controller->decodeBadgeName((int)$model->badge_number),'/badges/view-work-credits?badge_number='.$model->badge_number);
 				},
 			],
 			[
