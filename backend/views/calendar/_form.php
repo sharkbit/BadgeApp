@@ -363,6 +363,7 @@ sort($dirty);
 <style>
   th { padding: 10px; text-align: center;}
   td { padding: 10px; white-space: nowrap }
+  td { word-wrap: break-word word-break: break-all;  } 
 </style>
 <script>
     const convertTime12to24 = (time12h) => {
@@ -698,7 +699,7 @@ sort($dirty);
 
 						if(responseData.data) { //parseInt()
 							if (available_lanes != 0) {var resp_str='<th>Lanes ('+available_lanes+')</th>';} else {var resp_str='';}
-							$("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=40% border=1><thead><tr><th>ID</th><th>Range</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th><th>Type</th>'+resp_str+'</tr></thead></table></center>');
+							$("#error_msg").html( $("#error_msg").html() + '<br><center><table id="cal_items" width=100% border=1><thead><tr><th>ID</th><th>Range</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th><th>Type</th>'+resp_str+'</tr></thead></table></center>');
 							var table = document.getElementById("cal_items");
 							console.log(responseData.data);
 							for( var j = 0; j < responseData.data.length; j++ ){

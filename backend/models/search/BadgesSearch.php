@@ -132,14 +132,10 @@ class BadgesSearch extends Badges {
 			//$query->andFilterWhere(['like', 'badge_number', $this->badge_number]);
 			$query->andFilterWhere(['badge_number'=>$this->badge_number]);  
 		}
-		if(isset($this->first_name)) { 
-			$query->andFilterWhere(['like', 'first_name', $this->first_name]); }
-		if(isset($this->last_name)) { 
-			$query->andFilterWhere(['like', 'last_name', $this->last_name]); }
-		if(isset($this->suffix)) {
-			$query->andFilterWhere(['like', 'suffix', $this->suffix]); }
-		if(isset($this->status)) { 
-			$query->andFilterWhere(['like', 'badges.status', $this->status]); }
+		if(isset($this->first_name)) { $query->andFilterWhere(['like', 'first_name', $this->first_name]); }
+		if(isset($this->last_name)) { $query->andFilterWhere(['like', 'last_name', $this->last_name]); }
+		if(isset($this->suffix)) { $query->andFilterWhere(['like', 'suffix', $this->suffix]); }
+		if(isset($this->status)) { $query->andFilterWhere(['like', 'badges.status', $this->status]); }
 			
 //yii::$app->controller->createLog(true, 'trex-b-m-s-bs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
 		return $dataProvider;

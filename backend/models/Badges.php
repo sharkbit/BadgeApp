@@ -108,7 +108,6 @@ class Badges extends \yii\db\ActiveRecord {
 			'discounts' => 'Discounts',
 			'amt_due' => 'Amt Due',
 			'payment_method' => 'Payment Method',
-			'membershipType.type'=>'Badge Type',
 			'status'=>'Account Status',
 			'amount_paid'=>'Paid Amount',
 			'cc_num'=>'Card Number',
