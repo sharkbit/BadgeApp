@@ -145,12 +145,6 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 		</div>
 		<div id="search_error"> </div>
 
-		<div class="btn-group pull-right" id="guest_save_div" <?php if($model->isNewRecord) {echo 'style="display:none"';}?>> <br /><br /><div id="CC_Save">
-			<?= Html::submitButton($model->isNewRecord ? $msg : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success done-Guest' : 'btn btn-primary done-Guest','id'=>'save_btn']).PHP_EOL;  ?>
-		</div></div>
-
-
-
 <?php if($model->isNewRecord) { ?>
 <div class="col-xs-12 col-sm-12">
 
@@ -177,9 +171,9 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 		<div class="row summary-block-payment" style="margin: 0px;<?=$Payment_block?>" id="Div_Payment_Block">
 			<h3>$<?=$guest_price ?>  per Guest</h3><hr />
 			<input type="hidden" id='guest_price' value='<?=$guest_price ?>' />
-			<?= $form->field($model, 'guest_count')->dropDownList(['1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8,'9'=>9,'10'=>10,'11'=>11,'12'=>12,'13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'18'=>18,'19'=>19],['prompt'=>'select']).PHP_EOL; ?>
-			<?= $form->field($model, 'amount_due').PHP_EOL; ?>
-			<?= $form->field($model, 'payment_type')->dropdownList($myList,['prompt'=>'Payment Type']).PHP_EOL;?>
+			<?= $form->field($model, 'guest_count')->dropDownList(['1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8,'9'=>9,'10'=>10,'11'=>11,'12'=>12,'13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'18'=>18,'19'=>19],['value'=>'1']).PHP_EOL; ?>
+			<?= $form->field($model, 'amount_due')->textInput(['value' => $guest_price]).PHP_EOL; ?>
+			<?= $form->field($model, 'payment_type')->dropdownList($myList,['value'=>'cash']).PHP_EOL;?>
 
 		<div id="cc_form_div" style="margin-left: 25px">
 			<div id="CC_success">
@@ -242,6 +236,10 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			<div class="clearfix"> </div>
 		</div>
 	  </div><?php } ?>
+		<div class="btn-group pull-right" id="guest_save_div" <?php if($model->isNewRecord) {echo 'style="display:none"';}?>> <br /><br /><div id="CC_Save">
+			<?= Html::submitButton($model->isNewRecord ? $msg : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success done-Guest' : 'btn btn-primary done-Guest','id'=>'save_btn']).PHP_EOL;  ?>
+		</div></div>
+
 	</div>
 </div>
 <input type="hidden" id='m_first_n' />
@@ -296,12 +294,12 @@ $('#GuestForm').on('submit', function() {
         }
     });
 
-
    document.getElementById('guest-cc_num').addEventListener('keyup',function(evt){
         var ccnum = document.getElementById('guest-cc_num');
         var charCode = (evt.which) ? evt.which : evt.keyCode;
         ccnum.value = ccFormat(ccnum.value);
     });
+
  <?php } ?>
 
     $("#guest-isObserver").change(function() {
