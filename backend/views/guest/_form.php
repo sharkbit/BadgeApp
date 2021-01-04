@@ -169,9 +169,9 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 <?php if($model->isNewRecord) { ?>
 	  <div class="col-xs-12 col-sm-4">
 		<div class="row summary-block-payment" style="margin: 0px;<?=$Payment_block?>" id="Div_Payment_Block">
-			<h3>$<?=$guest_price ?>  per Guest</h3><hr />
+			<h3>$<?=$guest_price ?>  per Shooter</h3><hr />
 			<input type="hidden" id='guest_price' value='<?=$guest_price ?>' />
-			<?= $form->field($model, 'guest_count')->dropDownList(['1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8,'9'=>9,'10'=>10,'11'=>11,'12'=>12,'13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'18'=>18,'19'=>19],['value'=>'1']).PHP_EOL; ?>
+			<?= $form->field($model, 'guest_count')->dropDownList(['1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8,'9'=>9,'10'=>10,'11'=>11,'12'=>12,'13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'18'=>18,'19'=>19],['value'=>'1'])->label('Shooter Count').PHP_EOL; ?>
 			<?= $form->field($model, 'amount_due')->textInput(['value' => $guest_price]).PHP_EOL; ?>
 			<?= $form->field($model, 'payment_type')->dropdownList($myList,['value'=>'cash']).PHP_EOL;?>
 
@@ -262,6 +262,12 @@ $('#GuestForm').on('submit', function() {
     $('input, select').prop('disabled', false);
 });
 
+    function RefreshAmount() {
+		var guest_price = document.getElementById("guest_price").value
+		var guest_count = parseInt(document.getElementById("guest-guest_count").value);
+		document.getElementById("guest-amount_due").value = (guest_price * guest_count).toFixed(2);
+	};
+
  <?php if($model->isNewRecord) { ?>
     $("#guest-guest_count").change(function(e) {
         addTime();
@@ -313,6 +319,7 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-guest_count").disabled=true;
 			$("#guest-payment_type").val('cash');
 			document.getElementById("guest-payment_type").disabled=true;
+			document.getElementById("guest-amount_due").value = ('0.00');			
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
 			$("#guest-g_paid").val('');
@@ -335,21 +342,31 @@ $('#GuestForm').on('submit', function() {
 					alert("Enter your Birth Year.");
 					document.getElementById("guest-isMinor").checked = false;
 					document.getElementById("guest-isShooter").checked = true;
+					document.getElementById("guest-guest_count").disabled=false;
+				    document.getElementById("guest-payment_type").disabled=false;
+					RefreshAmount();
 				} else if (new Date().getFullYear() - document.getElementById('guest-g_yob').value <= 18 ) {
 					$("#guest-g_paid").val('m');
 					$("#guest-guest_count").val('1');
 					document.getElementById("guest-guest_count").disabled=true;
 					$("#guest-payment_type").val('cash');
+					document.getElementById("guest-amount_due").value = ('0.00');
 					document.getElementById("guest-payment_type").disabled=true;
 				} else {
 					alert("No Longer A Minor");
 					document.getElementById("guest-isMinor").checked = false;
 					document.getElementById("guest-isShooter").checked = true;
+					document.getElementById("guest-guest_count").disabled=false;
+				    document.getElementById("guest-payment_type").disabled=false;
+					RefreshAmount();
 				}
 			} else {
 				alert(" Please Check Year Of Birth ");
 				document.getElementById("guest-isMinor").checked = false;
 				document.getElementById("guest-isShooter").checked = true;
+				document.getElementById("guest-guest_count").disabled=false;
+				document.getElementById("guest-payment_type").disabled=false;
+				RefreshAmount();
 			}
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
@@ -369,6 +386,7 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-isYouth").checked = false;
 			$("#guest-g_paid").val('');
 			$("#guest-guest_count").val('1');
+			RefreshAmount();
 			document.getElementById("guest-guest_count").disabled=false;
 			document.getElementById("guest-payment_type").disabled=false;
         } else  {
@@ -387,6 +405,8 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-isMinor").checked = false;
 			document.getElementById("guest-isYouth").checked = false;
 			$("#guest-g_paid").val('s');
+			document.getElementById("guest-amount_due").value = ('0.00');
+			
 			$("#guest-guest_count").val('1');
 			document.getElementById("guest-guest_count").disabled=true;
 			$("#guest-payment_type").val('cash');
@@ -412,6 +432,7 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-guest_count").disabled=true;
 			$("#guest-payment_type").val('cash');
 			document.getElementById("guest-payment_type").disabled=true;
+			document.getElementById("guest-amount_due").value = ('0.00');
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
 			$("#guest-g_paid").val('');
