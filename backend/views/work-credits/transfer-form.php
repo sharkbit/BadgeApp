@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
 use kartik\date\DatePicker;
 
-$this->title = 'Credit Transfer form';
+$this->title = 'Credit Transfer';
 $this->params['breadcrumbs'][] = ['label' => 'Work Credit', 'url' => ['/work-credits/index']];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -34,14 +34,14 @@ $this->params['breadcrumbs'][] = $this->title;
 		<div class="col-xs-3">
 			<div id="credit-block_a">
 				<?php echo Html::radio('wc-Radio' ,false,['id'=>'wc_Radio_this','value'=>'this', 'name'=>'btnname', 'uncheckValue'=>null]), PHP_EOL; ?> 
-				<?php echo Html::label("Current Years Credits",'',['id'=>'cur_year_label']), PHP_EOL; ?>
+				<?php echo Html::label("Current Year's Credits",'',['id'=>'cur_year_label']), PHP_EOL; ?>
 				<?php echo Html::textinput("total_credit_this",'',['id'=>'cred_xfer-total_this','class'=>"form-control"]), PHP_EOL; ?>
 			</div>
 		</div>
 		<div class="col-xs-3">
 			<div id="credit-block_b">
 				<?php echo Html::radio('wc-Radio' ,false, ['id'=>'wc_Radio_Last','value'=>'last','name'=>'btnname', 'uncheckValue'=>null]), PHP_EOL; ?>
-				<?php echo Html::label("Last Years Credits",'',['id'=>'las_year_label']), PHP_EOL; ?>
+				<?php echo Html::label("Last Year's Credits",'',['id'=>'las_year_label']), PHP_EOL; ?>
 				<?php echo Html::textinput("total_credit_last",'',['id'=>'cred_xfer-total_last','class'=>"form-control"]), PHP_EOL; ?>
 			</div>
 		</div>
