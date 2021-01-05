@@ -6,7 +6,6 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\WorkCredits;
-use backend\models\Params;
 
 /**
  * WorkCreditsSearch represents the model behind the search form about `backend\models\WorkCredits`.
@@ -65,16 +64,6 @@ class WorkCreditsSearch extends WorkCredits {
             // $query->where('0=1');
             return $dataProvider;
         }
-		$confParams  = Params::findOne('1');
-		$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
-		$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
-
-		if ($DateChk <= $nowDate) {
-			$query->andFilterWhere(['>','work_date', date('Y-12-31', strtotime("-1 years",strtotime($nowDate)))]);
-		} else {
-			$query->andFilterWhere(['>', 'work_date',date('Y-12-31', strtotime("-2 years",strtotime($nowDate)))]);
-		}
-	
 
         // grid filtering conditions
         $query->andFilterWhere([
