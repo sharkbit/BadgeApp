@@ -43,6 +43,7 @@ if(yii::$app->controller->hasPermission('work-credits/delete')) {
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
+		'showFooter' => ($searchModel->badge_number > 0 ? true:false),
 		'columns' => [
 			[
 				'attribute' => 'badge_number',
@@ -56,10 +57,15 @@ if(yii::$app->controller->hasPermission('work-credits/delete')) {
 				'value'=>function($model) {
 					return date('M d, Y',strtotime($model->work_date));
 				},
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'work_date', ['A' => 'All', 'C' => 'Current'],['class'=>'form-control',]),
 			],
-			'project_name',
+			[
+				'attribute'=>'project_name',
+				'footer'=>'Total Credits in Table',
+			],
 			[
 				'attribute'=>'work_hours',
+				'footer' => $dataProvider->query->sum('work_hours'),
 				'contentOptions' => ['class' => 'text-right'],
 			],
 			[
