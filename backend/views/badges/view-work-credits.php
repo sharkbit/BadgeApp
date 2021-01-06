@@ -49,8 +49,8 @@ $badge_info = yii::$app->controller->actionGetBadgeDetails($model->badge_number,
                   <tr>
                     <th>Project Name</th>
                     <th>Work Date</th>
-                    <th> Autherized By</th>
-                    <th>Work hours</th>
+                    <th> Authorized By</th>
+                    <th>Work Hours</th>
                   </tr>
                 </thead>
                 <tbody>

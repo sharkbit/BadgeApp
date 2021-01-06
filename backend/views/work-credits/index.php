@@ -43,11 +43,18 @@ if(yii::$app->controller->hasPermission('work-credits/delete')) {
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
+		'showFooter' => ($searchModel->badge_number > 0 ? true:false),
 		'columns' => [
 			[
 				'attribute' => 'badge_number',
+				'format' => 'raw',
 				'value' => function($model) {
-					return str_pad($model->badge_number, 5, '0', STR_PAD_LEFT).' - '.yii::$app->controller->decodeBadgeName((int)$model->badge_number);
+					if((yii::$app->controller->hasPermission('badges/all')) || ( $_SESSION['badge_number'] == $model->badge_number )) {
+						$rtn_name = Html::a(yii::$app->controller->decodeBadgeName((int)$model->badge_number),'/badges/view-work-credits?badge_number='.$model->badge_number);
+					} else {
+						$rtn_name = yii::$app->controller->decodeBadgeName((int)$model->badge_number);
+					}
+					return str_pad($model->badge_number, 5, '0', STR_PAD_LEFT).' - '.$rtn_name;
 				},
 			],
 			[
@@ -55,10 +62,15 @@ if(yii::$app->controller->hasPermission('work-credits/delete')) {
 				'value'=>function($model) {
 					return date('M d, Y',strtotime($model->work_date));
 				},
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'work_date', ['A' => 'All', 'C' => 'Current'],['class'=>'form-control',]),
 			],
-			'project_name',
+			[
+				'attribute'=>'project_name',
+				'footer'=>'Total Credits in Table',
+			],
 			[
 				'attribute'=>'work_hours',
+				'footer' => $dataProvider->query->sum('work_hours'),
 				'contentOptions' => ['class' => 'text-right'],
 			],
 			[

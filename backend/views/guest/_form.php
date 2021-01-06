@@ -58,23 +58,20 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 	  <div class="col-xs-12 col-sm-8" >
         <div class="col-xs-12 col-sm-2" style="display: none;" >
 			<?= $form->field($model, 'id')->textInput(['readOnly'=>'true','value'=>$model->id]) ?>
-		</div><div class="col-sm-2">
+		</div>
 
+	<div class="row">
+		<div class="col-sm-2">
         <?php if($model->isNewRecord) {
 			echo $form->field($model, 'badge_number')->textInput(['value'=>$model->badge_number,'readonly'=> $isguest]);
-			//echo '</div><div class="col-sm-2">';
-			//echo $form->field($model, 'tmp_badge')->textInput(['maxlength' => true]);
 			echo '</div><div class="col-sm-2">';
 			echo $form->field($model, 'time_in')->textInput(['readonly' => true,'value'=>(yii::$app->controller->getNowTime())]).PHP_EOL;
 			echo $form->field($model, 'g_paid')->hiddenInput()->label(false).PHP_EOL;
 		} else {
 			echo $form->field($model, 'badge_number')->textInput(['readOnly'=>'true']);
-			//echo '</div><div class="col-sm-2">';
-			//echo $form->field($model, 'tmp_badge')->textInput(['maxlength' => true]);
 			echo '</div><div class="col-sm-2">';
 			echo $form->field($model, 'time_in')->textInput(['readOnly'=>'true','value'=>yii::$app->controller->pretydtg($model->time_in)]);
 			echo '</div><div class="col-sm-2">';
-
 			if ($model->g_paid==1) {
 				echo "Guest has Paid."; echo $form->field($model, 'g_paid')->hiddenInput()->label(false).PHP_EOL;
 			} else {
@@ -85,163 +82,173 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 		} ?>
 
         </div>
-
+		<div class="col-sm-8">
+		</div>
+	</div>
+	<div class="row">
         <div class="col-xs-12 col-sm-4">
             <?= $form->field($model, 'g_first_name')->textInput([]) ?>
-		</div><div class="col-xs-12 col-sm-4">
+		</div>
+		<div class="col-xs-12 col-sm-5">
 			<?= $form->field($model, 'g_last_name')->textInput([]) ?>
         </div>
-
-		<div class="col-xs-6 col-sm-2">
-		<?php if($model->isNewRecord) {
-			echo $form->field($model, 'g_zip'); ?>
-			</div><div class="col-xs-1 col-sm-1"><h3><i class="fa fa-thumbs-down" id="zip_check"></i></h3>
-		    <?= $form->field($model, 'g_city')->hiddenInput()->label(false); ?>
-            <?php }  else { ?>
-                <?= $form->field($model, 'g_city') ?>
-            <?php } ?>
-
-
-		<?php if($model->isNewRecord) {
-			echo $form->field($model, 'g_state')->hiddenInput()->label(false);
-		} else { ?>
-		</div><div class="col-xs-4 col-sm-1">
-			<?= $form->field($model, 'g_state'); } ?>
-		</div>
 		<div class="col-xs-4 col-sm-2">
 			<?= $form->field($model, 'g_yob')->label('Year of Birth') ?>
         </div>
-		<div style="<?=$Payment_block?>" >
-		<div class="col-xs-6 col-sm-2" ><p>
-<?php if($model->isNewRecord) { ?>
-			<?php echo Html::checkbox('guest-isShooter' ,true,['value'=>1,'id'=>'guest-isShooter']), PHP_EOL; ?><b> - Shooter? </b></p>
+		<div class="col-sm-1">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-sm-2">
+			<?php if($model->isNewRecord) {
+				echo $form->field($model, 'g_zip'); ?>
+				</div>
+				<div class="col-xs-6 col-sm-2"><h3><i class="fa fa-thumbs-down" id="zip_check"></i></h3>
+				<?= $form->field($model, 'g_city')->hiddenInput()->label(false); ?>
+				<?php }  else { ?>
+					<?= $form->field($model, 'g_city') ?>
+				<?php } ?>
+
+			<?php if($model->isNewRecord) {
+				echo $form->field($model, 'g_state')->hiddenInput()->label(false);
+			} else { ?>
+			</div>
+			<div class="col-xs-6 col-sm-8">
+				<?= $form->field($model, 'g_state'); } ?>
+		</div>
+	</div>
+	<p><b><h3>Type of Visitor?</h3></p></b>		
+	<div class="row">
+		<div class="col-xs-6 col-sm-3" ><p>
+	<?php if($model->isNewRecord) { ?>
+			<?php echo Html::checkbox('guest-isShooter' ,true,['value'=>1,'id'=>'guest-isShooter']), PHP_EOL; ?><b> - Shooter</b></p>
 			<div class="help-block"></div>
 		</div>
 		<div class="col-xs-6 col-sm-2" ><p>
-			<?php echo Html::checkbox('guest-isSpouse' ,false,['value'=>0,'id'=>'guest-isSpouse']), PHP_EOL; ?><b> - Spouse? </b></p>
+			<?php echo Html::checkbox('guest-isSpouse' ,false,['value'=>0,'id'=>'guest-isSpouse']), PHP_EOL; ?><b> - Spouse</b></p>
 			<div class="help-block"></div>
 		</div>
 		<div class="col-xs-6 col-sm-2" ><p>
-			<?php echo Html::checkbox('guest-isYouth' ,false,['value'=>0,'id'=>'guest-isYouth']), PHP_EOL; ?><b> - Junior Event? </b></p>
+			<?php echo Html::checkbox('guest-isYouth' ,false,['value'=>0,'id'=>'guest-isYouth']), PHP_EOL; ?><b> - Jr. Event</b></p>
 			<div class="help-block"></div>
 		</div>
 		<div class="col-xs-6 col-sm-2" ><p>
-			<?php echo Html::checkbox('guest-isMinor' ,false,['value'=>0,'id'=>'guest-isMinor']), PHP_EOL; ?><b> - Minor (<18yr)? </b></p>
+			<?php echo Html::checkbox('guest-isMinor' ,false,['value'=>0,'id'=>'guest-isMinor']), PHP_EOL; ?><b> - Minor (<18yr)</b></p>
 			<div class="help-block"></div>
 		</div>
 		<div class="col-xs-6 col-sm-2" ><p>
-			<?php echo Html::checkbox('guest-isObserver' ,false,['value'=>0,'id'=>'guest-isObserver']), PHP_EOL; ?><b> - Observer?</b></p>
-<?php } else { echo "<b><font size=+1>";
-					switch ($model->g_paid) {
-						case 'm': echo "is a Minor"; break;
-						case 'o': echo "is an Observer"; break;
-						case 's': echo "is a Spouse"; break;
-						case 'y': echo "is a Youth Participant"; break;
-					}; 
-					echo "</font></b></p>";
-} ?>
+			<?php echo Html::checkbox('guest-isObserver' ,false,['value'=>0,'id'=>'guest-isObserver']), PHP_EOL; ?><b> - Observer</b></p>
+	<?php } else { echo "<b><font size=+1>";
+				switch ($model->g_paid) {
+					case 'm': echo "is a Minor"; break;
+					case 'o': echo "is an Observer"; break;
+					case 's': echo "is a Spouse"; break;
+					case 'y': echo "is a Youth Participant"; break;
+				}; 
+				echo "</font></b></p>";
+		  } ?>
 			<div class="help-block"></div>
 		</div>
+		<div class="col-sm-1">
 		</div>
+	</div>
+
 		<div id="search_error"> </div>
+		
+	<?php if($model->isNewRecord) { ?>
+	<div class="row">
+		<div class="col-xs-12 col-sm-12">
 
-		<div class="btn-group pull-right" id="guest_save_div" <?php if($model->isNewRecord) {echo 'style="display:none"';}?>> <br /><br /><div id="CC_Save">
-			<?= Html::submitButton($model->isNewRecord ? $msg : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success done-Guest' : 'btn btn-primary done-Guest','id'=>'save_btn']).PHP_EOL;  ?>
-		</div></div>
-
-
-
-<?php if($model->isNewRecord) { ?>
-<div class="col-xs-12 col-sm-12">
-
-<p><b>Guest Safety Acknowledgement:</b></p>
-<ol>
-  <li><b>Guests or Responsible Adult agrees to AGC <a href="<?=yii::$app->params['wp_site']?>/waiver" target="_blank">Waiver of Liability</a>.</b></li>
-  <li>Assume every gun is always loaded.</li>
-  <li>Never allow your firearm to point in any direction other than downrange (toward your target) or straight up.</li>
-  <li>Keep your finger off the trigger until your sights are on the target and you are ready to shoot.</li>
-  <li>Be sure of your target and what is beyond it.</li>
-  <li>When “CEASE FIRE” is called, stop shooting immediately and allow the Badge Holder to make the firearm safe.</li>
-  <li>During a Cease Fire, you are not to have any contact with any firearm.  Step off the concrete pad and remain off. You can go with the Badge Holder downrange to change your targets. When you return from downrange, you shall remain off of the concrete pad.</li>
-  <li>Your Badge Holder will be held accountable for any range rules you break.  You are to be “closely supervised and monitored” by the Badge Holder who signed you in.</li>
-  <li>If your Badge Holder needs to leave the firing line, make sure the firearm is made safe (unloaded, ECI inserted) step off the concrete pad and do not handle any firearms until your Badge Holder returns.</li>
-</ol>
-<p>Please ask your Guest to acknowledge the above statements and that they understand each statement. If your guest is a minor, you can acknowledge for them.</p>
- <?= Html::Button('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
-</div>
-<?php } ?>
-
+		<p><b><h4>Guest Safety Acknowledgement:</h4></b></p>
+		<ol>
+		  <li><b>Guests or Responsible Adult agrees to AGC <a href="<?=yii::$app->params['wp_site']?>/waiver" target="_blank">Waiver of Liability</a>.</b></li>
+		  <li>Assume every gun is always loaded.</li>
+		  <li>Never allow your firearm to point in any direction other than downrange (toward your target) or straight up.</li>
+		  <li>Keep your finger off the trigger until your sights are on the target and you are ready to shoot.</li>
+		  <li>Be sure of your target and what is beyond it.</li>
+		  <li>When “CEASE FIRE” is called, stop shooting immediately and allow the Badge Holder to make the firearm safe.</li>
+		  <li>During a Cease Fire, you are not to have any contact with any firearm.  Step off the concrete pad and remain off. You can go with the Badge Holder downrange to change your targets. When you return from downrange, you shall remain off of the concrete pad.</li>
+		  <li>Your Badge Holder will be held accountable for any range rules you break.  You are to be “closely supervised and monitored” by the Badge Holder who signed you in.</li>
+		  <li>If your Badge Holder needs to leave the firing line, make sure the firearm is made safe (unloaded, ECI inserted) step off the concrete pad and do not handle any firearms until your Badge Holder returns.</li>
+		</ol>
+		<p>Please ask your Guest to acknowledge the above statements and that they understand each statement. If your guest is a minor, you can acknowledge for them.</p>
+		 <?= Html::Button('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
 		</div>
-<?php if($model->isNewRecord) { ?>
+	</div>
+	<?php } ?>
+	</div>
+	<?php if($model->isNewRecord) { ?>
 	  <div class="col-xs-12 col-sm-4">
 		<div class="row summary-block-payment" style="margin: 0px;<?=$Payment_block?>" id="Div_Payment_Block">
-			<h3>$<?=$guest_price ?>  per Guest</h3><hr />
+			<h3>$<?=$guest_price ?>  per Shooter</h3><hr />
 			<input type="hidden" id='guest_price' value='<?=$guest_price ?>' />
-			<?= $form->field($model, 'guest_count')->dropDownList(['1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8,'9'=>9,'10'=>10,'11'=>11,'12'=>12,'13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'18'=>18,'19'=>19],['prompt'=>'select']).PHP_EOL; ?>
-			<?= $form->field($model, 'amount_due').PHP_EOL; ?>
-			<?= $form->field($model, 'payment_type')->dropdownList($myList,['prompt'=>'Payment Type']).PHP_EOL;?>
-
-		<div id="cc_form_div" style="margin-left: 25px">
-			<div id="CC_success">
-			<div class="col-xs-12 col-sm-12">
-				<input type="radio" id="Who_pays" name="Who_pays" onclick="g_handleClick(this);" /> &nbsp;<label for="guest"> Guest info:</label> &nbsp; &nbsp; | &nbsp; &nbsp;
-				<input type="radio" id="Who_pays" name="Who_pays" onclick="m_handleClick(this);" /> &nbsp;<label for="member"> Member info:</label>
+			<?= $form->field($model, 'guest_count')->dropDownList(['1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8,'9'=>9,'10'=>10,'11'=>11,'12'=>12,'13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'18'=>18,'19'=>19],['value'=>'1'])->label('Shooter Count').PHP_EOL; ?>
+			<?= $form->field($model, 'amount_due')->textInput(['value' => $guest_price]).PHP_EOL; ?>
+			<?= $form->field($model, 'payment_type')->dropdownList($myList,['value'=>'cash']).PHP_EOL;?>
+			<div id="cc_form_div" style="margin-left: 1px">
+				<div id="CC_success">
+					<div class="col-xs-12 col-sm-12">
+						<input type="radio" id="Who_pays" name="Who_pays" onclick="g_handleClick(this);" /> &nbsp;<label for="guest"> Guest info:</label> &nbsp; &nbsp; | &nbsp; &nbsp;
+						<input type="radio" id="Who_pays" name="Who_pays" onclick="m_handleClick(this);" /> &nbsp;<label for="member"> Member info:</label>
+					</div>
+					<div class="col-xs-8 col-sm-8">
+						<?= $form->field($model, 'cc_name')->textInput().PHP_EOL; ?>
+					</div>
+					<div class="col-xs-4 col-sm-4">
+						<?= $form->field($model, 'cc_zip')->textInput().PHP_EOL; ?>
+					</div>
+					<div class="col-xs-12 col-sm-12">
+						<?= $form->field($model, 'cc_address')->textInput().PHP_EOL; ?>
+					</div>
+					<div class="col-xs-8 col-sm-8">
+						<?= $form->field($model, 'cc_city')->textInput().PHP_EOL; ?>
+					</div>
+					<div class="col-xs-4 col-sm-4">
+						<?= $form->field($model, 'cc_state')->textInput().PHP_EOL; ?>
+					</div>
+					<div class="col-xs-12 col-sm-12">
+						<?= $form->field($model, 'cc_num')->textInput(['maxlength'=>true]).PHP_EOL; ?>
+					</div>
+					<div class="col-xs-4 col-sm-4">
+						<?= $form->field($model, 'cc_exp_mo')->dropDownList(['01'=>'01 Jan','02'=>'02 Feb','03'=>'03 Mar','04'=>'04 Apr','05'=>'05 May','06'=>'06 Jun','07'=>'07 Jul','08'=>'08 Aug','09'=>'09 Sep','10'=>'10 Oct','11'=>'11 Nov','12'=>'12 Dec']).PHP_EOL; ?>
+					</div>
+					<div class="col-xs-5 col-sm-5">
+					<?php 	$curYr = date('Y',strtotime(yii::$app->controller->getNowTime()));
+					$ccYear = range($curYr,$curYr+25);  ?>
+						<?= $form->field($model, 'cc_exp_yr')->dropDownList($ccYear).PHP_EOL; ?>
+					</div>
+					<div class="col-xs-3 col-sm-3">
+						<?= $form->field($model, 'cc_cvc')->textInput(['maxlength'=>true]).PHP_EOL; ?>
+					</div>
+				</div>
+				<?= $form->field($model, 'cc_x_id')->hiddenInput()->label(false).PHP_EOL; ?>
+				<div class="col-xs-4 col-sm-4 form-group">
+					<?= Html::Button('<i class="fa fa-credit-card"> Process</i>', ['id'=>'guest-Process_CC','class' => 'btn btn-danger']), PHP_EOL ?>
+				</div>
+				<div class="col-xs-8 col-sm-8">
+					<p id="cc_info"> </p>
+				</div>
+				<div class="col-xs-12" id="cert_online_search" style="display: none">
+				<center><img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 50px" />Searching..</center>
+				<p>  </p>
+				</div><?php if($confParams->qb_env=='dev') {echo "Test CC: 4111-1111-1111-1111";} ?>
 			</div>
-			<div class="col-xs-8 col-sm-8">
-				<?= $form->field($model, 'cc_name')->textInput().PHP_EOL; ?>
-			</div>
-			<div class="col-xs-4 col-sm-4">
-				<?= $form->field($model, 'cc_zip')->textInput().PHP_EOL; ?>
-			</div>
-			<div class="col-xs-12 col-sm-12">
-				<?= $form->field($model, 'cc_address')->textInput().PHP_EOL; ?>
-			</div>
-			<div class="col-xs-8 col-sm-8">
-				<?= $form->field($model, 'cc_city')->textInput().PHP_EOL; ?>
-			</div>
-			<div class="col-xs-4 col-sm-4">
-				<?= $form->field($model, 'cc_state')->textInput().PHP_EOL; ?>
-			</div>
-			<div class="col-xs-12 col-sm-12">
-				<?= $form->field($model, 'cc_num')->textInput(['maxlength'=>true]).PHP_EOL; ?>
-			</div>
-			<div class="col-xs-4 col-sm-4">
-				<?= $form->field($model, 'cc_exp_mo')->dropDownList(['01'=>'01 Jan','02'=>'02 Feb','03'=>'03 Mar','04'=>'04 Apr','05'=>'05 May','06'=>'06 Jun','07'=>'07 Jul','08'=>'08 Aug','09'=>'09 Sep','10'=>'10 Oct','11'=>'11 Nov','12'=>'12 Dec']).PHP_EOL; ?>
-			</div>
-			<div class="col-xs-5 col-sm-5">
-<?php 	$curYr = date('Y',strtotime(yii::$app->controller->getNowTime()));
-$ccYear = range($curYr,$curYr+25);  ?>
-				<?= $form->field($model, 'cc_exp_yr')->dropDownList($ccYear).PHP_EOL; ?>
-			</div>
-			<div class="col-xs-3 col-sm-3">
-				<?= $form->field($model, 'cc_cvc')->textInput(['maxlength'=>true]).PHP_EOL; ?>
-			</div>
-			</div>
-			<?= $form->field($model, 'cc_x_id')->hiddenInput()->label(false).PHP_EOL; ?>
-			<div class="col-xs-4 col-sm-4 form-group">
-				<?= Html::Button('<i class="fa fa-credit-card"> Process</i>', ['id'=>'guest-Process_CC','class' => 'btn btn-danger']), PHP_EOL ?>
-			</div>
-			<div class="col-xs-8 col-sm-8">
-				<p id="cc_info"> </p>
-			</div>
-			<div class="col-xs-12" id="cert_online_search" style="display: none">
-			<center><img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 50px" />Searching..</center>
-			<p>  </p>
-			</div><?php if($confParams->qb_env=='dev') {echo "Test CC: 4111-1111-1111-1111";} ?>
-		</div>
-		<p> </P>
+			<p> </p>
 
 		</div>
 		<div class="row">
-		<div class="col-xs-12" id="cert_search" ><!--style="display: none"> -->
-			<center><img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 50px" />Searching..</center>
-			<p>  </p>
-		</div>
-		<div class="col-xs-12 text-center" id="cert_search_results" > </div>
+			<div class="col-xs-12" id="cert_search" ><!--style="display: none"> -->
+				<center><img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 50px" />Searching..</center>
+				<p>  </p>
+			</div>
+			<div class="col-xs-12 text-center" id="cert_search_results" > </div>
 		</div>
 			<div class="clearfix"> </div>
-		</div>
-	  </div><?php } ?>
+	</div>
+	<?php } ?>
+		<div class="btn-group pull-right" id="guest_save_div" <?php if($model->isNewRecord) {echo 'style="display:none"';}?>> <br /><br /><div id="CC_Save">
+			<?= Html::submitButton($model->isNewRecord ? $msg : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success done-Guest' : 'btn btn-primary done-Guest','id'=>'save_btn']).PHP_EOL;  ?>
+		</div></div>
 	</div>
 </div>
 <input type="hidden" id='m_first_n' />
@@ -263,6 +270,12 @@ $ccYear = range($curYr,$curYr+25);  ?>
 $('#GuestForm').on('submit', function() {
     $('input, select').prop('disabled', false);
 });
+
+    function RefreshAmount() {
+		var guest_price = document.getElementById("guest_price").value
+		var guest_count = parseInt(document.getElementById("guest-guest_count").value);
+		document.getElementById("guest-amount_due").value = (guest_price * guest_count).toFixed(2);
+	};
 
  <?php if($model->isNewRecord) { ?>
     $("#guest-guest_count").change(function(e) {
@@ -296,12 +309,12 @@ $('#GuestForm').on('submit', function() {
         }
     });
 
-
    document.getElementById('guest-cc_num').addEventListener('keyup',function(evt){
         var ccnum = document.getElementById('guest-cc_num');
         var charCode = (evt.which) ? evt.which : evt.keyCode;
         ccnum.value = ccFormat(ccnum.value);
     });
+
  <?php } ?>
 
     $("#guest-isObserver").change(function() {
@@ -315,6 +328,7 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-guest_count").disabled=true;
 			$("#guest-payment_type").val('cash');
 			document.getElementById("guest-payment_type").disabled=true;
+			document.getElementById("guest-amount_due").value = ('0.00');			
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
 			$("#guest-g_paid").val('');
@@ -337,21 +351,31 @@ $('#GuestForm').on('submit', function() {
 					alert("Enter your Birth Year.");
 					document.getElementById("guest-isMinor").checked = false;
 					document.getElementById("guest-isShooter").checked = true;
+					document.getElementById("guest-guest_count").disabled=false;
+				    document.getElementById("guest-payment_type").disabled=false;
+					RefreshAmount();
 				} else if (new Date().getFullYear() - document.getElementById('guest-g_yob').value <= 18 ) {
 					$("#guest-g_paid").val('m');
 					$("#guest-guest_count").val('1');
 					document.getElementById("guest-guest_count").disabled=true;
 					$("#guest-payment_type").val('cash');
+					document.getElementById("guest-amount_due").value = ('0.00');
 					document.getElementById("guest-payment_type").disabled=true;
 				} else {
 					alert("No Longer A Minor");
 					document.getElementById("guest-isMinor").checked = false;
 					document.getElementById("guest-isShooter").checked = true;
+					document.getElementById("guest-guest_count").disabled=false;
+				    document.getElementById("guest-payment_type").disabled=false;
+					RefreshAmount();
 				}
 			} else {
 				alert(" Please Check Year Of Birth ");
 				document.getElementById("guest-isMinor").checked = false;
 				document.getElementById("guest-isShooter").checked = true;
+				document.getElementById("guest-guest_count").disabled=false;
+				document.getElementById("guest-payment_type").disabled=false;
+				RefreshAmount();
 			}
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
@@ -371,6 +395,7 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-isYouth").checked = false;
 			$("#guest-g_paid").val('');
 			$("#guest-guest_count").val('1');
+			RefreshAmount();
 			document.getElementById("guest-guest_count").disabled=false;
 			document.getElementById("guest-payment_type").disabled=false;
         } else  {
@@ -389,6 +414,8 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-isMinor").checked = false;
 			document.getElementById("guest-isYouth").checked = false;
 			$("#guest-g_paid").val('s');
+			document.getElementById("guest-amount_due").value = ('0.00');
+			
 			$("#guest-guest_count").val('1');
 			document.getElementById("guest-guest_count").disabled=true;
 			$("#guest-payment_type").val('cash');
@@ -414,6 +441,7 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-guest_count").disabled=true;
 			$("#guest-payment_type").val('cash');
 			document.getElementById("guest-payment_type").disabled=true;
+			document.getElementById("guest-amount_due").value = ('0.00');
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
 			$("#guest-g_paid").val('');

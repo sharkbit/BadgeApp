@@ -5,6 +5,7 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use backend\models\Params;
 use backend\models\WorkCredits;
 
 /**
@@ -79,10 +80,20 @@ class WorkCreditsSearch extends WorkCredits {
 			$query->andFilterWhere(['like', 'remarks', $this->remarks]); }
         if(isset($this->badge_number)) {
 			$query->andFilterWhere(['like', 'badge_number', $this->badge_number.'%',false]); }
-		if(isset($this->badge_number)) {
+		if(isset($this->authorized_by)) {
 			$query->andFilterWhere(['like', 'authorized_by', $this->authorized_by]); }
-		if(isset($this->badge_number)) {
-			$query->andFilterWhere(['like', 'work_date', $this->work_date]); }
+		if((isset($this->work_date)) && ($this->work_date=='A')) {} else {
+			$this->work_date='C';
+			$confParams  = Params::findOne('1');
+			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
+			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
+
+			if ($DateChk <= $nowDate) {
+				$query->andFilterWhere(['>','work_date', date('Y-12-31', strtotime("-1 years",strtotime($nowDate)))]);
+			} else {
+				$query->andFilterWhere(['>', 'work_date',date('Y-12-31', strtotime("-2 years",strtotime($nowDate)))]);
+			}
+		}
 
         return $dataProvider;
     }
