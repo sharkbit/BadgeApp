@@ -82,16 +82,24 @@ class WorkCreditsSearch extends WorkCredits {
 			$query->andFilterWhere(['like', 'badge_number', $this->badge_number.'%',false]); }
 		if(isset($this->authorized_by)) {
 			$query->andFilterWhere(['like', 'authorized_by', $this->authorized_by]); }
-		if((isset($this->work_date)) && ($this->work_date=='A')) {} else {
-			$this->work_date='C';
-			$confParams  = Params::findOne('1');
-			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
-			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
 
+		$confParams  = Params::findOne('1');
+		$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
+		$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
+		if((isset($this->work_date)) && ($this->work_date=='A')) {} 
+		elseif((isset($this->work_date)) && ($this->work_date=='N')) {
 			if ($DateChk <= $nowDate) {
-				$query->andFilterWhere(['>','work_date', date('Y-12-31', strtotime("-1 years",strtotime($nowDate)))]);
+				$query->andFilterWhere(['>','work_date', date('Y-12-31', strtotime("+0 years",strtotime($nowDate)))]);
 			} else {
-				$query->andFilterWhere(['>', 'work_date',date('Y-12-31', strtotime("-2 years",strtotime($nowDate)))]);
+				$query->andFilterWhere(['>', 'work_date',date('Y-12-31', strtotime("-1 years",strtotime($nowDate)))]);
+			}
+		} 
+		else {
+			$this->work_date='C';
+			if ($DateChk <= $nowDate) {
+				$query->andFilterWhere(['like','work_date', date('Y', strtotime("-0 years",strtotime($nowDate)))]);
+			} else {
+				$query->andFilterWhere(['like', 'work_date',date('Y', strtotime("-1 years",strtotime($nowDate)))]);
 			}
 		}
 

@@ -62,7 +62,7 @@ if(yii::$app->controller->hasPermission('work-credits/delete')) {
 				'value'=>function($model) {
 					return date('M d, Y',strtotime($model->work_date));
 				},
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'work_date', ['A' => 'All', 'C' => 'Current'],['class'=>'form-control',]),
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'work_date', ['A' => 'All', 'C' => 'Current', 'N' => 'Next Year'],['class'=>'form-control',]),
 			],
 			[
 				'attribute'=>'project_name',
