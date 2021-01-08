@@ -35,31 +35,42 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 	</div>
 	<div class="col-xs-12 col-sm-8" >
 		<div class="row">
-		<div class="col-xs-4 col-sm-3">
+		<div class="col-xs-12 col-sm-3">
 
         <?php if($model->isNewRecord) {
 			echo $form->field($model, 'badge_reporter')->textInput(['value'=>$model->badge_reporter,'readonly'=> $isviolations]).PHP_EOL;
-			echo '</div><div class="col-xs-8 col-sm-5">';
+			echo '</div><div class="col-xs-12 col-sm-5">';
 			echo $form->field($model, 'reporter_name')->textInput(['readOnly'=>'true']).PHP_EOL;
-			echo '</div><div class="col-xs-6 col-sm-3">';
+			echo '</div><div class="col-xs-12 col-sm-2">';
 			echo $form->field($model, 'vi_type')->textInput(['readOnly'=>'true']).PHP_EOL;
-			echo '</div><div class="col-xs-6 col-sm-3">';
+			echo '</div><div class="container">';
+			echo '<div class="row"><div class="col-xs-6 col-sm-3">';
+			echo '<div class="row"><div class="col-xs-12 col-sm-12">';
 			echo $form->field($model, 'vi_override')->checkbox().PHP_EOL.'<p> </p>';
-			echo '</div><div class="col-xs-6 col-sm-3">';
-			echo $form->field($model, 'vi_date')->textInput(['readonly' => true,'value'=>(yii::$app->controller->getNowTime())]).PHP_EOL;
+			echo '</div></div><div class="row"><div class="col-xs-12 col-sm-12">';
+			echo $form->field($model, 'was_guest')->checkbox().PHP_EOL;
+			echo '</div></div>';
+			echo '</div><div class="col-xs-12 col-sm-3">';
+			echo $form->field($model, 'vi_date')->textInput(['readonly' => true,'value'=>(yii::$app->controller->getNowTime())]);
+			echo '</div></div>' .PHP_EOL;
         } else {
 			echo $form->field($model, 'badge_reporter')->textInput(['value'=>$model->badge_reporter,
 				'readOnly'=>yii::$app->controller->hasPermission('violations/delete') ? false: true]).PHP_EOL;
-			echo '</div><div class="col-xs-8 col-sm-5">';
+			echo '</div><div class="col-xs-12 col-sm-5">';
 			echo $form->field($model, 'reporter_name')->textInput(['value'=>$model->reporter_name,'readOnly'=>'true']).PHP_EOL;
-			echo '</div><div class="col-xs-6 col-sm-3">';
+			echo '</div><div class="col-xs-12 col-sm-2">';
 			echo $form->field($model, 'vi_type')->textInput(['readOnly'=>'true']).PHP_EOL;
-			echo '</div><div class="col-xs-6 col-sm-3">';
-			echo '<p> <br > </p>'.$form->field($model, 'vi_override')->checkbox().PHP_EOL.'<p> </p><br/>';
-			echo '</div><div class="col-xs-6 col-sm-3">';
+			echo '</div><div class="container">';
+			echo '<div class="row"><div class="col-xs-6 col-sm-3">';
+			echo '<div class="row"><div class="col-xs-12 col-sm-12">';
+			echo $form->field($model, 'vi_override')->checkbox().PHP_EOL.'<p> </p>';
+			echo '</div></div><div class="row"><div class="col-xs-12 col-sm-12">';
+			echo $form->field($model, 'was_guest')->checkbox().PHP_EOL;
+			echo '</div></div>';
+			echo '</div><div class="col-xs-12 col-sm-3">';
 			echo $form->field($model, 'vi_date')->textInput(['readOnly'=>'true','value'=>yii::$app->controller->pretydtg($model->vi_date)]);
 			if(yii::$app->controller->hasPermission('violations/board')) {
-				echo '</div><div class="col-xs-6 col-sm-3">';
+				echo '</div><div class="col-xs-12 col-sm-3">';
 			    echo $form->field($model, 'hear_date')->widget(DatePicker::classname(), [
 					'options' => ['placeholder' => 'Hearing Date'],
 					'type' => DatePicker::TYPE_INPUT,
@@ -69,29 +80,29 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
                         'convertFormat'=>true
 					]
                 ]).PHP_EOL;
+			} else {
+				echo '</div></div>';
 			}
 		}
 		?>
         </div>
 		</div><div class="row">
-		<div class="col-xs-4 col-sm-3">
+		<div class="col-xs-12 col-sm-3">
 			<?= $form->field($model, 'badge_involved')->textInput(['value'=>$model->badge_involved,'readonly'=> $isviolations]).PHP_EOL; ?>
 		</div>
-		<div class="col-xs-8 col-sm-4">
+		<div class="col-xs-12 col-sm-5">
 			<?= $form->field($model, 'involved_name')->textInput(['readOnly'=>'true']).PHP_EOL; ?>
 		</div>
 		</div><div class="row">
-		<div class="col-xs-4 col-sm-3">
+		<div class="col-xs-12 col-sm-3">
 			<?= $form->field($model, 'badge_witness')->textInput(['value'=>$model->badge_witness,'readonly'=> $isviolations]).PHP_EOL; ?>
 		</div>
-		<div class="col-xs-8 col-sm-5">
+		<div class="col-xs-12 col-sm-5">
 			<?= $form->field($model, 'witness_name')->textInput(['readOnly'=>'true']).PHP_EOL; ?>
 		</div>
-		<div class="col-xs-6 col-sm-4">
-			<?= $form->field($model, 'was_guest')->checkbox().PHP_EOL; ?>
-
 		</div>
-		<div class="col-xs-6">
+		<div class="row">
+		<div class="col-xs-12 col-sm-3">
 			<?= $form->field($model, 'vi_loc')->dropdownList($model->getLocations(),['maxlength'=>true]).PHP_EOL; ?>
 		</div>
 		</div>
