@@ -20,6 +20,7 @@ use backend\models\search\BadgeCertificationSearch;
 use backend\models\search\BadgeSubscriptionsSearch;
 use backend\models\search\PostPrintTransactionsSearch;
 use backend\models\search\WorkCreditsSearch;
+use backend\models\search\ViolationsSearch;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
@@ -1251,6 +1252,23 @@ class BadgesController extends AdminController {
 		return $this->render('view-subscriptions',[
 			'subciptionsArray'=>$subciptionsArray,
 		]);
+	}
+
+	public function actionViewViolationsHistory($badge_number) {
+		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
+			return $this->redirect(['view-violations-history', 'badge_number' => $_SESSION['badge_number']]);
+		}
+		$model = Badges::find()->where(['badge_number'=>$badge_number])->one();
+		if($model) {
+			$searchModel = new ViolationsSearch();
+			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+			$dataProvider->query->andWhere(['badge_involved'=>$badge_number]);
+			return $this->render('view-violations-history', [
+				'model' => $model,
+				'searchModel' => $searchModel,
+				'dataProvider' => $dataProvider,
+			]);
+		} else {return $this->redirect(['index']);}
 	}
 
 	public function actionViewWorkCredits($badge_number) {
