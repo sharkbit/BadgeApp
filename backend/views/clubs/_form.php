@@ -35,12 +35,12 @@ use yii\widgets\ActiveForm;
 	<div class="row" <?php if($model->isNewRecord){echo 'style="display: none;"';} ?> >
 	<?= $form->field($model, 'status')->dropDownList([ '0'=>'Active', '1'=>'Inactive', ], ['prompt' => 'Status']) ?>
 	</div>
-
+<?php if(yii::$app->controller->hasPermission('clubs/update')) { ?>
     <div class="form-group btn-group pull-right">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     	<?= Html::resetButton('Reset <i class="fa fa-eraser"> </i>', ['class' => 'btn btn-danger']) ?>
     </div>
-
+<?php } ?>
 </div>
 </div>
 <?php ActiveForm::end(); ?>

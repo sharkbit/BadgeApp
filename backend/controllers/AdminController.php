@@ -53,6 +53,19 @@ class AdminController extends \yii\web\Controller {
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update'],
 	];
 
+	public $adminViewPermission = [
+		'Accounts' => ['accounts/index','accounts/view'],
+		'Admin' => ['site/admin-menu'],
+		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Clubs' => ['clubs/index','clubs/view'],
+		'Events' => ['events/index','events/view'],
+		'Guest' => ['guest/all'],
+		'Rules'=> ['rules/index','rules/view'],
+		'sales' => ['sales/all'],
+		'violations' => ['violations/all'],
+		'Work Credits'=>['work-credits/all'],
+	];
+	
 	public $cashierPermission = [
 		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view','membership-type/fees-by-type'],
@@ -205,6 +218,7 @@ class AdminController extends \yii\web\Controller {
 				elseif ($priv==4) { if ($this->Check_Privs($event,$this->viewPermission)) return true; }
 				elseif ($priv==5) { if ($this->Check_Privs($event,$this->userPermission)) return true; }
 				elseif ($priv==11) { if ($this->Check_Privs($event,$this->chairmanPermission)) return true; }
+				elseif ($priv==13) { if ($this->Check_Privs($event,$this->adminViewPermission)) return true; }
 			}
 			return false;
 		}

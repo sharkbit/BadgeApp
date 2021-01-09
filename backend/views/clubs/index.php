@@ -46,10 +46,42 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/ind
                     ],
 					
                     //'status',
-                    [
-                        'header'=>'Action',
-                        'class' => 'yii\grid\ActionColumn'
-                    ],
+		[
+			'header' => 'Actions',
+			'class' => 'yii\grid\ActionColumn',
+			'template'=>'{view} {update} {delete}',
+			'buttons'=> [
+				'update' => function ($url, $model) {
+					if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||
+					((yii::$app->controller->hasPermission('clubs/update')) && (!array_intersect([1,2],json_decode($model->privilege))))) {
+					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/clubs/update','id'=>$model->club_id], [
+						'data-toggle'=>'tooltip',
+						'data-placement'=>'top',
+						'title'=>'Edit',
+						'class'=>'edit_item',
+					]); }
+				},
+				'delete' => function($url,$model) {
+					if(yii::$app->controller->hasPermission('clubs/delete'))  {
+					return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', ['/clubs/delete','id'=>$model->club_id], [
+						'data-toggle'=>'tooltip',
+						'data-placement'=>'top',
+						'title'=>'Delete',
+						'data' => [
+							'confirm' => 'Are you sure you want to delete this item?',
+							'method' => 'post',
+						],
+					]); }
+				},
+				'view' => function($url,$model) {
+					return  Html::a(' <span class="glyphicon glyphicon-eye-open"></span> ', ['/clubs/view','id'=>$model->club_id], [
+						'data-toggle'=>'tooltip',
+						'data-placement'=>'top',
+						'title'=>'View',
+					]); 
+				},
+			]
+		],
                 ],
             ]); ?>
             <?php Pjax::end(); ?>

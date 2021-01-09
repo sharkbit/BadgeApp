@@ -29,7 +29,9 @@ echo $this->render('/violations/_view-tab-menu').PHP_EOL ?>
 .text-wrap{max-width:"100px";, height:"100px"}
 </style>
 	<div class="btn-group pull-right">
-	<?= Html::a('<i class="fa fa-plus-square" aria-hidden="true"></i> Add Range Rule', ['create'], ['class' => 'btn btn-success ']) ?>
+	<?php 	if(yii::$app->controller->hasPermission('rules/create'))  {
+		echo Html::a('<i class="fa fa-plus-square" aria-hidden="true"></i> Add Range Rule', ['create'], ['class' => 'btn btn-success ']) ;
+	} ?>
 
 	</div>
 	<?= GridView::widget([
@@ -50,43 +52,42 @@ echo $this->render('/violations/_view-tab-menu').PHP_EOL ?>
 				'headerOptions' => ['style' => 'width:5%'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_active',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All']),
 			],
-			[
-				'header' => 'Actions',
-				'class' => 'yii\grid\ActionColumn',
-				'headerOptions' => ['style' => 'width:5%'],
-				//'template'=>yii::$app->controller->hasPermission('violations/delete') ? '{view}{update}{delete}' : '{view}{update}',
-				'template'=>'{view} {update}',
-				'buttons'=>[
-					'view' => function ($url, $model) {
-						return  Html::a(' <span class="glyphicon glyphicon-eye-open"></span> ', ['view','id'=>$model->id],
-						[	'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'Edit',
-							'class'=>'edit_item',
-						]);
-					},
-					'update' => function ($url, $model) {
-						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['update','id'=>$model->id],
-						[	'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'Edit',
-							'class'=>'edit_item',
-						]);
-					},
-					'delete' => function($url,$model) {
-						return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', $url, [
-							'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'Delete',
-							'data' => [
-								'confirm' => 'Are you sure you want to delete this item?',
-								'method' => 'post',
-							],
-						]);
-					},
-
-				]
+		[
+			'header' => 'Actions',
+			'class' => 'yii\grid\ActionColumn',
+			'template'=>'{view} {update} {delete}',
+			'buttons'=> [
+				'update' => function ($url, $model) {
+					if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||
+					((yii::$app->controller->hasPermission('clubs/update')) && (!array_intersect([1,2],json_decode($model->privilege))))) {
+					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/clubs/update','id'=>$model->id], [
+						'data-toggle'=>'tooltip',
+						'data-placement'=>'top',
+						'title'=>'Edit',
+						'class'=>'edit_item',
+					]); }
+				},
+				'delete' => function($url,$model) {
+					if(yii::$app->controller->hasPermission('clubs/delete'))  {
+					return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', ['/clubs/delete','id'=>$model->id], [
+						'data-toggle'=>'tooltip',
+						'data-placement'=>'top',
+						'title'=>'Delete',
+						'data' => [
+							'confirm' => 'Are you sure you want to delete this item?',
+							'method' => 'post',
+						],
+					]); }
+				},
+				'view' => function($url,$model) {
+					return  Html::a(' <span class="glyphicon glyphicon-eye-open"></span> ', ['/clubs/view','id'=>$model->id], [
+						'data-toggle'=>'tooltip',
+						'data-placement'=>'top',
+						'title'=>'View',
+					]); 
+				},
 			]
+		],
 		]
 	]); ?>
 </div>
