@@ -40,7 +40,7 @@ class User extends \yii\db\ActiveRecord {
             [['badge_number','status','created_at', 'updated_at'], 'integer'],
             [['username', 'email', 'full_name', 'password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32],
-			[['company'], 'string', 'max' => 45],
+			[['company','r_user'], 'string', 'max' => 45],
             [['username'], 'unique','message' => 'This username has already been taken.'],
             [['email'], 'unique','message' => 'This email has already been taken.'],
             [['badge_number','password_reset_token'], 'unique','message' => 'Try new password.'],
@@ -66,6 +66,7 @@ class User extends \yii\db\ActiveRecord {
             'password_reset_token' => 'Password Reset Token',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+			'r_user' => 'Remote User Name (Case sensitive)',
         ];
     }
 
@@ -93,9 +94,15 @@ class User extends \yii\db\ActiveRecord {
 
     public function getPrivList($limit=null) {
 		if (in_array(1, json_decode(yii::$app->user->identity->privilege))) { $where =''; } 
+		elseif(is_array($limit)) {
+			$where='';
+			foreach ($limit as $id) { $where .= " OR id=".$id; }
+			$where =' WHERE restricted=0 '.$where;
+		}
 		else {
-			if ($limit) { $where =' where id >2 '; }
-			else { $where =' where id >=2 '; }
+			//if ($limit) { $where =' where id >2 '; }
+			//else { $where =' where id >=2 '; }
+			$where =' where restricted=0 ';
 		}
 		$sql = "SELECT id,privilege FROM user_privileges $where order by priv_sort ASC";
 		$privArray= Yii::$app->db->createCommand($sql)->queryAll();

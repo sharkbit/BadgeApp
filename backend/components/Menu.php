@@ -4,6 +4,7 @@ namespace backend\components;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
+use backend\models\Params;
 
 /* Menu Colors:
 	btn-info	= Light Blue
@@ -152,25 +153,32 @@ class Menu extends Widget{
 
 	protected function generateMenu($type,$privilege) {
 		$html ='';
+		$param = Params::find()->one();
 		if($type=='admin') {
-			$print_menu =  array_merge($this->adminMenu, $this->LastMenu);
+			$print_menu =  $this->adminMenu;
 		} else {		
 			if( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge" )) {
 				if ((yii::$app->controller->hasPermission('calendar/showed')) && (yii::$app->params['cal_site']<>'')) {
-					$print_menu =  array_merge($this->mainMenu,[['label'=>'Calender','url' => yii::$app->params['cal_site'].'/calendar/index','allow' => 'calendar/index','target'=>'cal','color' => 'btn-danger',],], $this->LastMenu);
+					$print_menu =  array_merge($this->mainMenu,[['label'=>'Calender','url' => yii::$app->params['cal_site'].'/calendar/index','allow' => 'calendar/index','target'=>'cal','color' => 'btn-danger',],]);
 				} else {
-					$print_menu =  array_merge($this->mainMenu, $this->LastMenu);
+					$print_menu =  $this->mainMenu;
 				}
 			} elseif ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "calendar" )) {
 				if (yii::$app->controller->hasPermission('cal-setup/index')) {
-				$print_menu = array_merge($this->mainMenu, $this->mainCalendar, $this->LastMenu);
+				$print_menu = array_merge($this->mainMenu, $this->mainCalendar);
 				} else {
-					$print_menu = array_merge($this->mainCalendar, $this->LastMenu);
+					$print_menu = $this->mainCalendar;
 				}
 			} else {
-				$print_menu = array_merge($this->mainMenu, $this->mainCalendar, $this->LastMenu);
+				$print_menu = array_merge($this->mainMenu, $this->mainCalendar);
+			}
+		
+			if ((file_exists($param->remote_users)) && (isset($_SESSION['r_user']) && ($_SESSION['r_user'] !=null))) {
+				$print_menu = array_merge($print_menu, [['label'=>'Remote User Password','url' => '/params/password','color' => 'btn-warning',],]);
 			}
 		}
+		
+		$print_menu = array_merge($print_menu, $this->LastMenu);
 
 		$html .="<div class='container'>\n";
 		foreach ($print_menu as $menu) {

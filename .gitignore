@@ -17,3 +17,4 @@ common\config\main-local.php
 common/config/main-local.php
 vendor
 comms_constants.php
+backend/web/passwd

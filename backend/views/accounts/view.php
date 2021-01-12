@@ -62,6 +62,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function($model) { return $model->getPrivilege_Names($model->privilege);},
             ],
 			[
+                'attribute' =>'r_user',
+				'contentOptions' =>['style' => 'width:50%'],
+				'visible'=> (in_array(13,json_decode($model->privilege))) ? true : false,
+			],
+			[
 				'attribute' => 'clubs',
 				'value'=> function($model) {
 					if(is_array(json_decode($model->clubs))) {

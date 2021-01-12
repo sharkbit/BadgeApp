@@ -137,7 +137,7 @@ class AdminController extends \yii\web\Controller {
 		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'payments'=>['payment/charge'],
 		'sales' => ['sales/index','sales/print-rcpt','sales/purchases'],
-		'Site' => ['site/index','site/error','site/logout','site/login','site/login-member'],
+		'Site' => ['site/index','site/error','site/logout','site/login','site/login-member','params/password'],
 		'violations' => ['violations/index','violations/view'],
 		'Work Credits'=>['work-credits/create','work-credits/index','work-credits/sticky-form','work-credits/credit-transfer','work-credits/transfer-confirm','work-credits/transfer-form','work-credits/transfer-view','work-credits/view'],
 	];

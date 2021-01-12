@@ -21,7 +21,7 @@ class SignupForm extends Model {
 	public $id;
 	public $auth_key;
 	public $clubs;
-
+	public $r_user;
 
     /**
      * @inheritdoc
@@ -34,10 +34,11 @@ class SignupForm extends Model {
             [['username', 'email'], 'trim'],
             ['email', 'email'],
 			[['auth_key'],'string','max'=>100],
-            ['username', 'string', 'min' => 2, 'max' => 255],
-			[['email'], 'string', 'max' => 255],
+            [['username','email'], 'string', 'min' => 2, 'max' => 255],
+			[['r_user'], 'string', 'max' => 45],
+			['email', 'filter', 'filter' => 'trim'],
             ['password', 'string', 'min' => 6],
-			['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+			[['email'],'unique','message'=>'Email already exist. Please try another one.'],
 			['confirm_password', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match"],
             [['badge_number','id'],'integer'],
         ];
@@ -47,12 +48,12 @@ class SignupForm extends Model {
         return [
 			'clubs'=>'Calendar Access',
             'f_name' => 'First Name',
-			'l_name' => 'Last Name'
+			'l_name' => 'Last Name',
+			'r_user' => 'Remote User Name'
         ];
     }
 
     public function signup() {
-//yii::$app->controller->createLog(false, 'trex_F_M_Sf:55', 'Tag-1');
         if (!$this->validate()) {
             return null;
         }
@@ -64,6 +65,7 @@ class SignupForm extends Model {
 		$user->clubs = json_encode($this->clubs);
         $user->full_name = $this->f_name." ".$this->l_name;
         $user->privilege = $this->privilege;
+		$user->r_user = $this->r_user;
         $user->created_at = strtotime($this->getNowTime());
         $user->updated_at = strtotime($this->getNowTime());
         $user->setPassword($this->password);

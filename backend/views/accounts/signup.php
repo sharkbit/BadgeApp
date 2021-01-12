@@ -39,7 +39,11 @@ $randStr = generateRandomString();
 			<?php if (in_array(1, json_decode(yii::$app->user->identity->privilege))) { $limit=false; } else { $limit=true; }
 			echo $form->field($model, 'privilege')->dropDownList((new User)->getPrivList($limit),['id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
-		<div class="col-xs-12 col-sm-6 col-md-5" id="need_cal" style="display: none;" 
+		<div class="col-xs-12 col-sm-6 col-md-2" id="remote_name" style="display: none;" >
+			<?= $form->field($model, 'r_user')->textInput(['maxlength' => true]) ?>
+		</div>
+		
+		<div class="col-xs-12 col-sm-6 col-md-3" id="need_cal" style="display: none;" 
 			<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
 		<div id='dont_need_cal' ><input type='hidden' id="club-id" value=''> </div>
@@ -113,7 +117,18 @@ $randStr = generateRandomString();
 		$("#cio_hide").hide();
 		$("#need_cal").hide();$ ("#dont_need_cal").show();
 	}
-	
+
+	if (selectedText.indexOf("Remote Access")>0) {
+		$("#remote_name").show();
+		var rem_usr = document.getElementById("signupform-r_user").value;
+		console.log(rem_usr);
+		if ((!rem_usr) || (rem_usr=='')) {
+			document.getElementById("signupform-r_user").value = document.getElementById("signupform-badge_number").value
+		}
+	} else {
+		$("#remote_name").hide();
+	}
+
     if(selectedText != ' ') { buildUsername();}
   });
 
@@ -185,6 +200,8 @@ $randStr = generateRandomString();
     else if (sel_opt==7) { priv = 'wc';}
     else if (sel_opt==8) { priv = 'cio';  }
     else if (sel_opt==4) { priv = 'view'; }
+	else if (sel_opt==12) { priv = 'Arso'; }
+	else if (sel_opt==13) { priv = 'adv'; }
     else if (sel_opt==5) { alert('Do not use Member'); priv = 'Do not use Member'; }
 
     $("#signupform-username").val(priv+'.'+fname+'.'+lname);
