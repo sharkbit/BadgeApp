@@ -38,7 +38,7 @@ class SignupForm extends Model {
 			[['r_user'], 'string', 'max' => 45],
 			['email', 'filter', 'filter' => 'trim'],
             ['password', 'string', 'min' => 6],
-			[['email'],'unique','message'=>'Email already exist. Please try another one.'],
+			[['email'],'unique','targetClass' => '\common\models\User', 'message'=>'Email already exist. Please try another one.'],
 			['confirm_password', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match"],
             [['badge_number','id'],'integer'],
         ];
