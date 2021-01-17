@@ -715,7 +715,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 				$datesFound = array_merge($myEventDatesA,$myEventDatesB);
 			} else {
 				if($eco) { echo "Start C";}
-				$datesFound = [$this->getEventDates($eStart,$eEnd,$ePat,date('Y'),$eco)];
+				$datesFound = $this->getEventDates($eStart,$eEnd,$ePat,date('Y'),$eco);
 			}
 		}
 		if($eco) {yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:722', var_export($datesFound,true));}
