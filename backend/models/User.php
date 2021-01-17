@@ -93,7 +93,8 @@ class User extends \yii\db\ActiveRecord {
 	}
 
     public function getPrivList($limit=null) {
-		if (in_array(1, json_decode(yii::$app->user->identity->privilege))) { $where =''; } 
+		if (in_array(1, json_decode(yii::$app->user->identity->privilege))) { $where =''; }
+		elseif($limit=='usr_filter') { $where =' where id >=2 '; }
 		elseif(is_array($limit)) {
 			$where='';
 			foreach ($limit as $id) { $where .= " OR id=".$id; }
