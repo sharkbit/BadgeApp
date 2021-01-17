@@ -18,14 +18,6 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, ];
 <br />
 <p>Please Note your username is case sensitive:  <b><?=$_SESSION['r_user'] ?></b></p>
 
-<?php 
-
-//echo "<p> $status </p>";
-
-//yii::$app->controller->createLog(false, 'trex-pwd', var_export($status,false));
-
-?>
-
 <div class="row">
 	<div class="col-xs-12 col-sm-6">
 		<?= $form->field($model, 'pwd')->passwordInput() ?>
