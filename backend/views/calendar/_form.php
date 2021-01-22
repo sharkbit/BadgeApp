@@ -182,7 +182,7 @@ sort($dirty);
 
 <div id="Div_recur" <?=$Div_recur?>>
 
-<div class="col-xs-12" style="background-color: silver"> <p> Reocurring Event:</p>  </div>
+<div class="col-xs-12" style="background-color: silver"> <p> Recurring Event:</p>  </div>
     <div  class="col-xs-12 col-sm-8 col-md-6 col-lg-6 col-xl-4" style="background-color: silver; border:thin solid black;" >
         <div class="row">
 <!--####  Main Select####################### -->
@@ -200,7 +200,7 @@ sort($dirty);
             </div>
 <!--####  Weekly ########################### -->
             <div id="pattern_week" class="col-xs-8 col-sm-9" style="padding:5px 15px; display: none">
-                Recure every <select id="pat_week_n" name="pat_week_n"> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                Repeats every <select id="pat_week_n" name="pat_week_n"> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
                 </select> week(s) on: <br />
                 <div class="row">
                 <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_mon" name="pat_da_mon" value="mon" <?=$chkMon ?>> Monday</div>
@@ -241,7 +241,7 @@ sort($dirty);
             </div>
 <!--####  Yearly ############################ -->
             <div id="pattern_year" class="col-xs-8 col-sm-9" style="padding:5px 15px; display: none">
-                Recures Every <select id="pat_yr_n" name="pat_yr_n" ><option value="1">1</option><option disabled value="2">2</option></select> year(s) <br />
+                Repeats Every <select id="pat_yr_n" name="pat_yr_n" ><option value="1">1</option><option disabled value="2">2</option></select> year(s) <br />
                 <input type="radio" id="pat_yr_a" name="pat_yearly" value="date" /> On:
                 <select id="pat_yr_mon" name="pat_yr_mon">
                     <option value="1">January</option><option value="2">Febuary</option><option value="3">March</option>
