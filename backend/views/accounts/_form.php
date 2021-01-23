@@ -30,7 +30,7 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 		echo "<b>Privilege: </b> ".$model->getPrivilege_Names($model->privilege)."\n<br/><br/>";
 	} ?>
 
-	<div id="remote_name" <?php if(($model->r_user=='') && (!in_array(13,json_decode($model->privilege)))) {?> style="display: none;" <?php } ?>>
+	<div id="remote_name" <?php if((is_null($model->r_user)) || (!in_array(14,json_decode($model->privilege)))) {?> style="display: none;" <?php } ?>>
 	<?= $form->field($model, 'r_user')->textInput(['maxlength' => true]) ?>
 	</div>
 

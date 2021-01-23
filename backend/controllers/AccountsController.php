@@ -6,6 +6,7 @@ use Yii;
 use backend\models\User;
 use backend\models\search\UserSearch;
 use backend\models\ResetPasswordForm;
+use backend\models\Params;
 use backend\models\PasswordResetRequestForm;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -83,10 +84,15 @@ class AccountsController extends SiteController {
 
     public function actionUpdate($id) {
         $model = $this->findModel($id);
+		if(isset($model->r_user)) { $old_r_user=$model->r_user;}
 
 		if ((!in_array(1, json_decode(yii::$app->user->identity->privilege))) && (array_intersect([1,2],json_decode($model->privilege)))) {
 			$this->redirect('index'); }
         if ($model->load(Yii::$app->request->post()) ) {
+			if ((!in_array(14,$model->privilege)) && (!is_null($old_r_user))){
+				$this->removeRemoteUser($old_r_user);
+				$model->r_user = null;
+			}
 			
 			if ($model->privilege=='') {
 				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, "Authorized User Deleted: $model->id: $model->username");
@@ -109,6 +115,21 @@ class AccountsController extends SiteController {
             ]);
         }
     }
+
+	private function removeRemoteUser($r_user){
+		$param = Params::find()->one();
+		$pwd_file = Yii::getAlias('@webroot').'/'.$param->remote_users;
+		$newPasswd='';
+		
+		$txt = explode(PHP_EOL,file_get_contents($param->remote_users));
+		foreach($txt as $item) {
+			if (strlen($item)<3) { continue 1; }
+			$name=explode(":",$item);
+			if($name[0]==$r_user) { continue 1; }
+			$newPasswd .= implode(":",$name).PHP_EOL;
+		}
+		file_put_contents($param->remote_users, $newPasswd);
+	}
 
     public function actionRequestPasswordReset($id) {
         $model = new PasswordResetRequestForm();
@@ -140,7 +161,9 @@ class AccountsController extends SiteController {
     }
 
     public function actionDelete($id) {
-        if($this->findModel($id)->delete()) {
+		$model = $this->findModel($id);
+		if(isset($model->r_user)) { $this->removeRemoteUser($model->r_user); }
+        if($model->delete()) {
             $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Authorized User Deleted: '.$id);
         }
 

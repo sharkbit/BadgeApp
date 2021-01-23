@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
                 'attribute' =>'r_user',
 				'contentOptions' =>['style' => 'width:50%'],
-				'visible'=> (in_array(13,json_decode($model->privilege))) ? true : false,
+				'visible'=> (in_array(14,json_decode($model->privilege))) ? true : false,
 			],
 			[
 				'attribute' => 'clubs',
