@@ -8,7 +8,7 @@ use yii\helpers\Html;
 $this->title = "Calendar Item: $model->event_name";
 
 if (($model->recur_every) && ($model->recurrent_calendar_id == $model->calendar_id)) {$myUrl='recur';} 
-elseif (strpos($_SERVER['HTTP_REFERER'],'conflict')) { $myUrl='conflict'; }
+elseif (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'],'conflict')) { $myUrl='conflict'; }
 else { $myUrl='index'; }
 $this->params['breadcrumbs'][] = ['label' => 'Calendar', 'url' => ['calendar/'.$myUrl]];
 $this->params['breadcrumbs'][] = ['label' => $this->title];

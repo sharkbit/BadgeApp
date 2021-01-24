@@ -323,19 +323,23 @@ sort($dirty);
 	} ?>
 
 <div class="row"><div class="col-xs-12" id="inpatt_msg"></div></div>
+<div class="row"><div class="col-xs-12" id="error_msg"></div>
 <div class="row">
-    <div class="col-xs-8" id="error_msg">
-
-    </div>
-    <div class="col-xs-4 form-group ">
+	<div class="col-xs-0 col-md-6" id="error_msg"></div>
+	<div class="col-xs-6 col-md-3 form-group" style="text-align: right;">
         <div id="searchng_cal_animation" style="display: none">
             <img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
         </div>
         <?= Html::Button('Check Availability', ['class' => 'btn btn-primary','id'=>'cal_check_avail', 'onclick' => 'OpenRange();' ]).PHP_EOL ?>
         <?= Html::submitButton($model->isNewRecord ? 'Create':'Update', ['class' => 'btn btn-secondary ','id'=>'cal_update_item']).PHP_EOL ?>
         <?php if (($isMaster) && (!$model->isNewRecord) && (yii::$app->controller->hasPermission('calendar/republish'))){ ?>
-        <?= Html::submitButton('RePublish Upcomming', ['class' => 'btn btn-info','id'=>'re_pub','name' => 'republish','value'=>1 ]).PHP_EOL ?>
-        <?php } ?>
+	</div>
+    <div class="col-xs-6 col-md-3" style="background-color:whitesmoke; padding:8px ">
+		<center>
+		<?= Html::submitButton('RePublish Upcomming', ['class' => 'btn btn-info','id'=>'re_pub','name' => 'republish','value'=>1 ]).PHP_EOL ?>
+		<p>RePublishing is ONLY needed if you modify the Recurring patern.</p>
+		</center>
+		<?php } ?>
     </div>
 </div>
 
