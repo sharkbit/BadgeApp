@@ -458,7 +458,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 						'changed'=>'Republished by '.$_SESSION['user'],
 						'data'=>($force_order)? 'Forcing Priority':'Normal Priority'];
 					$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
-					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Futuer Events");
+					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Future Events");
 					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days);
 
 					$model = $this->createRecCalEvent($model,$myEventDates,$force_order,false,$tst);
