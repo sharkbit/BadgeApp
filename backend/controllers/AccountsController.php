@@ -89,17 +89,19 @@ class AccountsController extends SiteController {
 		if ((!in_array(1, json_decode(yii::$app->user->identity->privilege))) && (array_intersect([1,2],json_decode($model->privilege)))) {
 			$this->redirect('index'); }
         if ($model->load(Yii::$app->request->post()) ) {
-			if ((!in_array(14,$model->privilege)) && (!is_null($old_r_user))){
-				$this->removeRemoteUser($old_r_user);
-				$model->r_user = null;
-			}
-			
+	
 			if ($model->privilege=='') {
 				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, "Authorized User Deleted: $model->id: $model->username");
 				Yii::$app->getSession()->setFlash('success', $model->username.' has been deleted');
 				User::deleteAll("id = ".$model->id);
+				if(isset($old_r_user)) { $this->removeRemoteUser($old_r_user); }
+				if(isset($model->r_user)) { $this->removeRemoteUser($model->r_user); }
                 return $this->redirect(['/accounts/index']);
 			} else {
+				if ((!in_array(14,$model->privilege)) && (!is_null($old_r_user))){
+					$this->removeRemoteUser($old_r_user);
+					$model->r_user = null;
+				}
 				$model->clubs=json_encode($model->clubs);
 				$model->privilege= str_replace('"',"", json_encode($model->privilege));
 				$model->clubs = str_replace("\\","", str_replace('"',"", json_encode($model->clubs)));
