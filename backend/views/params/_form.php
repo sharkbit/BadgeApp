@@ -38,7 +38,11 @@ foreach ($whitelist as $item) {
 	<div class="col-xs-12 col-sm-3">
 		<?= $form->field($model, 'AddWhitelist')->textInput(['maxlength' => true])->label('Add To Whitelist') ?>
 	</div>
+	<div class="col-xs-12 col-sm-12">
+		<?= $form->field($model, 'remote_users').PHP_EOL; ?>
+	</div>
 </div>
+
 
 <h3>Converge Settings</h2>
 <div class="row">

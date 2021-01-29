@@ -41,7 +41,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		'full_name',
 		'privilege' => [   'header'=>'Privilege',
 			'value' => function($model, $attribute){ return (new User)->getPrivilege_Names($model->privilege); },
-			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'privilege', (new User)->getPrivList(),['class'=>'form-control','prompt' => 'All']),
+			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'privilege', (new User)->getPrivList('usr_filter'),['class'=>'form-control','prompt' => 'All']),
 		],
 		[
 			'attribute' => 'clubs',

@@ -483,3 +483,14 @@ ADD COLUMN `self_service` INT(1) NOT NULL DEFAULT 1 AFTER `type`;
 UPDATE `BadgeDB`.`membership_type` SET `self_service` = '0' WHERE (`id` = '88');
 UPDATE `BadgeDB`.`membership_type` SET `self_service` = '0' WHERE (`id` = '99');
 
+-- v2.1.6 
+ALTER TABLE `BadgeDB`.`user` 
+ADD COLUMN `r_user` VARCHAR(45) NULL DEFAULT NULL AFTER `clubs`;
+
+ALTER TABLE `BadgeDB`.`user_privileges` 
+ADD COLUMN `restricted` INT(3) NULL DEFAULT '0' AFTER `timeout`;
+insert into BadgeDB.user_privileges VALUES ('13', 'Admin View Only', '22', '30','1'),('14', 'Remote Access', '99', '5', '1');
+UPDATE BadgeDB.user_privileges SET restricted=1 where id=1 or id=2;
+
+ALTER TABLE `BadgeDB`.`params` 
+ADD COLUMN `remote_users` VARCHAR(100) NULL DEFAULT NULL AFTER `whitelist`;

@@ -9,7 +9,7 @@ use backend\models\Legelemail;
 /* @var $searchModel backend\models\search\WorkCreditsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Legeslative Contacts';
+$this->title = 'Legislative Contacts';
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['legelemail/index']];
 
 if (isset($_SESSION['pagesize'])) {

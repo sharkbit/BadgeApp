@@ -90,6 +90,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 				if($userArray) {
 					// user has privileges
 					$_SESSION['privilege']=json_decode($userArray->privilege);
+					$_SESSION['r_user']=$userArray->r_user;
 					foreach ($_SESSION['privilege'] as $priv) {
 						$chk_priv = Privileges::find()->where(['id'=>$priv])->one();
 						if (isset($_SESSION['timeout'])) {

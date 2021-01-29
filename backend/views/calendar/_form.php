@@ -182,38 +182,42 @@ sort($dirty);
 
 <div id="Div_recur" <?=$Div_recur?>>
 
-<div class="col-xs-12" style="background-color: silver"> <p> Reocurring Event:</p>  </div>
-    <div  class="col-xs-12 col-sm-8 col-md-6 col-lg-6 col-xl-4" style="background-color: silver; border:thin solid black;" >
+<div class="col-xs-12" style="background-color: silver"> <p> Recurring Event:</p>  </div>
+    <div  class="col-xs-12 col-sm-12 col-md-7 col-lg-6" style="background-color: silver; border:thin solid black;" >
         <div class="row">
 <!--####  Main Select####################### -->
-            <div class="col-xs-4 col-sm-3" style="padding:5px 15px;" >
+            <div class="col-xs-3 col-sm-3 col-md-2" style="padding:5px 5px;" >
                 <input type="radio" id="daily" name="pat_type" value="daily" <?=@$sel_d ?>> <label for="daily">daily</label> <br />
                 <input type="radio" id="weekly" name="pat_type" value="weekly" <?=@$sel_w ?>> <label for="weekly">weekly</label> <br />
                 <input type="radio" id="monthly" name="pat_type" value="monthly" <?=@$sel_m ?>> <label for="monthly">monthly</label> <br />
                 <input type="radio" id="yearly" name="pat_type" value="yearly" <?=@$sel_y ?>> <label for="yearly">yearly</label> <br />
             </div>
 <!--####  Daily ############################ -->
-            <div id="pattern_day" class="col-xs-8 col-sm-9" style="padding:5px 15px; display: none">
+            <div id="pattern_day" class="col-xs-9 col-sm-9 col-md-10" style="padding:5px 5px; display: none">
                 <input type="radio" id="pat_day_x" name="pat_day" value="d" > Every
                 <select id="pat_daily_n" name="pat_daily"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select> day(s) <br />
                 <input type="radio" id="pat_day_e" name="pat_day" value="wd"> Every weekday
             </div>
 <!--####  Weekly ########################### -->
-            <div id="pattern_week" class="col-xs-8 col-sm-9" style="padding:5px 15px; display: none">
-                Recure every <select id="pat_week_n" name="pat_week_n"> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+            <div id="pattern_week" class="col-xs-9 col-sm-9 col-md-10" style="padding:5px 5px; display: none">
+                Repeats every <select id="pat_week_n" name="pat_week_n"> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
                 </select> week(s) on: <br />
                 <div class="row">
-                <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_mon" name="pat_da_mon" value="mon" <?=$chkMon ?>> Monday</div>
-                <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_tue" name="pat_da_tue" value="tue" <?=$chkTue ?>> Tuesday</div>
-                <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_wed" name="pat_da_wed" value="wed" <?=$chkWed ?>> Wednesday</div>
-                <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_thu" name="pat_da_thu" value="thu" <?=$chkThu ?>> Thursday</div>
-                <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_fri" name="pat_da_fri" value="fri" <?=$chkFri ?>> Friday</div>
-                <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_sat" name="pat_da_sat" value="sat" <?=$chkSat ?>> Saturday</div>
-                <div class="col-xs-3 col-sm-3"><input type="checkbox" id="pat_da_sun" name="pat_da_sun" value="sun" <?=$chkSun ?>> Sunday</div>
+                <div class="col-xs-4 col-sm-3"><input type="checkbox" id="pat_da_mon" name="pat_da_mon" value="mon" <?=$chkMon ?>> Monday</div>
+                <div class="col-xs-4 col-sm-3"><input type="checkbox" id="pat_da_tue" name="pat_da_tue" value="tue" <?=$chkTue ?>> Tuesday</div>
+                <div class="col-xs-4 col-sm-3"><input type="checkbox" id="pat_da_wed" name="pat_da_wed" value="wed" <?=$chkWed ?>> Wednesday</div>
+                </div>
+				<div class="row">
+				<div class="col-xs-4 col-sm-3"><input type="checkbox" id="pat_da_thu" name="pat_da_thu" value="thu" <?=$chkThu ?>> Thursday</div>
+                <div class="col-xs-4 col-sm-3"><input type="checkbox" id="pat_da_fri" name="pat_da_fri" value="fri" <?=$chkFri ?>> Friday</div>
+                <div class="col-xs-4 col-sm-3"><input type="checkbox" id="pat_da_sat" name="pat_da_sat" value="sat" <?=$chkSat ?>> Saturday</div>
+                </div>
+				<div class="row">
+				<div class="col-xs-4 col-sm-3"><input type="checkbox" id="pat_da_sun" name="pat_da_sun" value="sun" <?=$chkSun ?>> Sunday</div>
                 </div>
             </div>
 <!--####  Monthly ########################## -->
-            <div id="pattern_month" class="col-xs-8 col-sm-9" style="padding:5px 15px; display: none">
+            <div id="pattern_month" class="col-xs-9 col-sm-9 col-md-10" style="padding:5px 5px; display: none">
                 <input type="radio" id="pat_mon_a" name="pat_mon_by" value="date" > Day
                 <select id="pat_mon_x" name="pat_mon_x">
                     <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option>
@@ -240,8 +244,8 @@ sort($dirty);
                 </select> month(s)
             </div>
 <!--####  Yearly ############################ -->
-            <div id="pattern_year" class="col-xs-8 col-sm-9" style="padding:5px 15px; display: none">
-                Recures Every <select id="pat_yr_n" name="pat_yr_n" ><option value="1">1</option><option disabled value="2">2</option></select> year(s) <br />
+            <div id="pattern_year" class="col-xs-9 col-sm-9 col-md-10" style="padding:5px 5px; display: none">
+                Repeats Every <select id="pat_yr_n" name="pat_yr_n" ><option value="1">1</option><option disabled value="2">2</option></select> year(s) <br />
                 <input type="radio" id="pat_yr_a" name="pat_yearly" value="date" /> On:
                 <select id="pat_yr_mon" name="pat_yr_mon">
                     <option value="1">January</option><option value="2">Febuary</option><option value="3">March</option>
@@ -273,34 +277,41 @@ sort($dirty);
             </div>
         </div>
     </div>
-
-    <div class="col-xs-6 col-sm-4 col-md-4 col-lg-2 col-xl-1" style="background-color: silver">
-        <?php   echo $form->field($model, 'recurrent_start_date')->widget(DatePicker::classname(), [
-            'options' => ['value' => (isset($model->recurrent_start_date) && $model->recurrent_start_date >0) ? $model->recurrent_start_date : '1 Jan'],
-            'pluginOptions' => [
-                'autoclose'=>true,
-                'format' => 'd M',
-                'todayHighlight' => true ] ] ).PHP_EOL; ?>
-    </div>
-    <div class="col-xs-6 col-sm-4 col-md-4 col-lg-2 col-xl-1" style="background-color: silver">
-        <?php   echo $form->field($model, 'recurrent_end_date')->widget(DatePicker::classname(), [
-                'options' => ['value' =>  (isset($model->recurrent_end_date) && $model->recurrent_end_date >0) ? $model->recurrent_end_date : '31 Dec'],
-                'pluginOptions' => [
-                    'autoclose'=>true,
-                    'format' => 'd M',
-                    'todayHighlight' => true ] ] ).PHP_EOL; ?>
-    </div>
-<?php echo $form->field($model, 'recur_every')->hiddeninput(['readonly'=>true,'maxlength'=>true])->label(false).PHP_EOL;
-	if (in_array(1,$_SESSION['privilege'])) { //(yii::$app->controller->hasPermission('calendar/delete')) { ?>
-    <div class="col-xs-6 col-sm-2 col-md-1" style="background-color: silver">
-        <?= $form->field($model, 'recurrent_calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
-    </div>
-<?php } else { echo $form->field($model, 'recurrent_calendar_id')->hiddeninput(['readonly'=>true,'maxlength'=>true])->label(false).PHP_EOL; }?>
-
-    <?= $form->field($model, 'recur_week_days')->hiddenInput()->label(false).PHP_EOL; ?>
-
-	<p>* <u>Year is always current Year for Recurrent Start & End Dates</u></p>
-	<p>** <u>Dates can wrap arround: 1 Sep - 31 Mar</u></p>
+	<div class="col-xs-12 col-sm-12 col-md-5 col-lg-6" style="background-color: silver;">
+		<div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" style="background-color: silver">
+			<?php   echo $form->field($model, 'recurrent_start_date')->widget(DatePicker::classname(), [
+				'options' => ['value' => (isset($model->recurrent_start_date) && $model->recurrent_start_date >0) ? $model->recurrent_start_date : '1 Jan'],
+				'size' => 'xs',
+				'pluginOptions' => [
+					'autoclose'=>true,
+					'format' => 'd M',
+					'todayHighlight' => true ] ] ).PHP_EOL; ?>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" style="background-color: silver">
+			<?php   echo $form->field($model, 'recurrent_end_date')->widget(DatePicker::classname(), [
+					'options' => ['value' =>  (isset($model->recurrent_end_date) && $model->recurrent_end_date >0) ? $model->recurrent_end_date : '31 Dec'],
+					'size' => 'xs', 
+					'pluginOptions' => [
+						'autoclose'=>true,
+						'format' => 'd M',
+						'todayHighlight' => true ] ] ).PHP_EOL; ?>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-3 col=lg-3" style="background-color: silver">
+			<?php echo $form->field($model, 'recur_every')->hiddeninput(['readonly'=>true,'maxlength'=>true])->label(false).PHP_EOL;
+			if (in_array(1,$_SESSION['privilege'])) { //(yii::$app->controller->hasPermission('calendar/delete')) { ?>
+				<?= $form->field($model, 'recurrent_calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
+			<?php } else { echo $form->field($model, 'recurrent_calendar_id')->hiddeninput(['readonly'=>true,'maxlength'=>true])->label(false).PHP_EOL; }?>
+		</div>
+		<?= $form->field($model, 'recur_week_days')->hiddenInput()->label(false).PHP_EOL; ?>
+		</div>
+		<div class="row">	
+			<div class="col-xs-12 col-sm-12">
+			<p>* <u>Year is always current for Recurrent Start/End Dates</u><br>
+			   ** <u>Dates can wrap arround: 1 Sep - 31 Mar</u></p>
+			</div>
+		</div>
+	</div>
 </div>
 
     <div class="col-xs-4 col-sm-1" style="background-color: pink<?php if(((isset($model->conflict)) && ($model->conflict==0)) || ($model->isNewRecord)) {echo '; display:none';} ?>" >
@@ -323,19 +334,23 @@ sort($dirty);
 	} ?>
 
 <div class="row"><div class="col-xs-12" id="inpatt_msg"></div></div>
+<div class="row"><div class="col-xs-12" id="error_msg"></div>
 <div class="row">
-    <div class="col-xs-8" id="error_msg">
-
-    </div>
-    <div class="col-xs-4 form-group ">
+	<div class="col-xs-0 col-md-6" id="error_msg"></div>
+	<div class="col-xs-6 col-md-3 form-group" style="text-align: right;">
         <div id="searchng_cal_animation" style="display: none">
             <img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
         </div>
         <?= Html::Button('Check Availability', ['class' => 'btn btn-primary','id'=>'cal_check_avail', 'onclick' => 'OpenRange();' ]).PHP_EOL ?>
         <?= Html::submitButton($model->isNewRecord ? 'Create':'Update', ['class' => 'btn btn-secondary ','id'=>'cal_update_item']).PHP_EOL ?>
         <?php if (($isMaster) && (!$model->isNewRecord) && (yii::$app->controller->hasPermission('calendar/republish'))){ ?>
-        <?= Html::submitButton('RePublish Upcomming', ['class' => 'btn btn-info','id'=>'re_pub','name' => 'republish','value'=>1 ]).PHP_EOL ?>
-        <?php } ?>
+	</div>
+    <div class="col-xs-6 col-md-3" style="background-color:whitesmoke; padding:8px ">
+		<center>
+		RePublishing is ONLY needed if you modify the Recurring pattern.<br>
+		<?= Html::submitButton('RePublish Upcomming', ['class' => 'btn btn-info','id'=>'re_pub','name' => 'republish','value'=>1 ]).PHP_EOL ?>
+		</center>
+		<?php } ?>
     </div>
 </div>
 

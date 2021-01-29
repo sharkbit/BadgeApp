@@ -81,7 +81,7 @@ class AgcCal extends \yii\db\ActiveRecord {
 		if ($id) {
 			// If event is in next year
 			$recTest = AgcCal::find()->where(['calendar_id'=>$id])->one();
-			if (strtotime($recTest->event_date) >strtotime(date('Y')."-12-31 23:59:00")) { return true; } else { return false; }
+			if (strtotime($recTest->event_date) > strtotime(date('Y')."-12-31 23:59:00")) { return true; } else { return false; }
 		} else {
 			// If allowed to Show republished field?
 			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00') && strtotime(yii::$app->controller->getNowTime()) < strtotime(date('Y').'-10-15 00:00:00')) {
@@ -94,7 +94,7 @@ class AgcCal extends \yii\db\ActiveRecord {
 					" calendar_id=recurrent_calendar_id AND recurrent_calendar_id >0 AND deleted=0;";
 				$sum =  Yii::$app->db->createCommand($sql)->queryScalar();
 				if ($sum >0) { return false; } else { return true; }
-			} else { return false; }
+			} else { return true; }
 		}
 	}
 }

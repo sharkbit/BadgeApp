@@ -366,7 +366,7 @@ if($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:338', "** $r
 							$msg='<b style="color:green;">'.$fas->name.' has space left (' .$HeavyCheck['msg'] .' Lanes free)</b>';
 						}
 					} else {
-if($tst) { yii::$app->controller->createCalLog(false, 'trex_facility:364', 'has lanes!'); }
+if($tst) { yii::$app->controller->createCalLog(false, 'trex_facility:369', 'has lanes!'); }
 						if(isset($found)) {
 							$msg='<b style="color:green;">'.$fas->name.' has space left, (' .($Range_available_lanes-$lanes_used-$lanes) .' Lanes free)</b>';
 						} else {
@@ -379,12 +379,12 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_facility:364', 'has 
 
 			$returnMsg=['status'=>($isAval)?'success':'error','msg'=>rtrim($full_msg,", "),'lu'=>$lanes_used, 'data'=>(isset($found))?$found:false];
 		} else {
-if($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:362', 'Nothnig Found'); }
-			$returnMsg=['status'=>'success','msg'=>'<b style="color:green;">Facility is Available</b>','ln'=>365];
+if($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:382', 'Nothnig Found'); }
+			$returnMsg=['status'=>'success','msg'=>'<b style="color:green;">Facility is Available</b>','ln'=>383];
 		}
 
 		$returnMsg = array_merge($returnMsg,$inPattern);
-if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:367 isAval', var_export($returnMsg,true));}
+if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval', var_export($returnMsg,true));}
 			
 		if (Yii::$app->request->isAjax) {
 			return json_encode($returnMsg); } 
@@ -458,7 +458,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:367 isAval'
 						'changed'=>'Republished by '.$_SESSION['user'],
 						'data'=>($force_order)? 'Forcing Priority':'Normal Priority'];
 					$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
-					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Futuer Events");
+					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Future Events");
 					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days);
 
 					$model = $this->createRecCalEvent($model,$myEventDates,$force_order,false,$tst);
@@ -693,7 +693,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:367 isAval'
 	public function getEvents($eStart, $eEnd, $ePat, $eco=false) {
 		$whatYear= intval(date('Y'))+1;
 
-		if (strtotime($eStart) > strtotime($eEnd)) {
+		if (strtotime($eStart) > strtotime($eEnd)) {  //start date before the end date [Nov thru Feb]
 			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) {
 				if($eco) { echo "Start B";}
 				$myEventDatesA = $this->getEventDates(date('Y').'-01-01',$eEnd,$ePat,date('Y'),$eco);
@@ -707,17 +707,18 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:367 isAval'
 				$myEventDatesB = $this->getEventDates($eStart,date('Y').'-12-31',$ePat,$whatYear,$eco);
 				$datesFound = array_merge($myEventDatesA,$myEventDatesB);
 			}
-		} else {
-			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) {
+		} else {  // normal date run [Feb thru June]
+			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) { // rollover
 				if($eco) { echo "Start D";}
 				$myEventDatesA = $this->getEventDates($eStart,$eEnd,$ePat,date('Y'),$eco);
 				$myEventDatesB = $this->getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco);
 				$datesFound = array_merge($myEventDatesA,$myEventDatesB);
 			} else {
 				if($eco) { echo "Start C";}
-				$datesFound = $this->getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco);
+				$datesFound = $this->getEventDates($eStart,$eEnd,$ePat,date('Y'),$eco);
 			}
 		}
+		if($eco) {yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:722', var_export($datesFound,true));}
 		return $datesFound;
 	}
 
@@ -734,7 +735,7 @@ if($eco) { echo "<hr />GetEventDates: Start: $eStart, End: $eEnd, Pat: $ePat, yr
 if($eco) {
 	echo "Yr: $whatYear <br> Start: ". date('Y-m-d',$Date_Start)." = $Date_Start,<br> Stop: ".date('Y-m-d',$Date_Stop)." = $Date_Stop, <br>Direction: $dayCnt. <hr> Pattern: $ePat <br />";
 	print_r( $myPat);
-	yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:671', var_export($myPat,true));
+	yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:738', var_export($myPat,true));
 	echo " <hr> <br>"; }
 
 		if (isset($myPat->daily)) {
@@ -797,17 +798,17 @@ if($eco) { echo  "s: ".date('m',$Date_Start). ' e:'. (date('m',$Date_Stop)+1).'<
 					$myMonth = strtotime($i."/".$myPat->day."/$whatYear");
 				}
 				if (($myMonth >= $Date_Start ) && ($myMonth <= $Date_Stop)  && ($skip_now==false)) {
-if($eco) { echo "737: ".date("D, d-M-Y", $myMonth)." >= ".$today." <br>"; }
+if($eco) { echo "801: ".date("D, d-M-Y", $myMonth)." >= ".$today." <br>"; }
 					if ($myMonth >= strtotime($today)) {
 if($eco) { echo date("D, d-M-Y", $myMonth).":<br>"; }
 						array_push($myEventDates,date('Y-m-d',$myMonth));
 					} else {
-if($eco) { echo "742: date passed,<br />";}
+if($eco) { echo "806: date passed,<br />";}
 					}
 				} elseif ($skip_now==true) {
 if($eco) { echo "Skipping : ".date("D, d-M-Y", $myMonth).":<br>"; }
 				} else {
-if($eco) { echo "else 583<br>"; }
+if($eco) { echo "else 811<br>"; }
 				}
 				$cnt++;
 			}
@@ -823,7 +824,7 @@ if($eco) { echo "yearly <br/>"; }
 					$myYear = $myYear-(60*60*24*7); }
 				$myYear = date("Y-m-d",$myYear);
 			}
-if($eco) { echo "765: $myYear ".strtotime($myYear)." >= ".strtotime($today)." $today <br />";}
+if($eco) { echo "827: $myYear ".strtotime($myYear)." >= ".strtotime($today)." $today <br />";}
 			if (strtotime($myYear) >= strtotime($today)) {
 if($eco) { echo "using $myYear<br/>"; }
 				array_push($myEventDates,$myYear);

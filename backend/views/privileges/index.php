@@ -40,6 +40,11 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
                     'privilege',
                     'priv_sort',
                     'timeout',
+					[
+						'attribute'=>'restricted',
+						'value' => function($model, $attribute) { if($model->restricted==0) {return 'No';} else { return 'Yes';} },
+                           
+					],
                     [
                         'header'=>'Action',
                         'class' => 'yii\grid\ActionColumn',

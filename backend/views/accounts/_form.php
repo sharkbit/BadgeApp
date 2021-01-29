@@ -25,10 +25,15 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 	<?= $form->field($model, 'badge_number')->textInput(['maxlength' => true]) ?>
 
 <?php if(array_intersect([1,2],$_SESSION['privilege'])) {
-		echo $form->field($model, 'privilege')->dropDownList($model->getPrivList(), ['value'=>json_decode($model->privilege),'id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
+		echo $form->field($model, 'privilege')->dropDownList($model->getPrivList(json_decode($model->privilege)), ['value'=>json_decode($model->privilege),'id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
 	} else {
 		echo "<b>Privilege: </b> ".$model->getPrivilege_Names($model->privilege)."\n<br/><br/>";
 	} ?>
+
+	<div id="remote_name" <?php if((is_null($model->r_user)) || (!in_array(14,json_decode($model->privilege)))) {?> style="display: none;" <?php } ?>>
+	<?= $form->field($model, 'r_user')->textInput(['maxlength' => true]) ?>
+	</div>
+
 	<div id="need_cal" <?php if(!$need_cal) {?> style="display: none;" <?php } ?>>
 	<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 	</div>
@@ -63,11 +68,22 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 	}
 	
 	if ((selectedText.indexOf("CIO")>0) || (selectedText.indexOf("Calendar")>0)) {
-		if (selectedText.indexOf("CIO")>0) { $("#cio_hide").show(); console.log('hii');}
+		if (selectedText.indexOf("CIO")>0) { $("#cio_hide").show(); }
 		$("#need_cal").show(); $("#dont_need_cal").hide();
 	} else {
 		$("#cio_hide").hide();
 		$("#need_cal").hide();$ ("#dont_need_cal").show();
+	}
+
+	if (selectedText.indexOf("Remote Access")>0) {
+		$("#remote_name").show();
+		var rem_usr = document.getElementById("user-r_user").value;
+		console.log(rem_usr);
+		if ((!rem_usr) || (rem_usr=='')) {
+			document.getElementById("user-r_user").value = document.getElementById("user-badge_number").value
+		}
+	} else {
+		$("#remote_name").hide();
 	}
   });
 

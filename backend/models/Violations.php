@@ -50,10 +50,12 @@ class Violations extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
 		return [
-            'badge_reporter' => 'RSO Badge',
-            'badge_involved' => 'Member Badge',
-			'badge_witness' => 'Witness Badge',
+            'badge_reporter' => 'RSO Badge#',
+			'reporter_name' => 'RSO Name',
+            'badge_involved' => 'Badge#',
+			'badge_witness' => 'Witness Badge#',
             'vi_date' => 'Date of Incident',
+			'involved_name' => 'Badge Holder Name',
             'vi_type' => 'Class',
 			'vi_override' => 'Class 4 Override',
 			'vi_loc' => 'Location',
