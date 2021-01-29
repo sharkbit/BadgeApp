@@ -232,6 +232,7 @@ else {
 	// Only Allow AGC Web Servers Below
 	if((strpos(" ".$_SERVER['REMOTE_ADDR'],"96.234.172.16")) ||
 		(strpos(" ".$_SERVER['REMOTE_ADDR'],"72.170.251.9")) ||
+	   	(strpos(" ".$_SERVER['REMOTE_ADDR'],"71.127.151.82")) ||
 		(strpos(" ".$_SERVER['REMOTE_ADDR'],"2001:470:5:a64"))) {
 
 	$mysqli = new mysqli('localhost',DATABASE_USERNAME,DATABASE_PASSWORD,DATABASE_NAME);
