@@ -426,7 +426,6 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 		return ['status'=>'Open','msg'=> ($rng_limit-$max_used).' Lanes'];
 	}
 	
-
 	public function actionRecur() {
 		$searchModel = new AgcCalSearch();
 		$searchModel->recur_every = true;
@@ -483,7 +482,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 		return $this->redirect(['index']);
 	}
 
-    public function actionUpdate($id=1) {
+    public function actionUpdate($id=1,$hideRepub=null) {
 		$model = $this->findModel($id);
 		if (!$model) { return $this->redirect(['index']); }
 
@@ -555,7 +554,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 				Yii::$app->getSession()->setFlash('error', 'Something Went Wrong');
 			}
 			yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:504', 'updated');
-			return $this->redirect(['update','id' => $id]);
+			return $this->redirect(['update','id' => $id,'hideRepub'=>"no"]);
 
 
         } else {

@@ -107,7 +107,9 @@ foreach($search_all as $word_search) {
 	}
 }
 sort($dirty);
- ?>
+
+if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub=false; } else { $hideRepub=true; }
+?>
 
  <input type='hidden' id='bad_words' value='<?=htmlspecialchars(json_encode($dirty),ENT_QUOTES)?>' />
  <input type="hidden" id="Req_Lanes" name="Req_Lanes" value='<?=json_encode($Req_Lanes )?>' />
@@ -345,7 +347,7 @@ sort($dirty);
         <?= Html::submitButton($model->isNewRecord ? 'Create':'Update', ['class' => 'btn btn-secondary ','id'=>'cal_update_item']).PHP_EOL ?>
         <?php if (($isMaster) && (!$model->isNewRecord) && (yii::$app->controller->hasPermission('calendar/republish'))){ ?>
 	</div>
-    <div class="col-xs-6 col-md-3" style="background-color:whitesmoke; padding:8px ">
+    <div class="col-xs-6 col-md-3" id="div_hideRepub" style="background-color:whitesmoke; padding:8px; <?php if($hideRepub) {echo 'display:none;';} ?>">
 		<center>
 		RePublishing is ONLY needed if you modify the Recurring pattern.<br>
 		<?= Html::submitButton('RePublish Upcomming', ['class' => 'btn btn-info','id'=>'re_pub','name' => 'republish','value'=>1 ]).PHP_EOL ?>
@@ -578,6 +580,7 @@ sort($dirty);
 
     function OpenRange() {
         console.log('Run: OpenRange 576');
+		$("#div_hideRepub").hide();
 		$("#error_msg").html('');
 
 		var is_dirty=false; var dirty_word='';

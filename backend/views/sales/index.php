@@ -386,10 +386,18 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			document.getElementById("sales-badge_number").readOnly  = true;
 			document.getElementById("sales-first_name").readOnly  = false;
 			document.getElementById("sales-last_name").readOnly  = false;
+			var elementExists = document.getElementById("v_First");
+			if (typeof(elementExists) != 'undefined' && elementExists != null) {
 			document.getElementById("sales-first_name").value  = document.getElementById("v_First").value;
 			document.getElementById("sales-last_name").value  = document.getElementById("v_Last").value;
 			document.getElementById("sales-city").value  = 		document.getElementById("v_City").value;
 			document.getElementById("sales-state").value  = 	document.getElementById("v_State").value;
+			} else {
+				document.getElementById("sales-first_name").value = '';
+				document.getElementById("sales-last_name").value = '';
+				document.getElementById("sales-city").value = '';
+				document.getElementById("sales-state").value = '';
+			}
 			document.getElementById("sales-zip").value  = '';
 			document.getElementById("sales-address").value  = '';
 			document.getElementById("sales-email").value  = '';
@@ -404,9 +412,12 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			document.getElementById("sales-zip").value  = '';
 			document.getElementById("sales-address").value  = '';
 			document.getElementById("sales-email").value  = '';
-			sales_badge=document.getElementById("m_bn").value;
-			$("#sales-badge_number").val(sales_badge);
-			getReporterName(sales_badge);
+			var elementExists = document.getElementById("m_bn");
+			if (typeof(elementExists) != 'undefined' && elementExists != null) {
+			    sales_badge=document.getElementById("m_bn").value
+			    $("#sales-badge_number").val(sales_badge);
+			    getReporterName(sales_badge);
+		    }
 		}
     });
 
