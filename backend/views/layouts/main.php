@@ -555,6 +555,11 @@ app.controller("CreateBadgeController", function($scope) {
 						$("#badges-item_sku").val(responseData.item_sku);
                         $("#badges-amt_due-disp").val(responseData.badgeSpecialFee);
                         $("#badges-amt_due").val(responseData.badgeSpecialFee);
+						if (parseInt(responseData.badgeSpecialFee) > 0) {
+							 $("#div_friend_block").show(0);
+						} else {
+							 $("#div_friend_block").hide(0);
+						}
                         console.log(responseData);
                         doCalcNew();
                     },
@@ -563,7 +568,7 @@ app.controller("CreateBadgeController", function($scope) {
                     },
                 });
                 run_waitMe('hide');
-                fillBarcode()
+                fillBarcode();
             }
         });
     });
@@ -576,15 +581,16 @@ app.controller("CreateBadgeController", function($scope) {
 
     $("#badges-FriendBadge").change(function() {
         var friendBadge = $("#badges-FriendBadge").val();
-        if(friendBadge!=null || friendBadge !=0) {
+        if(friendBadge) {
             $("p#badges-FrendStatus").html("Searching for "+friendBadge);
             var BadgeFee = parseInt($("#badges-badge_fee").val());
             var badgeYear = $("#badges-expires").val();
-
+			var friendurl = '<?=yii::$app->params['rootUrl']?>/badges/api-generate-renaval-fee?friend_badge='+friendBadge+'&BadgeFee='+BadgeFee+'&badgeYear='+badgeYear;
+			console.log(friendurl);
             jQuery.ajax({
                 method: 'POST',
                 dataType:'json',
-                url: '<?=yii::$app->params['rootUrl']?>/badges/api-generate-renaval-fee?friend_badge='+friendBadge+'&BadgeFee='+BadgeFee+'&badgeYear='+badgeYear,
+                url: friendurl,
                 crossDomain: false,
                 success: function(responseData, textStatus, jqXHR) {
                     $scope.fee = responseData;
@@ -603,7 +609,7 @@ app.controller("CreateBadgeController", function($scope) {
                     $("p#badges-FrendStatus").html("Using "+responseData.redeemableCredit+" Credits from "+friendBadge);
                    // console.log(responseData);
                     doCalcNew();
-                    console.log('line 581');
+                    console.log('line 612');
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     $("p#badges-FrendStatus").html("What happened?");
