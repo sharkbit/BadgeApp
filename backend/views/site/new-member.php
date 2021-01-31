@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Badges */
 /* @var $form yii\widgets\ActiveForm */
-
+$hideAck=true;
 $MyYr = (int) substr(yii::$app->controller->getNowTime(),0,4) -8;
 $YearList = '';
 for ($x = 1; $x <= 90; $x++) {
@@ -29,7 +29,7 @@ if ($DateChk <= $nowDate) {
 } else {
 	$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
 }
-$this->title = 'Regester New Member (Self-service)';
+$this->title = 'Register New Member (Self-service)';
 //$this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -37,36 +37,38 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h2><?= Html::encode($this->title) ?></h2>
 
-<div class="container row" id="Ack">
+<div class="container row" id="Ack" style="<?php if($hideAck) {echo 'display:none;';} ?>">
 <style>
-#Ack td {
-    padding: 5;
-	margin: 5;
-    font-size: 18px;
+#AckTbl table, td {
+		width: 100%;
+		background-color: #f1f1c1;
+		border: 1px solid black;
+
+    padding: 5px;
+	margin: 5px;
+    font-size: 16px;
+	text-align:left;
 }
 </style>
 	<br><hr>
 	<h2>Please Read and Agree to our Terms of Service:</h2>
-
-	<table border=1>
-	<tr><td> <input type=checkbox id=1> - </td><td>1. You agrees to AGC <a href="https://agcrange.org/waiver" target="waver">Waiver of Liability</a>.</td><tr>
-	<tr><td> <input type=checkbox id=2> - </td><td>2. Assume every gun is always loaded.</td><tr>
-	<tr><td> <input type=checkbox id=3> - </td><td>3. Never allow your firearm to point in any direction other than downrange (toward your target) or straight up.</td><tr>
-	<tr><td> <input type=checkbox id=4> - </td><td>4. Keep your finger off the trigger until your sights are on the target and you are ready to shoot.</td><tr>
-	<tr><td> <input type=checkbox id=5> - </td><td>5. Be sure of your target and what is beyond it.</td><tr>
-	<tr><td> <input type=checkbox id=6> - </td><td>6. When “CEASE FIRE” is called, stop shooting immediately and allow the Badge Holder to make the firearm safe.</td><tr>
-	<tr><td> <input type=checkbox id=7> - </td><td>7. During a Cease Fire, you are not to have any contact with any firearm. Step off the concrete pad and remain off. You can go with the Badge Holder downrange to change your targets. When you return from downrange, you shall remain off of the concrete pad.</td><tr>
-	<tr><td> <input type=checkbox id=8> - </td><td>8. Your Badge Holder will be held accountable for any range rules you break. You are to be “closely supervised and monitored” by the Badge Holder who signed you in.</td><tr>
-	<tr><td> <input type=checkbox id=9> - </td><td>9. If your Badge Holder needs to leave the firing line, make sure the firearm is made safe (unloaded, ECI inserted) step off the concrete pad and do not handle any firearms until your Badge Holder returns.</td><tr>
+	<table id="AckTbl">
+		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=1></td><td>1. You agree to the AGC <a href="https://agcrange.org/waiver" target="waver">Waiver of Liability</a>.</td></tr>
+		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=2></td><td>2. You will assume every gun is always loaded.</td></tr>
+		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=3></td><td>3. You will never allow your firearm to point in any direction other than downrange (toward your target) or straight up.</td></tr>
+		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=4></td><td>4. You will keep your finger off the trigger until your sights are on the target and you are ready to shoot.</td></tr>
+		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=5></td><td>6. When “CEASE FIRE” is called, you will stop shooting immediately and make the firearm safe.</td></tr>
+		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=6></td><td>7. During a Cease Fire, you will not have any contact with any firearm. </td><tr>
+		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=7></td><td>8. You will be held accountable for any range rules you break.</td></tr>
+		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=8></td><td>9. You have completed a Range Safety Orientation and possess a signed Orientation Affidavit.</td></tr>
+		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=9></td><td>9. You have joined an AGC member club and possess a club membership ID.</td></tr>
 	</table>
-	<h2>Please ask your Guest to acknowledge the above statements and that they understand each statement. If your guest is a minor, you can acknowledge for them.</h2>
-<br><hr><br>
-^ Push "Agree" this this disapears ^
-<br> <p> </p>
+	<br>
+	<?= Html::Button('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'new-agree','class' => 'btn btn-primary']), $hideAcK=false, PHP_EOL ?>
+	
 </div>
 
-
-<div class="badges-form" >
+<div class="badges-form" style="<?php if($hideAck) {echo 'display:none;';} ?>">
 <?php $form = ActiveForm::begin(['id'=>'NewMembers']); ?>
 <div class="row">
 
