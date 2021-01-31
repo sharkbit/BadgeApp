@@ -193,6 +193,7 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'discounts')->widget(MaskMoney::classname(), [
                         'pluginOptions' => ['allowNegative' => false]]); ?>
                 </div>
+				<div id="div_friend_block" style="display:none" >
                 <div class="col-xs-6 col-sm-12" >
 					<?php echo Html::checkbox('badges-FriendHelp' ,'',['id'=>'badges-FriendHelp']), PHP_EOL; ?> Friend's help?
 					<div class="help-block"></div>
@@ -206,6 +207,7 @@ $confParams  = Params::findOne('1');
 					<?php echo Html::textinput("FriendBadge" ,'',['class'=>"form-control",'id'=>'badges-FriendBadge']), PHP_EOL; ?>
 					<p id="badges-FrendStatus"> </p>
 					<div class="help-block" ></div>
+				</div>
 				</div>
 				<div class="col-xs-6 col-sm-12">
 					<p class="pull-right"><a href="" class="badge_store_div" > Extras </a></p>

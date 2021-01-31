@@ -566,8 +566,40 @@ app.controller("CreateBadgeController", function($scope) {
             }
             document.getElementById('badges-expires').readOnly = true;
             fillBarcode();
-
 			get_fees(memTypeId);
+            if (memTypeId!='') {
+                run_waitMe('show');
+                var responseData;
+                jQuery.ajax({
+                    method: 'GET',
+                    url: '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?from=n&id='+memTypeId,
+                    crossDomain: false,
+                    success: function(responseData, textStatus, jqXHR) {
+                        responseData = JSON.parse(responseData);
+                        $scope.fee = responseData;
+                        $("#badges-badge_fee").val(parseFloat(Math.round(responseData.badgeFee * 100) / 100).toFixed(2));
+
+                        $("#badges-discounts-disp").val(responseData.discount);
+                        $("#badges-discounts").val(responseData.discount);
+						$("#badges-item_name").val(responseData.item_name);
+						$("#badges-item_sku").val(responseData.item_sku);
+                        $("#badges-amt_due-disp").val(responseData.badgeSpecialFee);
+                        $("#badges-amt_due").val(responseData.badgeSpecialFee);
+						if (parseInt(responseData.badgeSpecialFee) > 0) {
+							 $("#div_friend_block").show(0);
+						} else {
+							 $("#div_friend_block").hide(0);
+						}
+                        console.log(responseData);
+                        doCalcNew();
+                    },
+                    error: function (responseData, textStatus, errorThrown) {
+                        console.log(responseData);
+                    },
+                });
+                run_waitMe('hide');
+                fillBarcode();
+            }
         });
     });
 
@@ -579,15 +611,16 @@ app.controller("CreateBadgeController", function($scope) {
 
     $("#badges-FriendBadge").change(function() {
         var friendBadge = $("#badges-FriendBadge").val();
-        if(friendBadge!=null || friendBadge !=0) {
+        if(friendBadge) {
             $("p#badges-FrendStatus").html("Searching for "+friendBadge);
             var BadgeFee = parseInt($("#badges-badge_fee").val());
             var badgeYear = $("#badges-expires").val();
-
+			var friendurl = '<?=yii::$app->params['rootUrl']?>/badges/api-generate-renaval-fee?friend_badge='+friendBadge+'&BadgeFee='+BadgeFee+'&badgeYear='+badgeYear;
+			console.log(friendurl);
             jQuery.ajax({
                 method: 'POST',
                 dataType:'json',
-                url: '<?=yii::$app->params['rootUrl']?>/badges/api-generate-renaval-fee?friend_badge='+friendBadge+'&BadgeFee='+BadgeFee+'&badgeYear='+badgeYear,
+                url: friendurl,
                 crossDomain: false,
                 success: function(responseData, textStatus, jqXHR) {
                     console.log(responseData);
@@ -605,7 +638,7 @@ app.controller("CreateBadgeController", function($scope) {
                     $("p#badges-FrendStatus").html("Using "+responseData.redeemableCredit+" Credits from "+friendBadge);
                    // console.log(responseData);
                     doCalcNew();
-                    console.log('line 581');
+                    console.log('line 612');
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     $("p#badges-FrendStatus").html("What happened?");

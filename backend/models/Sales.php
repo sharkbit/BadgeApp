@@ -40,7 +40,7 @@ class Sales extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['badge_number', 'total','payment_method','first_name','last_name'], 'required'],
+            [['badge_number', 'total','payment_method','first_name','last_name','address','city','state','zip'], 'required'],
             [['first_name','last_name','address','city','state','email','cart','payment_method','cc_num','cc_exp_mo','cc_exp_yr','cc_x_id'], 'string'],
 			[['badge_number','zip'], 'integer'],
             [['total','cc_cvc'], 'number'],
