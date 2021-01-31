@@ -226,7 +226,8 @@ class SiteController extends AdminController {
 	public function actionNewMember() {
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
 		$model = New Badges;
-
+		if ($model->load(Yii::$app->request->post())) {
+		echo 'Hello';exit;}
 		return $this->render('new-member',[
 			'model'=> $model
 		]);

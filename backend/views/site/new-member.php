@@ -218,10 +218,9 @@ table, td {
                     <?= $form->field($model, 'badge_fee')->textInput(['readOnly'=>true,'class'=>'form-control Money']); ?>
                 </div>
 				<div class="col-xs-6 col-sm-12">
-                <?= $form->field($model, 'discounts')->widget(MaskMoney::classname(), [
-                        'pluginOptions' => ['allowNegative' => false]]); ?>
+                <?= $form->field($model, 'discounts')->textInput(['readOnly'=>true,'class'=>'form-control Money']); ?>
                 </div>
-                <div class="col-xs-6 col-sm-12" >
+ 				<div class="col-xs-6 col-sm-12" >
 					<?php echo Html::checkbox('badges-FriendHelp' ,'',['id'=>'badges-FriendHelp']), PHP_EOL; ?> Friend's help?
 					<div class="help-block"></div>
 				</div>
@@ -244,17 +243,9 @@ table, td {
                         'pluginOptions' => ['allowNegative' => false,]]); ?>
                 </div>
                 <div class="col-xs-12 col-sm-12">
-      <?php if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
-				if($confParams->qb_env == 'prod') {
-					$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card','creditnow'=>'Credit Card Now!','online'=>'Online','other'=>'Other'];
-				} else { $myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card','creditnow'=>'TEST CC (Do not use)','online'=>'Online','other'=>'Other']; }
-
-			} else {
-				$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card','online'=>'Online','other'=>'Other'];
-			}
+      <?php $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online'];
 			echo $form->field($model, 'payment_method')->dropDownList($myList,['prompt'=>'select']).PHP_EOL; ?>
                 </div>
-
 				<div id="cc_form_div" style="display:none;">
 					<div class="col-xs-12 col-sm-12">
 						<?= $form->field($model, 'cc_num')->textInput(['maxlength'=>true]) ?>
@@ -279,7 +270,7 @@ table, td {
 					</div>
 				</div>
 				<div class="col-xs-12 col-sm-12">
-                    <?= $form->field($model, 'sticker')->textInput(['maxlength'=>true]) ?>
+                    <?= $form->field($model, 'sticker')->hiddenInput(['value'=>"self-register", 'maxlength'=>true])->label(false) ?>
                 </div>
                 <div class="clearfix"></div>
             </div>
