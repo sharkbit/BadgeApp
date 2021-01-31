@@ -558,9 +558,9 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		
 		var testId=false;
 		if(selectedIndex.text.toLowerCase().includes('steel')) { //like...
-			testId=3;
-		}else if(selectedIndex.text.toLowerCase().includes('holster')) {
 			testId=1;
+		}else if(selectedIndex.text.toLowerCase().includes('holster')) {
+			testId=2;
 		} else {
 			$("#cert_search").hide();
 			$("#cert_search_results").html("No Test Data");
@@ -582,7 +582,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 						var entry ="";
 						var myData ='<table border-width=1><tr><th>Test Date</th><th>Score</th><th>Badge</th></tr>';
 						obj.data.forEach(function(entry) {
-							var d = new Date(entry.testdate*1000);
+							var d = new Date(entry.testdate);
 							myData += "<tr><td>"+ d.toLocaleString('en-US') + "</td><td>" +
 										entry.score + "</td><td>" +
 										entry.badge+"</td></tr>\n";
