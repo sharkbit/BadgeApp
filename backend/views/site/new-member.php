@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Badges */
 /* @var $form yii\widgets\ActiveForm */
-$hideAck=true;
+
 $MyYr = (int) substr(yii::$app->controller->getNowTime(),0,4) -8;
 $YearList = '';
 for ($x = 1; $x <= 90; $x++) {
@@ -36,39 +36,64 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="Member-create" ng-controller="CreateBadgeController">
 
     <h2><?= Html::encode($this->title) ?></h2>
-
-<div class="container row" id="Ack" style="<?php if($hideAck) {echo 'display:none;';} ?>">
+<div class="container row" id="div_Ack" >
 <style>
-#AckTbl table, td {
-		width: 100%;
-		background-color: #f1f1c1;
-		border: 1px solid black;
-
-    padding: 5px;
+#AckTbl {
+width: 100%;
+background-color: #f1f1c1;
+}
+table, td {
+	border: 1px solid black;
+	padding: 5px;
 	margin: 5px;
-    font-size: 16px;
+	font-size: 16px;
 	text-align:left;
 }
 </style>
 	<br><hr>
 	<h2>Please Read and Agree to our Terms of Service:</h2>
 	<table id="AckTbl">
-		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=1></td><td>1. You agree to the AGC <a href="https://agcrange.org/waiver" target="waver">Waiver of Liability</a>.</td></tr>
-		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=2></td><td>2. You will assume every gun is always loaded.</td></tr>
-		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=3></td><td>3. You will never allow your firearm to point in any direction other than downrange (toward your target) or straight up.</td></tr>
-		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=4></td><td>4. You will keep your finger off the trigger until your sights are on the target and you are ready to shoot.</td></tr>
-		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=5></td><td>6. When “CEASE FIRE” is called, you will stop shooting immediately and make the firearm safe.</td></tr>
-		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=6></td><td>7. During a Cease Fire, you will not have any contact with any firearm. </td><tr>
-		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=7></td><td>8. You will be held accountable for any range rules you break.</td></tr>
-		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=8></td><td>9. You have completed a Range Safety Orientation and possess a signed Orientation Affidavit.</td></tr>
-		<tr><td style="width:4%; text-align:center"> <input type=checkbox id=9></td><td>9. You have joined an AGC member club and possess a club membership ID.</td></tr>
+		<tr>
+			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
+			<td>1. You agree to the AGC <a href="<?=yii::$app->params['wp_site']?>/waiver" target="waver">Waiver of Liability</a>.</td>
+		</tr>
+		<tr>
+			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
+			<td>2. You will assume every gun is always loaded.</td>
+		</tr>
+		<tr>
+			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
+			<td>3. You will never allow your firearm to point in any direction other than downrange (toward your target) or straight up.</td>
+		</tr>
+		<tr>
+			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
+			<td>4. You will keep your finger off the trigger until your sights are on the target and you are ready to shoot.</td>
+			</tr>
+		<tr>
+			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
+			<td>5. When “CEASE FIRE” is called, you will stop shooting immediately and make the firearm safe.</td>
+		</tr>
+		<tr>
+			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
+			<td>6. During a Cease Fire, you will not have any contact with any firearm. </td>
+		<tr>
+		<tr>
+			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
+			<td>7. You will be held accountable for any range rules you break.</td>
+		</tr>
+		<tr>
+			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
+			<td>8. You have completed a Range Safety Orientation and possess a signed Orientation Affidavit.</td>
+		</tr>
+		<tr>
+			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
+			<td>9. You have joined an AGC member club and possess a club membership ID.</td>
+		</tr>
 	</table>
 	<br>
-	<?= Html::Button('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'new-agree','class' => 'btn btn-primary']), $hideAcK=false, PHP_EOL ?>
-	
+	<?= Html::Button('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'new-agree', 'class' => 'btn btn-primary', 'onclick' => 'AckAgree();']), PHP_EOL ?> 
 </div>
-
-<div class="badges-form" style="<?php if($hideAck) {echo 'display:none;';} ?>">
+<div class="badges-form" id="div_FormBody" style="display:none;">
 <?php $form = ActiveForm::begin(['id'=>'NewMembers']); ?>
 <div class="row">
 
@@ -265,8 +290,26 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 </div>
 <script>
+
+document.getElementById("new-agree").disabled=true;
+
+	function AckAgree() {
+		$("#div_Ack").hide();
+		$("#div_FormBody").show();
+	}
+	
+	function ChkAgreed() {
+		b=0;
+		checkboxes = document.getElementsByName('agreed');
+		for(var i=0, n=checkboxes.length;i<n;i++) {
+			if (checkboxes[i].checked == true) { b++;}
+		}
+		if(b==9) {document.getElementById("new-agree").disabled=false;} 
+		else {document.getElementById("new-agree").disabled=true;}
+	}
+	
 	function CheckOnline() {
-		// Only For Renuals!
+		// Only For Renewals!
 	}
 
 	function doCalcNew() {
