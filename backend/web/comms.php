@@ -42,45 +42,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 function GetTestResults($email,$test_id) {
 	global $mysqli;
-	$sql = "SELECT statistic_ref_id, create_time, form_data, ".
-		"(SELECT sum(correct_count) FROM wp_wp_pro_quiz_statistic as wp WHERE wp.statistic_ref_id=wp_ref.statistic_ref_id) as cor, ".
-		"(SELECT count(*) FROM wp_wp_pro_quiz_statistic as wp WHERE wp.statistic_ref_id=wp_ref.statistic_ref_id) as cnt ".
-		"FROM wp_wp_pro_quiz_statistic_ref as wp_ref ".
-		"WHERE quiz_id=".$test_id." AND form_data like '%".$email."%' ORDER BY create_time DESC";
+	$sql = "SELECT result_id,time_taken,correct_score,`name`,business,email FROM associat_gunclubsnew.wp_mlw_results ".
+		"WHERE quiz_id=".$test_id." AND email like '%".$email."%' ORDER BY time_taken DESC";
 	//echo "<hr>".$sql."<hr>";
+	$allData = [];
 
 	$qurey = $mysqli->query($sql);
-	if($mysqli->affected_rows>0) {$stat='success';} else {$stat='error';}
+	if($mysqli->affected_rows>0) {$stat='success';
 	//printf("%d records found.<br />\n", $mysqli->affected_rows);
 	$data = new stdClass();
-	$allData = [];
-	foreach($qurey as $row) {
-		$data->score = round(((int)$row['cor'] / (int)$row['cnt']) * 100)."%";
-		$data->testdate = $row['create_time'];         //date("d/m/Y H:i:s",$row['create_time']);
-		$data->right = $row['cor']." of ".$row['cnt'];
 
-		$form_data = json_decode($row['form_data']);
-		if( $test_id == 1 ) {
-			$data->name = $form_data->{'1'};
-			$data->email = $form_data->{'2'};
-			$data->badge = $form_data->{'3'};
-		} elseif( $test_id == 2 ) {
-			$data->name = $form_data->{'4'};
-			$data->email = $form_data->{'5'};
-			$data->badge = $form_data->{'6'};
-		} elseif( $test_id == 3 ) {
-			$data->name = $form_data->{'7'};
-			$data->email = $form_data->{'8'};
-			$data->badge = $form_data->{'9'};
-		} elseif( $test_id == 4 ) {
-			$data->name = $form_data->{'10'};
-			$data->email = $form_data->{'11'};
-			$data->badge = $form_data->{'12'};
-		}
+	foreach($qurey as $row) {
+		$data->score = $row['correct_score'];
+		$data->testdate = $row['time_taken'];         //date("d/m/Y H:i:s",$row['create_time']);
+		$data->right = $row['correct_score'];
+
+		$data->name = $row['name'];
+		$data->email = $row['email'];
+		$data->badge = $row['business'];
 
 		$allData[] = json_decode(json_encode($data),true);
 	}
-
+	} else {$stat='error';}
 	// echo "<hr />\n";
 	// echo var_export( json_encode($allData) );
 	return json_encode(['status'=>$stat,'data'=>$allData]);
@@ -222,10 +205,10 @@ elseif(isset($_GET['unsubscribe'])) {
 		echo "<!DOCTYPE html>\n<html lang='en-US'>".PHP_EOL;
 		echo "<head><title>AGC Unsubscribe</title></head>".PHP_EOL;
 		echo "The Associated Gun Clubs of Baltimore will miss you!<br />".
-		"Your email address: ".$email." will be removed promptly.<br /><br />".
-		"<a href='".WP_SITE."/'>The AGC</a></html>";
+		"Your email address: ".$email." will be removed promptly.<br /><br />";
 	} else { echo " The Email you entered is invalid."; }
-	echo "<br /> Good Bye.";
+	echo "Good Bye,<br />".
+	"<a href='".WP_SITE."/'>The AGC</a></html>";
 }
 
 else {
