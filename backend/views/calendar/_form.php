@@ -133,7 +133,11 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
     <?= $form->field($model, 'club_id')->DropDownList($ary_club).PHP_EOL; ?>
     </div>
     <div class="col-xs-9 col-sm-8 col-md-6 col-lg-5 col-xl-5">
-    <?php $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
+	<?php if(yii::$app->controller->hasPermission('calendar/shoot')) {
+		 $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
+		} else {
+		 $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->andWhere(['not',['like', 'name', '%Shooting Bay%', false]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
+		}
 		echo $form->field($model, 'facility_id')->dropDownList($ary_fac,['value'=>json_decode($model->facility_id),'prompt'=>'Select', 'id'=>'agccal-facility_id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
 	?>
     </div>
@@ -375,6 +379,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 </div>
 <?php } ?>
 <?php ActiveForm::end(); ?>
+</div>
 </div>
 <script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
 <style>

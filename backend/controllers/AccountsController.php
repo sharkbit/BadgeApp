@@ -98,7 +98,7 @@ class AccountsController extends SiteController {
 				if(isset($model->r_user)) { $this->removeRemoteUser($model->r_user); }
                 return $this->redirect(['/accounts/index']);
 			} else {
-				if ((!in_array(14,$model->privilege)) && (!is_null($old_r_user))){
+				if ((!in_array(14,$model->privilege)) && (isset($old_r_user)) && (!is_null($old_r_user))){
 					$this->removeRemoteUser($old_r_user);
 					$model->r_user = null;
 				}
