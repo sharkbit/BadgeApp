@@ -10,9 +10,12 @@ use backend\models\AgcCal;
 $testConflict=0;
 if(yii::$app->controller->hasPermission('calendar/conflict')) {
 	if(yii::$app->controller->hasPermission('calendar/all')) {
-		$testConflict = (new AgcCal)::find()->where(['conflict' => 1])->count();
+		$testConflict = (new AgcCal)::find()->where(['conflict' => 1])->andWhere(['deleted'=>0])
+		->andWhere(['>=','event_date' , date("Y-m-d 00:00",strtotime(yii::$app->controller->getNowTime())) ])
+		->count();
 	} else {
-		$testConflict = (new AgcCal)::find()->where(['conflict' => 1])
+		$testConflict = (new AgcCal)::find()->where(['conflict' => 1])->andWhere(['deleted'=>0])
+		->andWhere(['>=','event_date' , date("Y-m-d 00:00",strtotime(yii::$app->controller->getNowTime())) ])
 		->andWhere(['in','agc_calendar.club_id',json_decode(Yii::$app->user->identity->clubs)])
 		->count();
 	}
