@@ -494,3 +494,15 @@ UPDATE BadgeDB.user_privileges SET restricted=1 where id=1 or id=2;
 
 ALTER TABLE `BadgeDB`.`params` 
 ADD COLUMN `remote_users` VARCHAR(100) NULL DEFAULT NULL AFTER `whitelist`;
+
+-- v2.1.7
+CREATE TABLE `BadgeDB`.`login_access` (
+  `l_id` INT NOT NULL AUTO_INCREMENT,
+  `l_date` DATETIME NULL,
+  `module` VARCHAR(45) NULL,
+  `l_name` VARCHAR(80) NULL,
+  `ip` VARCHAR(45) NULL,
+  `l_status` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));
+
+

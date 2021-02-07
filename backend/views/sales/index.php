@@ -15,7 +15,15 @@ $confParams  = Params::findOne('1');
 $is_dev=false;
 if(yii::$app->controller->hasPermission('sales/all')) {
 	$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card'];
-} else {$myList=[];}
+	$pgLimited=false;
+} else {
+	$myList=[];
+	$pgLimited=true;
+	if(is_null($model->badge_number)) {
+		$_REQUEST['badge']=$_SESSION['badge_number'];
+		$_REQUEST['id']=$_SESSION['badge_number'];
+	}
+}
 
 if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
 	if($confParams->qb_env == 'prod') { 
@@ -67,6 +75,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			<div class="row">
 				<div class="col-sm-3">
 				<?php echo Html::checkbox('sales-ForGuest' ,'',['id'=>'sales-ForGuest']), PHP_EOL; ?> For a Guest?
+				<?= $form->field($model, 'pgLimited')->hiddenInput(['id'=>'pgLimited','value'=>$pgLimited])->label(false).PHP_EOL; ?>
 				</div>
 			</div>
 			<div class="row">
@@ -102,7 +111,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 					<?= $form->field($model, 'cart')->hiddenInput(['id'=>'sales-cart'])->label(false).PHP_EOL; ?>
 				</div>
 				<div class="col-sm-6">
-					<?= $form->field($model, 'total')->textInput(['id'=>'sales-total','readonly'=>($is_dev)?false:true]).PHP_EOL; ?>
+					<?= $form->field($model, 'total')->textInput(['id'=>'sales-total','readonly'=>($pgLimited)?true : (($is_dev)?false : true)]).PHP_EOL; ?>
 				</div>
 			</div>
 			<div class="help-block" ></div>
@@ -402,7 +411,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			document.getElementById("sales-address").value  = '';
 			document.getElementById("sales-email").value  = '';
 		} else {
-			document.getElementById("sales-badge_number").readOnly  = false;
+			if (document.getElementById("pgLimited").value == true){
+				document.getElementById("sales-badge_number").value = document.getElementById("m_bn").value;
+			} else {
+				document.getElementById("sales-badge_number").readOnly  = false;
+			}
 			document.getElementById("sales-first_name").readOnly  = true;
 			document.getElementById("sales-last_name").readOnly  = true;
 			document.getElementById("sales-first_name").value  = '';

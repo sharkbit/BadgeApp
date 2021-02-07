@@ -5,8 +5,10 @@ backend\runtime\logs\*.*
 backend\runtime\debug\*.*
 backend\runtime\HTML
 backend/runtime/HTML
+backend/runtime/mpdf
 backend\runtime\transactions\*.*
 backend\web\assets\*.*
+backend/web/export
 backend\web\files\badge_photos\*.jpg
 backend/web/files/badge_photos/*.jpg
 backend\web\files\rosters\*.*

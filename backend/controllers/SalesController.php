@@ -164,8 +164,8 @@ class SalesController extends AdminController {
 
 	public function actionPurchases() {
 		$searchModel = new CardReceiptSearch();
+		if(isset($_REQUEST['reset'])) { UNSET($_REQUEST); }
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-		//$dataProvider->query->andWhere("active=1");
 
 		return $this->render('purchases', [
 				'searchModel' => $searchModel,
