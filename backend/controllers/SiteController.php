@@ -179,7 +179,7 @@ class SiteController extends AdminController {
 		$model = new LoginForm();
 		if ($model->load(Yii::$app->request->post())) {
 			if($model->login()) {
-				$this->log_access("user",$_SERVER['REMOTE_ADDR'],$_SESSION['user'],'success');
+				$this->log_access("user",$_SERVER['REMOTE_ADDR'],$model->username,'success');
 				yii::$app->controller->createAccessLog(true, "Login-u", $model->username.", ".$_SERVER['REMOTE_ADDR']);
 				if (isset($_SESSION['jump']) && $_SESSION['jump'] !='') {
 					$jump = base64_decode($_SESSION['jump']);
@@ -215,7 +215,7 @@ class SiteController extends AdminController {
 					return $this->goBack();
 				}
 			} else {
-				$this->log_access("member",$_SERVER['REMOTE_ADDR'],$_REQUEST['LoginMemberForm']['username'],'FAIL');
+				$this->log_access("member",$_SERVER['REMOTE_ADDR'],$_REQUEST['LoginMemberForm']['badge'],'FAIL');
 			}
 		} 
 		return $this->render('login-member', [
