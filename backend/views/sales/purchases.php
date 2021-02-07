@@ -66,7 +66,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		],
 		[
 			'attribute'=>'amount',
-			'footer' => "$".number_format($dataProvider->query->sum('amount'), 2, ',', ','),
+			'footer' => "$".number_format($dataProvider->query->sum('amount'), 2, '.', ','),
 		],
 		[ 
 			'attribute'=>'cashier',
@@ -118,6 +118,8 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			'folder' => '@webroot/export', // this is default save folder on server
 			'exportConfig' => [
 				ExportMenu::FORMAT_HTML => false,
+				ExportMenu::FORMAT_EXCEL => false,
+				ExportMenu::FORMAT_EXCEL_X => false,
 				//ExportMenu::FORMAT_PDF => false
 			]
 		]) . "<br /> <br />\n";?>
