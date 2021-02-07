@@ -16,6 +16,8 @@ class CardReceipt extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
+ 	public $pagesize;
+
     public static function tableName() {
         return 'cc_receipts';
     }
