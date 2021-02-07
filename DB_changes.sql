@@ -503,6 +503,6 @@ CREATE TABLE `BadgeDB`.`login_access` (
   `l_name` VARCHAR(80) NULL,
   `ip` VARCHAR(45) NULL,
   `l_status` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`));
+  PRIMARY KEY (`l_id`));
 
 
