@@ -10,6 +10,7 @@ use backend\controllers\AdminController;
 use common\models\User;
 use backend\models\Badges;
 use backend\models\Guest;
+use backend\models\LoginAccess;
 use backend\models\Privileges;
 
 /**
@@ -176,20 +177,24 @@ class SiteController extends AdminController {
 		}
 
 		$model = new LoginForm();
-		if ($model->load(Yii::$app->request->post()) && $model->login()) {
-			yii::$app->controller->createAccessLog(true, "Login-u", $model->username.", ".$_SERVER['REMOTE_ADDR']);
-			if (isset($_SESSION['jump']) && $_SESSION['jump'] !='') {
-				$jump = base64_decode($_SESSION['jump']);
-				unset($_SESSION['jump']);
-				$this->redirect($jump);
+		if ($model->load(Yii::$app->request->post())) {
+			if($model->login()) {
+				$this->log_access("user",$_SERVER['REMOTE_ADDR'],$_SESSION['user'],'success');
+				yii::$app->controller->createAccessLog(true, "Login-u", $model->username.", ".$_SERVER['REMOTE_ADDR']);
+				if (isset($_SESSION['jump']) && $_SESSION['jump'] !='') {
+					$jump = base64_decode($_SESSION['jump']);
+					unset($_SESSION['jump']);
+					$this->redirect($jump);
+				} else {
+					return $this->goBack();
+				}
 			} else {
-				return $this->goBack();
+				$this->log_access("user",$_SERVER['REMOTE_ADDR'],$_REQUEST['LoginForm']['username'],'FAIL');
 			}
-		} else {
-			return $this->render('login', [
-				'model' => $model,
-			]);
 		}
+		return $this->render('login', [
+			'model' => $model,
+		]);
 	}
 
 	public function actionLoginMember() {
@@ -198,20 +203,24 @@ class SiteController extends AdminController {
 		}
 
 		$model = new LoginMemberForm();
-		if ($model->load(Yii::$app->request->post()) && $model->login()) {
-			yii::$app->controller->createAccessLog(true, "Login-m", $_SESSION['user'].", ".$_SERVER['REMOTE_ADDR']);
-			if (isset($_SESSION['jump']) && $_SESSION['jump'] !='') {
-				$jump = base64_decode($_SESSION['jump']);
-				unset($_SESSION['jump']);
-				$this->redirect($jump);
+		if ($model->load(Yii::$app->request->post())) {
+			if ($model->login()) {
+				$this->log_access("member",$_SERVER['REMOTE_ADDR'],$_SESSION['user'],'success');
+				yii::$app->controller->createAccessLog(true, "Login-m", $_SESSION['user'].", ".$_SERVER['REMOTE_ADDR']);
+				if (isset($_SESSION['jump']) && $_SESSION['jump'] !='') {
+					$jump = base64_decode($_SESSION['jump']);
+					unset($_SESSION['jump']);
+					$this->redirect($jump);
+				} else {
+					return $this->goBack();
+				}
 			} else {
-				return $this->goBack();
+				$this->log_access("member",$_SERVER['REMOTE_ADDR'],$_REQUEST['LoginMemberForm']['username'],'FAIL');
 			}
-		} else {
-			return $this->render('login-member', [
-				'model' => $model,
-			]);
-		}
+		} 
+		return $this->render('login-member', [
+			'model' => $model,
+		]);
 	}
 
 	public function actionLogout($url=false) {
@@ -288,4 +297,13 @@ class SiteController extends AdminController {
 		} else { echo " The Email you entered is invalid."; }
 	}
 
+	public function log_access($m,$i,$n,$s) {
+		$log = new LoginAccess;
+		$log->l_date = yii::$app->controller->getNowTime();
+		$log->module = $m;
+		$log->ip = $i;
+		$log->l_name = $n;
+		$log->l_status = $s;
+		$log->save();
+	}
 }
