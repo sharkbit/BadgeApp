@@ -20,7 +20,6 @@ if(yii::$app->controller->hasPermission('sales/all')) {
 	$myList=[];
 	$pgLimited=true;
 	if(is_null($model->badge_number)) {
-		yii::$app->controller->createLog(false, 'trex_sal_hr', 'visit log test ');
 		$_REQUEST['badge']=$_SESSION['badge_number'];
 		$_REQUEST['id']=$_SESSION['badge_number'];
 	}
