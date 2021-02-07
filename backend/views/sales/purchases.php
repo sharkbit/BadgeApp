@@ -112,10 +112,14 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			'filterModel' => $searchModel,
 			'columns' => $gridColumns,
 			'fontAwesome' => true,
-			'batchSize' => 10,
+			'batchSize' => 0,
 			'filename'=>  $this->title,
 			'target' => '_blank',
 			'folder' => '@webroot/export', // this is default save folder on server
+			'exportConfig' => [
+				ExportMenu::FORMAT_HTML => false,
+				//ExportMenu::FORMAT_PDF => false
+			]
 		]) . "<br /> <br />\n";?>
 	</div>
 	<div class="col-xs-3 col-sm-2">
