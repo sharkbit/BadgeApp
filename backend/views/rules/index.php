@@ -45,9 +45,12 @@ echo $this->render('/violations/_view-tab-menu').PHP_EOL ?>
                 'value' => function($model, $attribute) { return $model->vi_type; },
 				'headerOptions' => ['style' => 'width:10%'],
             ],
-			[	'attribute'=>'rule_name','contentOptions' => ['style' => 'white-space:pre-line;'],	],
-			[
-				'attribute'=>'is_active',
+			[	'attribute'=>'rule_name',
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'white-space:pre-line;'.$color];}, 
+			],
+			[	'attribute'=>'is_active',
 				'value'=>function($model) { if($model->is_active) {return "Yes";} else  {return "No";} },
 				'headerOptions' => ['style' => 'width:5%'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_active',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All']),

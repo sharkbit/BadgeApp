@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use Yii;
+use backend\models\BadgeToClubs;
 use backend\models\User;
 use backend\models\search\UserSearch;
 use backend\models\ResetPasswordForm;
@@ -85,12 +86,16 @@ class AccountsController extends SiteController {
     public function actionUpdate($id) {
         $model = $this->findModel($id);
 		if(isset($model->r_user)) { $old_r_user=$model->r_user;}
+		$old_priv = json_decode($model->privilege);
 
 		if ((!in_array(1, json_decode(yii::$app->user->identity->privilege))) && (array_intersect([1,2],json_decode($model->privilege)))) {
 			$this->redirect('index'); }
         if ($model->load(Yii::$app->request->post()) ) {
 	
 			if ($model->privilege=='') {
+				if(intval($model->badge_number)>0) {
+					$this->RemoveClub($model->badge_number);
+				}
 				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, "Authorized User Deleted: $model->id: $model->username");
 				Yii::$app->getSession()->setFlash('success', $model->username.' has been deleted');
 				User::deleteAll("id = ".$model->id);
@@ -102,6 +107,21 @@ class AccountsController extends SiteController {
 					$this->removeRemoteUser($old_r_user);
 					$model->r_user = null;
 				}
+				if (array_intersect([3,6],$old_priv)) {
+					if(!array_intersect([3,6],$model->privilege)) {
+						$this->RemoveClub($model->badge_number);
+					}
+				}
+				if(array_intersect([3,6],$model->privilege)) {
+					$BtC = (new BadgeToClubs)->find()->where(['badge_number'=>$model->badge_number,'club_id'=>33])->one();
+					if(!$BtC) {
+						$BtC = new BadgeToClubs;
+						$BtC->badge_number=$model->badge_number;
+						$BtC->club_id=33;  // Add AGC Staff
+						$BtC->save();
+					}
+				}
+				
 				$model->clubs=json_encode($model->clubs);
 				$model->privilege= str_replace('"',"", json_encode($model->privilege));
 				$model->clubs = str_replace("\\","", str_replace('"',"", json_encode($model->clubs)));
@@ -118,6 +138,19 @@ class AccountsController extends SiteController {
         }
     }
 
+	private function RemoveClub($badge_number) {
+		$BtC = (new BadgeToClubs)->find()->where(['badge_number'=>$badge_number,'club_id'=>33])->one();
+		if($BtC) { $BtC->delete(); 
+			$BtC = (new BadgeToClubs)->find()->where(['badge_number'=>$badge_number])->all();
+			if(!$BtC) {
+				$BtC = new BadgeToClubs;
+				$BtC->badge_number=$badge_number;
+				$BtC->club_id=35;  // Add Z Old Data
+				$BtC->save();
+			}
+		}
+	}
+					
 	private function removeRemoteUser($r_user){
 		$param = Params::find()->one();
 		$pwd_file = Yii::getAlias('@webroot').'/'.$param->remote_users;

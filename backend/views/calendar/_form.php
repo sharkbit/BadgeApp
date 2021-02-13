@@ -403,7 +403,6 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 	runClub();
 
     document.getElementById("cal_update_item").disabled=true;
-<?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=true; <?php } ?>
 	$("#agccal-facility_id").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){ OpenRange(); });	
 
   $("#re_pub").click(function (e) {
@@ -628,7 +627,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 
 		if(OnlyOneLane > 1) {
 			document.getElementById("cal_update_item").disabled = true;
-            $("#error_msg").html('<center><p style="color:red;"><b>Only allowed one range with lanes. Found: '+fa_name+'</b></p></center>');
+            $("#error_msg").html('<center><p style="color:red;"><b>App only allows one range with lanes. You will have to make another event. Found: '+fa_name+'</b></p></center>');
             return;
 		} else if(OnlyOneLane == 1) {
 			var lReq = parseInt($("#agccal-lanes_requested").val());
@@ -640,7 +639,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			
 			reqLanes = $("#agccal-lanes_requested").val();
 			if (reqLanes) {reqLnN = parseInt(reqLanes); reqLanes = '&lanes='+reqLanes;}
-			else {$("#error_msg").html('<center><p style="color:red;"><b>Please Provie how many Lanes requested.</b></p></center>');return;}
+			else {$("#error_msg").html('<center><p style="color:red;"><b>Please Provide how many Lanes requested.</b></p></center>');return;}
 		} else {
 			$("#Div_Lanes_Req").hide();
 			$("#agccal-lanes_requested").val(0);

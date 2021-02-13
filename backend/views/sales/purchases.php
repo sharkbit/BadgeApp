@@ -103,7 +103,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		'id'=>'viewSalsetFilter',
 	]); ?>
 	<div class="col-xs-6 col-sm-3">
-		Use a comma (,) to seperate miultiple Cashiers
+		Use a comma (,) to seperate multiple Cashiers when filtering.
 		<?php //= $form->field($model, 'atRange_condition')->dropDownlist(['all'=>'All','atRange'=>'At Range','gone'=>'Past Visitors'],['value'=>$model->atRange_condition !=null ? $model->atRange_condition : 'atRange'])->label('Fliter by') ?>
 	</div>
 	<div class="col-xs-2 col-sm-1" > <p> <br /></p>

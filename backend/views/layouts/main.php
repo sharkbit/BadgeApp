@@ -1370,7 +1370,9 @@ if(strpos($_SERVER['REQUEST_URI'], 'violations/')) {
 
 app.controller('ViolationsRecFrom', function($scope) {
     $(document).ready(function (e) {
-        $("#violations-vi_rules").chosen({placeholder_text_multiple:'Select Violations',width: "100%"}).change(function() {
+        $("#violations-vi_rules")
+		.chosen({placeholder_text_multiple:'Select Violations',width: "100%",})
+		.change(function() {
             var cur_rules = $("#violations-vi_rules").val().toString();
 
             if(cur_rules) {

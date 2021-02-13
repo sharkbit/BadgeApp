@@ -28,15 +28,22 @@ class RuleList extends \yii\db\ActiveRecord {
             'rule_name' => 'Short Description'
         ];
     }
-
-	public function getRules() {
+	public function getRules(&$optionDataAttributes) {
 		$sql="SELECT CONCAT(rule_abrev,'-C',vi_type) as rule_ab, CONCAT(rule_abrev,'-C',vi_type,' - ',rule_name) as rul_name FROM rule_list where is_active='1'";
 		$connection = Yii::$app->getDb();
 		$command = $connection->createCommand($sql);
-		$rules = $command->queryAll(); 
-		return ArrayHelper::map($rules,'rule_ab','rul_name');;
+		$rules = $command->queryAll();
+		$rules_ary = ArrayHelper::map($rules,'rule_ab','rul_name');
+		$listOptions=array();
+		$optionDataAttributes=array();
+		foreach($rules_ary as $color_ab => $color_name) {
+			$listOptions=array_merge($listOptions,[$color_ab => $color_name]);
+			if (strpos($color_ab, '-C4')) {
+				$optionDataAttributes=array_merge($optionDataAttributes,[$color_ab => ['style' => "color:red;"]]);
+			}
+		}
+		return $listOptions;
 	}
-
 	public function getRuleNames($Rule_ids) {
 		if (strpos($Rule_ids,',')) {
 			
