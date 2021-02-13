@@ -43,6 +43,9 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		'columns' => [
 			[
 				'attribute'=>'badge_reporter',
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'white-space:pre-line;'.$color];}, 
 				//'format' => 'raw',
 				'value'=>function ($model) {
 					return yii::$app->controller->decodeBadgeName((int)$model->badge_reporter).' ('.$model->badge_reporter.')';
@@ -50,25 +53,42 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			],
 			[
 				'attribute' => 'vi_type',
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'white-space:pre-line;'.$color];}, 
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'vi_type',
 					['1'=>'Class 1','2'=>'Class 2','3'=>'Class 3','4'=>'Class 4'],['class'=>'form-control','prompt' => 'All']),
 				'value'=> 'vi_type',
 			],
 			[
 				'attribute' => 'badge_involved',
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'white-space:pre-line;'.$color];}, 
 				'value' => function($model) {
 					return yii::$app->controller->decodeBadgeName((int)$model->badge_involved).' ('.$model->badge_involved.')';
 				},
 			],
-			'vi_rules',
+			[
+				'attribute' => 'vi_rules',
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'white-space:pre-line;'.$color];}, 
+			],
 			[
 				'attribute'=>'was_guest',
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'white-space:pre-line;'.$color];}, 
 				'value' => function($model) { if($model->was_guest=='1') {return "Yes";} else { return "No";} },
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'was_guest',
 					['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All']),
 			],
 			[
 				'attribute' => 'vi_loc',
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'white-space:pre-line;'.$color];}, 
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'vi_loc',(new Violations)->getLocations(),['class'=>'form-control','prompt' => 'All']),
 				'value'=> function($model, $attribute) {
 					return $model->getLocations($model->vi_loc);
@@ -76,6 +96,9 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			],
 			[
 				'attribute'=>'vi_date',
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'white-space:pre-line;'.$color];}, 
 				'value'=>function($model) {
 					return yii::$app->controller->pretydtg($model->vi_date);
 				},
