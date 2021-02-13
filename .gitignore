@@ -7,6 +7,7 @@ backend\runtime\HTML
 backend/runtime/HTML
 backend/runtime/mpdf
 backend\runtime\transactions\*.*
+backend/runtime/URI
 backend\web\assets\*.*
 backend/web/export
 backend\web\files\badge_photos\*.jpg

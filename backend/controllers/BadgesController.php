@@ -732,6 +732,7 @@ class BadgesController extends AdminController {
 			unset($_SESSION['BadgeSearchFname']);
 			unset($_SESSION['BadgeSearchLname']);
 			unset($_SESSION['BadgeSearchMemType']);
+			unset($_SESSION['BadgeSearchStatus']);
 		} else {
 			if(isset($_REQUEST['BadgesSearch']['club_id'])) {
 				$searchModel->club_id = $_REQUEST['BadgesSearch']['club_id'];
@@ -762,6 +763,12 @@ class BadgesController extends AdminController {
 				$_SESSION['BadgeSearchMemType'] = $_REQUEST['BadgesSearch']['mem_type'];
 			} elseif (isset($_SESSION['BadgeSearchMemType'])) {
 				$searchModel->mem_type = $_SESSION['BadgeSearchMemType'];
+			}
+			if(isset($_REQUEST['BadgesSearch']['status'])) {
+				$searchModel->status = $_REQUEST['BadgesSearch']['status'];
+				$_SESSION['BadgeSearchStatus'] = $_REQUEST['BadgesSearch']['status'];
+			} elseif (isset($_SESSION['BadgeSearchStatus'])) {
+				$searchModel->status = $_SESSION['BadgeSearchStatus'];
 			}
 		}
 

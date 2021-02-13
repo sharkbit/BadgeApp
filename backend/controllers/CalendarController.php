@@ -871,7 +871,7 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 			$model_event->poc_badge 		= $model->poc_badge;
 			$model_event->remarks 			= $model->remarks;
 			$model_event->save();
-			if(!$first_id) {$first_id=$model->calendar_id;}
+			if(!$first_id) {$first_id=$model_event->calendar_id;}
 			yii::$app->controller->createCalLog(true, $_SESSION['user'], "Created New Calendar item: ','".$model_event->calendar_id.'->'.$model_event->event_name);
 
 			if (intval(substr($eDate,0,4)) > intval(date('Y'))){
