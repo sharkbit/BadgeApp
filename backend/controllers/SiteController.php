@@ -9,6 +9,7 @@ use common\models\LoginForm;
 use backend\controllers\AdminController;
 use common\models\User;
 use backend\models\Badges;
+use backend\models\BadgesSm;
 use backend\models\Guest;
 use backend\models\LoginAccess;
 use backend\models\Privileges;
@@ -234,7 +235,7 @@ class SiteController extends AdminController {
 
 	public function actionNewMember() {
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
-		$model = New Badges;
+		$model = New BadgesSm;
 		if ($model->load(Yii::$app->request->post())) {
 		echo 'Hello';exit;}
 		return $this->render('new-member',[

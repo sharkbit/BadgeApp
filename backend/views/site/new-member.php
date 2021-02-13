@@ -33,7 +33,7 @@ $this->title = 'Register New Member (Self-service)';
 //$this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="Member-create" ng-controller="CreateBadgeController">
+<div class="Self-Member-create">
 
     <h2><?= Html::encode($this->title) ?></h2>
 <div class="container row" id="div_Ack" >
@@ -44,9 +44,9 @@ background-color: #f1f1c1;
 }
 table, td {
 	border: 1px solid black;
-	padding: 5px;
-	margin: 5px;
-	font-size: 16px;
+	padding: 8px;
+	margin: 8px;
+	font-size: 18px;
 	text-align:left;
 }
 </style>
@@ -97,7 +97,7 @@ table, td {
 <?php $form = ActiveForm::begin(['id'=>'NewMembers']); ?>
 <div class="row">
 
-    <div class="col-xs-12 col-sm-8">
+    <div class="col-xs-12">
 		<div class="row">
   
             <div class="col-xs-6 col-sm-2">
@@ -147,7 +147,7 @@ table, td {
                 <?= $form->field($model, 'state')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
-                <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female']) ?>
+                <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female'],['value'=>0]) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
                 <?= $form->field($model, 'yob')->dropDownList($YearList,['value'=>$MyYr-13 ]) ?>
@@ -171,7 +171,7 @@ table, td {
             </div>
 
             <div class="col-xs-6 col-sm-6">
-                <?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A')]) ?>
+                <?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))]) ?>
             </div>
             <div class="col-xs-6 col-sm-4">
                 <?php $model->expires = date('M d, Y',strtotime($nextExpire)); ?>
@@ -198,6 +198,7 @@ table, td {
 
 			<div class="col-xs-3" id="HideMySubmit">
 				<?= Html::submitButton($model->isNewRecord ? '<i class="fa fa-save"> </i> SAVE' : 'Update', ['id'=>'badges_submin_btn','class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+				<?= Html::Button('Check Form', ['class' =>'btn btn-warning ', 'onclick' => 'checkForm();' ]).PHP_EOL; ?>
 			</div>
 			<div class="col-xs-3">
 				<?= Html::a('<i class="fa fa-eraser"> </i> Clear',['/badges/create'],['class' => 'btn btn-danger']) ?>
@@ -210,79 +211,24 @@ table, td {
 			<p> </p>
 		</div>
 	</div>
-    <div class="col-xs-12 col-sm-4">
-
-        <div class="row">
-            <div class="summary-block-payment box">
-                <div class="col-xs-6 col-sm-12">
-                    <?= $form->field($model, 'badge_fee')->textInput(['readOnly'=>true,'class'=>'form-control Money']); ?>
-                </div>
-				<div class="col-xs-6 col-sm-12">
-                <?= $form->field($model, 'discounts')->textInput(['readOnly'=>true,'class'=>'form-control Money']); ?>
-                </div>
- 				<div class="col-xs-6 col-sm-12" >
-					<?php echo Html::checkbox('badges-FriendHelp' ,'',['id'=>'badges-FriendHelp']), PHP_EOL; ?> Friend's help?
-					<div class="help-block"></div>
-				</div>
-				<div class="col-xs-12 col-sm-12" id="badges-firbadiv" style="display:none" >
-					<?php echo Html::label("Friend's Badge"), PHP_EOL; ?>
-
-					<?php echo Html::hiddenInput("item_name",'',['id'=>'badges-item_name']), PHP_EOL; ?>
-					<?php echo Html::hiddenInput("item_sku",'',['id'=>'badges-item_sku']), PHP_EOL; ?>
-					<?php echo Html::hiddenInput("FriendCredits",'',['id'=>'badges-FriendCredits']), PHP_EOL; ?>
-					<?php echo Html::textinput("FriendBadge" ,'',['class'=>"form-control",'id'=>'badges-FriendBadge']), PHP_EOL; ?>
-					<p id="badges-FrendStatus"> </p>
-					<div class="help-block" ></div>
-				</div>
-				<div class="col-xs-6 col-sm-12">
-					<p class="pull-right"><a href="" class="badge_store_div" > Extras </a></p>
-				</div>
-				
-                <div class="col-xs-12 col-sm-12">
-                    <?= $form->field($model, 'amt_due')->widget(MaskMoney::classname(), [
-                        'pluginOptions' => ['allowNegative' => false,]]); ?>
-                </div>
-                <div class="col-xs-12 col-sm-12">
-      <?php $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online'];
-			echo $form->field($model, 'payment_method')->dropDownList($myList,['prompt'=>'select']).PHP_EOL; ?>
-                </div>
-				<div id="cc_form_div" style="display:none;">
-					<div class="col-xs-12 col-sm-12">
-						<?= $form->field($model, 'cc_num')->textInput(['maxlength'=>true]) ?>
-					</div>
-					<div class="col-xs-4 col-sm-4">
-						<?= $form->field($model, 'cc_exp_mo')->dropDownList(['01'=>'01 Jan','02'=>'02 Feb','03'=>'03 Mar','04'=>'04 Apr','05'=>'05 May','06'=>'06 Jun','07'=>'07 Jul','08'=>'08 Aug','09'=>'09 Sep','10'=>'10 Oct','11'=>'11 Nov','12'=>'12 Dec'],['style'=>'padding:2px; min-width: 20px;']) ?>
-					</div>
-					<div class="col-xs-5 col-sm-5">
-<?php 	$curYr = date('Y',strtotime(yii::$app->controller->getNowTime()));
-		$ccYear = range($curYr,$curYr+25);  ?>
-						<?= $form->field($model, 'cc_exp_yr')->dropDownList($ccYear,['style'=>'padding:2px;']) ?>
-					</div>
-					<div class="col-xs-3 col-sm-3">
-						<?= $form->field($model, 'cc_cvc')->textInput(['maxlength'=>true,'style'=>'padding:2px;']) ?>
-						<?= $form->field($model, 'cc_x_id')->hiddenInput()->label(false) ?>
-					</div>
-					<div class="col-xs-4 col-sm-4 form-group">
-						<?= Html::Button('<i class="fa fa-credit-card"> Process</i>', ['id'=>'badges-Process_CC','class' => 'btn btn-danger']), PHP_EOL ?>
-					</div>
-					<div class="col-xs-8 col-sm-8">
-						<p id="cc_info"> </p>
-					</div>
-				</div>
-				<div class="col-xs-12 col-sm-12">
-                    <?= $form->field($model, 'sticker')->hiddenInput(['value'=>"self-register", 'maxlength'=>true])->label(false) ?>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-    </div>
 </div>
+<?= $form->field($model, 'status')->hiddenInput(['value'=>"self"])->label(false) ?>
+
 <?php ActiveForm::end(); ?>
 </div>
 </div>
 <script>
 
 document.getElementById("new-agree").disabled=true;
+
+	function checkForm() {
+		console.log("Check Form");
+		var $form = $("#NewMembers"),data = $form.data("yiiActiveForm");
+		$.each(data.attributes, function() {
+		   this.status = 3;
+		});
+		$form.yiiActiveForm("validate");
+	}
 
 	function AckAgree() {
 		$("#div_Ack").hide();
@@ -304,7 +250,7 @@ document.getElementById("new-agree").disabled=true;
 	}
 
 	function doCalcNew() {
-
+/*
 		var badgeFee = parseInt($("#badges-badge_fee").val());
 		var discount = parseInt($("#badges-discounts").val());
 		var amountDue = badgeFee - discount;
@@ -314,10 +260,10 @@ document.getElementById("new-agree").disabled=true;
 		$("#badges-amt_due-disp").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
 		$("#badges-amt_due").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
 		console.log('Badge Total: '+badgeFee+ '; Grand total: '+ amountDue);
-	}
+*/	}
 
 	function ProcessSwipe(cleanUPC) {
-
+/*
 		if  ((cleanUPC.indexOf('ANSI 6360') > 0) || (cleanUPC.indexOf('AAMVA6360') > 0)) { // Matched Drivers Licence
 			console.log('Drivers Licence Scanned: ', cleanUPC);
 			var FName=false;
@@ -423,14 +369,11 @@ document.getElementById("new-agree").disabled=true;
 			document.getElementById("badges-cc_exp_yr").value = ExpYr;
 		} else { SwipeError(cleanUPC,'b-v-b-f:443'); }
 		cleanUPC = '';
-	};
-
+*/	};
 
 $( document ).ready(function() {
   family_badge_view('hide');
-  get_fees(50);
-	
-	
+  //get_fees(50);
 });
 </script>
 
