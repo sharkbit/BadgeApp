@@ -119,7 +119,7 @@ $confParams  = Params::findOne('1');
                 }
             ?>
             <div class="col-xs-6 col-sm-6">
-                <?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A')]) ?>
+                <?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))]) ?>
             </div>
             <div class="col-xs-6 col-sm-4">
                 <?php $model->expires = date('M d, Y',strtotime($nextExpire)); ?>
