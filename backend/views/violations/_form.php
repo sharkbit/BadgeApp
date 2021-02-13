@@ -108,7 +108,11 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		</div>
 	</div>
 		<div class="col-xs-12">
-			<?= $form->field($model, 'vi_rules')->dropDownList((new RuleList)->getRules(), ['value'=>explode(', ',$model->vi_rules),'multiple'=>true]).PHP_EOL; ?>
+			<?= $form->field($model, 'vi_rules')->dropDownList((new RuleList)->getRules($optionDataAttributes),
+			[
+			'options' => $optionDataAttributes,
+			'value'=>explode(', ',$model->vi_rules),
+			'multiple'=>true]).PHP_EOL; ?>
 		</div>
 
 		<div class="col-xs-12">
