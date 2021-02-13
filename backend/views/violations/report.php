@@ -52,33 +52,55 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 <?php  $gridColumns = [
 			[
 				'attribute'=>'vi_date',
-				'contentOptions' =>['style' => 'width:20px'],
+				'contentOptions' =>  function($model) {
+						if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+						return ['style' => 'width:8%;'.$color];}, 
 				'value' => function($model) {
 					return date('Y-m-d',strtotime($model->vi_date));}
 			],
-			'badge_involved',
+			[
+				'attribute' => 'badge_involved',
+				'contentOptions' =>  function($model) {
+						if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+						return ['style' => 'width:5%;'.$color];}, 
+			],
 			[
 				'attribute' => 'club_id',
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
-				'contentOptions' =>['style' => 'width:15%; overflow: auto; word-wrap: break-word; white-space: normal;'],
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'width:20%; overflow: auto; word-wrap: break-word; white-space: normal;'.$color];}, 
 				'value'=> function($model, $attribute) {
 					return (new clubs)->getMyClubsNames($model->badge_involved);
 				},
 			],
 			[	'attribute'=> 'was_guest',
+				'contentOptions' =>  function($model) {
+						if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+						return ['style' => 'width:5%;'.$color];}, 
 				'value' => function($model) {
 					if ($model->was_guest) {return 'Yes';} else { return 'No';} }
 			],
-			'vi_rules',
+			[
+				'attribute' => 'vi_rules',
+				'contentOptions' =>  function($model) {
+						if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+						return ['style' => 'width:12%; white-space:pre-line;'.$color];}, 
+			],
 			[
 				'attribute' => 'vi_type',
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'vi_type',
 					['1'=>'Class 1','2'=>'Class 2','3'=>'Class 3','4'=>'Class 4'],['class'=>'form-control','prompt' => 'All']),
-				'contentOptions' =>['style' => 'width:10%; overflow: auto; word-wrap: break-word; white-space: normal;'],
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'width:5%;'.$color];},
 				'value'=> 'vi_type',
 			],
 			[
 				'attribute' => 'vi_loc',
+				'contentOptions' =>  function($model) {
+						if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+						return ['style' => 'width:5%; white-space:pre-line;'.$color];},
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'vi_loc',(new Violations)->getLocations(),['class'=>'form-control','prompt' => 'All']),
 				'value'=> function($model, $attribute) {
 					return $model->getLocations($model->vi_loc);
@@ -86,7 +108,9 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			],
 			[
 				'attribute' => 'vi_sum',
-				'contentOptions' =>['style' => 'width:50%; overflow: auto; word-wrap: break-word; white-space: normal;'],
+				'contentOptions' =>  function($model) {
+					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
+					return ['style' => 'width:40%; overflow: auto; word-wrap: break-word; white-space: normal;'.$color];},
 			]
 		];
 
