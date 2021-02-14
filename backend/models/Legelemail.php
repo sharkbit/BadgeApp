@@ -60,9 +60,17 @@ class Legelemail extends \yii\db\ActiveRecord {
 		$myGroupN = $command->queryAll();
 		$myGroupNames='';
 		foreach($myGroupN as $group){
-			$myGroupNames .= $group['gm'].", ";
+			if ($use_short) {
+				$myGroupNames .= $group['name'].", ";
+			} else {
+				$myGroupNames .= $group['gm'].", ";
+			}
 		}
-		return explode(',',rtrim($myGroupNames, ', '));
+		if ($use_short) {
+			return $myGroupNames;
+		} else {
+			return explode(',',rtrim($myGroupNames, ', '));
+		}
 	}
 
 	public function getGroupList() {
