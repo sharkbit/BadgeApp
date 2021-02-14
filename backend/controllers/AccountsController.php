@@ -163,7 +163,6 @@ class AccountsController extends SiteController {
 			if($name[0]==$r_user) { continue 1; }
 			$newPasswd .= implode(":",$name).PHP_EOL;
 		}
-		file_put_contents($param->remote_users, $newPasswd);
 	}
 
     public function actionRequestPasswordReset($id) {
