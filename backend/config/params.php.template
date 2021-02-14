@@ -24,7 +24,7 @@ return [
         'allowNegative' => false,
     ],
 	'mail' =>[
-		'enabled' => false,					// Turns Mailer on or off
+		'Enabled' => false,					// Turns Mailer on or off
 		'Username' => 'your_username',		// SMTP username
 		'Password' => 'your_password',		// SMTP password
 		'Debug' => false,					 	// Enable verbose debug output: false=off, 2= good, 3=better, 4 = connection
