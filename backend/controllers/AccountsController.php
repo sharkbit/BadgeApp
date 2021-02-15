@@ -155,15 +155,16 @@ class AccountsController extends SiteController {
 		$param = Params::find()->one();
 		$pwd_file = Yii::getAlias('@webroot').'/'.$param->remote_users;
 		$newPasswd='';
-		
-		$txt = explode(PHP_EOL,file_get_contents($param->remote_users));
-		foreach($txt as $item) {
-			if (strlen($item)<3) { continue 1; }
-			$name=explode(":",$item);
-			if($name[0]==$r_user) { continue 1; }
-			$newPasswd .= implode(":",$name).PHP_EOL;
+		if (file_exists($param->remote_users)) { 
+			$txt = explode(PHP_EOL,file_get_contents($param->remote_users));
+			foreach($txt as $item) {
+				if (strlen($item)<3) { continue 1; }
+				$name=explode(":",$item);
+				if($name[0]==$r_user) { continue 1; }
+				$newPasswd .= implode(":",$name).PHP_EOL;
+			}
+			file_put_contents($param->remote_users, $newPasswd);
 		}
-		file_put_contents($param->remote_users, $newPasswd);
 	}
 
     public function actionRequestPasswordReset($id) {

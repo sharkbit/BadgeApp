@@ -878,8 +878,10 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 				$NewID = $model_event->calendar_id;
 			}
 		}
-
-		if ($NewID) {
+		
+		$CalidExist = (new AgcCal)->find()->where(['calendar_id'=>$model->calendar_id])->one();
+		if (($NewID) || (!$CalidExist)) {
+			if (!$NewID) {$NewID=$first_id;}
 			AgcCal::UpdateAll(['recurrent_calendar_id'=>$NewID],"recurrent_calendar_id = ".$model->recurrent_calendar_id);
 			$model->recurrent_calendar_id=$NewID;
 			$model->save();

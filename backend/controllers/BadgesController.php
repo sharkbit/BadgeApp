@@ -1350,8 +1350,8 @@ class BadgesController extends AdminController {
 			BadgesController::saveClub($model->badge_number,$_POST['new_club']);
 			$model->club_id=$_POST['new_club'][0];
 		} else {
-			BadgesController::saveClub($model->badge_number,[35]);
-			$model->club_id=35;
+			if(!$isNew) {BadgesController::saveClub($model->badge_number,[35]);
+			$model->club_id=35; }
 		}
 
 		$dirty = BadgesController::loadDirtyFilds($model);

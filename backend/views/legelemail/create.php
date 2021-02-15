@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Params */
 
-$this->title = 'Add Legeslative Contacts';
-$this->params['breadcrumbs'][] = ['label' => 'Legeslative Contacts', 'url' => ['index']];
+$this->title = 'Add Legislative Contact';
+$this->params['breadcrumbs'][] = ['label' => 'Legislative Contacts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title];
 ?>
 <div class="Legelemail-create">
