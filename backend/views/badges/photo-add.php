@@ -14,6 +14,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $csrfToken=Yii::$app->request->getCsrfToken();
 ?>
+<div class="container">
+<ul>
+<li>Please use a white background.</li>
+<li>Try to take a passport style photo.</li>
+</ul>
 
 <div class="row">
   <div class="col-xs-12" id="uploadingInfoError" style="display: none;">
@@ -62,7 +67,7 @@ $csrfToken=Yii::$app->request->getCsrfToken();
 </div>
 
 <br> If you change your video source, hold picture to refresh...  
-
+</div>
 <!-- <a href="https://simpl.info/getusermedia/sources/" target="_blank">test</a> -->
 <script src="/js/GetMedia.js"></script>
 <script>

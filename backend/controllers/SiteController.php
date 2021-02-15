@@ -267,12 +267,19 @@ class SiteController extends AdminController {
 					$myClub->badge_number = $model->badge_number;
 					$myClub->save();
 
-		// Send Welcome Email
+		// Send Welcome Email with qr and badge#
 		
-		//Auto Login??
-					$_SESSION['jump'] = base64_encode('/badges/view');
-					
-					return $this->redirect(['view', 'badge_number' => $model->badge_number]);
+					//Auto Login!
+					$badgeArray = Badges::find()->where(['badge_number'=>$model->badge_number])->one();
+					$_SESSION["badge_number"] = $badgeArray->badge_number;
+					$_SESSION["user"] = $badgeArray->first_name.' '.$badgeArray->last_name;
+					$_SESSION['names'] = yii::$app->controller->getBadgeList();
+					$_SESSION['privilege']=array(5);
+					$priv = Privileges::find()->where(['id'=>5])->one();
+					$_SESSION['timeout'] = $priv->timeout;
+					Yii::$app->user->login(User::findIdentity(0), 0);
+
+					return $this->redirect(['/badges/photo-add', 'badge' => $model->badge_number]);
 				} else {
 					Yii::$app->getSession()->setFlash('error', 'Something Broke?');
 					$errors = $model->getErrors();

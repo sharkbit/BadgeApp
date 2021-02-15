@@ -118,7 +118,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $userPermission = [
-		'Badges'=>['badges/restrict','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/restrict','badges/photo-add','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Guest' => ['guest/update'],
 	];
 

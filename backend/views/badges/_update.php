@@ -105,7 +105,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
             <div class="col-xs-12 col-sm-6">
 	<?php 	if($restrict) {
 				$ClubName=(new clubs)->getClubList();
-		        echo $form->field($model, 'club_name')->textInput(['value'=>$ClubName[$model->club_id],'disabled'=>true]).PHP_EOL;
+		        echo $form->field($model, 'club_name')->textInput(['value'=>(new clubs)->getMyClubsNames($model->badge_number),'disabled'=>true]).PHP_EOL;
 			} else { ?>
 
 				<div class="form-group" >

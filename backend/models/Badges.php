@@ -126,6 +126,7 @@ class Badges extends \yii\db\ActiveRecord {
 				case 'suspended': return 'Suspended'; break;
 				case 'revoked': return 'Revoked'; break;
 				case 'retired': return 'Retired'; break;
+				case 'self': return 'Self-Registered'; break;
 			}
 		} else {
 			return ['approved'=>'Approved','pending'=>'Pending','prob'=>'Probation','suspended'=>'Suspended','revoked'=>'Revoked','retired'=>'Retired'];

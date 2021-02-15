@@ -99,7 +99,7 @@ input[type='checkbox'] {
 	<br>
 	<?= Html::Button('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'new-agree', 'class' => 'btn btn-primary', 'onclick' => 'AckAgree();']), PHP_EOL ?> 
 </div>
-<div class="container badgessm-form" id="div_FormBody" ><!-- style="display:none;"> -->
+<div class="container badgessm-form" id="div_FormBody" style="display:none;">
     <?php $form = ActiveForm::begin([
 			'id'=>'NewMembers',
 			'enableAjaxValidation' => true,
@@ -146,11 +146,11 @@ input[type='checkbox'] {
 			<?= $form->field($model, 'zip')->textInput([]) ?>
 		</div>
 		<div class="col-xs-6 col-sm-4">
-			<?= $form->field($model, 'city')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
+			<?= $form->field($model, 'city')->textInput(['autocomplete' => 'off']) ?>
 		</div>
 
 		<div class="col-xs-6 col-sm-2">
-			<?= $form->field($model, 'state')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
+			<?= $form->field($model, 'state')->dropDownList(['AL'=>'Alabama','AK'=>'Alaska','AZ'=>'Arizona','AR'=>'Arkansas','CA'=>'California','CO'=>'Colorado','CT'=>'Connecticut','DE'=>'Delaware','FL'=>'Florida','GA'=>'Georgia','HI'=>'Hawaii','ID'=>'Idaho','IL'=>'Illinois','IN'=>'Indiana','IA'=>'Iowa','KS'=>'Kansas','KY'=>'Kentucky','LA'=>'Louisiana','ME'=>'Maine','MD'=>'Maryland','MA'=>'Massachusetts','MI'=>'Michigan','MN'=>'Minnesota','MS'=>'Mississippi','MO'=>'Missouri','MT'=>'Montana','NE'=>'Nebraska','NV'=>'Nevada','NH'=>'New Hampshire','NJ'=>'New Jersey','NM'=>'New Mexico','NY'=>'New York','NC'=>'North Carolina','ND'=>'North Dakota','OH'=>'Ohio','OK'=>'Oklahoma','OR'=>'Oregon','PA'=>'Pennsylvania','RI'=>'Rhode Island','SC'=>'South Carolina','SD'=>'South Dakota','TN'=>'Tennessee','TX'=>'Texas','UT'=>'Utah','VT'=>'Vermont','VA'=>'Virginia','WA'=>'Washington','WV'=>'West Virginia','WI'=>'Wisconsin','WY'=>'Wyoming','DC'=>'District of Columbia','GU'=>'Guam','MH'=>'Marshall Islands','MP'=>'Northern Mariana Island','PR'=>'Puerto Rico','VI'=>'Virgin Islands','AE'=>'Armed Forces Africa','AA'=>'Armed Forces Americas','AE'=>'Armed Forces Canada','AE'=>'Armed Forces Europe','AE'=>'Armed Forces Middle East','AP'=>'Armed Forces Pacific'],['value'=>'MD']) ?>
 		</div>
 		<div class="col-xs-6 col-sm-2">
 			<p><?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female'],['value'=>0]) ?></p>

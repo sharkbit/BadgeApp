@@ -28,7 +28,7 @@ class BadgesSm extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name','last_name','address','city','club_name','email','email_verify','state','zip','gender','ice_phone','ice_contact','incep','mem_type','expires','wt_date','wt_instru'], 'required'],
+			[['first_name','last_name','address','city','club_name','email','email_verify','state','zip','gender','ice_phone','phone','ice_contact','incep','mem_type','expires','wt_date','wt_instru'], 'required'],
 			[['address', 'gender', 'qrcode','status','club_name'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip','club_id', 'mem_type','yob'], 'integer'],
@@ -39,7 +39,7 @@ class BadgesSm extends \yii\db\ActiveRecord {
 			//['email','uniqueEmail'],
 			['email_verify', 'compare', 'compareAttribute'=>'email', 'message'=>"Emails don't match"],
 			[['first_name','last_name'], 'string', 'max' => 35],
-			[['phone_op','ice_phone'], 'match', 'pattern' => '/^[- 0-9() +]+$/', 'message' => 'Not a valid phone number.'],
+			[['phone','phone_op','ice_phone'], 'match', 'pattern' => '/^[- 0-9() +]+$/', 'message' => 'Not a valid phone number.'],
 			[['city', 'phone', 'phone_op', 'ice_phone'], 'string', 'max' => 25],
 			[['zip'], 'string', 'max' => 10],
 			[['wt_instru'], 'string', 'max' => 255],
