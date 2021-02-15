@@ -465,11 +465,11 @@ class BadgesController extends AdminController {
 			$model->created_at = $this->getNowTime();
 
 			$model->status ='approved';
-			$model = $this->cleanBadgeData($model,true,true);
+			$model = $model->cleanBadgeData($model,true,true);
 
 			$saved=$model->save();
 			if(!$saved) {
-				$model->badge_number=$this->getFirstFreeBadge();
+				$model->badge_number=$model->getFirstFreeBadge();
 				$qr=explode(" ",$model->qrcode);
 				$model->qrcode=$qr[0]." ".$qr[1]." ".str_pad($model->badge_number, 5, '0', STR_PAD_LEFT)." ".$qr[3];
 				$saved=$model->save();
@@ -570,7 +570,7 @@ class BadgesController extends AdminController {
 			}
 		}
 		else {
-			$model->badge_number = $this->getFirstFreeBadge();
+			$model->badge_number = $model->getFirstFreeBadge();
 
 			return $this->render('create', [
 				'model' => $model,
@@ -954,9 +954,9 @@ class BadgesController extends AdminController {
 		$model = new BadgeSubscriptions();
 		$badgeRecords = Badges::find()->where(['badge_number'=>$membership_id])->one();
 		$badgeRecords->load(Yii::$app->request->post());
-		$dirty = BadgesController::loadDirtyFilds($badgeRecords);
+		$dirty = $model->loadDirtyFilds($badgeRecords);
 		$dirty=implode(", ",$dirty);
-		$badgeRecords = $this->cleanBadgeData($badgeRecords);
+		$badgeRecords = $badgeRecords->cleanBadgeData($badgeRecords);
 		yii::$app->controller->sendVerifyEmail($badgeRecords->email,'update',$badgeRecords);
 
 		if ($model->load(Yii::$app->request->post())) {
@@ -1089,7 +1089,7 @@ class BadgesController extends AdminController {
 			if(yii::$app->request->isAjax) {
 				// if ajax request
 				if ($model->load(Yii::$app->request->post())) {
-					$model = $this->cleanBadgeData($model,true);
+					$model = $model->cleanBadgeData($model,true);
 
 					if($model->save(false)) {
 						$this->createLog($this->getNowTime(), $_SESSION['user'], "Updated Badge','".$model->badge_number);
@@ -1109,7 +1109,7 @@ class BadgesController extends AdminController {
 			}
 			else {  // if not ajax request
 				if ($model->load(Yii::$app->request->post())) {
-					$model = $this->cleanBadgeData($model,true);
+					$model = $model->cleanBadgeData($model,true);
 					if($model->save(false)) {
 
 						//send Email
@@ -1319,73 +1319,6 @@ class BadgesController extends AdminController {
 		} else {return $this->redirect(['index']);}
 	}
 
-	public static function cleanBadgeData($model, $DoComment=false,$isNew=false) {
-
-		if(isset($model->yob)) {
-			$model->yob = (int)trim($model->yob);
-			if($model->yob == 0) { $model->yob=null; }
-		}
-		if(isset($model->mem_type)) {$model->mem_type = (int)trim($model->mem_type);}
-		if($model->mem_type!='51') {
-			$model->primary = null;
-		}
-
-		$model->first_name = trim($model->first_name);
-		$model->last_name = trim($model->last_name);
-		$model->suffix = trim($model->suffix);
-		$model->address = str_replace("\r\n", ", ", $model->address);
-		$model->address = trim(str_replace("\n", ", ", $model->address));
-
-		$model->phone = preg_replace('/\D/','',$model->phone);
-		$model->phone_op = preg_replace('/\D/','',$model->phone_op);
-		$model->ice_phone = preg_replace('/\D/','',$model->ice_phone);
-
-		$model->wt_date = date('Y-m-d',strtotime($model->wt_date));
-		$model->expires = date('Y-m-d',strtotime($model->expires));
-		$model->incep = date('Y-m-d H:i:s',strtotime($model->incep));
-
-		if(isset($model->payment_method)) {
-			if($model->payment_method=='creditnow') {$payment_method = 'credit';} else {$payment_method = $model->payment_method;} }
-		if(isset($_POST['new_club'])) {
-			BadgesController::saveClub($model->badge_number,$_POST['new_club']);
-			$model->club_id=$_POST['new_club'][0];
-		} else {
-			if(!$isNew) {BadgesController::saveClub($model->badge_number,[35]);
-			$model->club_id=35; }
-		}
-
-		$dirty = BadgesController::loadDirtyFilds($model);
-		$dirty = implode(", ",$dirty);
-
-		$model->incep = date('Y-m-d H:i:s',strtotime($model->incep));
-		$model->updated_at = yii::$app->controller->getNowTime();
-
-		if((isset($model->remarks_temp) && $model->remarks_temp <> '') || ($DoComment && $dirty)) {
-			$remarksOld = json_decode($model->remarks,true);
-			if(($model->remarks_temp) && ($dirty)) {
-				$cmnt = $model->remarks_temp.", Updated: ".$dirty;
-			} elseif($dirty) { $cmnt = "Updated: ".$dirty;
-			} elseif($model->remarks_temp) { $cmnt=$model->remarks_temp;
-			} else { $cmnt = ''; }
-			if ($isNew) {$by='Created';} else {$by='Updated';}
-			$nowRemakrs = [
-				'created_at'=>yii::$app->controller->getNowTime(),
-				'data'=>$cmnt. ' ',
-				'changed'=> $by.' by '.$_SESSION['user'],
-			];
-			if($remarksOld != '') {
-				array_push($remarksOld,$nowRemakrs);
-			} else {
-				$remarksOld = [
-					$nowRemakrs,
-				];
-			}
-			$model->remarks = json_encode($remarksOld,true);
-		}
-
-		return $model;
-	}
-
 	public function getStikker() {
 		$badgeCertification = new BadgeCertification();
 		$presmission = true;
@@ -1396,48 +1329,6 @@ class BadgesController extends AdminController {
 				return $sticker;
 			}
 		}
-	}
-
-	public static function loadDirtyFilds($model) {
-		$model->club_id=(int)$model->club_id;
-//yii::$app->controller->createLog(true, 'trex_dirty', var_export($model,true));
-		$items=$model->getDirtyAttributes();
-		$obejectWithkeys = [
-			'club_id' => 'Club',
-			'prefix' => 'Prefix',
-			'first_name' => 'First Name',
-			'last_name' => 'Last Name',
-			'suffix' => 'Suffix',
-			'address' => 'Address',
-			'city' => 'City',
-			'state' => 'State',
-			'zip' => 'Zip',
-			'gender' => 'Gender',
-			'yob' => 'YOB',
-			'email' => 'Email',
-			'email_vrfy' => 'Verified',
-			'phone' => 'Phone',
-			'phone_op' => 'Phone Optional',
-			'ice_contact' => 'Emergency Contact',
-			'ice_phone' => 'Emergency Contact Phone',
-			'mem_type' => 'Membership Type',
-			'primary' => 'Primary',
-			'expires' => 'Expires',
-			'qrcode' => 'qrcode',
-			'wt_date' => 'WT Date',
-			'wt_instru' => 'WT Instructor',
-			'status'=>'Account Status',
-		];
-
-		$responce = [];
-
-		foreach($items as $key => $item) {
-			if(array_key_exists($key,$obejectWithkeys)) {
-				$responce[] = $obejectWithkeys[$key];
-			}
-		}
-		sort($responce);
-		return $responce;
 	}
 
 	public static function saveClub($badge_number, $clubs) {
@@ -1503,16 +1394,6 @@ class BadgesController extends AdminController {
 	protected function getClubRecord($badge_number) {
 		$badgeArray = Badges::find()->where(['badge_number'=>$badge_number])->one();
 		return $badgeArray;
-	}
-
-	protected function getFirstFreeBadge(){
-		$sql='SELECT t.badge_number + 1 AS FirstAvailableId FROM badges t LEFT JOIN badges t1 ON t1.badge_number = t.badge_number + 1 WHERE t1.badge_number IS NULL ORDER BY t.badge_number LIMIT 0, 1';
-		$connection = Yii::$app->getDb();
-		$command = $connection->createCommand($sql);
-		$NewId = $command->queryAll();
-		if (isset($NewId[0]['FirstAvailableId'])) {$FirstId=$NewId[0]['FirstAvailableId'];} else {$FirstId=1;}
-		return $FirstId;
-
 	}
 
 	protected function getOfferFee($feeArray) {

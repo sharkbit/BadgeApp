@@ -10,6 +10,7 @@ use backend\controllers\AdminController;
 use common\models\User;
 use backend\models\Badges;
 use backend\models\BadgesSm;
+use backend\models\BadgeToClubs;
 use backend\models\Guest;
 use backend\models\LoginAccess;
 use backend\models\Privileges;
@@ -236,8 +237,51 @@ class SiteController extends AdminController {
 	public function actionNewMember() {
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
 		$model = New BadgesSm;
+
 		if ($model->load(Yii::$app->request->post())) {
-		echo 'Hello';exit;}
+			if (Yii::$app->request->isAjax) {
+				yii::$app->controller->createLog(true, 'trex_nmm', var_export($_POST,true));
+
+				$model->addError('email', 'noo');
+				yii::$app->controller->createLog(true, 'trex_model', var_export('Ajax',true));
+
+				return json_encode(['status'=>'error']);
+			} else {
+				yii::$app->controller->createLog(true, 'trex_nmm', var_export("yes post",true));
+				$model->created_at = $this->getNowTime();
+				$model->remarks = '';
+
+				$model = (new Badges)->cleanBadgeData($model,false,true);
+				$saved=$model->save();
+				if(!$saved) {
+					$model->badge_number = (new Badges)->getFirstFreeBadge();
+					$qr=explode(" ",$model->qrcode);
+					$model->qrcode=$qr[0]." ".$qr[1]." ".str_pad($model->badge_number, 5, '0', STR_PAD_LEFT)." ".$qr[3];
+					$saved=$model->save();
+				}
+				if($saved) {
+					$this->createLog($this->getNowTime(), $model->first_name.' '.$model->last_name, "Self-Registered new Badge','".$model->badge_number);
+					Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been created');
+					$myClub=New BadgeToClubs;
+					$myClub->club_id = $model->club_name;
+					$myClub->badge_number = $model->badge_number;
+					$myClub->save();
+
+		// Send Welcome Email
+		
+		//Auto Login??
+					$_SESSION['jump'] = base64_encode('/badges/view');
+					
+					return $this->redirect(['view', 'badge_number' => $model->badge_number]);
+				} else {
+					Yii::$app->getSession()->setFlash('error', 'Something Broke?');
+					$errors = $model->getErrors();
+					yii::$app->controller->createLog(true, 'trex_self_error', var_export($errors,true));
+				}
+			}
+		}
+		
+		$model->badge_number = (new Badges)->getFirstFreeBadge();
 		return $this->render('new-member',[
 			'model'=> $model
 		]);

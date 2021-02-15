@@ -3,6 +3,7 @@ namespace backend\models;
 
 use Yii;
 use DateTime;
+use backend\models\Badges;
 use backend\models\BadgeSubscriptions;
 use backend\models\clubs;
 use backend\models\MembershipType;
@@ -16,6 +17,7 @@ use yii\helpers\ArrayHelper;
  */
 class BadgesSm extends \yii\db\ActiveRecord {
 	public $club_name;
+	public $email_verify;
 
 	public static function tableName() {
 		return 'badges';
@@ -26,15 +28,16 @@ class BadgesSm extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name', 'last_name', 'address', 'city','club_name','state', 'zip', 'gender', 'mem_type', 'incep', 'expires','wt_date','wt_instru'], 'required'],
+			[['first_name','last_name','address','city','club_name','email','email_verify','state','zip','gender','ice_phone','ice_contact','incep','mem_type','expires','wt_date','wt_instru'], 'required'],
 			[['address', 'gender', 'qrcode','status','club_name'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
-			[['badge_number','zip','club_id', 'mem_type','email_vrfy','yob'], 'integer'],
+			[['badge_number','zip','club_id', 'mem_type','yob'], 'integer'],
 			[['prefix', 'suffix'], 'string', 'max' => 15],
-			['email', 'string', 'max' => 60],
-			['email', 'filter', 'filter' => 'trim'],
-			['email', 'email'],
-			[['email'],'unique','message'=>'Email already exist. Please try another one.'],
+			['email','filter','filter' => 'trim'],
+			['email','email'],
+			//['email','unique','targetClass' => '\backend\models\Badges','message'=>'Email already exist. Please use another one.'],
+			//['email','uniqueEmail'],
+			['email_verify', 'compare', 'compareAttribute'=>'email', 'message'=>"Emails don't match"],
 			[['first_name','last_name'], 'string', 'max' => 35],
 			[['phone_op','ice_phone'], 'match', 'pattern' => '/^[- 0-9() +]+$/', 'message' => 'Not a valid phone number.'],
 			[['city', 'phone', 'phone_op', 'ice_phone'], 'string', 'max' => 25],
@@ -48,38 +51,28 @@ class BadgesSm extends \yii\db\ActiveRecord {
 		];
 	}
 
+/*	public function uniqueEmail($attribute, $params){
+         if($user = Badges::model()->exists('email=:email',array('email'=>$this->email)))
+          $this->addError($attribute, 'Email already exists!');
+    } */
+	
+	
 	/**
 	 * @inheritdoc
 	 */
 	public function attributeLabels() {
 		return [
-			'badge_number' => 'Badge Number',
-			'prefix' => 'Prefix',
-			'first_name' => 'First Name',
-			'last_name' => 'Last Name',
-			'suffix' => 'Suffix',
-			'address' => 'Address',
-			'city' => 'City',
-			'state' => 'State',
-			'zip' => 'Zip',
-			'gender' => 'Gender',
 			'yob' => 'YOB',
-			'email' => 'Email',
+			'email_verify'=> 'Verify Email',
 			'email_vrfy' => 'Verified',
-			'phone' => 'Phone',
 			'phone_op' => 'Phone Optional',
 			'ice_contact' => 'Emergency Contact',
 			'ice_phone' => 'Emergency Contact Phone',
-			'club_name' => 'Club Name',
 			'club_id' => 'Clubs',
 			'mem_type' => 'Badge Type',
-			'primary' => 'Primary',
-			'incep' => 'Incep',
-			'expires' => 'Expires',
-			'qrcode' => 'qrcode',
-			'wt_date' => 'WT Date',
-			'wt_instru' => 'WT Instructor',
-			'remarks' => 'Remarks',
+			'incep' => 'Date Joined',
+			'wt_date' => 'Walk Through Date',
+			'wt_instru' => 'Walk Through Instructor',
 			'status'=>'Account Status',
 		];
 	}

@@ -77,43 +77,21 @@ class Badges extends \yii\db\ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return [
-			'badge_number' => 'Badge Number',
-			'prefix' => 'Prefix',
-			'first_name' => 'First Name',
-			'last_name' => 'Last Name',
-			'suffix' => 'Suffix',
-			'address' => 'Address',
-			'city' => 'City',
-			'state' => 'State',
-			'zip' => 'Zip',
-			'gender' => 'Gender',
 			'yob' => 'YOB',
-			'email' => 'Email',
 			'email_vrfy' => 'Verified',
-			'phone' => 'Phone',
 			'phone_op' => 'Phone Optional',
 			'ice_contact' => 'Emergency Contact',
 			'ice_phone' => 'Emergency Contact Phone',
-			'club_name' => 'Club Name',
 			'club_id' => 'Clubs',
 			'mem_type' => 'Badge Type',
-			'primary' => 'Primary',
-			'incep' => 'Incep',
-			'expires' => 'Expires',
-			'qrcode' => 'qrcode',
+			'incep' => 'Date Joined',
 			'wt_date' => 'WT Date',
 			'wt_instru' => 'WT Instructor',
-			'remarks' => 'Remarks',
-			'badge_fee' => 'Badge Fee',
-			'discounts' => 'Discounts',
-			'amt_due' => 'Amt Due',
-			'payment_method' => 'Payment Method',
 			'status'=>'Account Status',
-			'amount_paid'=>'Paid Amount',
 			'cc_num'=>'Card Number',
 			'cc_cvc'=>'CVC',
 			'cc_exp_yr'=>'Exp Year',
-			'cc_exp_mo'=>'Exp Month' 
+			'cc_exp_mo'=>'Exp Month'
 		];
 	}
 
@@ -153,12 +131,76 @@ class Badges extends \yii\db\ActiveRecord {
 			return ['approved'=>'Approved','pending'=>'Pending','prob'=>'Probation','suspended'=>'Suspended','revoked'=>'Revoked','retired'=>'Retired'];
 		}
 	}
-	
+
+	public static function cleanBadgeData($model, $DoComment=false,$isNew=false) {
+		if(isset($model->yob)) {
+			$model->yob = (int)trim($model->yob);
+			if($model->yob == 0) { $model->yob=null; }
+		}
+		if(isset($model->mem_type)) {$model->mem_type = (int)trim($model->mem_type);}
+		if($model->mem_type!='51') {
+			$model->primary = null;
+		}
+
+		$model->first_name = trim($model->first_name);
+		$model->last_name = trim($model->last_name);
+		$model->suffix = trim($model->suffix);
+		$model->address = str_replace("\r\n", ", ", $model->address);
+		$model->address = trim(str_replace("\n", ", ", $model->address));
+		$model->phone = preg_replace('/\D/','',$model->phone);
+		$model->phone_op = preg_replace('/\D/','',$model->phone_op);
+		$model->ice_phone = preg_replace('/\D/','',$model->ice_phone);
+		$model->wt_date = date('Y-m-d',strtotime($model->wt_date));
+		$model->expires = date('Y-m-d',strtotime($model->expires));
+		$model->incep = date('Y-m-d H:i:s',strtotime($model->incep));
+
+		if(isset($model->payment_method)) {
+			if($model->payment_method=='creditnow') {$payment_method = 'credit';} else {$payment_method = $model->payment_method;} }
+		if(isset($_POST['new_club'])) {
+			BadgesController::saveClub($model->badge_number,$_POST['new_club']);
+			$model->club_id=$_POST['new_club'][0];
+		} else {
+			if(!$isNew) {BadgesController::saveClub($model->badge_number,[35]);
+			$model->club_id=35; }
+		}
+
+		$dirty = (New Badges)->loadDirtyFilds($model);
+		$dirty = implode(", ",$dirty);
+
+		$model->incep = date('Y-m-d H:i:s',strtotime($model->incep));
+		$model->updated_at = yii::$app->controller->getNowTime();
+
+		if((isset($model->remarks_temp) && $model->remarks_temp <> '') || ($DoComment && $dirty)) {
+			$remarksOld = json_decode($model->remarks,true);
+			if(($model->remarks_temp) && ($dirty)) {
+				$cmnt = $model->remarks_temp.", Updated: ".$dirty;
+			} elseif($dirty) { $cmnt = "Updated: ".$dirty;
+			} elseif($model->remarks_temp) { $cmnt=$model->remarks_temp;
+			} else { $cmnt = ''; }
+			if ($isNew) {$by='Created';} else {$by='Updated';}
+			$nowRemakrs = [
+				'created_at'=>yii::$app->controller->getNowTime(),
+				'data'=>$cmnt. ' ',
+				'changed'=> $by.' by '.$_SESSION['user'],
+			];
+			if($remarksOld != '') {
+				array_push($remarksOld,$nowRemakrs);
+			} else {
+				$remarksOld = [
+					$nowRemakrs,
+				];
+			}
+			$model->remarks = json_encode($remarksOld,true);
+		}
+
+		return $model;
+	}
+
 	public function canRenew($status) {
 		if ($status=='approved' || $status=='pending' || $status=='prob') {
 			return true; }
 		else { return false; }
-		
+
 	}
 
 	public function gtActiveSubscriptionModel() {
@@ -167,6 +209,55 @@ class Badges extends \yii\db\ActiveRecord {
 
 	public function getActiveClub() {
 		return $this->hasOne(Clubs::className(),['club_id'=>'club_id']);
+	}
+
+	public static function loadDirtyFilds($model) {
+		$model->club_id=(int)$model->club_id;
+		$items=$model->getDirtyAttributes();
+		$obejectWithkeys = [
+			'club_id' => 'Club',
+			'prefix' => 'Prefix',
+			'first_name' => 'First Name',
+			'last_name' => 'Last Name',
+			'suffix' => 'Suffix',
+			'address' => 'Address',
+			'city' => 'City',
+			'state' => 'State',
+			'zip' => 'Zip',
+			'gender' => 'Gender',
+			'yob' => 'YOB',
+			'email' => 'Email',
+			'email_vrfy' => 'Verified',
+			'phone' => 'Phone',
+			'phone_op' => 'Phone Optional',
+			'ice_contact' => 'Emergency Contact',
+			'ice_phone' => 'Emergency Contact Phone',
+			'mem_type' => 'Membership Type',
+			'primary' => 'Primary',
+			'expires' => 'Expires',
+			'qrcode' => 'qrcode',
+			'wt_date' => 'WT Date',
+			'wt_instru' => 'WT Instructor',
+			'status'=>'Account Status',
+		];
+
+		$responce = [];
+		foreach($items as $key => $item) {
+			if(array_key_exists($key,$obejectWithkeys)) {
+				$responce[] = $obejectWithkeys[$key];
+			}
+		}
+		sort($responce);
+		return $responce;
+	}
+
+	public function getFirstFreeBadge(){
+		$sql='SELECT t.badge_number + 1 AS FirstAvailableId FROM badges t LEFT JOIN badges t1 ON t1.badge_number = t.badge_number + 1 WHERE t1.badge_number IS NULL ORDER BY t.badge_number LIMIT 0, 1';
+		$connection = Yii::$app->getDb();
+		$command = $connection->createCommand($sql);
+		$NewId = $command->queryAll();
+		if (isset($NewId[0]['FirstAvailableId'])) {$FirstId=$NewId[0]['FirstAvailableId'];} else {$FirstId=1;}
+		return $FirstId;
 	}
 
 	public function getWorkCredits($badge_number) {

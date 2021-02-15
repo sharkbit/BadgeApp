@@ -19,7 +19,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 ?>
 <div class="site-login">
     <div class="row ">
-		<div class="col-xs-12 col-sm-4" >
+		<div class="col-xs-12 col-md-4" >
 <?php if($agc_event) { ?>
 			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<h3>Todays Events:</h3><hr /><ul>
@@ -38,7 +38,7 @@ foreach($agc_event as $an_event){
 		<p> </p> <br />
 <?php } ?>
 		</div>
-        <div class="col-xs-12 col-sm-4" >
+        <div class="col-xs-12 col-md-4" >
             <div class="login-box">
 			<?= $this->render('_login-tab-menu',['model'=>$model]).PHP_EOL; ?>
 				<p class="help-block help-block-error"></p>
@@ -64,9 +64,11 @@ foreach($agc_event as $an_event){
                 <?php ActiveForm::end(); ?>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-4" >
-			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
-			<p> </p> <center><h3><a href="/site/new-member">New Member Signup</a></h3></center>
+        <div class="col-xs-12 col-md-4" >
+			<div style=" padding: 20px;"><p> <br /> </p>
+				<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
+				<p> </p> <center><h3><a href="/site/new-member">New Member Signup</a></h3></center>
+				</div>
 			</div>
 		</div>
     </div>

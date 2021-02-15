@@ -25,10 +25,12 @@ $confParams  = Params::findOne('1');
 $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
 $nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 if ($DateChk <= $nowDate) {
-	$nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));
+	$nextExpire = strtotime(strtotime($nowDate));
 } else {
-	$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
+	$nextExpire = strtotime("-1 years",strtotime($nowDate));
 }
+$model->expires = date('M d, Y',strtotime(date('Y-01-09',$nextExpire)));
+ 
 $this->title = 'Register New Member (Self-service)';
 //$this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -39,8 +41,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="container row" id="div_Ack" >
 <style>
 #AckTbl {
-width: 100%;
-background-color: #f1f1c1;
+	width: 100%;
+	background-color: #f1f1c1;
 }
 table, td {
 	border: 1px solid black;
@@ -48,6 +50,10 @@ table, td {
 	margin: 8px;
 	font-size: 18px;
 	text-align:left;
+}
+input[type='checkbox'] {
+    width:30px;
+    height:30px;
 }
 </style>
 	<br><hr>
@@ -93,133 +99,128 @@ table, td {
 	<br>
 	<?= Html::Button('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'new-agree', 'class' => 'btn btn-primary', 'onclick' => 'AckAgree();']), PHP_EOL ?> 
 </div>
-<div class="badges-form" id="div_FormBody" style="display:none;">
-<?php $form = ActiveForm::begin(['id'=>'NewMembers']); ?>
-<div class="row">
+<div class="container badgessm-form" id="div_FormBody" ><!-- style="display:none;"> -->
+    <?php $form = ActiveForm::begin([
+			'id'=>'NewMembers',
+			'enableAjaxValidation' => true,
+			'validateOnSubmit' => true,]); ?>
+	<div class="row">
 
-    <div class="col-xs-12">
-		<div class="row">
-  
-            <div class="col-xs-6 col-sm-2">
-				<?= $form->field($model, 'prefix')->dropDownList(['Mr'=>'Mr','Ms'=>'Ms','Miss'=>'Miss','Mrs'=>'Mrs','Master'=>'Master','Fr'=>'Father (Fr)','Rev'=>'Reverend (Rev)','Dr'=>'Doctor (Dr)','Atty'=>'Attorney (Atty)','Hon'=>'Honorable (Hon)','Prof'=>'Professor (Prof)','Pres'=>'President (Pres)','VP'=>'Vice President (VP)','Gov'=>'Governor (Gov)','Ofc'=>'Officer (Ofc)'],['readonly'=> $model->isNewRecord ? false : true,]) ?>
-            </div>
-            <div class="col-xs-6 col-sm-4">
-                <?= $form->field($model, 'first_name')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,'placeholder' => 'First M.']) ?>
-            </div>
-            <div class="col-xs-6 col-sm-4">
-                <?= $form->field($model, 'last_name')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,'placeholder' => 'Last']) ?>
-            </div>
-            <div class="col-xs-6 col-sm-2">
-                <?= $form->field($model, 'suffix')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
-            </div>
-            <div class="col-xs-6 col-sm-6 col-md-4">
-                <?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(true),[]).PHP_EOL; ?>
-            </div>
-            <div class="col-xs-6 col-sm-6 col-md-4">
-                <?= $form->field($model, 'club_name')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'select','id'=>'club-id']).PHP_EOL; ?>
-                <?= $form->field($model, 'club_id')->hiddenInput(['readonly' => true])->label(false) ?>
-            </div>
+		<div class="col-xs-6 col-sm-2">
+			<?= $form->field($model, 'prefix')->dropDownList(['Mr'=>'Mr','Ms'=>'Ms','Miss'=>'Miss','Mrs'=>'Mrs','Master'=>'Master','Fr'=>'Father (Fr)','Rev'=>'Reverend (Rev)','Dr'=>'Doctor (Dr)','Atty'=>'Attorney (Atty)','Hon'=>'Honorable (Hon)','Prof'=>'Professor (Prof)','Pres'=>'President (Pres)','VP'=>'Vice President (VP)','Gov'=>'Governor (Gov)','Ofc'=>'Officer (Ofc)'],['readonly'=> $model->isNewRecord ? false : true,]) ?>
+		</div>
+		<div class="col-xs-6 col-sm-4">
+			<?= $form->field($model, 'first_name')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,'placeholder' => 'First M.']) ?>
+		</div>
+		<div class="col-xs-6 col-sm-4">
+			<?= $form->field($model, 'last_name')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,'placeholder' => 'Last']) ?>
+		</div>
+		<div class="col-xs-6 col-sm-2">
+			<?= $form->field($model, 'suffix')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-4">
+			<?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(true),[]).PHP_EOL; ?>
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-4">
+			<?= $form->field($model, 'club_name')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'select','id'=>'club-id']).PHP_EOL; ?>
+			<?= $form->field($model, 'club_id')->hiddenInput(['readonly' => true])->label(false) ?>
+		</div>
 
-			<div  class="col-xs-12" id="primary-badge-summary">
-				<div class="row">
-					<div class="col-xs-6 col-sm-3" >
-						<?= $form->field($model, 'primary')->textInput(['value'=>''])->label("Primary Family Member") ?>
-					</div>
-					<div class="col-xs-12 col-sm-9">
-						<h4 class="text-center" id="no-primary-error" ><br> <p>Please Enter Primary badge Holder</p> <br> </h4>
-						<div id="searchng-badge-animation" style="display: none">
-							<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
-						</div>
-					</div>
-				</div>
-			</div>
-            <div class="col-xs-12 col-sm-6">
-                <?= $form->field($model, 'address')->textarea(['rows' => '1']).PHP_EOL; ?>
-            </div>
-            <div class="col-xs-6 col-sm-2">
-                <?= $form->field($model, 'zip')->textInput([]) ?>
-            </div>
-            <div class="col-xs-6 col-sm-4">
-                <?= $form->field($model, 'city')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
-            </div>
-
-            <div class="col-xs-6 col-sm-2">
-                <?= $form->field($model, 'state')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
-            </div>
-            <div class="col-xs-6 col-sm-2">
-                <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female'],['value'=>0]) ?>
-            </div>
-            <div class="col-xs-6 col-sm-2">
-                <?= $form->field($model, 'yob')->dropDownList($YearList,['value'=>$MyYr-13 ]) ?>
-            </div>
-            <div class="col-xs-12 col-sm-6">
-                <?= $form->field($model, 'email', ['enableAjaxValidation' => true])->textInput(['autocomplete' => 'off','class'=>'form-control']) ?>
-            </div>
-
-            <div class="col-xs-6 col-sm-6">
-                <?= $form->field($model, 'phone')->textInput(['autocomplete' => 'off','maxlength'=>true,'readonly'=> $model->isNewRecord ? false : true,]) ?>
-            </div>
-            <div class="col-xs-6 col-sm-6">
-                <?= $form->field($model, 'phone_op')->textInput(['autocomplete' => 'off','maxlength'=>true,'readonly'=> $model->isNewRecord ? false : true,'placeholder'=>'Optional']) ?>
-            </div>
-
-            <div class="col-xs-6 col-sm-6">
-                <?= $form->field($model, 'ice_contact')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
-            </div>
-            <div class="col-xs-6 col-sm-6">
-                <?= $form->field($model, 'ice_phone')->textInput(['autocomplete' => 'off','maxlength'=>true,'readonly'=> $model->isNewRecord ? false : true,]) ?>
-            </div>
-
-            <div class="col-xs-6 col-sm-6">
-                <?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))]) ?>
-            </div>
-            <div class="col-xs-6 col-sm-4">
-                <?php $model->expires = date('M d, Y',strtotime($nextExpire)); ?>
-                <?= $form->field($model, 'expires')->textInput(['readOnly'=>true]) ?>
-                <input type="hidden" value='<?php echo date('M d, Y',strtotime($nextExpire)); ?>' id='defDate' />
-            </div>
-             <div class="col-xs-6 col-sm-4">
-                <?php $model->wt_date = date('M d, Y',strtotime(yii::$app->controller->getNowTime())) ?>
-                <?= $form->field($model, 'wt_date')->widget(DatePicker::classname(), [
-                                'options' => ['placeholder' => 'WT Date'],
-                                'type' => DatePicker::TYPE_INPUT,
-                                'pluginOptions' => [
-                                'format' => 'M dd, yyyy',
-                                'endDate' => date('M d, Y', strtotime("+90 days")),
-                                'autoclose'=>true,
-                                'convertFormat'=>true,
-                            ]
-                ]); ?>
-
-            </div>
-             <div class="col-xs-6 col-sm-4">
-                <?= $form->field($model, 'wt_instru')->textInput(['placeholder'=>'Required']) ?>
-            </div>
-
-			<div class="col-xs-3" id="HideMySubmit">
-				<?= Html::submitButton($model->isNewRecord ? '<i class="fa fa-save"> </i> SAVE' : 'Update', ['id'=>'badges_submin_btn','class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-				<?= Html::Button('Check Form', ['class' =>'btn btn-warning ', 'onclick' => 'checkForm();' ]).PHP_EOL; ?>
-			</div>
-			<div class="col-xs-3">
-				<?= Html::a('<i class="fa fa-eraser"> </i> Clear',['/badges/create'],['class' => 'btn btn-danger']) ?>
-			</div>
-			
+		<div  class="col-xs-12" id="primary-badge-summary">
 			<div class="row">
-				<div class="col-xs-12 col-sm-3" ng-if="membershipType=='2'">
+				<div class="col-xs-6 col-sm-3" >
+					<?= $form->field($model, 'primary')->textInput(['value'=>''])->label("Primary Family Member") ?>
+				</div>
+				<div class="col-xs-12 col-sm-9">
+					<h4 class="text-center" id="no-primary-error" ><br> <p>Please Enter Primary badge Holder</p> <br> </h4>
+					<div id="searchng-badge-animation" style="display: none">
+						<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
+					</div>
 				</div>
 			</div>
-			<p> </p>
+		</div>
+		<div class="col-xs-12 col-sm-6">
+			<?= $form->field($model, 'address')->textarea(['rows' => '1']).PHP_EOL; ?>
+		</div>
+		<div class="col-xs-6 col-sm-2">
+			<?= $form->field($model, 'zip')->textInput([]) ?>
+		</div>
+		<div class="col-xs-6 col-sm-4">
+			<?= $form->field($model, 'city')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
+		</div>
+
+		<div class="col-xs-6 col-sm-2">
+			<?= $form->field($model, 'state')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
+		</div>
+		<div class="col-xs-6 col-sm-2">
+			<p><?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female'],['value'=>0]) ?></p>
+		</div>
+		<div class="col-xs-6 col-sm-2">
+			<?= $form->field($model, 'yob')->dropDownList($YearList,['value'=>$MyYr-13 ]) ?>
+		</div>
+		<div class="col-xs-12 col-sm-6">
+			<?= $form->field($model, 'email')->textInput(['autocomplete' => 'off','class'=>'form-control']) ?>
+		</div>
+		<div class="col-xs-12 col-sm-6">
+			<?= $form->field($model, 'email_verify')->textInput(['autocomplete' => 'off','class'=>'form-control']) ?>
+		</div>
+
+		<div class="col-xs-6 col-sm-6">
+			<?= $form->field($model, 'phone')->textInput(['autocomplete' => 'off','maxlength'=>true,'readonly'=> $model->isNewRecord ? false : true,]) ?>
+		</div>
+		<div class="col-xs-6 col-sm-6">
+			<?= $form->field($model, 'phone_op')->textInput(['autocomplete' => 'off','maxlength'=>true,'readonly'=> $model->isNewRecord ? false : true,'placeholder'=>'Optional']) ?>
+		</div>
+
+		<div class="col-xs-6 col-sm-6">
+			<?= $form->field($model, 'ice_contact')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
+		</div>
+		<div class="col-xs-6 col-sm-6">
+			<?= $form->field($model, 'ice_phone')->textInput(['autocomplete' => 'off','maxlength'=>true,'readonly'=> $model->isNewRecord ? false : true,]) ?>
+		</div>
+
+		 <div class="col-xs-6 col-sm-4">
+			<?php $model->wt_date = date('M d, Y',strtotime(yii::$app->controller->getNowTime())) ?>
+			<?= $form->field($model, 'wt_date')->widget(DatePicker::classname(), [
+					'options' => ['placeholder' => 'WT Date'],
+					'type' => DatePicker::TYPE_INPUT,
+					'pluginOptions' => [
+					'format' => 'M dd, yyyy',
+					'endDate' => date('M d, Y', strtotime("+90 days")),
+					'autoclose'=>true,
+					'convertFormat'=>true,
+				]
+			]); ?>
+
+		</div>
+		 <div class="col-xs-6 col-sm-4">
+			<?= $form->field($model, 'wt_instru')->textInput(['placeholder'=>'Required']) ?>
 		</div>
 	</div>
-</div>
-<?= $form->field($model, 'status')->hiddenInput(['value'=>"self"])->label(false) ?>
+	<div class="row">
+		<div class="col-xs-12" id="HideMySubmit">
+			<?= Html::submitButton('<i class="fa fa-save"> </i> SAVE', ['class' => 'btn btn-success','id'=>'self_save']).PHP_EOL; ?>
+		
+			<?= Html::Button('Check Form', ['class' =>'btn btn-warning ', 'onclick' => 'checkForm();' ]).PHP_EOL; ?>
+		
+			<?= Html::a('<i class="fa fa-eraser"> </i> Clear',['/site/new-member'],['class' => 'btn btn-danger']).PHP_EOL; ?>
+		</div>
+	</div>
+<hr />
+	<?= $form->field($model, 'badge_number')->textInput(['readonly'=>true, 'value' =>str_pad($model->badge_number, 5, '0', STR_PAD_LEFT) ]) ?>
+	<?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))])->label() ?>
+	<?= $form->field($model, 'expires')->textInput(['readOnly'=>true])->label() ?>
+	<?= $form->field($model, 'qrcode')->textInput(['readOnly'=>true])->label() ?>
+	<?= $form->field($model, 'status')->hiddenInput(['value'=>"self"])->label(false) ?>
 
-<?php ActiveForm::end(); ?>
+	<?php ActiveForm::end(); ?>
 </div>
 </div>
+</div>
+
 <script>
-
 document.getElementById("new-agree").disabled=true;
+//document.getElementById("self_save").disabled=true;
 
 	function checkForm() {
 		console.log("Check Form");
@@ -228,6 +229,14 @@ document.getElementById("new-agree").disabled=true;
 		   this.status = 3;
 		});
 		$form.yiiActiveForm("validate");
+		
+		if ($("#NewMembers").find(".has-error").length) { 
+			document.getElementById("self_save").disabled=true;
+			return false; 
+		} else { 
+			document.getElementById("self_save").disabled=false;
+			return true; 
+		}
 	}
 
 	function AckAgree() {
@@ -246,9 +255,99 @@ document.getElementById("new-agree").disabled=true;
 	}
 	
 	function CheckOnline() {
-		// Only For Renewals!
+		// Only For Renewals!console
 	}
 
+    function fillQR() {
+        var ranText="";
+        var possible = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        for (var ri = 0; ri < 2; ri++)
+           ranText += possible.charAt(Math.floor(Math.random() * possible.length));
+        var barcodeData = ("00" + $('#club-id').val()).slice(-2)+' '+("00" + $('#badgessm-mem_type').val()).slice(-2)+' '+$('#badgessm-badge_number').val()+' '+ranText;
+        $('#badgessm-qrcode').val(barcodeData);
+        barcodeGenerate(barcodeData);
+        $(".barcode").show(300);
+    };
+
+	$("#club-id").change(function() {
+		fillQR();
+	});
+
+	$("#badgessm-mem_type").change(function() {
+		run_waitMe('show');
+		var memTypeId = $("#badgessm-mem_type").val();
+		if(memTypeId=='51') {
+			$("#HideMySubmit").hide(500);
+			family_badge_view('show');
+		} else {
+			$("#HideMySubmit").show(500);
+			family_badge_view('hide');
+		}
+		run_waitMe('hide');
+		fillQR();
+	});
+
+    $("#badgessm-primary").change(function() {
+        var primaryRequest = $("#badgessm-primary").val();
+        if(primaryRequest!=null || primaryRequest !=0) {
+            getPrimaryBadger(primaryRequest,'self');
+        }
+        else {
+            //alert("error reporting");
+        }
+        if(primaryRequest==0 || primaryRequest ==null) {
+ //           $("#primary-badge-summary").hide(500);
+        }
+    });
+
+    $('#badgessm-zip').keyup(function(e) {
+        zipcode = $("#badgessm-zip").val();
+        if(zipcode.length==5) {
+            console.log('Using '+zipcode);
+            jQuery.ajax({
+                method: 'GET',
+                url: '<?=yii::$app->params['rootUrl']?>/badges/api-zip?zip='+zipcode,
+                crossDomain: false,
+                async: true,
+                success: function(responseData, textStatus, jqXHR) {
+                    responseData = JSON.parse(responseData);
+                    if(responseData.City) {
+					$mycity=responseData.City.toProperCase()
+                    $("#badgessm-city").val($mycity);
+                    $("#badgessm-state").val(responseData.State);
+					}
+                },
+                error: function (responseData, textStatus, errorThrown) {
+                    console.log(responseData);
+                },
+            });
+        }
+    });
+
+    document.getElementById('badgessm-phone').addEventListener('keyup',function(evt){
+        var phoneNumber = document.getElementById('badgessm-phone');
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        phoneNumber.value = phoneFormat(phoneNumber.value);
+    });
+
+    document.getElementById('badgessm-phone_op').addEventListener('keyup',function(evt){
+        var phoneNumber = document.getElementById('badgessm-phone_op');
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        phoneNumber.value = phoneFormat(phoneNumber.value);
+    });
+
+    document.getElementById('badgessm-ice_phone').addEventListener('keyup',function(evt){
+        var phoneNumber = document.getElementById('badgessm-ice_phone');
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        phoneNumber.value = phoneFormat(phoneNumber.value);
+    });
+	
+
+  function subform() {
+    //e.preventDefault();
+	console.log(checkForm());
+  };
+  
 	function doCalcNew() {
 /*
 		var badgeFee = parseInt($("#badges-badge_fee").val());
@@ -373,7 +472,7 @@ document.getElementById("new-agree").disabled=true;
 
 $( document ).ready(function() {
   family_badge_view('hide');
-  //get_fees(50);
+  fillQR();
 });
 </script>
 

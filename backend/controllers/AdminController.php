@@ -176,6 +176,7 @@ class AdminController extends \yii\web\Controller {
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='clubs/badge-rosters') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='payment/charge') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='membership-type/fees-by-type') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/api-request-family') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/api-zip') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/api-generate-renaval-fee') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='mass-email/process') ) {

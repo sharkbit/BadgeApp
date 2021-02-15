@@ -319,12 +319,13 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                                 var bgren = '<?=yii::$app->params['rootUrl']?>/badges/view?badge_number='+responseData.badge_number;
                                 $("td#primary-block-badgeNumber").html(responseData.badge_number);
                                 $("h4#no-primary-error").html("Found: <a href='"+bgren+"' target='_blank'>"+responseData.first_name+" "+responseData.last_name+"</a>");
-                                document.getElementById("badges-city").value = responseData.city;
-                                document.getElementById("badges-state").value = responseData.state;
-                                document.getElementById("badges-zip").value = responseData.zip;
-                                document.getElementById("badges-ice_contact").value =responseData.prefix+" "+responseData.first_name+" "+responseData.last_name+" "+responseData.suffix;
-                                document.getElementById("badges-ice_phone").value = responseData.ice_phone;
-                                document.getElementById("badges-address").value = responseData.address;
+								if(type=='self'){var myform='badgessm';} else {var myform='badges';}
+                                document.getElementById(myform+"-city").value = responseData.city;
+                                document.getElementById(myform+"-state").value = responseData.state;
+                                document.getElementById(myform+"-zip").value = responseData.zip;
+                                document.getElementById(myform+"-ice_contact").value =responseData.prefix+" "+responseData.first_name+" "+responseData.last_name+" "+responseData.suffix;
+                                document.getElementById(myform+"-ice_phone").value = responseData.ice_phone;
+                                document.getElementById(myform+"-address").value = responseData.address;
                                 $("#no-primary-error").show(500);
                                 $("#HideMySubmit").show(500);
                             }
