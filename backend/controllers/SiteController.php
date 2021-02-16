@@ -10,7 +10,7 @@ use backend\controllers\AdminController;
 use common\models\User;
 use backend\models\Badges;
 use backend\models\BadgesSm;
-use backend\models\BadgeToClubs;
+use backend\models\Clubs;
 use backend\models\Guest;
 use backend\models\LoginAccess;
 use backend\models\Privileges;
@@ -262,10 +262,7 @@ class SiteController extends AdminController {
 				if($saved) {
 					$this->createLog($this->getNowTime(), $model->first_name.' '.$model->last_name, "Self-Registered new Badge','".$model->badge_number);
 					Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been created');
-					$myClub=New BadgeToClubs;
-					$myClub->club_id = $model->club_name;
-					$myClub->badge_number = $model->badge_number;
-					$myClub->save();
+					(New Clubs)->saveClub($model->badge_number, $model->club_id, false);
 
 		// Send Welcome Email with qr and badge#
 		

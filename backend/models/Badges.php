@@ -158,10 +158,10 @@ class Badges extends \yii\db\ActiveRecord {
 		if(isset($model->payment_method)) {
 			if($model->payment_method=='creditnow') {$payment_method = 'credit';} else {$payment_method = $model->payment_method;} }
 		if(isset($_POST['new_club'])) {
-			BadgesController::saveClub($model->badge_number,$_POST['new_club']);
+			(new Clubs)->saveClub($model->badge_number,$_POST['new_club']);
 			$model->club_id=$_POST['new_club'][0];
 		} else {
-			if(!$isNew) {BadgesController::saveClub($model->badge_number,[35]);
+			if(!$isNew) {(new Clubs)->saveClub($model->badge_number,[35]);
 			$model->club_id=35; }
 		}
 

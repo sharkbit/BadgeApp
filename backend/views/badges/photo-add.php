@@ -24,27 +24,13 @@ $csrfToken=Yii::$app->request->getCsrfToken();
   <div class="col-xs-12" id="uploadingInfoError" style="display: none;">
       <div class="alert alert-danger alert-dismissable fade in" id="error_info">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<br /> <br/ ><p> If you have a camera, <b>grant the webpadge access to you camera</b> and reload the page.</p>
+		<p>- or - <b>Please see associat.</b></p>
       </div>
     </div>
 </div>
-<div class="row" id="no_camera" style="display: none;">
-	<div class="col-md-12 ">
-	<p> Or Try the upload button</p>
-	<p class="help-block help-block-error"></p>
-	</div>
-	<div class="col-md-6 ">
-	<input type="file" id="file" accept="image/jpeg">
-	<p class="help-block help-block-error"></p>
-	</div>
-	<div class="col-md-6 ">
-	<button id="send_photo" class="btn btn-success btn-sm">Submit Photo</button>
-	</div>
-</div>
 <div class="row" id="video_block">
 	<div class="col-md-12 text-center"> 
-		<!-- <div class="select" style="display: none;">
-			<label for="audioSource">Audio source: </label><select id="audioSource"></select>
-		</div> -->
 		<div class="select">
 			<label for="videoSource">Video source: </label> <select id="videoSource"></select>
 		</div>

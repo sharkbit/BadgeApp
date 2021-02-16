@@ -75,7 +75,7 @@ class Clubs extends \yii\db\ActiveRecord {
 		}
     }
 	
-   public function getAvoid($restrict=false) {
+    public function getAvoid($restrict=false) {
 		$clubArray = Clubs::find()
 			->where(['status'=>'0'])
 			->orderBy(['is_club'=> SORT_DESC ])
@@ -126,4 +126,28 @@ class Clubs extends \yii\db\ActiveRecord {
 		$command = Yii::$app->db->createCommand($sql);
 		return $command->queryAll();
 	}
+
+	public static function saveClub($badge_number, $clubs, $delOld=true) {
+		$connection = Yii::$app->getDb();
+
+		if ($delOld) {
+			$sql="DELETE FROM `badge_to_club` WHERE badge_number=".$badge_number;
+			$command = $connection->createCommand($sql);
+			$exec = $command->execute();
+		}
+
+		$myClubs="";
+		if (is_array($clubs)) {
+			foreach($clubs as $clubid) {
+				$myClubs .= "(".$badge_number.",".$clubid."),";
+			}
+		} else {
+			$myClubs = "(".$badge_number.",".$clubs.")";
+		}
+		$myClubs = "INSERT INTO `badge_to_club` (badge_number,Club_id) VALUES ".rtrim($myClubs, ',');
+		$command = $connection->createCommand($myClubs);
+		$exec = $command->execute();
+		return $exec;
+	}
+
 }

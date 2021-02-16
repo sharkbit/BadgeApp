@@ -147,7 +147,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
             </div>
 
             <div class="col-xs-6 col-sm-2">
-                <?= $form->field($model, 'state')->textInput([]).PHP_EOL; ?>
+                <?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates()) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
                 <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female']).PHP_EOL; ?>

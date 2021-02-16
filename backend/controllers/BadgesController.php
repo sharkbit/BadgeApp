@@ -500,7 +500,7 @@ class BadgesController extends AdminController {
 				//Email Verify
 				yii::$app->controller->sendVerifyEmail($model->email,'new',$model);
 
-				$stat = $this->saveClub($model->badge_number, $model->club_id);
+				$stat = (New Clubs)->saveClub($model->badge_number, $model->club_id);
 
 				if($_POST['FriendCredits']>0) {
 					$workCredit = new WorkCredits();
@@ -1329,27 +1329,6 @@ class BadgesController extends AdminController {
 				return $sticker;
 			}
 		}
-	}
-
-	public static function saveClub($badge_number, $clubs) {
-		$connection = Yii::$app->getDb();
-
-		$sql="DELETE FROM `badge_to_club` WHERE badge_number=".$badge_number;
-		$command = $connection->createCommand($sql);
-		$exec = $command->execute();
-
-		$myClubs="";
-		if (is_array($clubs)) {
-			foreach($clubs as $clubid) {
-				$myClubs .= "(".$badge_number.",".$clubid."),";
-			}
-		} else {
-			$myClubs = "(".$badge_number.",".$clubs.")";
-		}
-		$myClubs = "INSERT INTO `badge_to_club` (badge_number,Club_id) VALUES ".rtrim($myClubs, ',');
-		$command = $connection->createCommand($myClubs);
-		$exec = $command->execute();
-		return $exec;
 	}
 
 	public function UpdateQR($model) {
