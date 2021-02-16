@@ -122,7 +122,7 @@ input[type='checkbox'] {
 			<?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(true),[]).PHP_EOL; ?>
 		</div>
 		<div class="col-xs-6 col-sm-6 col-md-4">
-			<?= $form->field($model, 'club_name')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'select','id'=>'club-id']).PHP_EOL; ?>
+			<?= $form->field($model, 'club_name')->dropDownList((new clubs)->getClubList(false,false,2), ['prompt'=>'select','id'=>'club-id']).PHP_EOL; ?>
 			<?= $form->field($model, 'club_id')->hiddenInput(['readonly' => true])->label(false) ?>
 		</div>
 
