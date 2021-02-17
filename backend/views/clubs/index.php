@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/ind
 			'buttons'=> [
 				'update' => function ($url, $model) {
 					if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||
-					((yii::$app->controller->hasPermission('clubs/update')) && (!array_intersect([1,2],json_decode($model->privilege))))) {
+					((yii::$app->controller->hasPermission('clubs/update')) && (!array_intersect([1,2],json_decode(yii::$app->user->identity->privilege))))) {
 					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/clubs/update','id'=>$model->club_id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',
