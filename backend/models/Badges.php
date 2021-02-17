@@ -129,7 +129,7 @@ class Badges extends \yii\db\ActiveRecord {
 				case 'self': return 'Self-Registered'; break;
 			}
 		} else {
-			return ['approved'=>'Approved','pending'=>'Pending','prob'=>'Probation','suspended'=>'Suspended','revoked'=>'Revoked','retired'=>'Retired'];
+			return ['self'=>'Self-Registered','approved'=>'Approved','pending'=>'Pending','prob'=>'Probation','suspended'=>'Suspended','revoked'=>'Revoked','retired'=>'Retired'];
 		}
 	}
 
@@ -198,10 +198,8 @@ class Badges extends \yii\db\ActiveRecord {
 	}
 
 	public function canRenew($status) {
-		if ($status=='approved' || $status=='pending' || $status=='prob') {
-			return true; }
+		if ($status=='approved' || $status=='pending' || $status=='prob' || $status=='self') { return true; }
 		else { return false; }
-
 	}
 
 	public function gtActiveSubscriptionModel() {
