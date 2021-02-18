@@ -954,7 +954,7 @@ class BadgesController extends AdminController {
 		$model = new BadgeSubscriptions();
 		$badgeRecords = Badges::find()->where(['badge_number'=>$membership_id])->one();
 		$badgeRecords->load(Yii::$app->request->post());
-		$dirty = $model->loadDirtyFilds($badgeRecords);
+		$dirty = (New Badges)->loadDirtyFilds($badgeRecords);
 		$dirty=implode(", ",$dirty);
 		$badgeRecords = $badgeRecords->cleanBadgeData($badgeRecords);
 		yii::$app->controller->sendVerifyEmail($badgeRecords->email,'update',$badgeRecords);
@@ -1008,6 +1008,7 @@ class BadgesController extends AdminController {
 				$badgeRecords->sticker = $model->sticker;
 				$badgeRecords->wt_date = $wt_date_reIssue !=null ? $wt_date_reIssue : $badgeRecords->wt_date;
 				$badgeRecords->wt_instru = $wt_date_reIssue !=null ? $wt_instru_reIssue : $badgeRecords->wt_instru;
+				$badgeRecords->status = 'approved';
 				$badgeRecords->updated_at = $this->getNowTime();
 				if($model->redeemable_credit>0) {
 					$workCredit = new WorkCredits();
