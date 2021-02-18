@@ -4,6 +4,7 @@ namespace backend\components;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
+use backend\models\Badges;
 use backend\models\Params;
 
 /* Menu Colors:
@@ -32,6 +33,7 @@ class Menu extends Widget{
 		[
 			'label'=>'Range Badges',
 			'url' => '/badges/index',
+			'self'=>true,
 		],
 		[
 			'label'=>'Guest Checkout',
@@ -50,6 +52,7 @@ class Menu extends Widget{
 		[
 			'label'=>'Store',
 			'url' => '/sales/index',
+			'self'=>true,
 		],
 		[
 			'label'=>'Work Credits',
@@ -143,6 +146,7 @@ class Menu extends Widget{
 			'label'=>'Logout',
 			'url' => '/site/logout',
 			'color' => 'btn-danger',
+			'self' => true,
 		],
 	];
 
@@ -156,7 +160,7 @@ class Menu extends Widget{
 		$param = Params::find()->one();
 		if($type=='admin') {
 			$print_menu =  $this->adminMenu;
-		} else {		
+		} else {
 			if( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge" )) {
 				if ((yii::$app->controller->hasPermission('calendar/showed')) && (yii::$app->params['cal_site']<>'')) {
 					$print_menu =  array_merge($this->mainMenu,[['label'=>'Calender','url' => yii::$app->params['cal_site'].'/calendar/index','allow' => 'calendar/index','target'=>'cal','color' => 'btn-danger',],]);
@@ -180,8 +184,14 @@ class Menu extends Widget{
 		
 		$print_menu = array_merge($print_menu, $this->LastMenu);
 
+		if (in_array(5,json_decode(yii::$app->user->identity->privilege))) { 
+			$member = (New Badges)->find()->where(['badge_number'=>$_SESSION['badge_number'],'status'=>'self'])->one();
+			if ($member) { $mem_self=true; } else { $mem_self=false; }
+		} else { $mem_self=false; }
+
 		$html .="<div class='container'>\n";
 		foreach ($print_menu as $menu) {
+			if($mem_self) { if(!isset($menu['self'])) { continue(1); } }
 			if(!isset($menu['allow'])) { $menu['allow'] = $menu['url']; }
 			if(isset($menu['color'])) { $btn_color = $menu['color']; } else { $btn_color='btn-primary'; }
 			if(!isset($menu['target'])) { $menu['target'] = '_self'; }
