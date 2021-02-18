@@ -49,7 +49,11 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		$hide_Renew=true;
 	} else {
 		if ($model->canRenew($model->status)) {
-			$hide_Renew=false; } else { $hide_Renew=true; }
+			if (yii::$app->controller->hasPermission('badges/renew-membership')) {
+				$hide_Renew=false; } else { $hide_Renew=true; }
+		} else {
+			$hide_Renew=true; 
+		}
 	}
 
 	// Show Certifications?
