@@ -9,6 +9,7 @@ use backend\models\BadgeCertification;
 use backend\models\Badges;
 use backend\models\BadgeSubscriptions;
 use backend\models\CardReceipt;
+use backend\models\clubs;
 use backend\models\Guest;
 use backend\models\MembershipType;
 use backend\models\Params;
@@ -500,7 +501,7 @@ class BadgesController extends AdminController {
 				//Email Verify
 				yii::$app->controller->sendVerifyEmail($model->email,'new',$model);
 
-				$stat = (New Clubs)->saveClub($model->badge_number, $model->club_id);
+				$stat = (New clubs)->saveClub($model->badge_number, $model->club_id);
 
 				if($_POST['FriendCredits']>0) {
 					$workCredit = new WorkCredits();
@@ -1170,6 +1171,69 @@ class BadgesController extends AdminController {
 		return $this->render('update-renewal',[
 			'model'=> $model,
 		]);
+	}
+
+	public function actionVerifyEmail($badge_number,$type) {
+		$model = Badges::find()->where(['badge_number'=>$badge_number])->one();
+		if(!$model) { return true; }
+
+		if (filter_var($model->email, FILTER_VALIDATE_EMAIL)) {
+			if($type=='new') { $welcome = 'Welcome to the AGC '.$model->first_name.'!,'; }
+			else if ($type=='update') { $welcome = 'Hi '.$model->first_name.','; }
+
+			$mail = $this->emailSetup();
+			if ($mail) {
+				$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$model->email.'>');
+				$mail->addAddress($model->email, $model->first_name.' '.$model->last_name);
+				
+				if($type=='new') {
+					$extra = '<p>Your new Badge Number is: <b>'.$model->badge_number.'</b><br />And your Login code is: <b>'.$model->qrcode.'</b><br />This information wil also be on the back of your badge.</p>';
+				} else { $extra=''; }
+
+				try {
+					//Recipients
+					$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
+
+					//$mail->addAddress('contact@example.com');			   // Name is optional
+					//$mail->addReplyTo('info@example.com', 'Information');
+					//$mail->addCC('cc@example.com');
+					//$mail->addBCC('bcc@example.com');
+
+					//Attachments
+					//$mail->addAttachment('/var/tmp/file.tar.gz');		 // Add attachments
+					//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');	// Optional name
+
+					// Compose a simple HTML email message
+					$message = "<!DOCTYPE html><html>\n<body>\n" .
+						'<p>'.$welcome.'</p>'.$extra.
+						'<p>Please take a moment to verify your Email by clicking on the link below.</p>' .
+						'<p><a href="'.yii::$app->params['wp_site'].'/comms.php?verifyemail='.$model->email.'"> Verify your Email: '.$model->email.' </a></p><br>' .
+						'<p>Thank You,<br />Associated Gun Clubs of Baltimore.</p>' ."\n".
+						'<a href="'.yii::$app->params['wp_site'].'">'.yii::$app->params['wp_site'].'</a>' ."\n".
+						"<br /><br><p>P.S. We know our email probably went to the spam folder. Please tell your provider It's not Spam!. </p>\n".
+						'<br /><p> or Click here to <a href="'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$model->email.'">remove your email from our List</a>.</p>'. "\n".
+						"</body>\n</html>";
+
+						//Content
+					$mail->Subject = 'AGC Email Verification';
+					$mail->Body	= $message;
+					$mail->AltBody = $welcome."\n\n".
+						"Please take a moment to verify your Email by clicking on the link below.\n\n".
+						yii::$app->params['wp_site'].'/comms.php?verifyemail='.$model->email."\n\n".
+						"Thank You,\nAssociated Gun Clubs of Baltimore.";
+
+					$mail->send();
+					yii::$app->controller->createLog(true, 'Email Verify', "Sent to ".$model->email."','".$model->badge_number);
+					return true;
+				} catch (Exception $e) {
+					$mail->SMTPDebug = 3;
+					Yii::$app->response->data .= 'Message could not be sent.';
+					Yii::$app->response->data .= 'Mailer Error: ' . $mail->ErrorInfo;
+					yii::$app->controller->createLog(true, 'trex Verify Email Error: ', var_export($mail->ErrorInfo,true));
+				}
+			}
+		}
+		return false;
 	}
 
 	public function actionView($badge_number) {

@@ -58,7 +58,7 @@ class Badges extends \yii\db\ActiveRecord {
 			['email', 'string', 'max' => 60],
 			['email', 'filter', 'filter' => 'trim'],
 			['email', 'email'],
-			[['email'],'unique','message'=>'Email already exist. Please try another one.'],
+			['email','unique','targetClass' => '\backend\models\Badges','message'=>'Email already exist. Please use another one.'],
 			[['first_name','last_name'], 'string', 'max' => 35],
 			[['phone_op','ice_phone'], 'match', 'pattern' => '/^[- 0-9() +]+$/', 'message' => 'Not a valid phone number.'],
 			[['city', 'phone', 'phone_op', 'ice_phone'], 'string', 'max' => 25],
@@ -158,10 +158,10 @@ class Badges extends \yii\db\ActiveRecord {
 		if(isset($model->payment_method)) {
 			if($model->payment_method=='creditnow') {$payment_method = 'credit';} else {$payment_method = $model->payment_method;} }
 		if(isset($_POST['new_club'])) {
-			(new Clubs)->saveClub($model->badge_number,$_POST['new_club']);
+			(new clubs)->saveClub($model->badge_number,$_POST['new_club']);
 			$model->club_id=$_POST['new_club'][0];
 		} else {
-			if(!$isNew) {(new Clubs)->saveClub($model->badge_number,[35]);
+			if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]);
 			$model->club_id=35; }
 		}
 

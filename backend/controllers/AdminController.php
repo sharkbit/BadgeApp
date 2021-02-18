@@ -138,7 +138,7 @@ class AdminController extends \yii\web\Controller {
 	];
 	
 	public $AllPermission = [
-		'Badges'=>['badges/api-zip','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/view'],
+		'Badges'=>['badges/api-zip','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
 		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'payments'=>['payment/charge'],
 		'sales' => ['sales/index','sales/print-rcpt','sales/purchases'],
@@ -173,6 +173,7 @@ class AdminController extends \yii\web\Controller {
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login-member') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/get-badge-name') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/verify-email') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='clubs/badge-rosters') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='payment/charge') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='membership-type/fees-by-type') ||
@@ -430,76 +431,28 @@ class AdminController extends \yii\web\Controller {
 
 	public function sendVerifyEmail($email,$type='new',$model=null) {
 		if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			if($type=='new') { $welcome = 'Welcome to the AGC!'; }
-			else if ($type=='update') { $welcome = 'Hi '.$model->first_name.','; }
+			if($model->email_vrfy==1) {	return; }
+			
+			// Only send out email to user after waiting 10 min.
+			if(isset($_SESSION['emails'])) {
+				//$badge_number = $model->badge_number;
+				if(isset($_SESSION['emails'][$model->badge_number])) {
+					$myTest = $_SESSION['emails'][$model->badge_number];
+					if($myTest < time()) {
+						$_SESSION['emails'][$model->badge_number] = time() + (10 * 60);
+					}else {
+						//Yii::$app->getSession()->setFlash('error', 'Email aleard sent to '.$model->first_name.'. Wait 10min.');
+						return;
+					}
+				} else { $_SESSION['emails'][$model->badge_number]= time() + (10 * 60); }
+			} else { $_SESSION['emails']=[$model->badge_number => time() + (10 * 60)]; }
+			
 
-			$mail = $this->emailSetup();
-			if ($mail) {
-			$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$email.'>');
-
-		// Only send out email to user after waiting 10 min.
-			if(isset($model->badge_number)) {
-				if($model->email_vrfy==1) {	return; }
-				if(isset($_SESSION['emails'])) {
-					//$badge_number = $model->badge_number;
-					if(isset($_SESSION['emails'][$model->badge_number])) {
-						$myTest = $_SESSION['emails'][$model->badge_number];
-						if($myTest < time()) {
-							$_SESSION['emails'][$model->badge_number] = time() + (10 * 60);
-						}else {
-							//Yii::$app->getSession()->setFlash('error', 'Email aleard sent to '.$model->first_name.'. Wait 10min.');
-							return;
-						}
-					} else { $_SESSION['emails'][$model->badge_number]= time() + (10 * 60); }
-				} else { $_SESSION['emails']=[$model->badge_number => time() + (10 * 60)]; }
-				$mail->addAddress($email, $model->first_name);
-			} else { $mail->addAddress($email); }
-
-			try {
-				//Recipients
-				$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
-
-				//$mail->addAddress('contact@example.com');			   // Name is optional
-				//$mail->addReplyTo('info@example.com', 'Information');
-				//$mail->addCC('cc@example.com');
-				//$mail->addBCC('bcc@example.com');
-
-				//Attachments
-				//$mail->addAttachment('/var/tmp/file.tar.gz');		 // Add attachments
-				//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');	// Optional name
-
-				// Compose a simple HTML email message
-				$message = "<!DOCTYPE html><html>\n<body>\n" .
-					'<p>'.$welcome.'</p>' .
-					'<p>Please take a moment to verify your Email by clicking on the link below.</p>' .
-					'<p><a href="'.yii::$app->params['wp_site'].'/comms.php?verifyemail='.$email.'"> Verify your Email: '.$email.' </a></p><br>' .
-					'<p>Thank You,<br />Associated Gun Clubs of Baltimore.</p>' ."\n".
-					'<a href="'.yii::$app->params['wp_site'].'">'.yii::$app->params['wp_site'].'</a>' ."\n".
-					"<br /><br><p>P.S. We know our email probably went to the spam folder. Please tell your provider It's not Spam!. </p>\n".
-					'<br /><p> or Click here to <a href="'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$email.'">remove your email from our List</a>.</p>'. "\n".
-					"</body>\n</html>";
-
-					//Content
-				$mail->Subject = 'AGC Email Verification';
-				$mail->Body	= $message;
-				$mail->AltBody = $welcome."\n\n".
-					"Please take a moment to verify your Email by clicking on the link below.\n\n".
-					yii::$app->params['wp_site'].'/comms.php?verifyemail='.$email."\n\n".
-					"Thank You,\nAssociated Gun Clubs of Baltimore.";
-
-				$mail->send();
-				return 'Message has been sent';
-				yii::$app->controller->createLog(true, 'Email Verify', "Sent to ".$email."','".$model->badge_number);
-			} catch (Exception $e) {
-				$mail->SMTPDebug = 3;
-				Yii::$app->response->data .= 'Message could not be sent.';
-				Yii::$app->response->data .= 'Mailer Error: ' . $mail->ErrorInfo;
-				yii::$app->controller->createLog(true, 'trex Verify Email Error: ', var_export($mail->ErrorInfo,true));
-			}
-			return true;
-			}
+			$site = $_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'];
+			$command = "wget -qO- '".$site."/badges/verify-email?badge_number=".$model->badge_number."&type=".$type;
+			exec('nohup ' . $command . ' > /dev/null 2>&1 &');
 		}
-		return false;
+		return;
 	}
 
 }

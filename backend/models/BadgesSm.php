@@ -35,8 +35,7 @@ class BadgesSm extends \yii\db\ActiveRecord {
 			[['prefix', 'suffix'], 'string', 'max' => 15],
 			['email','filter','filter' => 'trim'],
 			['email','email'],
-			//['email','unique','targetClass' => '\backend\models\Badges','message'=>'Email already exist. Please use another one.'],
-			//['email','uniqueEmail'],
+			['email','unique','targetClass' => '\backend\models\BadgesSm','message'=>'Email already exist. Please use another one.'],
 			['email_verify', 'compare', 'compareAttribute'=>'email', 'message'=>"Emails don't match"],
 			[['first_name','last_name'], 'string', 'max' => 35],
 			[['phone','phone_op','ice_phone'], 'match', 'pattern' => '/^[- 0-9() +]+$/', 'message' => 'Not a valid phone number.'],
@@ -51,12 +50,6 @@ class BadgesSm extends \yii\db\ActiveRecord {
 		];
 	}
 
-/*	public function uniqueEmail($attribute, $params){
-         if($user = Badges::model()->exists('email=:email',array('email'=>$this->email)))
-          $this->addError($attribute, 'Email already exists!');
-    } */
-	
-	
 	/**
 	 * @inheritdoc
 	 */
@@ -113,12 +106,12 @@ class BadgesSm extends \yii\db\ActiveRecord {
 			return ['approved'=>'Approved','pending'=>'Pending','prob'=>'Probation','suspended'=>'Suspended','revoked'=>'Revoked','retired'=>'Retired'];
 		}
 	}
-	
+
 	public function canRenew($status) {
 		if ($status=='approved' || $status=='pending' || $status=='prob' || $status=='self') {
 			return true; }
 		else { return false; }
-		
+
 	}
 
 	public function gtActiveSubscriptionModel() {

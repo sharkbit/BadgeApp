@@ -5,12 +5,13 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\widgets\ActiveForm;
 use common\models\LoginForm;
-use backend\controllers\AdminController;
 use common\models\User;
+use backend\controllers\AdminController;
 use backend\models\Badges;
 use backend\models\BadgesSm;
-use backend\models\Clubs;
+use backend\models\clubs;
 use backend\models\Guest;
 use backend\models\LoginAccess;
 use backend\models\Privileges;
@@ -240,14 +241,10 @@ class SiteController extends AdminController {
 
 		if ($model->load(Yii::$app->request->post())) {
 			if (Yii::$app->request->isAjax) {
-				yii::$app->controller->createLog(true, 'trex_nmm', var_export($_POST,true));
+				Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+				return ActiveForm::validate($model);
 
-				$model->addError('email', 'noo');
-				yii::$app->controller->createLog(true, 'trex_model', var_export('Ajax',true));
-
-				return json_encode(['status'=>'error']);
 			} else {
-				yii::$app->controller->createLog(true, 'trex_nmm', var_export("yes post",true));
 				$model->created_at = $this->getNowTime();
 				$model->remarks = '';
 
@@ -262,9 +259,9 @@ class SiteController extends AdminController {
 				if($saved) {
 					$this->createLog($this->getNowTime(), $model->first_name.' '.$model->last_name, "Self-Registered new Badge','".$model->badge_number);
 					Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been created');
-					(New Clubs)->saveClub($model->badge_number, $model->club_id, false);
+					(New clubs)->saveClub($model->badge_number, $model->club_id, false);
 
-		// Send Welcome Email with qr and badge#
+					yii::$app->controller->sendVerifyEmail($model->email,'new',$model);
 		
 					//Auto Login!
 					$badgeArray = Badges::find()->where(['badge_number'=>$model->badge_number])->one();

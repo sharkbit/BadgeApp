@@ -200,17 +200,17 @@ input[type='checkbox'] {
 	<div class="row">
 		<div class="col-xs-12" id="HideMySubmit">
 			<?= Html::submitButton('<i class="fa fa-save"> </i> SAVE', ['class' => 'btn btn-success','id'=>'self_save']).PHP_EOL; ?>
-		
-			<?= Html::Button('Check Form', ['class' =>'btn btn-warning ', 'onclick' => 'checkForm();' ]).PHP_EOL; ?>
-		
 			<?= Html::a('<i class="fa fa-eraser"> </i> Clear',['/site/new-member'],['class' => 'btn btn-danger']).PHP_EOL; ?>
+			<div id="run_animation" style="display: none">
+				<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px"> Please Wait.. </h4>
+			</div>
 		</div>
 	</div>
 <hr />
-	<?= $form->field($model, 'badge_number')->textInput(['readonly'=>true, 'value' =>str_pad($model->badge_number, 5, '0', STR_PAD_LEFT) ]) ?>
-	<?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))])->label() ?>
-	<?= $form->field($model, 'expires')->textInput(['readOnly'=>true])->label() ?>
-	<?= $form->field($model, 'qrcode')->textInput(['readOnly'=>true])->label() ?>
+	<?= $form->field($model, 'badge_number')->hiddenInput(['readonly'=>true, 'value' =>str_pad($model->badge_number, 5, '0', STR_PAD_LEFT) ])->label(false) ?>
+	<?= $form->field($model, 'incep')->hiddenInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))])->label(false) ?>
+	<?= $form->field($model, 'expires')->hiddenInput(['readOnly'=>true])->label(false) ?>
+	<?= $form->field($model, 'qrcode')->hiddenInput(['readOnly'=>true])->label(false) ?>
 	<?= $form->field($model, 'status')->hiddenInput(['value'=>"self"])->label(false) ?>
 
 	<?php ActiveForm::end(); ?>
@@ -220,7 +220,11 @@ input[type='checkbox'] {
 
 <script>
 document.getElementById("new-agree").disabled=true;
-//document.getElementById("self_save").disabled=true;
+
+$('#NewMembers').on('beforeSubmit', function (e) {
+	document.getElementById("self_save").disabled=true;
+	$("run_animation").show();
+	clnsole.log('submitting...');});
 
 	function checkForm() {
 		console.log("Check Form");
