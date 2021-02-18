@@ -29,7 +29,7 @@ class Clubs extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['club_name', 'short_name'], 'required'],
-            [['club_id', 'status','is_club'],'number'],
+            [['club_id', 'status','is_club','allow_self'],'number'],
             [['avoid','club_name', 'poc_email'], 'string', 'max' => 255],
             [['short_name'], 'string', 'max' => 20],
             [['poc_email'],'safe'],
@@ -42,7 +42,7 @@ class Clubs extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-          //  'id' => 'Club ID',
+			'allow_self' => 'Self-Register',
             'club_id' => 'Club ID',
             'club_name' => 'Club Name',
             'short_name' => 'Short Name',
@@ -55,7 +55,8 @@ class Clubs extends \yii\db\ActiveRecord {
     public function getClubList($use_short=false,$restrict=false,$allow_members=false) {
 		if($use_short) {$field='short_name';} else {$field='club_name';}
 		
-		if($allow_members) { $where = ['status'=>'0','is_club'=>'1']; } else { $where = ['status'=>'0']; }		
+		if($allow_members==2) { $where = ['status'=>'0','allow_self'=>'1']; }
+		elseif($allow_members) { $where = ['status'=>'0','is_club'=>'1']; } else { $where = ['status'=>'0']; }		
 		$clubArray = Clubs::find()
 			->where($where )
 			->orderBy(['is_club'=> SORT_DESC,$field => SORT_ASC ])
@@ -75,7 +76,7 @@ class Clubs extends \yii\db\ActiveRecord {
 		}
     }
 	
-   public function getAvoid($restrict=false) {
+    public function getAvoid($restrict=false) {
 		$clubArray = Clubs::find()
 			->where(['status'=>'0'])
 			->orderBy(['is_club'=> SORT_DESC ])
@@ -126,4 +127,28 @@ class Clubs extends \yii\db\ActiveRecord {
 		$command = Yii::$app->db->createCommand($sql);
 		return $command->queryAll();
 	}
+
+	public static function saveClub($badge_number, $clubs, $delOld=true) {
+		$connection = Yii::$app->getDb();
+
+		if ($delOld) {
+			$sql="DELETE FROM `badge_to_club` WHERE badge_number=".$badge_number;
+			$command = $connection->createCommand($sql);
+			$exec = $command->execute();
+		}
+
+		$myClubs="";
+		if (is_array($clubs)) {
+			foreach($clubs as $clubid) {
+				$myClubs .= "(".$badge_number.",".$clubid."),";
+			}
+		} else {
+			$myClubs = "(".$badge_number.",".$clubs.")";
+		}
+		$myClubs = "INSERT INTO `badge_to_club` (badge_number,Club_id) VALUES ".rtrim($myClubs, ',');
+		$command = $connection->createCommand($myClubs);
+		$exec = $command->execute();
+		return $exec;
+	}
+
 }

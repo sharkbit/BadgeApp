@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use backend\models\Events;
 use backend\models\Event_Att;
+use backend\models\Params;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -13,19 +14,17 @@ $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 
 $agc_event = Events::find()->where(['e_date' => date('Y-m-d',strtotime(yii::$app->controller->getNowTime())),'e_status'=>'0'])->andWhere(['!=', 'e_type', 'cio'])->all();
-//$agc_event = Events::find()->where(['e_date' => '2020-01-02'])->all();
-
+$param = Params::find()->one();
 $urlStatus = yii::$app->controller->getCurrentUrl();
 ?>
 <div class="site-login">
     <div class="row ">
+		<div class="col-xs-12 col-md-4" >
 <?php if($agc_event) { ?>
-		<div class="col-xs-12 col-sm-4" >
 			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<h3>Todays Events:</h3><hr /><ul>
 <?php
 foreach($agc_event as $an_event){
- //yii::$app->controller->createLog(false, 'trex_B_V_Si_Login_mem', var_export($an_event,true));
 	switch ($an_event->e_type) {
 		case 'cio':  $e_type="CIO Sponsored"; break;
 		case 'club': $e_type="Club Sponsored"; break;
@@ -36,11 +35,9 @@ foreach($agc_event as $an_event){
 } ?>
 			</div>
 		<p> </p> <br />
-		</div>
-        <div class="col-xs-12 col-sm-4" >
-<?php } else { ?>
-        <div class="col-xs-12" >
 <?php } ?>
+		</div>
+        <div class="col-xs-12 col-md-4" >
             <div class="login-box">
 			<?= $this->render('_login-tab-menu',['model'=>$model]).PHP_EOL; ?>
 				<p class="help-block help-block-error"></p>
@@ -66,8 +63,19 @@ foreach($agc_event as $an_event){
                 <?php ActiveForm::end(); ?>
             </div>
         </div>
+        <div class="col-xs-12 col-md-4" >
+<?php if( ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge" )) || $param->qb_env='dev' ){ ?>
+			<div style=" padding: 20px;"><p> <br /> </p>
+				<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
+				<p> </p> <center><h3><a href="/site/new-member">New Member Signup</a></h3></center>
+				</div>
+			</div>
+<?php } ?>
+		</div>
     </div>
 </div>
+
+
 <?php if($agc_event) {
 	$event_model = New Event_Att;
 ?>

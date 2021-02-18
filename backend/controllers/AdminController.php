@@ -28,7 +28,7 @@ class AdminController extends \yii\web\Controller {
 		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/return','events/remove-att','events/update','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/delete-X','membership-type/view','membership-type/fees-by-type'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/stats','guest/delete'],
-		'Index' => ['site/no-email','site/verify'],
+		'Index' => ['site/new-member','site/no-email','site/verify'],
 		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/update','legelemail/delete'],
 		'Params' => ['params/update'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
@@ -118,7 +118,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $userPermission = [
-		'Badges'=>['badges/restrict','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/restrict','badges/photo-add','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Guest' => ['guest/update'],
 	];
 
@@ -138,7 +138,7 @@ class AdminController extends \yii\web\Controller {
 	];
 	
 	public $AllPermission = [
-		'Badges'=>['badges/api-zip','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/view'],
+		'Badges'=>['badges/api-zip','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
 		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'payments'=>['payment/charge'],
 		'sales' => ['sales/index','sales/print-rcpt','sales/purchases'],
@@ -168,11 +168,18 @@ class AdminController extends \yii\web\Controller {
 			// Pages that dont require login
 			if((Yii::$app->controller->id."/".Yii::$app->controller->action->id=='events/reg') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/verify') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/new-member') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/no-email') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login-member') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/get-badge-name') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/verify-email') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='clubs/badge-rosters') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='payment/charge') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='membership-type/fees-by-type') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/api-request-family') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/api-zip') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/api-generate-renaval-fee') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='mass-email/process') ) {
 
 				$myJump = Yii::$app->request->get();
@@ -299,6 +306,10 @@ class AdminController extends \yii\web\Controller {
 		return $responce;
 	}
 
+	public function getStates(){
+		return ['AL'=>'Alabama','AK'=>'Alaska','AZ'=>'Arizona','AR'=>'Arkansas','CA'=>'California','CO'=>'Colorado','CT'=>'Connecticut','DE'=>'Delaware','FL'=>'Florida','GA'=>'Georgia','HI'=>'Hawaii','ID'=>'Idaho','IL'=>'Illinois','IN'=>'Indiana','IA'=>'Iowa','KS'=>'Kansas','KY'=>'Kentucky','LA'=>'Louisiana','ME'=>'Maine','MD'=>'Maryland','MA'=>'Massachusetts','MI'=>'Michigan','MN'=>'Minnesota','MS'=>'Mississippi','MO'=>'Missouri','MT'=>'Montana','NE'=>'Nebraska','NV'=>'Nevada','NH'=>'New Hampshire','NJ'=>'New Jersey','NM'=>'New Mexico','NY'=>'New York','NC'=>'North Carolina','ND'=>'North Dakota','OH'=>'Ohio','OK'=>'Oklahoma','OR'=>'Oregon','PA'=>'Pennsylvania','RI'=>'Rhode Island','SC'=>'South Carolina','SD'=>'South Dakota','TN'=>'Tennessee','TX'=>'Texas','UT'=>'Utah','VT'=>'Vermont','VA'=>'Virginia','WA'=>'Washington','WV'=>'West Virginia','WI'=>'Wisconsin','WY'=>'Wyoming','DC'=>'District of Columbia','GU'=>'Guam','MH'=>'Marshall Islands','MP'=>'Northern Mariana Island','PR'=>'Puerto Rico','VI'=>'Virgin Islands','AE'=>'Armed Forces Africa','AA'=>'Armed Forces Americas','AE'=>'Armed Forces Canada','AE'=>'Armed Forces Europe','AE'=>'Armed Forces Middle East','AP'=>'Armed Forces Pacific'];
+	}
+
 	public function validateExcell($excell_type,$items) {
 		if($excell_type=='workcredit') {
 			$item = $items[0];
@@ -420,76 +431,28 @@ class AdminController extends \yii\web\Controller {
 
 	public function sendVerifyEmail($email,$type='new',$model=null) {
 		if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			if($type=='new') { $welcome = 'Welcome to the AGC!'; }
-			else if ($type=='update') { $welcome = 'Hi '.$model->first_name.','; }
+			if($model->email_vrfy==1) {	return; }
+			
+			// Only send out email to user after waiting 10 min.
+			if(isset($_SESSION['emails'])) {
+				//$badge_number = $model->badge_number;
+				if(isset($_SESSION['emails'][$model->badge_number])) {
+					$myTest = $_SESSION['emails'][$model->badge_number];
+					if($myTest < time()) {
+						$_SESSION['emails'][$model->badge_number] = time() + (10 * 60);
+					}else {
+						//Yii::$app->getSession()->setFlash('error', 'Email aleard sent to '.$model->first_name.'. Wait 10min.');
+						return;
+					}
+				} else { $_SESSION['emails'][$model->badge_number]= time() + (10 * 60); }
+			} else { $_SESSION['emails']=[$model->badge_number => time() + (10 * 60)]; }
+			
 
-			$mail = $this->emailSetup();
-			if ($mail) {
-			$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$email.'>');
-
-		// Only send out email to user after waiting 10 min.
-			if(isset($model->badge_number)) {
-				if($model->email_vrfy==1) {	return; }
-				if(isset($_SESSION['emails'])) {
-					//$badge_number = $model->badge_number;
-					if(isset($_SESSION['emails'][$model->badge_number])) {
-						$myTest = $_SESSION['emails'][$model->badge_number];
-						if($myTest < time()) {
-							$_SESSION['emails'][$model->badge_number] = time() + (10 * 60);
-						}else {
-							//Yii::$app->getSession()->setFlash('error', 'Email aleard sent to '.$model->first_name.'. Wait 10min.');
-							return;
-						}
-					} else { $_SESSION['emails'][$model->badge_number]= time() + (10 * 60); }
-				} else { $_SESSION['emails']=[$model->badge_number => time() + (10 * 60)]; }
-				$mail->addAddress($email, $model->first_name);
-			} else { $mail->addAddress($email); }
-
-			try {
-				//Recipients
-				$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
-
-				//$mail->addAddress('contact@example.com');			   // Name is optional
-				//$mail->addReplyTo('info@example.com', 'Information');
-				//$mail->addCC('cc@example.com');
-				//$mail->addBCC('bcc@example.com');
-
-				//Attachments
-				//$mail->addAttachment('/var/tmp/file.tar.gz');		 // Add attachments
-				//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');	// Optional name
-
-				// Compose a simple HTML email message
-				$message = "<!DOCTYPE html><html>\n<body>\n" .
-					'<p>'.$welcome.'</p>' .
-					'<p>Please take a moment to verify your Email by clicking on the link below.</p>' .
-					'<p><a href="'.yii::$app->params['wp_site'].'/comms.php?verifyemail='.$email.'"> Verify your Email: '.$email.' </a></p><br>' .
-					'<p>Thank You,<br />Associated Gun Clubs of Baltimore.</p>' ."\n".
-					'<a href="'.yii::$app->params['wp_site'].'">'.yii::$app->params['wp_site'].'</a>' ."\n".
-					"<br /><br><p>P.S. We know our email probably went to the spam folder. Please tell your provider It's not Spam!. </p>\n".
-					'<br /><p> or Click here to <a href="'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$email.'">remove your email from our List</a>.</p>'. "\n".
-					"</body>\n</html>";
-
-					//Content
-				$mail->Subject = 'AGC Email Verification';
-				$mail->Body	= $message;
-				$mail->AltBody = $welcome."\n\n".
-					"Please take a moment to verify your Email by clicking on the link below.\n\n".
-					yii::$app->params['wp_site'].'/comms.php?verifyemail='.$email."\n\n".
-					"Thank You,\nAssociated Gun Clubs of Baltimore.";
-
-				$mail->send();
-				return 'Message has been sent';
-				yii::$app->controller->createLog(true, 'Email Verify', "Sent to ".$email."','".$model->badge_number);
-			} catch (Exception $e) {
-				$mail->SMTPDebug = 3;
-				Yii::$app->response->data .= 'Message could not be sent.';
-				Yii::$app->response->data .= 'Mailer Error: ' . $mail->ErrorInfo;
-				yii::$app->controller->createLog(true, 'trex Verify Email Error: ', var_export($mail->ErrorInfo,true));
-			}
-			return true;
-			}
+			$site = $_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'];
+			$command = "wget -qO- '".$site."/badges/verify-email?badge_number=".$model->badge_number."&type=".$type;
+			exec('nohup ' . $command . ' > /dev/null 2>&1 &');
 		}
-		return false;
+		return;
 	}
 
 }

@@ -46,9 +46,9 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 					echo "<b><a href='/badges/print?badge_number=".$model->badge_number."' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> Print ]</a></b>";
 				}
 				if(yii::$app->controller->hasPermission('badges/photo-add')) {
-					echo "<b><a href='/badges/photo-add?badge=".$model->badge_number."'>[ <span class='glyphicon glyphicon-camera'></span> Update ]</a></b>";
-					echo "<b><a href='/badges/photo-crop?badge=".$model->badge_number."'>[ <span class='glyphicon glyphicon-modal-window'></span> Crop ]</a></b>";
-				}
+					echo "<b><a href='/badges/photo-add?badge=".$model->badge_number."'>[ <span class='glyphicon glyphicon-camera'></span> Update ]</a></b>"; }
+				if(yii::$app->controller->hasPermission('badges/photo-crop')) {
+					echo "<b><a href='/badges/photo-crop?badge=".$model->badge_number."'>[ <span class='glyphicon glyphicon-modal-window'></span> Crop ]</a></b>"; }
 				echo "<br /><br />\n";
 				$findUser=User::Find()->where(['badge_number'=>$model->badge_number])->one();
 				if ($findUser) {

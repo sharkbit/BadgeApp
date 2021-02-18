@@ -32,6 +32,9 @@ use yii\widgets\ActiveForm;
 	<div class="row">
 	<?= $form->field($model, 'is_club')->dropDownList([ '0'=>'CIO', '1'=>'Club','2'=>"AGC Sponsored" ], ['prompt' => 'Choose']) ?>
 	</div>
+	<div class="row" >
+	<?= $form->field($model, 'allow_self')->dropDownList([ '0'=>'no', '1'=>'yes', ], ['value' => $model->isNewRecord ? 1 : $model->allow_self]) ?>
+	</div>
 	<div class="row" <?php if($model->isNewRecord){echo 'style="display: none;"';} ?> >
 	<?= $form->field($model, 'status')->dropDownList([ '0'=>'Active', '1'=>'Inactive', ], ['prompt' => 'Status']) ?>
 	</div>

@@ -230,10 +230,51 @@ $this->beginBody() ?>
 
 var app = angular.module('agc', []);
 <?php
-if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUEST_URI'], 'badges/update'))) {
+if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUEST_URI'], 'badges/update')) || (strpos($_SERVER['REQUEST_URI'], 'site/new-member'))) {
 ?>
 
     $(".chosen_select").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"});
+
+	function get_fees(memTypeId) {
+		if (memTypeId!='') {
+			run_waitMe('show');
+			var responseData;
+			jQuery.ajax({
+				method: 'GET',
+				url: '<?=yii::$app->params['rootUrl']?>/membership-type/fees-by-type?from=n&id='+memTypeId,
+				crossDomain: false,
+				success: function(responseData, textStatus, jqXHR) {
+					responseData = JSON.parse(responseData);
+					$("#badges-badge_fee").val(parseFloat(Math.round(responseData.badgeFee * 100) / 100).toFixed(2));
+
+					$("#badges-discounts-disp").val(responseData.discount);
+					$("#badges-discounts").val(responseData.discount);
+					$("#badges-item_name").val(responseData.item_name);
+					$("#badges-item_sku").val(responseData.item_sku);
+					$("#badges-amt_due-disp").val(responseData.badgeSpecialFee);
+					$("#badges-amt_due").val(responseData.badgeSpecialFee);
+					console.log(responseData);
+					doCalcNew();
+				},
+				error: function (responseData, textStatus, errorThrown) {
+					console.log(responseData);
+				},
+			});
+			run_waitMe('hide');
+			fillBarcode()
+		}
+	};
+
+    function fillBarcode() {
+        var ranText="";
+        var possible = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        for (var ri = 0; ri < 2; ri++)
+           ranText += possible.charAt(Math.floor(Math.random() * possible.length));
+        var barcodeData = ("00" + $('#badges-club_id').val()).slice(-2)+' '+("00" + $('#badges-mem_type').val()).slice(-2)+' '+$('#badges-badge_number').val()+' '+ranText;
+        $('#badges-qrcode').val(barcodeData);
+        barcodeGenerate(barcodeData);
+        $(".barcode").show(300);
+    };
 
     function barcodeGenerate(newData) {
         $("svg.barcode").attr('jsbarcode-value',newData);
@@ -278,12 +319,13 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                                 var bgren = '<?=yii::$app->params['rootUrl']?>/badges/view?badge_number='+responseData.badge_number;
                                 $("td#primary-block-badgeNumber").html(responseData.badge_number);
                                 $("h4#no-primary-error").html("Found: <a href='"+bgren+"' target='_blank'>"+responseData.first_name+" "+responseData.last_name+"</a>");
-                                document.getElementById("badges-city").value = responseData.city;
-                                document.getElementById("badges-state").value = responseData.state;
-                                document.getElementById("badges-zip").value = responseData.zip;
-                                document.getElementById("badges-ice_contact").value =responseData.prefix+" "+responseData.first_name+" "+responseData.last_name+" "+responseData.suffix;
-                                document.getElementById("badges-ice_phone").value = responseData.ice_phone;
-                                document.getElementById("badges-address").value = responseData.address;
+								if(type=='self'){var myform='badgessm';} else {var myform='badges';}
+                                document.getElementById(myform+"-city").value = responseData.city;
+                                document.getElementById(myform+"-state").value = responseData.state;
+                                document.getElementById(myform+"-zip").value = responseData.zip;
+                                document.getElementById(myform+"-ice_contact").value =responseData.prefix+" "+responseData.first_name+" "+responseData.last_name+" "+responseData.suffix;
+                                document.getElementById(myform+"-ice_phone").value = responseData.ice_phone;
+                                document.getElementById(myform+"-address").value = responseData.address;
                                 $("#no-primary-error").show(500);
                                 $("#HideMySubmit").show(500);
                             }
@@ -411,17 +453,6 @@ app.controller("MembershipTypeForm", function($scope) {
 
 app.controller("CreateBadgeController", function($scope) {
 
-    function fillBarcode() {
-        var ranText="";
-        var possible = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-        for (var ri = 0; ri < 2; ri++)
-           ranText += possible.charAt(Math.floor(Math.random() * possible.length));
-        var barcodeData = ("00" + $('#badges-club_id').val()).slice(-2)+' '+("00" + $('#badges-mem_type').val()).slice(-2)+' '+$('#badges-badge_number').val()+' '+ranText;
-        $('#badges-qrcode').val(barcodeData);
-        barcodeGenerate(barcodeData);
-        $(".barcode").show(300);
-    };
-
     var qrcode = $("#badges-qrcode").val();
 
     if(qrcode=='') {
@@ -536,7 +567,7 @@ app.controller("CreateBadgeController", function($scope) {
             }
             document.getElementById('badges-expires').readOnly = true;
             fillBarcode();
-
+			get_fees(memTypeId);
             if (memTypeId!='') {
                 run_waitMe('show');
                 var responseData;
@@ -593,7 +624,6 @@ app.controller("CreateBadgeController", function($scope) {
                 url: friendurl,
                 crossDomain: false,
                 success: function(responseData, textStatus, jqXHR) {
-                    $scope.fee = responseData;
                     console.log(responseData);
                     //$("#badges-badge_fee-disp").val(responseData.BadgeFee);
                     //$("#badges-badge_fee").val(responseData.badgeFee);

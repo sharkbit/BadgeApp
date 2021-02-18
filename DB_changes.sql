@@ -503,6 +503,9 @@ CREATE TABLE `BadgeDB`.`login_access` (
   `l_name` VARCHAR(80) NULL,
   `ip` VARCHAR(45) NULL,
   `l_status` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`));
+  PRIMARY KEY (`l_id`));
 
-
+-- v.2.1.7 Allowd Self-Registered Clubs
+ALTER TABLE `BadgeDB`.`clubs` 
+	ADD COLUMN `allow_self` INT NOT NULL DEFAULT '1' AFTER `is_club`;
+update `BadgeDB`.`clubs` set allow_self =0 where is_club=0 or is_club=2 or club_id=33 or club_id=35;

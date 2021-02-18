@@ -32,12 +32,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function($model) { if($model->is_club==0) return'COI or Other'; else return 'Yes'; },
                 'headerOptions' => ['style' => 'width:5%'],
 			],
-            [       
-                'attribute' => 'status',
+            [   'attribute' => 'allow_self',
+                'value' => function($model) { if($model->allow_self==0) return'No'; else return 'Yes'; },
+                'headerOptions' => ['style' => 'width:5%'],
+            ],
+            [   'attribute' => 'status',
                 'value' => function($model) { if($model->status==0) return'Active'; else return 'Inactive'; },
                 'headerOptions' => ['style' => 'width:5%'],
             ],
-            
+
         ],
     ]) ?>
 

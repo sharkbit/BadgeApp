@@ -5,10 +5,13 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\widgets\ActiveForm;
 use common\models\LoginForm;
-use backend\controllers\AdminController;
 use common\models\User;
+use backend\controllers\AdminController;
 use backend\models\Badges;
+use backend\models\BadgesSm;
+use backend\models\clubs;
 use backend\models\Guest;
 use backend\models\LoginAccess;
 use backend\models\Privileges;
@@ -230,6 +233,59 @@ class SiteController extends AdminController {
 			return $this->redirect(['login-member', 'url' => $url]);
 		} else {
 			return $this->goHome();}
+	}
+
+	public function actionNewMember() {
+		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
+		$model = New BadgesSm;
+
+		if ($model->load(Yii::$app->request->post())) {
+			if (Yii::$app->request->isAjax) {
+				Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+				return ActiveForm::validate($model);
+
+			} else {
+				$model->created_at = $this->getNowTime();
+				$model->remarks = '';
+
+				$model = (new Badges)->cleanBadgeData($model,false,true);
+				$saved=$model->save();
+				if(!$saved) {
+					$model->badge_number = (new Badges)->getFirstFreeBadge();
+					$qr=explode(" ",$model->qrcode);
+					$model->qrcode=$qr[0]." ".$qr[1]." ".str_pad($model->badge_number, 5, '0', STR_PAD_LEFT)." ".$qr[3];
+					$saved=$model->save();
+				}
+				if($saved) {
+					$this->createLog($this->getNowTime(), $model->first_name.' '.$model->last_name, "Self-Registered new Badge','".$model->badge_number);
+					Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been created');
+					(New clubs)->saveClub($model->badge_number, $model->club_id, false);
+
+					yii::$app->controller->sendVerifyEmail($model->email,'new',$model);
+		
+					//Auto Login!
+					$badgeArray = Badges::find()->where(['badge_number'=>$model->badge_number])->one();
+					$_SESSION["badge_number"] = $badgeArray->badge_number;
+					$_SESSION["user"] = $badgeArray->first_name.' '.$badgeArray->last_name;
+					$_SESSION['names'] = yii::$app->controller->getBadgeList();
+					$_SESSION['privilege']=array(5);
+					$priv = Privileges::find()->where(['id'=>5])->one();
+					$_SESSION['timeout'] = $priv->timeout;
+					Yii::$app->user->login(User::findIdentity(0), 0);
+
+					return $this->redirect(['/badges/photo-add', 'badge' => $model->badge_number]);
+				} else {
+					Yii::$app->getSession()->setFlash('error', 'Something Broke?');
+					$errors = $model->getErrors();
+					yii::$app->controller->createLog(true, 'trex_self_error', var_export($errors,true));
+				}
+			}
+		}
+		
+		$model->badge_number = (new Badges)->getFirstFreeBadge();
+		return $this->render('new-member',[
+			'model'=> $model
+		]);
 	}
 
 	public function actionNoEmail($unsubscribe) {

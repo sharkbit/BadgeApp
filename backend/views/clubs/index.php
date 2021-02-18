@@ -32,20 +32,22 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/ind
                     ],
                     'club_name',
                     'short_name',
-					'avoid',
+					[	'attribute'=>'avoid',
+						'header'=>'Words to Avoid',
+					],
                     'poc_email',
-					
-                    'is_club' => [   'attribute'=>'is_club',
+					[   'attribute'=>'is_club',
                             'value' => function($model, $attribute) { if($model->is_club==0) {return 'No';} elseif($model->is_club==1){ return 'Yes';} else { return 'AGC Sponsored'; } },
                             'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_club', ['0' => 'No', '1' => 'Yes' , '2' => 'AGC Sponsored'],['class'=>'form-control','prompt' => 'All']),
                     ],
-					
-                    'status' => [   'header'=>'Status',
-                            'value' => function($model, $attribute){ if($model->status==0) {return 'Active';} else if($model->status==1) {return 'Inactive';} },
+					[   'attribute'=>'allow_self',
+                            'value' => function($model, $attribute){ if($model->allow_self==0) {return 'No';} else {return 'Yes';} },
+                            'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'allow_self', ['0' => 'No', '1' => 'Yes'],['class'=>'form-control','prompt' => 'All']),
+                    ],
+                    [   'attribute'=>'Status',
+                            'value' => function($model, $attribute){ if($model->status==0) {return 'Active';} else {return 'Inactive';} },
                             'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status', ['0' => 'Active', '1' => 'Inactive'],['class'=>'form-control','prompt' => 'All']),
                     ],
-					
-                    //'status',
 		[
 			'header' => 'Actions',
 			'class' => 'yii\grid\ActionColumn',
@@ -53,7 +55,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/ind
 			'buttons'=> [
 				'update' => function ($url, $model) {
 					if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||
-					((yii::$app->controller->hasPermission('clubs/update')) && (!array_intersect([1,2],json_decode($model->privilege))))) {
+					((yii::$app->controller->hasPermission('clubs/update')) && (!array_intersect([1,2],json_decode(yii::$app->user->identity->privilege))))) {
 					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/clubs/update','id'=>$model->club_id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',

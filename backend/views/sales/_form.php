@@ -21,8 +21,8 @@ use yii\widgets\ActiveForm;
 			} else {
 				echo $form->field($model, 'type')->dropDownList($model->getTypes(true)).PHP_EOL;
 			}
-		} ?>	
-		
+		} ?>
+
 		<?php if($model->type!='Category'){echo $form->field($model, 'paren')->dropDownList($model->getGroups()).PHP_EOL; } ?>	
 		
 		<?= $form->field($model, 'item')->textInput(['maxlength'=>true])->label("Item Name") ?>

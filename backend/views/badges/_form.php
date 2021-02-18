@@ -83,7 +83,7 @@ $confParams  = Params::findOne('1');
             </div>
 
             <div class="col-xs-6 col-sm-2">
-                <?= $form->field($model, 'state')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
+                <?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates(),['value'=>'MD']) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
                 <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female']) ?>

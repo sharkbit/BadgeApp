@@ -109,7 +109,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
             <div class="col-xs-12 col-sm-6">
 	<?php 	if($restrict) {
 				$ClubName=(new clubs)->getClubList();
-		        echo $form->field($model, 'club_name')->textInput(['value'=>$ClubName[$model->club_id],'disabled'=>true]).PHP_EOL;
+		        echo $form->field($model, 'club_name')->textInput(['value'=>(new clubs)->getMyClubsNames($model->badge_number),'disabled'=>true]).PHP_EOL;
 			} else { ?>
 
 				<div class="form-group" >
@@ -151,7 +151,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
             </div>
 
             <div class="col-xs-6 col-sm-2">
-                <?= $form->field($model, 'state')->textInput([]).PHP_EOL; ?>
+                <?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates()) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
                 <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female']).PHP_EOL; ?>
