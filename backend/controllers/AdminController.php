@@ -20,13 +20,13 @@ class AdminController extends \yii\web\Controller {
 	public $rootAdminPermission = [
 		'Accounts' => ['accounts/index','accounts/create','accounts/update','accounts/view','accounts/delete','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu','privileges/create','privileges/delete','privileges/index','privileges/update'],
-		'Badges'=>['badges/all','badges/add-certification','badges/api-check','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete-certificate','badges/delete','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log',],
+		'Badges'=>['badges/all','badges/add-certification','badges/api-check','badges/barcode','badges/create','badges/delete-certificate','badges/delete','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log',],
 		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/shoot','calendar/showed','calendar/update','calendar/view'],
 		'CalSetup' => ['cal-setup/index','cal-setup/clubs','cal-setup/updateclu','cal-setup/facility','cal-setup/updatefac','cal-setup/rangestatus','cal-setup/updateran','cal-setup/eventstatus','cal-setup/updateeven'],
 		'Clubs' => ['clubs/index','clubs/create','clubs/delete','clubs/update','clubs/view','clubs/delete-X','clubs/badge-rosters'],
 		'MassEmail' => ['mass-email/create','mass-email/index','mass-email/update','mass-email/send','mass-email/process'],
 		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/return','events/remove-att','events/update','events/view'],
-		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/delete-X','membership-type/view','membership-type/fees-by-type'],
+		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/delete-X','membership-type/view'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/stats','guest/delete'],
 		'Index' => ['site/new-member','site/no-email','site/verify'],
 		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/update','legelemail/delete'],
@@ -41,9 +41,9 @@ class AdminController extends \yii\web\Controller {
 	public $adminPermission = [
 		'Accounts' => ['accounts/index','accounts/create','accounts/update','accounts/view','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu'],
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/shoot','calendar/update'],
-		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view','membership-type/fees-by-type'],
+		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/index','clubs/create','clubs/update','clubs/view','clubs/badge-rosters'],
 		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/remove-att','events/update','events/view'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/delete','guest/stats'],
@@ -67,28 +67,28 @@ class AdminController extends \yii\web\Controller {
 	];
 	
 	public $cashierPermission = [
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
-		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view','membership-type/fees-by-type'],
+		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
 		'sales' => ['sales/all'],
 		'Guest' => ['guest/update'],
 	];
 
 	public $rsoLeadPermission = [
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/showed','calendar/index'],
 		'Events' => ['events/approve','events/index','events/close','events/create','events/reg','events/return','events/remove-att','events/view'],
-		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/fees-by-type'],
+		'Membership Type'=>['membership-type/ajaxmoney-convert'],
 		'Guest' => ['guest/all','guest/modify','guest/update'],
 		'sales' => ['sales/all'],
 		'violations' => ['violations/all','violations/create','violations/report','violations/update'],
 	];
 
 	public $rsoPermission = [
-		'Badges'=>['badges/all','badges/add-certification','badges/api-generate-renaval-fee','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/showed','calendar/index'],
 		'Events' => ['events/approve','events/index','events/close','events/create','events/reg','events/return','events/remove-att','events/view'],
-		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/fees-by-type'],
+		'Membership Type'=>['membership-type/ajaxmoney-convert'],
 		'Guest' => ['guest/all','guest/modify','guest/update'],
 		'sales' => ['sales/all'],
 		'violations' => ['violations/all','violations/create','violations/update'],
@@ -138,8 +138,9 @@ class AdminController extends \yii\web\Controller {
 	];
 	
 	public $AllPermission = [
-		'Badges'=>['badges/api-zip','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
+		'Badges'=>['badges/api-zip','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
 		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
+		'membershiptype'=>['membership-type/fees-by-type'],
 		'payments'=>['payment/charge'],
 		'sales' => ['sales/index','sales/print-rcpt','sales/purchases'],
 		'Site' => ['site/index','site/error','site/logout','site/login','site/login-member','params/password'],
@@ -431,28 +432,79 @@ class AdminController extends \yii\web\Controller {
 
 	public function sendVerifyEmail($email,$type='new',$model=null) {
 		if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			if($model->email_vrfy==1) {	return; }
-			
-			// Only send out email to user after waiting 10 min.
-			if(isset($_SESSION['emails'])) {
-				//$badge_number = $model->badge_number;
-				if(isset($_SESSION['emails'][$model->badge_number])) {
-					$myTest = $_SESSION['emails'][$model->badge_number];
-					if($myTest < time()) {
-						$_SESSION['emails'][$model->badge_number] = time() + (10 * 60);
-					}else {
-						//Yii::$app->getSession()->setFlash('error', 'Email aleard sent to '.$model->first_name.'. Wait 10min.');
-						return;
-					}
-				} else { $_SESSION['emails'][$model->badge_number]= time() + (10 * 60); }
-			} else { $_SESSION['emails']=[$model->badge_number => time() + (10 * 60)]; }
-			
+			if($type=='new') { $welcome = 'Welcome to the AGC '.$model->first_name.'!,'; }
+			else if ($type=='update') { $welcome = 'Hi '.$model->first_name.','; }
 
-			$site = $_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'];
-			$command = "wget -qO- '".$site."/badges/verify-email?badge_number=".$model->badge_number."&type=".$type;
-			exec('nohup ' . $command . ' > /dev/null 2>&1 &');
+			$mail = $this->emailSetup();
+			if ($mail) {
+			$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$email.'>');
+
+		// Only send out email to user after waiting 10 min.
+			if(isset($model->badge_number)) {
+				if($model->email_vrfy==1) {	return; }
+				if(isset($_SESSION['emails'])) {
+					//$badge_number = $model->badge_number;
+					if(isset($_SESSION['emails'][$model->badge_number])) {
+						$myTest = $_SESSION['emails'][$model->badge_number];
+						if($myTest < time()) {
+							$_SESSION['emails'][$model->badge_number] = time() + (10 * 60);
+						}else {
+							//Yii::$app->getSession()->setFlash('error', 'Email aleard sent to '.$model->first_name.'. Wait 10min.');
+							return;
+						}
+					} else { $_SESSION['emails'][$model->badge_number]= time() + (10 * 60); }
+				} else { $_SESSION['emails']=[$model->badge_number => time() + (10 * 60)]; }
+				$mail->addAddress($email, $model->first_name);
+			} else { $mail->addAddress($email); }
+
+			if($type=='new') {
+				$extra = '<p>Your new Badge Number is: <b>'.$model->badge_number.'</b><br />And your Login code is: <b>'.$model->qrcode.'</b><br />This information wil also be on the back of your badge.</p>';
+			} else { $extra=''; }
+				
+			try {
+				//Recipients
+				$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
+
+				//$mail->addAddress('contact@example.com');			   // Name is optional
+				//$mail->addReplyTo('info@example.com', 'Information');
+				//$mail->addCC('cc@example.com');
+				//$mail->addBCC('bcc@example.com');
+
+				//Attachments
+				//$mail->addAttachment('/var/tmp/file.tar.gz');		 // Add attachments
+				//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');	// Optional name
+
+				// Compose a simple HTML email message
+				$message = "<!DOCTYPE html><html>\n<body>\n" .
+					'<p>'.$welcome.'</p>'.$extra.
+					'<p>Please take a moment to verify your Email by clicking on the link below.</p>' .
+					'<p><a href="'.yii::$app->params['wp_site'].'/comms.php?verifyemail='.$email.'"> Verify your Email: '.$email.' </a></p><br>' .
+					'<p>Thank You,<br />Associated Gun Clubs of Baltimore.</p>' ."\n".
+					'<a href="'.yii::$app->params['wp_site'].'">'.yii::$app->params['wp_site'].'</a>' ."\n".
+					"<br /><br><p>P.S. We know our email probably went to the spam folder. Please tell your provider It's not Spam!. </p>\n".
+					'<br /><p> or Click here to <a href="'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$email.'">remove your email from our List</a>.</p>'. "\n".
+					"</body>\n</html>";
+
+					//Content
+				$mail->Subject = 'AGC Email Verification';
+				$mail->Body	= $message;
+				$mail->AltBody = $welcome."\n\n".
+					"Please take a moment to verify your Email by clicking on the link below.\n\n".
+					yii::$app->params['wp_site'].'/comms.php?verifyemail='.$email."\n\n".
+					"Thank You,\nAssociated Gun Clubs of Baltimore.";
+
+				$mail->send();
+				yii::$app->controller->createLog(true, 'Email Verify', "Sent to ".$email."','".$model->badge_number);
+				return 'Message has been sent';
+			} catch (Exception $e) {
+				$mail->SMTPDebug = 3;
+				Yii::$app->response->data .= 'Message could not be sent.';
+				Yii::$app->response->data .= 'Mailer Error: ' . $mail->ErrorInfo;
+				yii::$app->controller->createLog(true, 'trex Verify Email Error: ', var_export($mail->ErrorInfo,true));
+			}
+			return true;
+			}
 		}
-		return;
+		return false;
 	}
-
 }

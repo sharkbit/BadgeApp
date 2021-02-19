@@ -94,29 +94,10 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
                 <?= $form->field($model, 'suffix')->textInput(['readOnly'=>yii::$app->controller->hasPermission('badges/rename') ? false : true,]).PHP_EOL; ?>
             </div>
             <div class="col-xs-6 col-sm-6">
-	<?php 	if($restrict) {
-				echo $form->field($model, 'mem_type')->textInput(['value'=>$model->getMembershipType($model->mem_type),'disabled' => true] ).PHP_EOL;
-			} else {
-				echo $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(),['options'=>['approved'=>['title'=>'blaa blaa'],
-			'pending'=>['title'=>'blaa blaa'],
-			'prob'=>['title'=>'blaa blaa'],
-			'suspended'=>['title'=>'blaa blaa'],
-			'revoked'=>['title'=>'blaa blaa'],
-			'retired'=>['title'=>'blaa blaa']
-			]]).PHP_EOL;
-			}  ?>
+				<?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(),['disabled' =>($restrict)? true : false]).PHP_EOL; ?>
             </div>
             <div class="col-xs-12 col-sm-6">
-	<?php 	if($restrict) {
-				$ClubName=(new clubs)->getClubList();
-		        echo $form->field($model, 'club_name')->textInput(['value'=>(new clubs)->getMyClubsNames($model->badge_number),'disabled'=>true]).PHP_EOL;
-			} else { ?>
-
-				<div class="form-group" >
-				<?php echo Html::label("Club Name"); ?>
-				<?php echo Html::dropDownList("new_club",(new clubs)->getMyClubs($model->badge_number) ,(new clubs)->getClubList(false,false,true),['id'=>'badges-clubs', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]), PHP_EOL; ?>
-				</div>
-			<?php } ?>
+				<?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false),['value'=>(new clubs)->getMyClubs($model->badge_number),'class'=>"chosen_select", 'multiple'=>true,'disabled'=>($restrict)? true : false]).PHP_EOL; ?>
             </div>
 			<div  class="col-xs-12" id="primary-badge-summary">
 				<div class="row">
@@ -498,7 +479,6 @@ $ccYear = range($curYr,$curYr+25);  ?>
 	$("#cert_search").hide();
 	$("#online_search").hide();
 	$("#cert_cc_form_div").hide();
-	
 
 	$(".badge_store_div").click(function(e) {
         e.preventDefault();

@@ -2,20 +2,14 @@
 namespace backend\models;
 
 use Yii;
-use DateTime;
-use backend\models\BadgeSubscriptions;
-use backend\models\clubs;
 use backend\models\MembershipType;
-use backend\models\Params;
-use backend\models\StoreItems;
-use backend\models\WorkCredits;
 use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "badges".
  */
 class BadgesSm extends \yii\db\ActiveRecord {
-	public $club_name;
+	public $club_id;
 	public $email_verify;
 
 	public static function tableName() {
@@ -27,8 +21,8 @@ class BadgesSm extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name','last_name','address','city','club_name','email','email_verify','state','zip','gender','ice_phone','phone','ice_contact','incep','mem_type','expires','wt_date','wt_instru'], 'required'],
-			[['address', 'gender', 'qrcode','status','club_name'], 'string'],
+			[['first_name','last_name','address','city','club_id','email','email_verify','state','zip','gender','ice_phone','phone','ice_contact','incep','mem_type','expires','wt_date','wt_instru'], 'required'],
+			[['address', 'gender', 'qrcode','status'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip','club_id', 'mem_type','yob'], 'integer'],
 			[['prefix', 'suffix'], 'string', 'max' => 15],
@@ -77,10 +71,6 @@ class BadgesSm extends \yii\db\ActiveRecord {
 		];
 	}
 
-	//public function getclubs() {
-    //    return $this->hasMany(Clubs::className(), ['club_id' => 'club_id']);
-    //}
-
 	public function getMembershipType($mem_type='') {
 		if($mem_type<>"") {
 			$memberShip = MembershipType::find()->where(['id'=>$mem_type])->one();
@@ -121,21 +111,4 @@ class BadgesSm extends \yii\db\ActiveRecord {
 
 	}
 
-	public function gtActiveSubscriptionModel() {
-		return $this->hasOne(BadgeSubscriptions::className(),['id'=>'badge_subscription_id']);
-	}
-
-	public function getActiveClub() {
-		return $this->hasOne(Clubs::className(),['club_id'=>'club_id']);
-	}
-
-	public function getWorkCredits($badge_number) {
-		$command = Yii::$app->db->createCommand("SELECT sum(work_hours) FROM work_credits where badge_number='$badge_number' ");
-		$sum = $command->queryScalar();
-		return $sum;
-	}
-
-	public function getAllWorkCredits() {
-		return $this->hasMany(WorkCredits::className(),['badge_number'=>'badge_number']);
-	}
 }

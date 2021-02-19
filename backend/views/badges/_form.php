@@ -25,7 +25,7 @@ $confParams  = Params::findOne('1');
 ?>
 
 <div class="badges-form">
-<?php $form = ActiveForm::begin(['id'=>'badgeCreate']); ?>
+<?php $form = ActiveForm::begin(['id'=>'badgeCreate','enableAjaxValidation' => true]); ?>
 <div class="row">
 
     <div class="col-xs-12 col-sm-8">
@@ -52,12 +52,7 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(),['prompt'=>'select']).PHP_EOL; ?>
             </div>
             <div class="col-xs-6 col-sm-6 col-md-4">
-                <?php if($model->isNewRecord) { ?>
-                <?= $form->field($model, 'club_name')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'select','id'=>'club-id']).PHP_EOL; ?>
-                <?php } else { ?>
-                <?= $form->field($model, 'club_name')->textInput(['readonly' => true]) ?>
-                <?php } ?>
-                <?= $form->field($model, 'club_id')->hiddenInput(['readonly' => true])->label(false) ?>
+                <?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false), ['prompt'=>'select']).PHP_EOL; ?>
             </div>
 			<div  class="col-xs-12" id="primary-badge-summary">
 			<div class="row">
@@ -86,7 +81,7 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates(),['value'=>'MD']) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
-                <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female']) ?>
+                <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female'],['value'=>0]) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
                 <?= $form->field($model, 'yob')->dropDownList($YearList,['value'=>$MyYr-13 ]) ?>

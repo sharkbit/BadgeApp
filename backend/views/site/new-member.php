@@ -122,8 +122,7 @@ input[type='checkbox'] {
 			<?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(true),[]).PHP_EOL; ?>
 		</div>
 		<div class="col-xs-6 col-sm-6 col-md-4">
-			<?= $form->field($model, 'club_name')->dropDownList((new clubs)->getClubList(false,false,2), ['prompt'=>'select','id'=>'club-id']).PHP_EOL; ?>
-			<?= $form->field($model, 'club_id')->hiddenInput(['readonly' => true])->label(false) ?>
+			<?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false,2), ['prompt'=>'select']).PHP_EOL; ?>
 		</div>
 
 		<div  class="col-xs-12" id="primary-badge-summary">
@@ -267,13 +266,13 @@ $('#NewMembers').on('beforeSubmit', function (e) {
         var possible = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
         for (var ri = 0; ri < 2; ri++)
            ranText += possible.charAt(Math.floor(Math.random() * possible.length));
-        var barcodeData = ("00" + $('#club-id').val()).slice(-2)+' '+("00" + $('#badgessm-mem_type').val()).slice(-2)+' '+$('#badgessm-badge_number').val()+' '+ranText;
+        var barcodeData = ("00" + $('#badgessm-club_id').val()).slice(-2)+' '+("00" + $('#badgessm-mem_type').val()).slice(-2)+' '+$('#badgessm-badge_number').val()+' '+ranText;
         $('#badgessm-qrcode').val(barcodeData);
         barcodeGenerate(barcodeData);
         $(".barcode").show(300);
     };
 
-	$("#club-id").change(function() {
+	$("#badgessm-club_id").change(function() {
 		fillQR();
 	});
 

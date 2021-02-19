@@ -534,9 +534,8 @@ app.controller("CreateBadgeController", function($scope) {
             doCalcNew();
         });
 
-        $("#club-id").change(function() {
-            $("#badges-club_id").val($("#club-id").val());
-            fillBarcode();
+        $("#badges-club_id").change(function() {
+             fillBarcode();
         });
 
         family_badge_view('hide');
@@ -924,10 +923,6 @@ app.controller('UpdateBadgeController', function($scope) {
             if(primaryRequest==0 || primaryRequest ==null) {
 //                family_badge_view('hide');
             }
-        });
-
-        $("#club-id").change(function() {
-            $("#badges-club_id").val($("#club-id").val());
         });
 
         $("#badgesubscriptions-discount").change(function() {

@@ -28,7 +28,7 @@ class Badges extends \yii\db\ActiveRecord {
 	public $cc_exp_mo;
 	public $cc_exp_yr;
 	public $cc_x_id;
-	public $club_name;
+	public $club_id;
 	public $discounts;
 	public $item_name;
 	public $item_sku;
@@ -49,8 +49,8 @@ class Badges extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name', 'last_name', 'address', 'city','club_name','state', 'zip', 'gender', 'mem_type', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
-			[['address', 'gender', 'qrcode','status','club_name','cc_num','cc_x_id'], 'string'],
+			[['first_name', 'last_name', 'address', 'city','club_id','state', 'zip', 'gender', 'mem_type', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
+			[['address', 'gender', 'qrcode','status','cc_num','cc_x_id'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip','club_id', 'mem_type','sticker','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
 			[['badge_fee', 'discounts', 'amt_due'], 'number'],
@@ -58,7 +58,8 @@ class Badges extends \yii\db\ActiveRecord {
 			['email', 'string', 'max' => 60],
 			['email', 'filter', 'filter' => 'trim'],
 			['email', 'email'],
-			['email','unique','targetClass' => '\backend\models\Badges','message'=>'Email already exist. Please use another one.'],
+			//['email','unique','targetClass' => '\backend\models\Badges','message'=>'Email already exist. Please use another one.'],
+			[['email'],'uniqueEmail'],
 			[['first_name','last_name'], 'string', 'max' => 35],
 			[['phone_op','ice_phone'], 'match', 'pattern' => '/^[- 0-9() +]+$/', 'message' => 'Not a valid phone number.'],
 			[['city', 'phone', 'phone_op', 'ice_phone'], 'string', 'max' => 25],
@@ -72,9 +73,13 @@ class Badges extends \yii\db\ActiveRecord {
 		];
 	}
 
-	/**
-	 * @inheritdoc
-	 */
+	public function uniqueEmail($a) {
+		$user = (New Badges)->find()->where(['email'=>$this->$a])->one();
+		if($user) {
+			$this->addError('email', 'Email used by: '.$user->first_name.' (Badge #'.$user->badge_number.')');
+		}
+	}
+
 	public function attributeLabels() {
 		return [
 			'yob' => 'YOB',
@@ -157,14 +162,13 @@ class Badges extends \yii\db\ActiveRecord {
 
 		if(isset($model->payment_method)) {
 			if($model->payment_method=='creditnow') {$payment_method = 'credit';} else {$payment_method = $model->payment_method;} }
-		if(isset($_POST['new_club'])) {
-			(new clubs)->saveClub($model->badge_number,$_POST['new_club']);
-			$model->club_id=$_POST['new_club'][0];
-		} else {
-			if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]);
-			$model->club_id=35; }
+		if(yii::$app->controller->hasPermission('badges/all')) {
+			if(isset($model->club_id)) {
+				(new clubs)->saveClub($model->badge_number,$model->club_id);
+			} else {
+				if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]);}
+			}
 		}
-
 		$dirty = (New Badges)->loadDirtyFilds($model);
 		$dirty = implode(", ",$dirty);
 
