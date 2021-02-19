@@ -3,7 +3,6 @@ namespace backend\models;
 
 use Yii;
 use DateTime;
-use backend\models\Badges;
 use backend\models\BadgeSubscriptions;
 use backend\models\clubs;
 use backend\models\MembershipType;
@@ -35,7 +34,8 @@ class BadgesSm extends \yii\db\ActiveRecord {
 			[['prefix', 'suffix'], 'string', 'max' => 15],
 			['email','filter','filter' => 'trim'],
 			['email','email'],
-			['email','unique','targetClass' => '\backend\models\BadgesSm','message'=>'Email already exist. Please use another one.'],
+			//['email','unique','targetClass' => '\backend\models\BadgesSm','message'=>'Email already exist. Please use another one.'],
+			[['email'],'uniqueEmail'],
 			['email_verify', 'compare', 'compareAttribute'=>'email', 'message'=>"Emails don't match"],
 			[['first_name','last_name'], 'string', 'max' => 35],
 			[['phone','phone_op','ice_phone'], 'match', 'pattern' => '/^[- 0-9() +]+$/', 'message' => 'Not a valid phone number.'],
@@ -48,6 +48,13 @@ class BadgesSm extends \yii\db\ActiveRecord {
 				'whenClient' => "function (attribute, value) { return $('#badges-mem_type').val() == '51'; }"
 			],
 		];
+	}
+
+	public function uniqueEmail($a) {
+		$user = (New BadgesSm)->find()->where(['email'=>$this->$a])->one();
+		if($user) {
+			$this->addError('email', 'Email used by: '.$user->first_name.' (Badge #'.$user->badge_number.')');
+		}
 	}
 
 	/**
