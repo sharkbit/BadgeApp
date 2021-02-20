@@ -853,53 +853,6 @@ app.controller('UpdateBadgeController', function($scope) {
             });
         });
 
-        $("#form_badge_cert").on("beforeSubmit", function (event, messages) {
-            var $form = $("#badgeUpdate"),
-                data = $form.data("yiiActiveForm");
-            $.each(data.attributes, function() {
-                this.status = 3;
-            });
-            $form.yiiActiveForm("validate");
-            if ($("#badgeUpdate").find(".has-error").length) {
-                alert("Please update errors in RED on Form");
-                return false;
-            }
-
-            var formData = $("#badgeUpdate").serializeArray();
-            var ajaxRequestUrl = $("#badgeUpdate").attr('action');
-            jQuery.ajax({
-                method: 'POST',
-                url:ajaxRequestUrl,
-                crossDomain: false,
-                data: formData,
-                dataType: 'json',
-                success: function(responseData, textStatus, jqXHR) {
-
-                    if(responseData.status=='true') {
-                        renewActionPermission = true;
-                        var myCert = document.getElementById("badgecertification-certification_type");
-                        var selectedText = myCert.options[myCert.selectedIndex].text;
-                        $("#badges-remarks_temp").val(' * Add Cert: '+ selectedText);
-                        //$("#form_badge_cert").submit();
-                    } else {
-                        console.log('Data Fail');
-                    }
-                },
-                error: function (responseData, textStatus, errorThrown) {
-                    console.log('Ajax error '+responseData.responseText);
-                },
-            });
-
-        }).on('submit', function(e,messages){
-            if ($("#badgeUpdate").find(".has-error").length) {
-                e.preventDefault();
-                return false;
-            } else if  (renewActionPermission == false) {
-                e.preventDefault();
-                return false;
-            }
-        });
-
         function submitit(element) {
             $('#rebates-form').yiiActiveForm('submitForm')
         }

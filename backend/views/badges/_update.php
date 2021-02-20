@@ -599,7 +599,6 @@ $ccYear = range($curYr,$curYr+25);  ?>
 	});
 
 	$("#badgecertification-cert_payment_type").change(function(e) {
-console.log('main:631: here');			
         var pay_meth = document.getElementById("badgecertification-cert_payment_type");
         var selectedVal = pay_meth.options[pay_meth.selectedIndex].value;
         if(selectedVal=="creditnow") {
@@ -619,7 +618,6 @@ console.log('main:631: here');
     });
 
 	$("#badgecertification-Process_CC").click(function(e) {
-console.log('main:651: here');
 		e.preventDefault();
 		$("#badgecertification-Process_CC").hide();
 		document.getElementById("badgecertification-Process_CC").disabled=true;
@@ -817,10 +815,21 @@ console.log('main:651: here');
 		} else { SwipeError(cleanUPC,'b-v-g-u:686'); }
 		cleanUPC = '';
 	};
+
+	$("#form_badge_cert").on('submit', function(e,messages){
+		var f = document.forms.badgeUpdate;
+		var postData = [];
+		for (var i = 0; i < f.elements.length; i++) {
+			postData.push(f.elements[i].name + "=" + f.elements[i].value);
+		}
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", '/badges/update?badge_number=<?=$model->badge_number?>', true);
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhr.send(postData.join("&"));
+	});
 </script>
 
 <style>
-
 .wrap {
     min-height: 100%;
     height: auto;
