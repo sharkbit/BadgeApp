@@ -804,7 +804,7 @@ class BadgesController extends AdminController {
 					if($subscription->save(false)) {
 					}
 				} else {
-					yii::$app->controller->createLog(true, 'T-Rex-BC_PPT', var_export($postPrintTransactions->getErrors(),true));
+					yii::$app->controller->createLog(true, 'T-Rex-BC_PPT:sub', var_export($postPrintTransactions->getErrors(),true));
 					Yii::$app->getSession()->setFlash('error', 'Badge Subscriptions '.' Please see Activity Log for T-Rex Error!.');
 				};
 		}
@@ -826,7 +826,7 @@ class BadgesController extends AdminController {
 				$certification->is_migrated = '1';
 				$certification->save();
 			} else {
-				yii::$app->controller->createLog(true, 'T-Rex-BC_PPT', var_export($postPrintTransactions->getErrors(),true));
+				yii::$app->controller->createLog(true, 'T-Rex-BC_PPT:cert', var_export($postPrintTransactions->getErrors(),true));
 				Yii::$app->getSession()->setFlash('error', 'Badge Certifications '.' Please see Activity Log for T-Rex Error!.');
 			};
 		}
