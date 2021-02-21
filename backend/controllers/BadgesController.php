@@ -468,14 +468,14 @@ class BadgesController extends AdminController {
 			$model->status ='approved';
 			$model = $model->cleanBadgeData($model,true,true);
 
-			$saved=$model->save();
-			if(!$saved) {
+			$bg_num =(New Badges)->find()->where(['badge_number'=>$model->badge_number])->count();
+			if($bg_num > 0) {
 				$model->badge_number=$model->getFirstFreeBadge();
 				$qr=explode(" ",$model->qrcode);
 				$model->qrcode=$qr[0]." ".$qr[1]." ".str_pad($model->badge_number, 5, '0', STR_PAD_LEFT)." ".$qr[3];
-				$saved=$model->save();
 			}
 
+			$saved=$model->save(); 
 			if($saved) {
 				if($model->payment_method <> 'creditnow') {
 					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee-$model->discounts ];

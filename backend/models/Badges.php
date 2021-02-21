@@ -65,7 +65,6 @@ class Badges extends \yii\db\ActiveRecord {
 			[['city', 'phone', 'phone_op', 'ice_phone'], 'string', 'max' => 25],
 			[['zip'], 'string', 'max' => 10],
 			[['wt_instru'], 'string', 'max' => 255],
-			[['badge_number'],'unique'],
 			['primary', 'required', 'when' => function ($model) {
 					return $model->mem_type == '51';},
 				'whenClient' => "function (attribute, value) { return $('#badges-mem_type').val() == '51'; }"
