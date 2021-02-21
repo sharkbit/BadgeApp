@@ -137,7 +137,7 @@ class Badges extends \yii\db\ActiveRecord {
 		}
 	}
 
-	public static function cleanBadgeData($model, $DoComment=false,$isNew=false) {
+	public static function cleanBadgeData($model, $DoComment=false,$isNew=false,$self=false) {
 		if(isset($model->yob)) {
 			$model->yob = (int)trim($model->yob);
 			if($model->yob == 0) { $model->yob=null; }
@@ -185,7 +185,7 @@ class Badges extends \yii\db\ActiveRecord {
 			$nowRemakrs = [
 				'created_at'=>yii::$app->controller->getNowTime(),
 				'data'=>$cmnt. ' ',
-				'changed'=> $by.' by '.$_SESSION['user'],
+				'changed'=> $by.' by '.(($self)? $model->last_name.' (Self-Registered)':$_SESSION['user']),
 			];
 			if($remarksOld != '') {
 				array_push($remarksOld,$nowRemakrs);

@@ -247,15 +247,17 @@ class SiteController extends AdminController {
 			} else {
 				$model->created_at = $this->getNowTime();
 				$model->remarks = '';
+				$model->remarks_temp='';
 
-				$model = (new Badges)->cleanBadgeData($model,false,true);
-				$saved=$model->save();
-				if(!$saved) {
+				$model = (New Badges)->cleanBadgeData($model,true,true,'Self');
+				$bg_num =(New Badges)->find()->where(['badge_number'=>$model->badge_number])->count();
+				if($bg_num > 0) {
 					$model->badge_number = (new Badges)->getFirstFreeBadge();
 					$qr=explode(" ",$model->qrcode);
 					$model->qrcode=$qr[0]." ".$qr[1]." ".str_pad($model->badge_number, 5, '0', STR_PAD_LEFT)." ".$qr[3];
-					$saved=$model->save();
 				}
+
+				$saved=$model->save();
 				if($saved) {
 					$this->createLog($this->getNowTime(), $model->first_name.' '.$model->last_name, "Self-Registered new Badge','".$model->badge_number);
 					Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been created');
