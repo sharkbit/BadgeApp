@@ -817,7 +817,7 @@ class BadgesController extends AdminController {
 			$postPrintTransactions = new PostPrintTransactions();
 			$postPrintTransactions->badge_number		=   $certification->badge_number;
 			$postPrintTransactions->transaction_type	=   'CERT';
-			$postPrintTransactions->club_id			 =   $this->getClubRecord($certification->badge_number)->club_id;
+			$postPrintTransactions->club_id			 =   (New clubs)->getMyClubs($certification->badge_number)[0];
 			$postPrintTransactions->created_at		  =   $certification->created_at;
 			$postPrintTransactions->fee				 =   $certification->fee;
 			$postPrintTransactions->discount			=   $certification->discount;
@@ -1433,11 +1433,6 @@ class BadgesController extends AdminController {
 		} else {
 			throw new NotFoundHttpException('The requested page does not exist.');
 		}
-	}
-
-	protected function getClubRecord($badge_number) {
-		$badgeArray = Badges::find()->where(['badge_number'=>$badge_number])->one();
-		return $badgeArray;
 	}
 
 	protected function getOfferFee($feeArray) {
