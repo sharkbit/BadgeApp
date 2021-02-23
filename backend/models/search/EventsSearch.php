@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\Events;
+use backend\models\Event_Att;
 
 /**
  * ParamsSearch represents the model behind the search form about `backend\models\Events`.
@@ -14,8 +15,8 @@ class EventsSearch extends Events {
 
     public function rules() {
         return [
-			[['e_id','e_poc'], 'integer'],
-            [['e_name','e_date','e_inst','e_rso','e_status','e_type'], 'safe']
+			[['e_poc'], 'integer'],
+            [['e_name','e_inst','e_status','e_type'], 'safe']
         ];
     }
 
@@ -26,6 +27,8 @@ class EventsSearch extends Events {
 
     public function search($params) {
         $query = Events::find();
+		//->joinWith(['event_Att']);
+		//->rightJoin('event_attendee',"`events`.e_id=event_attendee.ea_event_id");
 
         // add conditions that should always apply here
 
@@ -44,10 +47,10 @@ class EventsSearch extends Events {
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'e_id' => $this->e_id,
-        ]);
-
+        if(isset($this->e_name)) { $query->andFilterWhere(['like','e_name',$this->e_name]); }
+		if(isset($this->e_poc)) { $query->andFilterWhere(['e_poc'=>$this->e_poc]); }
+		if(isset($this->e_status)) { $query->andFilterWhere(['e_status'=>$this->e_status]); }
+		if(isset($this->e_type)) { $query->andFilterWhere(['e_type'=>$this->e_type]); }
         return $dataProvider;
     }
 }

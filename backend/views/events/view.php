@@ -57,7 +57,13 @@ $div_closed=false;
 			} else { echo "<b>Status:</b> Open"; }
 		} else {
 			$rso=explode('|',explode('+',$model->e_rso)[1]);
-			echo "Closed by ".yii::$app->controller->decodeBadgeName((int)$rso[0])." at ".date('Y-m-d H:i',strtotime($rso[1]));
+		/*	if($rso[0]=='0') { 
+				yii::$app->controller->createLog(true, 'trex_rso', var_export($rso,true));
+				echo " it's really closed "; 
+			} else {*/
+				
+				echo "Closed by ".yii::$app->controller->decodeBadgeName((int)$rso[0])." at ".date('Y-m-d H:i',strtotime($rso[1]));
+			//}
 		} ?>
 	</div>
 <?php if ($model->e_type=='cio') { ?>
@@ -168,7 +174,7 @@ if($att_count>0) {
 }
 </style>
 <script>
-<?php if($div_closed) { echo "document.getElementById('div_closed').style.visibility='hidden';"; } ?>
+<?php //if($div_closed) { echo "document.getElementById('div_closed').style.visibility='hidden';"; } ?>
 
 	$('#event_att-ea_badge').on('input', function() {
 		document.getElementById("event_att-ea_f_name").value='';

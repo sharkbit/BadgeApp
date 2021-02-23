@@ -7,6 +7,16 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\search\EventsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+if (isset($_REQUEST['EventsSearch']['pagesize'])) {
+	$pagesize = $_REQUEST['EventsSearch']['pagesize'];
+	$_SESSION['pagesize'] = $_REQUEST['EventsSearch']['pagesize'];
+} elseif (isset($_SESSION['pagesize'])) {
+	$pagesize = $_SESSION['pagesize'];
+} else {
+	$pagesize=20;
+}
+$dataProvider->pagination = ['pageSize' => $pagesize];
+
 $this->title = 'Events List';
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/index']];
 ?>
@@ -50,6 +60,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 					if($model->e_status=='0') {return 'Open';}
 					elseif($model->e_status=='2') {return 'Canceled';} else { return 'Closed';}
 				},
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'e_status',[0=>'Open',1=>'Closed',2=>'Cancled'],['class'=>'form-control','prompt' => 'All']),
 				'headerOptions' => ['style' => 'width:10%'] ],
 			[
 				'attribute'=>'e_poc',
@@ -59,7 +70,21 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 			[
 				'attribute'=>'e_type',
 				'value'=>function($model) { return strtoupper($model->e_type); },
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'e_type',[ 'cio'=>'CIO', 'club'=>'Club', 'vol'=>'Volunteer' ],['class'=>'form-control','prompt' => 'All']),
 				'headerOptions' => ['style' => 'width:10%']
+			],
+			[	'attribute'=>'wbOut',
+				'label'=>'WB Out',
+				'value'=>function($model) {
+					/*$cnt=0;
+					foreach($model->event_Att as $att) {
+						if($att->ea_wb_out == 1) { $cnt++;}
+					}
+					//yii::$app->controller->createLog(true, 'trex', var_export($model->event_Att,true));
+					return $cnt; 
+					*/
+					return $model->event_Att;
+				},
 			],
 			[
 				'header'=>'Action',

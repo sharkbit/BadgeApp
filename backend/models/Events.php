@@ -3,13 +3,14 @@
 namespace backend\models;
 
 use Yii;
+use backend\models\Event_Att;
 
 /**
  * This is the model class for table "Events".
  */
 
 class Events extends \yii\db\ActiveRecord{
-	
+	public $pagesize;
 	public $poc_name;
 	
     public static function tableName() {
@@ -36,5 +37,10 @@ class Events extends \yii\db\ActiveRecord{
 			'e_type' => 'Event Type',
 			'e_hours' => 'Hours'
        ];
+    }
+
+	public function getEvent_Att() {
+        //return $this->hasMany(Event_Att::className(), ['ea_event_id' => 'e_id']);
+		return (New Event_Att)->find()->where(['ea_event_id'=>$this->e_id,'ea_wb_out'=>1])->andwhere(['>','ea_wb_serial',0])->count();
     }
 }
