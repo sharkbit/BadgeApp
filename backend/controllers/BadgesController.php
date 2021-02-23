@@ -338,9 +338,9 @@ class BadgesController extends AdminController {
 			$verify = new USPSAddressVerify('066ASSOC7994');
 			$address = new USPSAddress;
 
-			$address->setFirmName('Marc');
+			$address->setFirmName('some guy');
 			$address->setApt('');
-			$address->setAddress('6013 Duckys Run Rd');
+			$address->setAddress('123 some st');
 			$address->setCity('Elkrdge');
 			$address->setState('MD');
 			$address->setZip5(21075);
