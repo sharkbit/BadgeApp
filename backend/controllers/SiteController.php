@@ -274,7 +274,8 @@ class SiteController extends AdminController {
 					$priv = Privileges::find()->where(['id'=>5])->one();
 					$_SESSION['timeout'] = $priv->timeout;
 					Yii::$app->user->login(User::findIdentity(0), 0);
-
+					$this->createLog($this->getNowTime(), $_SESSION['user'], "Self-Registered new Badge','".$model->badge_number);
+				
 					return $this->redirect(['/badges/photo-add', 'badge' => $model->badge_number]);
 				} else {
 					Yii::$app->getSession()->setFlash('error', 'Something Broke?');
