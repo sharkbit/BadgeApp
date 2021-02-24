@@ -29,9 +29,9 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
-use tejrajs\uspsapi\USPSAddress;
-use tejrajs\uspsapi\USPSAddressVerify;
-use tejrajs\uspsapi\USPSCityStateLookup;
+use USPS\Address;
+use USPS\AddressVerify;
+use USPS\CityStateLookup;
 
 class Phone extends \yii\db\ActiveRecord {
 	// Phone Scrubber (actionApiPhone)
@@ -335,56 +335,64 @@ class BadgesController extends AdminController {
 			echo "Phone #'s Cleaned";
 		}
 		elseif(isset($_GET['address']) ) {  //address
-			$verify = new USPSAddressVerify('066ASSOC7994');
-			$address = new USPSAddress;
+			$params = Params::findOne('1');
+			if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
+				$verify = new AddressVerify($params->usps_api);
+				$address = new Address;
 
-			$address->setFirmName('some guy');
-			$address->setApt('');
-			$address->setAddress('123 some st');
-			$address->setCity('Elkrdge');
-			$address->setState('MD');
-			$address->setZip5(21075);
-			$address->setZip4('');
+				$address->setFirmName('some guy');
+				$address->setApt('');
+				$address->setAddress('123 some st');
+				$address->setCity('Elkrdge');
+				$address->setState('MD');
+				$address->setZip5(21075);
+				$address->setZip4('');
 
-			// Add the address object to the address verify class
-			$verify->addAddress($address);
+				// Add the address object to the address verify class
+				$verify->addAddress($address);
 
-			// Perform the request and return result
-			echo "<br>Verify:<br>";
-			var_dump($verify->verify());
-			echo "<hr>Response:<br>";
-			print_r($verify->getArrayResponse());
-			echo "<hr>other:<br>";
-			var_dump($verify->isError());
+				// Perform the request and return result
+				echo "<br>Verify:<br>";
+				var_dump($verify->verify());
+				echo "<hr>Response:<br>";
+				print_r($verify->getArrayResponse());
+				echo "<hr>other:<br>";
+				var_dump($verify->isError());
 
-			// See if it was successful
-			if($verify->isSuccess()) {
-			  echo '<hr>Done';
-			} else {
-			  echo '<hr>Error: ' . $verify->getErrorMessage();
+				// See if it was successful
+				if($verify->isSuccess()) {
+				  echo '<hr>Done';
+				} else {
+				  echo '<hr>Error: ' . $verify->getErrorMessage();
+				}
+				echo "fin";
+				exit;
 			}
-			echo "fin";
-			exit;
 		}
 		elseif(isset($_GET['ckh_zip']) ) {  //  ./badges/api-check?zip=21075
-			$verify = new USPSCityStateLookup('066ASSOC7994');
+			$params = Params::findOne('1');
+			if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
+				$verify = new CityStateLookup($params->usps_api);
 
-			$verify->addZipCode($_GET['ckh_zip']);
+				$verify->addZipCode($_GET['ckh_zip']);
 
-			// Perform the call and print out the results
+				// Perform the call and print out the results
 
-			$verify->lookup();
+				$verify->lookup();
 
-			$response = $verify->getArrayResponse();
+				$response = $verify->getArrayResponse();
 
-			// Check if it was completed
-			if ($verify->isSuccess()) {
-				$myzip = $response['CityStateLookupResponse'];
-				echo json_encode($myzip['ZipCode']);
+				// Check if it was completed
+				if ($verify->isSuccess()) {
+					$myzip = $response['CityStateLookupResponse'];
+					echo json_encode($myzip['ZipCode']);
+				} else {
+					echo json_encode('Error: '.$verify->getErrorMessage());
+				}
 			} else {
-				echo json_encode('Error: '.$verify->getErrorMessage());
+				return json_encode(['city'=>'','state'=>'']);
 			}
-			exit;
+				
 		}
 		elseif(isset($_GET['unpub'])) {    //	./badges/api-check?unpub
 			if($unpub) {$where='club_id='.$unpub.' AND';} else {$where='';}
@@ -435,22 +443,26 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionApiZip($zip) {
-		$verify = new USPSCityStateLookup('066ASSOC7994');
-		$verify->addZipCode($zip);
+		$params = Params::findOne('1');
+		if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
+			$verify = new CityStateLookup($params->usps_api);
+			$verify->addZipCode($zip);
 
-		// Perform the call and print out the results
+			// Perform the call and print out the results
 
-		$verify->lookup();
-		$response = $verify->getArrayResponse();
+			$verify->lookup();
+			$response = $verify->getArrayResponse();
 
-		// Check if it was completed
-		if ($verify->isSuccess()) {
-			$myzip = $response['CityStateLookupResponse'];
-			echo json_encode($myzip['ZipCode']);
+			// Check if it was completed
+			if ($verify->isSuccess()) {
+				$myzip = $response['CityStateLookupResponse'];
+				return json_encode($myzip['ZipCode']);
+			} else {
+				return json_encode('Error: '.$verify->getErrorMessage());
+			} 
 		} else {
-			echo json_encode('Error: '.$verify->getErrorMessage());
+			return json_encode(['city'=>'','state'=>'']);
 		}
-		exit;
 	}
 
 	public function actionCreate() {

@@ -28,7 +28,7 @@ class Params extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['sell_date','guest_sku','guest_total'], 'required'],
-			[['pp_id','pp_sec','remote_users'],'string'],
+			[['pp_id','pp_sec','remote_users','usps_api'],'string'],
 			[['conv_p_merc_id','conv_p_user_id','conv_p_pin','conv_d_merc_id','conv_d_user_id','conv_d_pin'],'string'],
 			[['qb_env','qb_oauth_cust_key','qb_oauth_cust_sec','qb_realmId','qb_token_date','qb_token'], 'string'],
 			[['qb_oa2_id','qb_oa2_sec','qb_oa2_realmId','qb_oa2_access_token','qb_oa2_access_date','qb_oa2_refresh_token','qb_oa2_refresh_date'], 'string'],

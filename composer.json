@@ -28,7 +28,7 @@
         "kartik-v/yii2-date-range": "*",
         "kartik-v/yii2-export": "@dev",
 
-        "tejrajs/usps-api": "*",
+        "vinceg/usps-php-api": ">1.0",
         "phpmailer/phpmailer": ">=6.0",
 		
 		"league/omnipay": "^3",
