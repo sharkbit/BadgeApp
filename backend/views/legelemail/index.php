@@ -43,26 +43,42 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
 		'columns' => [
-			'last_name',
-			'first_name',
-			'email',
-			'title',
+			[
+				'attribute' => 'last_name',
+				'contentOptions' =>['style' => 'width:10%; overflow: auto; word-wrap: break-word; white-space: normal;'],
+			],
+			[
+				'attribute' => 'first_name',
+				'contentOptions' =>['style' => 'width:5%; overflow: auto; word-wrap: break-word; white-space: normal;'],
+			],
+			[
+				'attribute' => 'email',
+				'contentOptions' =>['style' => 'width:20%; font-stretch: condensed; overflow: auto; word-break: break-all; white-space: normal;'],
+			],
+			[
+				'attribute' => 'title',
+				'contentOptions' => function($model) {
+					if($model->title !=='Delegate' && $model->title !=='Senator') {$fontsz="font-size: x-small;";} else {$fontsz="";}
+					return ['style' => 'width:6%; text-align: center; overflow: auto; word-wrap: break-word; white-space: normal;'.$fontsz];},
+			],
 			[
 				'attribute' => 'office',
-				'contentOptions' =>['style' => 'width:10%'],
+				'contentOptions' =>['style' => 'width:7%; text-align: center; font-size: x-small; overflow: auto; word-wrap: break-word; white-space: normal;'],
 			],
 			[
 				'attribute' => 'committee',
-				'contentOptions' =>['style' => 'width:5%'],
+				'contentOptions' =>['style' => 'width:7%; text-align: center; white-space: normal;'],
 			],
 			[
 				'attribute' => 'district',
-				'contentOptions' =>['style' => 'width:5%'],
+				'contentOptions' =>function($model) {
+					if(strlen($model->district) > 3) {$fontsz="font-size: x-small;";} else {$fontsz="";}
+					return ['style' => 'width:6%; text-align: center; overflow: auto; word-wrap: break-word; white-space: normal;'.$fontsz];},
 			],
 			[
 				'attribute' => 'groups',
 				'format' => 'raw',
-				'contentOptions' =>['style' => 'width:40%; overflow: auto; word-wrap: break-word; white-space: normal;'],
+				'contentOptions' =>['style' => 'width:20%; font-stretch: condensed; overflow: auto; word-wrap: break-word; white-space: normal;'],
 				'value'=> function($searchModel, $attribute) {
 					return (new Legelemail)->getMyGroups($searchModel->contact_id, true);
 					},
@@ -70,12 +86,15 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			],
 		//	'date_modified',
 			[	'attribute'=>'is_active',
+				'contentOptions' =>['style' => 'width:6%; text-align: center; white-space: normal;'],
 				'value'=>function($model) { if($model->is_active) {return "Yes";} else  {return "No";} },
-				'headerOptions' => ['style' => 'width:5%'],
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_active',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All']),
+		//		'headerOptions' => ['style' => 'width:5%;'],
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_active',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All', 'style' => 'padding-left: 5%; text-align: left;']),
+		//		'filterOptions' =>['style' => 'text-align: left; font-size: x-small;'],
 			],
 			[
 				'header' => 'Actions',
+				'headerOptions' => ['style' => 'width:5%;'],
 				'class' => 'yii\grid\ActionColumn',
 				'template'=>$myTemplate,
 			/*	'buttons'=>[
