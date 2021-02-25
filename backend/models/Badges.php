@@ -49,7 +49,7 @@ class Badges extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name', 'last_name', 'address', 'city','club_id','state', 'zip', 'gender', 'mem_type', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
+			[['first_name', 'last_name', 'address', 'city','state', 'zip', 'gender', 'mem_type', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
 			[['address', 'gender', 'qrcode','status','cc_num','cc_x_id'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip','club_id', 'mem_type','sticker','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
@@ -161,14 +161,23 @@ class Badges extends \yii\db\ActiveRecord {
 
 		if(isset($model->payment_method)) {
 			if($model->payment_method=='creditnow') {$payment_method = 'credit';} else {$payment_method = $model->payment_method;} }
+		$dirty = (New Badges)->loadDirtyFilds($model);
 		if(yii::$app->controller->hasPermission('badges/all')) {
 			if(isset($model->club_id)) {
-				(new clubs)->saveClub($model->badge_number,$model->club_id);
+				if($model->club_id=='') {
+					(new clubs)->saveClub($model->badge_number,[35]); 
+					$dirty[]='Club';
+				} else {
+					$mine = (new clubs)->getMyClubs($model->badge_number);
+					if ($mine != $model->club_id) {
+						(new clubs)->saveClub($model->badge_number,$model->club_id);
+						$dirty[]='Club';
+					}
+				}
 			} else {
-				if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]);}
+				if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]); $dirty[]='Club'; }
 			}
 		}
-		$dirty = (New Badges)->loadDirtyFilds($model);
 		$dirty = implode(", ",$dirty);
 
 		$model->incep = date('Y-m-d H:i:s',strtotime($model->incep));
@@ -209,15 +218,9 @@ class Badges extends \yii\db\ActiveRecord {
 		return $this->hasOne(BadgeSubscriptions::className(),['id'=>'badge_subscription_id']);
 	}
 
-	public function getActiveClub() {
-		return $this->hasOne(Clubs::className(),['club_id'=>'club_id']);
-	}
-
 	public static function loadDirtyFilds($model) {
-		$model->club_id=(int)$model->club_id;
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
-			'club_id' => 'Club',
 			'prefix' => 'Prefix',
 			'first_name' => 'First Name',
 			'last_name' => 'Last Name',
