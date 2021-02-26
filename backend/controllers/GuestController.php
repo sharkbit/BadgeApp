@@ -31,7 +31,12 @@ class GuestController extends SiteController {
 
 	public function actionCreate() {
 		$model = new Guest();
-		if ($model->load(Yii::$app->request->post())) {
+		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+			Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+		yii::$app->controller->createLog(false, 'trex_C_GC Create:req', var_export($_REQUEST,true));
+			return yii\widgets\ActiveForm::validate($model);
+		}
+		elseif ($model->load(Yii::$app->request->post())) {
 			$model->g_first_name = trim($model->g_first_name);
 			$model->g_last_name = trim($model->g_last_name);
 			$model->g_city = trim($model->g_city);

@@ -53,7 +53,10 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 <div class="guest-form" ng-controller="GuestFrom">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php $form = ActiveForm::begin(['id'=>'GuestForm',]); ?>
+    <?php $form = ActiveForm::begin(['id'=>'GuestForm',
+				'enableAjaxValidation' => true,
+				'enableClientValidation'=>true,
+				'validateOnSubmit'=>true,]); ?>
     <div class="row">
 	  <div class="col-xs-12 col-sm-8" >
         <div class="col-xs-12 col-sm-2" style="display: none;" >
@@ -117,7 +120,7 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 				<?= $form->field($model, 'g_state'); } ?>
 		</div>
 	</div>
-	<p><b><h3>Type of Visitor?</h3></p></b>		
+	<h3><p><b>Type of Visitor?</b></p></h3>		
 	<div class="row">
 		<div class="col-xs-6 col-sm-3" ><p>
 	<?php if($model->isNewRecord) { ?>
@@ -159,7 +162,7 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 	<div class="row">
 		<div class="col-xs-12 col-sm-12">
 
-		<p><b><h4>Guest Safety Acknowledgement:</h4></b></p>
+		<h4><p><b>Guest Safety Acknowledgement:</b></p></h4>
 		<ol>
 		  <li><b>Guests or Responsible Adult agrees to AGC <a href="<?=yii::$app->params['wp_site']?>/waiver" target="_blank">Waiver of Liability</a>.</b></li>
 		  <li>Assume every gun is always loaded.</li>
@@ -188,7 +191,7 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 			<div id="cc_form_div" style="margin-left: 1px">
 				<div id="CC_success">
 					<div class="col-xs-12 col-sm-12">
-						<input type="radio" id="Who_pays" name="Who_pays" onclick="g_handleClick(this);" /> &nbsp;<label for="guest"> Guest info:</label> &nbsp; &nbsp; | &nbsp; &nbsp;
+						<input type="radio" id="Who_pays" name="Who_pays" onclick="g_handleClick(this);" checked /> &nbsp;<label for="guest"> Guest info:</label> &nbsp; &nbsp; | &nbsp; &nbsp;
 						<input type="radio" id="Who_pays" name="Who_pays" onclick="m_handleClick(this);" /> &nbsp;<label for="member"> Member info:</label>
 					</div>
 					<div class="col-xs-8 col-sm-8">
@@ -250,7 +253,6 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 			<?= Html::submitButton($model->isNewRecord ? $msg : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success done-Guest' : 'btn btn-primary done-Guest','id'=>'save_btn']).PHP_EOL;  ?>
 		</div></div>
 	</div>
-</div>
 <input type="hidden" id='m_first_n' />
 <input type="hidden" id='m_last_n' />
 <input type="hidden" id='m_address' />
@@ -258,7 +260,7 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 <input type="hidden" id='m_state' />
 <input type="hidden" id='m_zip' />
 <?php ActiveForm::end(); ?>
-
+</div>
 <script>
 	$("#cert_search").hide();
 	$("#cc_form_div").hide();
@@ -298,6 +300,10 @@ $('#GuestForm').on('submit', function() {
             $("#cc_form_div").show(500);
 			$("#CC_Save").hide();
 			document.getElementById("guest-g_paid").value = '';
+			$("#guest-cc_name").val($("#guest-g_first_name").val()+ ' '+$("#guest-g_last_name").val());
+			$("#guest-cc_zip").val(document.getElementById("guest-g_zip").value);
+			$("#guest-cc_state").val(document.getElementById("guest-g_state").value);
+			$("#guest-cc_city").val(document.getElementById("guest-g_city").value);
         } else if(selectedVal=="cash") {
 			$("#cc_form_div").hide(500);
 			$("#CC_Save").show();
@@ -460,9 +466,21 @@ $('#GuestForm').on('submit', function() {
     });
 
 	$("#guest-Process_CC").click(function(e) {
-		e.preventDefault();
-console.log('_form:228: here');
-		e.preventDefault();
+		console.log('_form:465: here');
+		
+		var $form = $("#GuestForm"),data = $form.data("yiiActiveForm");
+		$.each(data.attributes, function() {
+		   this.status = 3;
+		});
+		$form.yiiActiveForm("validate");
+	
+		if ($("#GuestForm").find(".has-error").length) {
+			console.log('_form:476: Validation Failed');
+			return false; 
+		} else {
+			//document.getElementById("self_save").disabled=false;
+			console.log('_form:478: Pass');
+
 		document.getElementById("guest-Process_CC").disabled=true;
 		$("p#cc_info").html("Processing...");
 		document.getElementById("guest-amount_due").disabled=false;
@@ -506,15 +524,16 @@ console.log('_form:228: here');
 		});
 		document.getElementById("guest-Process_CC").disabled=false;
 		document.getElementById("guest-amount_due").disabled=true;
+		}
 	});
 
 	function g_handleClick(myRadio) {  // Guest Radio
 		$("#guest-cc_name").val($("#guest-g_first_name").val()+ ' '+$("#guest-g_last_name").val());
-		document.getElementById("guest-cc_name").disabled = true;
+		//document.getElementById("guest-cc_name").disabled = true;
 		$("#guest-cc_zip").val(document.getElementById("guest-g_zip").value);
-		document.getElementById("guest-cc_zip").disabled = true;
+		//document.getElementById("guest-cc_zip").disabled = true;
 		$("#guest-cc_state").val(document.getElementById("guest-g_state").value);
-		document.getElementById("guest-cc_state").disabled = true;
+		//document.getElementById("guest-cc_state").disabled = true;
 		$("#guest-cc_city").val(document.getElementById("guest-g_city").value);
 		//document.getElementById("guest-g_city").disabled = true;
 		$("#guest-cc_address").val('');

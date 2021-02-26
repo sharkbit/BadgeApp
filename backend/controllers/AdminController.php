@@ -143,7 +143,7 @@ class AdminController extends \yii\web\Controller {
 		'membershiptype'=>['membership-type/fees-by-type'],
 		'payments'=>['payment/charge'],
 		'sales' => ['sales/index','sales/print-rcpt','sales/purchases'],
-		'Site' => ['site/index','site/error','site/logout','site/login','site/login-member','params/password'],
+		'Site' => ['site/index','site/error','site/log-error','site/logout','site/login','site/login-member','params/password'],
 		'violations' => ['violations/index','violations/view'],
 		'Work Credits'=>['work-credits/create','work-credits/index','work-credits/sticky-form','work-credits/credit-transfer','work-credits/transfer-confirm','work-credits/transfer-form','work-credits/transfer-view','work-credits/view'],
 	];
@@ -358,7 +358,7 @@ class AdminController extends \yii\web\Controller {
 	}
 
 	public function createLog($isEnabled, $username, $activity, $name='activity') {
-		$param = Params::find()->one();
+		$param = Params::findOne('1');
 		if(($isEnabled) || ($param->qb_env=='dev')) {
 			$root = Yii::getAlias('@webroot/'.$name.'_logs.txt');
 			$fp = fopen($root, 'a');
@@ -368,7 +368,7 @@ class AdminController extends \yii\web\Controller {
 	}
 
 	public function createCalLog($isEnabled, $username, $activity) {
-		$param = Params::find()->one();
+		$param = Params::findOne('1');
 		if(($isEnabled) || ($param->qb_env=='dev')) {
 			$root = Yii::getAlias('@webroot/calendar_logs.txt');
 			$fp = fopen($root, 'a');
@@ -378,7 +378,7 @@ class AdminController extends \yii\web\Controller {
 	}
 
 	public function createEmailLog($isEnabled, $username, $activity) {
-		$param = Params::find()->one();
+		$param = Params::findOne('1');
 		if(($isEnabled) || ($param->qb_env=='dev')) {
 			$root = Yii::getAlias('@webroot/email_logs.txt');
 			$fp = fopen($root, 'a');

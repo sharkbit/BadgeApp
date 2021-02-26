@@ -192,11 +192,9 @@ $this->beginBody() ?>
 
     function SwipeError(swipe,PageLoc) {
         console.log("b-l-m:200 Swipe Error! from -> " + PageLoc);
-        //console.log(swipe);
         jQuery.ajax({
             method: 'POST',
-            data: {'PageLoc':PageLoc,'ErrorData': swipe},
-            url: '<?=yii::$app->params['rootUrl']?>/badge/log-error',
+            url: '<?=yii::$app->params['rootUrl']?>/site/log-error?PageLoc='+PageLoc+'&ErrorData='+swipe,
             crossDomain: false
         });
     }

@@ -51,12 +51,18 @@ class Guest extends \yii\db\ActiveRecord {
         return [
 			[['badge_number', 'g_first_name', 'g_last_name', 'time_in','guest_count','payment_type'], 'required'],
 			[['time_in', 'time_out','g_address','badge_holder_name','cc_x_id','amount_due'], 'safe'],
-			[['badge_number','tmp_badge','pagesize','cc_zip','cc_cvc','cc_exp_mo','cc_exp_yr'], 'integer'],
+			[['badge_number','tmp_badge','pagesize','cc_zip','cc_exp_mo','cc_exp_yr'], 'integer'],
 			[['g_yob'], 'integer', 'max' => 3999,'min'=>1900],
-			[['g_city','cc_city','cc_address','cc_name','cc_num'], 'string', 'max' => 255],
+			[['g_city','cc_city','cc_address','cc_name'], 'string', 'max' => 255],
 			[['g_first_name', 'g_last_name'], 'string', 'max' => 35],
 			[['g_state','cc_state','g_paid'], 'string', 'max' => 2],
+			['cc_num','string','min'=>15],
+			['cc_cvc','string','min'=>3],
 			[['g_zip'],'number'],
+			[['cc_name','cc_address','cc_city','cc_state','cc_zip','cc_num','cc_cvc'], 'required', 'when' => function ($model) {
+				return $model->payment_type == 'creditnow';},
+			'whenClient' => "function (attribute, value) { return $('#guest-payment_type').val() == 'creditnow'; }"
+			],
         ];
     }
 
@@ -76,7 +82,15 @@ class Guest extends \yii\db\ActiveRecord {
 			'g_paid' => 'Paid',
 			'tmp_badge' => 'Temp Badge #',
             'time_in' => 'Time In',
-            'time_out' => 'Time Out'
+            'time_out' => 'Time Out',
+			'cc_city'=>'City',
+			'cc_state'=>'State',
+			'cc_zip'=>'Zip',
+			'cc_name'=>'Name',
+			'cc_num'=>'Card Number',
+			'cc_cvc'=>'CVC',
+			'cc_exp_mo'=>'Exp Mon',
+			'cc_exp_yr'=>'exp Yr',
         ];
     }
 }
