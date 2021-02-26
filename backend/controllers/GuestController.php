@@ -33,7 +33,6 @@ class GuestController extends SiteController {
 		$model = new Guest();
 		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
 			Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
-		yii::$app->controller->createLog(false, 'trex_C_GC Create:req', var_export($_REQUEST,true));
 			return yii\widgets\ActiveForm::validate($model);
 		}
 		elseif ($model->load(Yii::$app->request->post())) {
