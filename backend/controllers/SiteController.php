@@ -175,7 +175,6 @@ class SiteController extends AdminController {
 	}
 
 	public function actionLogError($PageLoc='', $ErrorData='') {
-		 yii::$app->controller->createLog(false, 'trex', 'C-site-C Log Err');
 		if(isset($_SESSION['user'])) {$usr = $_SESSION['user'];} else {$usr='unk';}
 		yii::$app->controller->createJavaLog($PageLoc, var_export($ErrorData,true),$usr);
 	}
