@@ -58,7 +58,7 @@ class StoreItemsSearch extends StoreItems {
 		if(isset($this->stock)) { $query->andFilterWhere(['stock' => $this->stock]); }
 		if(isset($this->active)) { $query->andFilterWhere(['active' => $this->active]); }
 		if(isset($this->new_badge)) { $query->andFilterWhere(['new_badge' => $this->new_badge]); }
-		if(isset($this->type)) { $query->andFilterWhere(['like', 'type', $this->type]); }
+		if(isset($this->type)) { $query->andFilterWhere(['type'=>$this->type]); }
         if(isset($this->item)) { $query->andFilterWhere(['like', 'item', $this->item]); }
 
 		//yii::$app->controller->createLog(true, 'trex-m-s-StoreItemsSearch', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
