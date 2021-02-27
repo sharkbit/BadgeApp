@@ -221,7 +221,7 @@ CREATE TABLE `store_items` (
   `sku` varchar(15) NOT NULL DEFAULT '0',
   `price` decimal(10,2) NOT NULL DEFAULT '0.00',
   `img` varchar(255) DEFAULT NULL,
-  `stock` int(11) DEFAULT NULL,
+  `stock` int(11) DEFAULT '0',
   `active` int(1) NOT NULL DEFAULT '0',
   `new_badge` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`item_id`)
@@ -513,3 +513,7 @@ update `BadgeDB`.`clubs` set allow_self =0 where is_club=0 or is_club=2 or club_
 -- v2.1.9 USPS API updates
 ALTER TABLE `BadgeDB`.`params` 
 ADD COLUMN `usps_api` VARCHAR(45) NULL DEFAULT NULL AFTER `remote_users`;
+
+-- table mod
+ALTER TABLE `BadgeDB`.`store_items` CHANGE COLUMN `stock` `stock` INT NULL DEFAULT 0 ;
+update `BadgeDB`.`store_items` set stock=0 where stock is null;

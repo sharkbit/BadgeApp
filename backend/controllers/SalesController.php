@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use Yii;
 use backend\controllers\AdminController;
-use backend\controllers\BadgesController;
 use backend\controllers\PaymentController;
 use backend\models\Badges;
 use backend\models\CardReceipt;
@@ -82,7 +81,7 @@ class SalesController extends AdminController {
 				if($model->email<>'')  { $badge->email = trim($model->email);}
 
 				$badge->remarks_temp='';
-				$badge = BadgesController::cleanBadgeData($badge,true);
+				$badge = Badges::cleanBadgeData($badge,true);
 				if($badge->save(false)) {
 					Yii::$app->response->data .= "Saved";
 				} else { Yii::$app->response->data .= "no save"; }
@@ -91,6 +90,7 @@ class SalesController extends AdminController {
 			if ($model->badge_number=='99999') {
 				yii::$app->controller->createLog(false, 'trex_C_SC Guest Checkout', var_export($_REQUEST,true));
 			}
+			$this->processCart($model->cart);
 			if($model->payment_method <> 'creditnow') {
 				$savercpt = new CardReceipt();
 				$model->cc_x_id = 'x'.rand(100000000,1000000000);
@@ -211,4 +211,15 @@ class SalesController extends AdminController {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+	public function processCart($cart) {
+		if(is_string($cart)) { $cart=json_decode($cart); }
+		foreach($cart as $item) {
+			$model = (New StoreItems)->find()->where(['sku'=>$item->sku])->one();
+			if($model->type=='Inventory') {
+				$model->stock = $model->stock - $item->qty;
+				$model->save();
+			}
+		}
+	}
 }
