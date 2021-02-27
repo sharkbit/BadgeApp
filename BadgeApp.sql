@@ -177,6 +177,7 @@ CREATE TABLE `clubs` (
   `poc_email` varchar(255) DEFAULT NULL,
   `status` int(1) NOT NULL,
   `is_club` int(1) NOT NULL DEFAULT '0',
+  `allow_self` INT NOT NULL DEFAULT '1',
   `avoid` VARCHAR(100) NULL DEFAULT '',
   PRIMARY KEY (`club_id`),
   UNIQUE KEY `club_id` (`club_id`)
@@ -299,6 +300,7 @@ DROP TABLE IF EXISTS `mass_email`;
 CREATE TABLE `mass_email` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `mass_to` varchar(255) NOT NULL,
+  `mass_to_users` VARCHAR(100) NULL DEFAULT '',
   `mass_reply_to` varchar(255) DEFAULT NULL,
   `mass_subject` varchar(255) NOT NULL,
   `mass_body` blob NOT NULL,
@@ -326,7 +328,10 @@ DROP TABLE IF EXISTS `membership_type`;
 CREATE TABLE `membership_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(25) NOT NULL,
-  `status` enum('0','1') NOT NULL,
+  `self_service` INT(1) NOT NULL DEFAULT 1,
+  `status` int(1) NOT NULL,
+  `sku_half` VARCHAR(15) NULL,
+  `sku_full` VARCHAR(15) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -337,7 +342,7 @@ CREATE TABLE `membership_type` (
 
 LOCK TABLES `membership_type` WRITE;
 /*!40000 ALTER TABLE `membership_type` DISABLE KEYS */;
-INSERT INTO `membership_type` VALUES (50,'Primary','0'),(51,'Family','0'),(52,'Junior','0'),(70,'15yr','0'),(88,'Staff','0'),(99,'Life','0');
+INSERT INTO `membership_type` VALUES (50,Primary,1,1,450115,450100),(51,Family,1,1,450125,450110),(52,Junior,1,1,450120,450105),(70,15yr,1,0,450200,450200),(88,Staff,0,1,null,null),(99,Life,0,1,null,null);
 /*!40000 ALTER TABLE `membership_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -377,6 +382,8 @@ CREATE TABLE `params` (
   `qb_oa2_refresh_date` datetime DEFAULT NULL,
   `log_rotate` int(3) DEFAULT NULL,
   `whitelist` TEXT NULL DEFAULT NULL,
+  `remote_users` VARCHAR(100) NULL DEFAULT NULL,
+  `usps_api` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -454,7 +461,7 @@ CREATE TABLE `store_items` (
   `type` varchar(45) NOT NULL,
   `paren` int(11) DEFAULT NULL,
   `img` varchar(255) DEFAULT NULL,
-  `stock` int(11) DEFAULT NULL,
+  `stock` int(11) DEFAULT '0',
   `active` int(1) NOT NULL DEFAULT '0',
   `new_badge` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`item_id`)
@@ -493,6 +500,7 @@ CREATE TABLE `user` (
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL,
   `clubs` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `r_user` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),
@@ -522,6 +530,7 @@ CREATE TABLE `user_privileges` (
   `privilege` varchar(99) NOT NULL,
   `priv_sort` int(3) NOT NULL,
   `timeout` int(3) NOT NULL,
+  `restricted` INT(3) NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -532,7 +541,7 @@ CREATE TABLE `user_privileges` (
 
 LOCK TABLES `user_privileges` WRITE;
 /*!40000 ALTER TABLE `user_privileges` DISABLE KEYS */;
-INSERT INTO `user_privileges` VALUES (1,'Root',1,60),(2,'Admin',20,30),(3,'RSO',40,20),(4,'View',65,15),(5,'Member',80,2),(6,'RSO Lead',30,20),(7,'Work Credits',60,15),(8,'CIO',64,5),(9,'Calendar_Coordinator',50,10),(10,'Cashier',41,15),(11, 'Chairmen', 81, 10);
+INSERT INTO `user_privileges` VALUES (1,'Root','1','60','1'),(2,'Admin','20','30','1'),(3,'RSO','40','20','0'),(4,'View','65','15','0'),(5,'Member','80','30','0'),(6,'RSO Lead','30','20','0'),(7,'Work Credits','60','15','0'),(8,'CIO','64','5','0'),(9,'Calendar Coordinator','50','10','0'),(10,'Cashier','45','15','0'),(11,'Chairmen','81','10','0'),(12,'RSO Action','41','5','0'),(13,'Admin View Only','22','30','1'),(14,'Remote Access','99','5','1');
 /*!40000 ALTER TABLE `user_privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 
