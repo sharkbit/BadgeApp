@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08bc55fdbc9b39417940eb509845af10",
+    "content-hash": "77959e1fa30fd98ce8305d96ed4010af",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -26,6 +26,21 @@
             "license": [
                 "MIT"
             ]
+        },
+        {
+            "name": "bower-asset/fontawesome",
+            "version": "5.15.2",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:FortAwesome/Font-Awesome.git",
+                "reference": "fcec2d1b01ff069ac10500ac42e4478d20d21f4c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FortAwesome/Font-Awesome/zipball/fcec2d1b01ff069ac10500ac42e4478d20d21f4c",
+                "reference": "fcec2d1b01ff069ac10500ac42e4478d20d21f4c"
+            },
+            "type": "bower-asset"
         },
         {
             "name": "bower-asset/inputmask",

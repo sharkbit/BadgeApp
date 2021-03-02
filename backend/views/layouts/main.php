@@ -4,6 +4,7 @@
 /* @var $content string */
 
 use backend\assets\AppAsset;
+use backend\assets\FontAwesomeAsset;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -11,6 +12,7 @@ use yii\widgets\Breadcrumbs;
 use common\widgets\Alert;
 
 AppAsset::register($this);
+FontAwesomeAsset::register($this);
 
 header("Expires: Fri, 01 Jan 1990 00:00:00 GMT");
 header("Pragma: no-store, no-cache");
@@ -26,15 +28,10 @@ header("Vary: *");
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <?= Html::csrfMetaTags() ?>
     <title>AGC <?= Html::encode($this->title) ?></title>
-    <!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>  -->
-    <script src="<?=yii::$app->params['rootUrl']?>/js/jquery-3.5.1.min.js"></script>
     <!--<script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/barcodes/JsBarcode.code128.min.js"></script> -->
     <script src="<?=yii::$app->params['rootUrl']?>/js/JsBarcode.code128.min.js"></script>
     <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>  -->
     <script src="<?=yii::$app->params['rootUrl']?>/js/angular.min.js"></script>
-
-    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">  -->
-    <link rel="stylesheet" href="<?=yii::$app->params['rootUrl']?>/css/font-awesome.min.css" />
 
     <link rel="stylesheet" href="<?=yii::$app->params['rootUrl']?>/css/sweetalert.css" />
     <link rel="stylesheet" href="<?=yii::$app->params['rootUrl']?>/css/waitMe.css" />

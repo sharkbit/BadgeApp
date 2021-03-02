@@ -32,7 +32,8 @@
         "phpmailer/phpmailer": ">=6.0",
 		
 		"league/omnipay": "^3",
-		"markroland/converge-api-php": "^0.4"
+		"markroland/converge-api-php": "^0.4",
+        "bower-asset/fontawesome": ">5.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
