@@ -74,10 +74,6 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/po
                         },
                     ],
                     [
-                        'header'=>'Club',
-                        'value'=>'clubDetails.club_name',
-                    ],
-                    [
                         'header'=>'Fee',
                         'value'=>function($searchModel) {
                              return money_format('$%i', $searchModel->fee);

@@ -30,9 +30,9 @@ class PostPrintTransactions extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['badge_number', 'transaction_type', 'club_id', 'created_at', 'fee', 'discount', 'paid_amount'], 'required'],
+            [['badge_number', 'transaction_type', 'created_at', 'fee', 'discount', 'paid_amount'], 'required'],
             [['transaction_type'], 'string'],
-            [['badge_number','club_id'], 'integer'],
+            [['badge_number'], 'integer'],
             [['created_at'], 'safe'],
             [['fee', 'discount', 'paid_amount'], 'number'],
         ];
@@ -46,7 +46,6 @@ class PostPrintTransactions extends \yii\db\ActiveRecord {
             'id' => 'ID',
             'badge_number' => 'Badge Number',
             'transaction_type' => 'Transaction Type',
-            'club_id' => 'Club ID',
             'created_at' => 'Created At',
             'fee' => 'Fee',
             'discount' => 'Discount',

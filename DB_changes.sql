@@ -517,3 +517,8 @@ ADD COLUMN `usps_api` VARCHAR(45) NULL DEFAULT NULL AFTER `remote_users`;
 -- table mod
 ALTER TABLE `BadgeDB`.`store_items` CHANGE COLUMN `stock` `stock` INT NULL DEFAULT 0 ;
 update `BadgeDB`.`store_items` set stock=0 where stock is null;
+
+-- P.P.T.
+ALTER TABLE `BadgeDB`.`post_print_transactions` 
+DROP COLUMN `club_id`;
+

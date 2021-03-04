@@ -806,7 +806,6 @@ class BadgesController extends AdminController {
 			$postPrintTransactions = new PostPrintTransactions();
 				$postPrintTransactions->badge_number		=   $subscription->badge_number;
 				$postPrintTransactions->transaction_type	=   $subscription->transaction_type;
-				$postPrintTransactions->club_id			 =   $subscription->club_id;
 				$postPrintTransactions->created_at		  =   $subscription->created_at;
 				$postPrintTransactions->fee				 =   $subscription->badge_fee;
 				$postPrintTransactions->discount			=   $subscription->discount;
@@ -829,7 +828,6 @@ class BadgesController extends AdminController {
 			$postPrintTransactions = new PostPrintTransactions();
 			$postPrintTransactions->badge_number		=   $certification->badge_number;
 			$postPrintTransactions->transaction_type	=   'CERT';
-			$postPrintTransactions->club_id			 =   (New clubs)->getMyClubs($certification->badge_number)[0];
 			$postPrintTransactions->created_at		  =   $certification->created_at;
 			$postPrintTransactions->fee				 =   $certification->fee;
 			$postPrintTransactions->discount			=   $certification->discount;
