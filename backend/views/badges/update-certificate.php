@@ -10,6 +10,7 @@ $this->params['breadcrumbs'][] = ['label' => $badgeModel->badge_number, 'url' =>
 $this->params['breadcrumbs'][] = ['label' => 'Certifications', 'url' => ['/badges/view-certifications-list','badge_number'=>$badgeModel->badge_number]];
 $this->params['breadcrumbs'][] = $this->title;
 
+$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
 ?>
 
 <div class="row">
@@ -21,9 +22,9 @@ $this->params['breadcrumbs'][] = $this->title;
               <li> Name <span class="pull-right"> <?= $badgeModel->prefix.' '.$badgeModel->first_name.' '.$badgeModel->last_name.' '.$badgeModel->suffix ?>  </span> </li>
               <li> Email <span class="pull-right"> <?= $badgeModel->email ?>  </span> </li>
               <li> Sticker <span class="pull-right"> <?= $certificationModel->sticker ?>  </span> </li>
-              <li> Fee <span class="pull-right"> <?=  money_format('$%i', $certificationModel->fee)  ?>  </span> </li>
-              <li> Discount <span class="pull-right"> <?= money_format('$%i',$certificationModel->discount)  ?>  </span> </li>
-              <li> Amount Paid <span class="pull-right"> <?= money_format('$%i',  $certificationModel->amount_due)  ?>  </span> </li>
+              <li> Fee <span class="pull-right"> <?=$formatter->formatCurrency($certificationModel->fee, 'USD') ?>  </span> </li>
+              <li> Discount <span class="pull-right"> <?=$formatter->formatCurrency($certificationModel->discount, 'USD') ?>  </span> </li>
+              <li> Amount Paid <span class="pull-right"> <?=$formatter->formatCurrency($certificationModel->amount_due, 'USD') ?>  </span> </li>
               <li> Issued on <span class="pull-right"> <?= date('M d, Y h:i A',strtotime($certificationModel->created_at))?>  </span> </li>
               <li> Updated at <span class="pull-right"> <?= date('M d, Y h:i A',strtotime($certificationModel->updated_at))?>  </span> </li>
               <?= $form->field($certificationModel, 'status')->dropdownList(['0'=>'Active','1'=>'Suspended','2'=>'Revoked'],['prompt'=>'status']) ?>

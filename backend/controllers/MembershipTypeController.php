@@ -17,9 +17,10 @@ use backend\controllers\AdminController;
 class MembershipTypeController extends AdminController {
 
     public function actionAjaxmoneyConvert($value) {
-        $responce = [
+        $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+		$responce = [
             'request'=>$value,
-            'responce' => money_format('$%i',$value),
+			'responce' =>$formatter->formatCurrency($value, 'USD'),
         ];
         return json_encode($responce);
     }

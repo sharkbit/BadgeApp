@@ -43,20 +43,22 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
                     [
                         'header'=>'Fee',
                         'value' => function($model) {
-                            return money_format('$%i', $model->fee);
+							$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+							return $formatter->formatCurrency($model->fee, 'USD');
                         },
                     ],
                     [
                         'header'=>'Discount',
                         'value' => function($model) {
-                            return money_format('$%i', $model->discount); 
+							$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+							return $formatter->formatCurrency($model->discount, 'USD');
                         },
                     ],
-
                     [
                         'header'=>'Paid Amount',
                         'value' => function($model) {
-                            return money_format('$%i', $model->amount_due); 
+							$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+							return $formatter->formatCurrency($model->amount_due, 'USD');
                         },
                     ],
                     [

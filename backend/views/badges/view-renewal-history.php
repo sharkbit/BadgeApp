@@ -82,21 +82,24 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
                 'header'=>'Badge Fee',
                 'attribute'=>'badge_fee',
                 'value'=>function($model) {
-                    return money_format('$%i', $model->badge_fee);
+					$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+                    return $formatter->formatCurrency($model->badge_fee, 'USD');
                 },
             ],
             [
                 'header'=>'Paid Amount',
                 'attribute'=>'paid_amount',
                 'value'=>function($model) {
-                    return money_format('$%i', $model->paid_amount);
+					$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+                    return $formatter->formatCurrency($model->paid_amount, 'USD');
                 },
             ],
             [
                 'header'=>'Discount',
-                'attribute'=>'paid_amount',
+                'attribute'=>'discount',
                 'value'=>function($model) {
-                    return money_format('$%i', $model->discount);
+					$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+                    return $formatter->formatCurrency($model->discount, 'USD');
                 },
             ],
             [

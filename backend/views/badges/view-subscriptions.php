@@ -13,6 +13,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['index']]
 $this->params['breadcrumbs'][] = $this->title;
 
 $urlStatus = yii::$app->controller->getCurrentUrl();
+$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
 
 $rcpt = CardReceipt::find()->where(['id'=>$subciptionsArray->cc_x_id,'badge_number'=>$subciptionsArray->badge_number])->one();
 if(isset($rcpt->on_qb) && $rcpt->on_qb==0) {
@@ -79,15 +80,15 @@ if(isset($rcpt->on_qb) && $rcpt->on_qb==0) {
                         </tr>
                         <tr>
                             <th>Badge Fee</th>
-                            <td> <?=money_format('$%i', $subciptionsArray->badge_fee);?> </td>
+                            <td> <?=$formatter->formatCurrency($subciptionsArray->badge_fee, 'USD');?> </td>
                         </tr>
                         <tr>
                             <th>Discount ( if any ) </th>
-                            <td> <?=money_format('$%i', $subciptionsArray->discount);?> </td>
+                            <td> <?=$formatter->formatCurrency($subciptionsArray->discount, 'USD');?> </td>
                         </tr>
                         <tr>
                             <th>Paid Amount</th>
-                            <td> <?=money_format('$%i', $subciptionsArray->paid_amount);?> </td>
+                            <td> <?=$formatter->formatCurrency($subciptionsArray->paid_amount, 'USD');?> </td>
                         </tr>
                     </tbody>
                 </table>

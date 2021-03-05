@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use backend\models\BadgeSubscriptions;
 
 $subciptionsArray = BadgeSubscriptions::findOne($model->badge_subscription_id);
-//echo'<pre>'; print_r($subciptionsArray); 
+$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
 ?>
 
 <div class="col-xs-12 col-sm-8">
@@ -53,15 +53,15 @@ $subciptionsArray = BadgeSubscriptions::findOne($model->badge_subscription_id);
 						</tr>
 						<tr>
 							<th>Badge Fee</th>
-							<td> <?=money_format('%i', $subciptionsArray->badge_fee);?> </td>
+							<td> <?=$formatter->formatCurrency($subciptionsArray->badge_fee, 'USD');?> </td>
 						</tr>
 						<tr>
 							<th>Discount ( if any ) </th>
-						<td> <?=money_format('%i', $subciptionsArray->discount);?> </td>
+						<td> <?=$formatter->formatCurrency($subciptionsArray->discount, 'USD');?> </td>
 						</tr>
 						<tr>
 							<th>Paid Amount</th>
-							<td> <?=money_format('%i', $subciptionsArray->paid_amount);?> </td>
+							<td> <?=$formatter->formatCurrency($subciptionsArray->paid_amount, 'USD');?> </td>
 						</tr>
 					</tbody>
 				</table>

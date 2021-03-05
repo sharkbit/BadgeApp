@@ -31,14 +31,16 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute'=>'fullprice.price',
                 'value'=>function($model,$attribute) {
-                    return money_format('$%i', $model->fullprice->price);
+					$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+                    return $formatter->formatCurrency($model->fullprice->price, 'USD');
                 },
             ],
 			'sku_half',
 			            [
                 'attribute'=>'halfprice.price',
                 'value'=>function($model,$attribute) {
-                    return money_format('$%i', $model->halfprice->price);
+					$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+                    return $formatter->formatCurrency($model->halfprice->price, 'USD');
                 },
             ],
             [       
