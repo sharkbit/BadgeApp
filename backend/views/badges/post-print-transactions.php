@@ -77,14 +77,16 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/po
                     [
                         'header'=>'Fee',
                         'value'=>function($searchModel) {
-                             return money_format('$%i', $searchModel->fee);
+							$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+							return $formatter->formatCurrency($searchModel->fee, 'USD');
                         },
                         'contentOptions' => ['class' => 'text-right'],
                     ],
                     [
                         'header'=>'Paid Amount',
                         'value'=>function($searchModel) {
-                             return money_format('$%i', $searchModel->paid_amount);
+							$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+							return $formatter->formatCurrency($searchModel->paid_amount, 'USD');
                         },
                         'contentOptions' => ['class' => 'text-right'],
                     ],
