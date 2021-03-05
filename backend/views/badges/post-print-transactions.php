@@ -73,6 +73,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/po
                             return $badgeArry->prefix.' '.$badgeArry->first_name.' '.$badgeArry->last_name.' '.$badgeArry->suffix;
                         },
                     ],
+					'ClubNames',
                     [
                         'header'=>'Fee',
                         'value'=>function($searchModel) {

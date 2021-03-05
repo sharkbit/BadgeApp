@@ -53,9 +53,9 @@ class PostPrintTransactions extends \yii\db\ActiveRecord {
         ];
     }
 
-    public function getClubDetails() {
-        return $this->hasOne(Clubs::className(),['club_id'=>'club_id']);
-    }
+	public function getClubNames() {
+		return (new clubs)->getMyClubsNames($this->badge_number);
+	}
 
 	public function getPPTSum($mydate) {
 		$two=false;
