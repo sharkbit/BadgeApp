@@ -1,6 +1,5 @@
 <?php
 
-use backend\models\PostPrintTransactions;
 use kartik\daterange\DateRangePicker;
 use kartik\export\ExportMenu;
 use yii\grid\GridView;
@@ -13,9 +12,9 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/payment/i
 
 $dataProvider = $SalesReport->getSRdata($SalesReport->created_at,false);
 
-if (isset($_REQUEST['BadgesSearch']['pagesize'])) { 
-	$pagesize = $_REQUEST['BadgesSearch']['pagesize']; 
-	$_SESSION['pagesize'] = $_REQUEST['BadgesSearch']['pagesize'];
+if (isset($_REQUEST['SalesReport']['pagesize'])) { 
+	$pagesize = $_REQUEST['SalesReport']['pagesize']; 
+	$_SESSION['pagesize'] = $_REQUEST['SalesReport']['pagesize'];
 } elseif (isset($_SESSION['pagesize'])) {
 	$pagesize = $_SESSION['pagesize'];
 } else {
@@ -29,16 +28,15 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 <h2><?= Html::encode($this->title) ?></h2>
 <div class="clubs-index" > <!-- ng-controller="SalesReportForm">-->
 	<div class="row">
-         <div class="col-xs-5">
-      <!--      <?=html::a('<i class="fa fa-download" aria-hidden="true"></i> Export as CSV',['#'],['id'=>'customExportCsv','class'=>'btn btn-primary'])?> -->
-        </div>
+		 <div class="col-xs-5">
+	  <!--	  <?=html::a('<i class="fa fa-download" aria-hidden="true"></i> Export as CSV',['#'],['id'=>'customExportCsv','class'=>'btn btn-primary'])?> -->
+		</div>
 
-        <div class="col-xs-5">
-             <?php $form = ActiveForm::begin([
-                'id'=>'SalesReportForm',
-               // 'action' => ['/badges/post-print-transactions'],
-                'method' => 'get',
-            ]); ?>
+		<div class="col-xs-5">
+			 <?php $form = ActiveForm::begin([
+				'id'=>'SalesReportForm',
+				'method' => 'get',
+			]); ?>
 
 <?=$form->field($SalesReport, 'created_at', [
 		'options'=>['class'=>'drp-container form-group']
@@ -52,78 +50,61 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		</div>
 		<div class="col-xs-2">
 			<?= Html::submitButton('<i class="fa fa-search pull-right" aria-hidden="true"></i> Search', ['class' => 'btn btn-primary']) ?>
-            <?php ActiveForm::end(); ?>
-        </div>
-    </div>
-    <div class="row">
+			<?php ActiveForm::end(); ?>
+		</div>
+	</div>
+	<div class="row">
 		<div class="col-sm-6">
 		<?= $SalesReport->getSRdata($SalesReport->created_at) ?>
 		</div>
 	</div>	
 	<hr>
 	<div class="row">
-        <div class="col-xs-12">
-            <?php
+		<div class="col-xs-12">
+			<?php
 
-                $gridColumns = [
+				$gridColumns = [
 					'club_name','short_name','new','renew','certs',
-           /*         [
+		   /*		 [
 						'header'=>'Date',
 						'value' => function($searchModel) {
 							return date('Y-m-d',strtotime($searchModel->created_at));}
 					],
-                    [
-                        'header'=>'Badge Number',
-                        'value' => 'badge_number',
-                        'contentOptions' => ['class' => 'text-left'],
-                    ],
-                    [
-                        'header'=>'Transaction Type',
-                        'value' => 'transaction_type',
-                    ],
-                    [
-                        'header'=> 'Name',
-                        'value' => function($searchModel) {
-                            $badgeArry = Badges::find()->where(['badge_number'=>$searchModel->badge_number])->one();
-                            return $badgeArry->prefix.' '.$badgeArry->first_name.' '.$badgeArry->last_name.' '.$badgeArry->suffix;
-                        },
-                    ],
-					'ClubNames',
-                    [
-                        'header'=>'Fee',
-                        'value'=>function($searchModel) {
+					[
+						'header'=>'Fee',
+						'value'=>function($searchModel) {
 							$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
 							return $formatter->formatCurrency($searchModel->fee, 'USD');
-                        },
-                        'contentOptions' => ['class' => 'text-right'],
-                    ],
-                    [
-                        'header'=>'Paid Amount',
-                        'value'=>function($searchModel) {
+						},
+						'contentOptions' => ['class' => 'text-right'],
+					],
+					[
+						'header'=>'Paid Amount',
+						'value'=>function($searchModel) {
 							$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
 							return $formatter->formatCurrency($searchModel->paid_amount, 'USD');
-                        },
-                        'contentOptions' => ['class' => 'text-right'],
-                    ], */
-                 ];
+						},
+						'contentOptions' => ['class' => 'text-right'],
+					], */
+				 ];
 
-    /*           echo ExportMenu::widget([
-                    'dataProvider' => $dataProvider,
-                    'columns' => $gridColumns,
-                    'fontAwesome' => true,
-                    'batchSize' => 10,
-                    'filename'=>  $this->title,
-                    'target' => '_blank',
-                    'folder' => '@webroot/export', // this is default save folder on server
-                ]) . "<hr>\n"; 
-	*/
-               echo GridView::widget([
-				    'dataProvider' => $dataProvider,
+	/*		   echo ExportMenu::widget([
+					'dataProvider' => $dataProvider,
 					'columns' => $gridColumns,
-                ]);
+					'fontAwesome' => true,
+					'batchSize' => 10,
+					'filename'=>  $this->title,
+					'target' => '_blank',
+					'folder' => '@webroot/export', // this is default save folder on server
+				]) . "<hr>\n"; 
+	*/
+			   echo GridView::widget([
+					'dataProvider' => $dataProvider,
+					'columns' => $gridColumns,
+				]);
 
-            ?>
-        </div>
+			?>
+		</div>
 
-    </div>
+	</div>
 </div>
