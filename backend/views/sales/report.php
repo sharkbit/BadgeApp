@@ -18,7 +18,7 @@ if (isset($_REQUEST['SalesReport']['pagesize'])) {
 } elseif (isset($_SESSION['pagesize'])) {
 	$pagesize = $_SESSION['pagesize'];
 } else {
-	$pagesize=50;
+	$pagesize=200;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
 
@@ -62,30 +62,17 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 	<div class="row">
 		<div class="col-xs-12">
 			<?php
-
 				$gridColumns = [
-					'club_name','short_name','new','renew','certs',
-		   /*		 [
-						'header'=>'Date',
-						'value' => function($searchModel) {
-							return date('Y-m-d',strtotime($searchModel->created_at));}
-					],
-					[
-						'header'=>'Fee',
-						'value'=>function($searchModel) {
-							$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
-							return $formatter->formatCurrency($searchModel->fee, 'USD');
-						},
-						'contentOptions' => ['class' => 'text-right'],
-					],
-					[
-						'header'=>'Paid Amount',
-						'value'=>function($searchModel) {
-							$formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
-							return $formatter->formatCurrency($searchModel->paid_amount, 'USD');
-						},
-						'contentOptions' => ['class' => 'text-right'],
-					], */
+					'club_name','short_name','new',
+					//[	'header'=>'Renew',
+					//	'value' => function($dataProvider) {
+					//		if($dataProvider['is_club']==1) {return $dataProvider['renew'];} else {return '';}
+					//	}
+					//],
+					'renew',
+					'certs',
+					'guests',
+					'students'
 				 ];
 
 	/*		   echo ExportMenu::widget([
