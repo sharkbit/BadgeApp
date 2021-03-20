@@ -33,7 +33,7 @@ class AdminController extends \yii\web\Controller {
 		'Params' => ['params/update'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
-		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/create','sales/delete','sales/stock','sales/update','sales/inventory'], // Test Pages
+		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/create','sales/delete','sales/stock','sales/update','sales/inventory','sales/report'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update','work-credits/delete'],
 	];
@@ -48,7 +48,7 @@ class AdminController extends \yii\web\Controller {
 		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/remove-att','events/update','events/view'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/delete','guest/stats'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
-		'sales' => ['sales/all','sales/create','sales/stock'],
+		'sales' => ['sales/all','sales/create','sales/stock','sales/report'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update'],
 	];
@@ -70,7 +70,7 @@ class AdminController extends \yii\web\Controller {
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
-		'sales' => ['sales/all'],
+		'sales' => ['sales/all','sales/report'],
 		'Guest' => ['guest/update'],
 	];
 
@@ -98,7 +98,7 @@ class AdminController extends \yii\web\Controller {
 		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all'],
-		'sales' => ['sales/all'],
+		'sales' => ['sales/all','sales/report'],
 		'violations' => ['violations/all'],
 		'Work Credits'=>['work-credits/all'],
 	];

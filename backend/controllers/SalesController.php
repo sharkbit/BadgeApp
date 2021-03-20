@@ -9,6 +9,7 @@ use backend\models\Badges;
 use backend\models\CardReceipt;
 use backend\models\search\CardReceiptSearch;
 use backend\models\Sales;
+use backend\models\SalesReport;
 use backend\models\search\StoreItemsSearch;
 use backend\models\StoreItems;
 use backend\models\Params;
@@ -16,9 +17,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * ParamsController implements the CRUD actions for StoreItems model.
- */
 class SalesController extends AdminController {
     /**
      * @inheritdoc
@@ -171,6 +169,19 @@ class SalesController extends AdminController {
 				'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider
             ]);
+	}
+
+	public function actionReport() {
+		$SalesReport = new SalesReport;
+		
+		if(isset($_REQUEST['SalesReport']['created_at'])) {
+			$SalesReport->created_at = $_REQUEST['SalesReport']['created_at'];
+		} else {
+			$SalesReport->created_at = date('m/01/Y',strtotime(yii::$app->controller->getNowTime())).' - '.date('m/t/Y',strtotime(yii::$app->controller->getNowTime()));
+		}
+		return $this->render('report',[
+			'SalesReport' => $SalesReport,
+		]);
 	}
 
     public function actionStock() {
