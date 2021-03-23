@@ -165,6 +165,7 @@ class Badges extends \yii\db\ActiveRecord {
 		if(yii::$app->controller->hasPermission('badges/all')) {
 			if(isset($model->club_id)) {
 				if($model->club_id=='') {
+					yii::$app->controller->createLog(true, 'trex_zod_1',  Yii::$app->controller->id.'->'.Yii::$app->controller->action->id);
 					(new clubs)->saveClub($model->badge_number,[35]); 
 					$dirty[]='Club';
 				} else {
@@ -175,7 +176,8 @@ class Badges extends \yii\db\ActiveRecord {
 					}
 				}
 			} else {
-				if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]); $dirty[]='Club'; }
+				if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]); $dirty[]='Club'; 
+				yii::$app->controller->createLog(true, 'trex_zod_2',  Yii::$app->controller->id.'->'.Yii::$app->controller->action->id);}
 			}
 		}
 		$dirty = implode(", ",$dirty);
