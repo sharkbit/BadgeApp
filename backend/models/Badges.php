@@ -162,7 +162,7 @@ class Badges extends \yii\db\ActiveRecord {
 		if(isset($model->payment_method)) {
 			if($model->payment_method=='creditnow') {$payment_method = 'credit';} else {$payment_method = $model->payment_method;} }
 		$dirty = (New Badges)->loadDirtyFilds($model);
-		if(yii::$app->controller->hasPermission('badges/all')) {
+		if((yii::$app->controller->hasPermission('badges/all')) && (Yii::$app->controller->id.'->'.Yii::$app->controller->action->id <> 'sales->index')) {
 			if(isset($model->club_id)) {
 				if($model->club_id=='') {
 					yii::$app->controller->createLog(true, 'trex_zod_1',  Yii::$app->controller->id.'->'.Yii::$app->controller->action->id);
