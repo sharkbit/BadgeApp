@@ -522,3 +522,6 @@ update `BadgeDB`.`store_items` set stock=0 where stock is null;
 ALTER TABLE `BadgeDB`.`post_print_transactions` 
 DROP COLUMN `club_id`;
 
+-- Mass Email Reply TO
+ALTER TABLE `BadgeDB`.`mass_email` 
+ADD COLUMN `mass_reply_name` VARCHAR(100) NULL DEFAULT NULL AFTER `mass_reply_to`;
