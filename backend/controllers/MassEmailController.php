@@ -173,7 +173,8 @@ class MassEmailController extends AdminController {
 						$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$value['email'].'>');
 
 						if($model->mass_reply_to) {
-							$mail->AddReplyTo($model->mass_reply_to, $model->mass_reply_name);
+								if($model->mass_reply_name) {$adminName =$model->mass_reply_name;} else {$adminName = yii::$app->params['adminName']; }
+							$mail->AddReplyTo($model->mass_reply_to, $adminName);
 						} else { $mail->AddReplyTo(yii::$app->params['adminEmail'], 'AGC President'); }
 						$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
 

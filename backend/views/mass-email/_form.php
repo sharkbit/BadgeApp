@@ -51,8 +51,11 @@ $form = ActiveForm::begin(['id'=>'email']); ?>
 <p> </p>
 <div class="row">
 	<div class="col-xs-12" id="email_err"> </div>
-	<div class="col-xs-12" >
+	<div class="col-xs-12 col-sm-6" >
 		<?= $form->field($model, 'mass_reply_to')->textInput(['placeholder'=>yii::$app->params['adminEmail']]) ?>
+	</div>
+	<div class="col-xs-12 col-sm-6" >
+		<?= $form->field($model, 'mass_reply_name')->textInput(['placeholder'=>yii::$app->params['adminName']]) ?>
 	</div>
 	<div class="col-xs-12" >
 	 <?= $form->field($model, 'mass_subject')->textInput(['placeholder'=>'Required']) ?>
