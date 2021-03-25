@@ -97,7 +97,11 @@ class MassEmailController extends AdminController {
 
 		yii::$app->controller->createEmailLog(true, 'Mass-Email', 'Start');
 		$email = AdminController::emailSetup();
-		if (!$email) {Yii::$app->getSession()->setFlash('error', 'Email System disabled'); echo "email-setup failed"; return;}
+		if (!$email) {
+			Yii::$app->getSession()->setFlash('error', 'Email System disabled'); echo "email-setup failed";
+			yii::$app->controller->createEmailLog(true, 'Mass-Email:', 'Disabled');
+			return;
+		}
 		$active_date = date('Y-m-d', strtotime($this->getNowTime()));
 
 		if(strlen($model->mass_to_users) > 1) {
