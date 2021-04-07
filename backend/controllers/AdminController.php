@@ -134,7 +134,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $shootPermission = [
-		'Calendar' => ['calendar/shoot'],
+		'Calendar' => ['calendar/all','calendar/shoot'],
 	];
 	
 	public $AllPermission = [
