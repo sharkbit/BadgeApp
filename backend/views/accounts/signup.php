@@ -42,8 +42,7 @@ $randStr = generateRandomString();
 		<div class="col-xs-12 col-sm-6 col-md-2" id="remote_name" style="display: none;" >
 			<?= $form->field($model, 'r_user')->textInput(['maxlength' => true]) ?>
 		</div>
-		
-		<div class="col-xs-12 col-sm-6 col-md-3" id="need_cal" style="display: none;" 
+		<div class="col-xs-12 col-sm-6 col-md-3" id="need_cal" style="display: none;" >
 			<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id','multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
 		<div id='dont_need_cal' ><input type='hidden' id="club-id" value=''> </div>
