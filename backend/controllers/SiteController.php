@@ -92,6 +92,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 				$_SESSION['names'] = yii::$app->controller->getBadgeList();
 				$userArray = User::find()->where(['badge_number'=> $model->badge])->one();
 				if($userArray) {
+					yii::$app->controller->RotateLog();
 					// user has privileges
 					$_SESSION['privilege']=json_decode($userArray->privilege);
 					$_SESSION['r_user']=$userArray->r_user;
@@ -188,7 +189,6 @@ class SiteController extends AdminController {
 		if ($model->load(Yii::$app->request->post())) {
 			if($model->login()) {
 				$this->log_access("user",$_SERVER['REMOTE_ADDR'],$model->username,'success');
-				yii::$app->controller->createAccessLog(true, "Login-u", $model->username.", ".$_SERVER['REMOTE_ADDR']);
 				if (isset($_SESSION['jump']) && $_SESSION['jump'] !='') {
 					$jump = base64_decode($_SESSION['jump']);
 					unset($_SESSION['jump']);
@@ -214,7 +214,6 @@ class SiteController extends AdminController {
 		if ($model->load(Yii::$app->request->post())) {
 			if ($model->login()) {
 				$this->log_access("member",$_SERVER['REMOTE_ADDR'],$_SESSION['user'],'success');
-				yii::$app->controller->createAccessLog(true, "Login-m", $_SESSION['user'].", ".$_SERVER['REMOTE_ADDR']);
 				if (isset($_SESSION['jump']) && $_SESSION['jump'] !='') {
 					$jump = base64_decode($_SESSION['jump']);
 					unset($_SESSION['jump']);

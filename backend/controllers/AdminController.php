@@ -331,7 +331,7 @@ class AdminController extends \yii\web\Controller {
 		return $string;
 	}
 
-	public function createAccessLog($time, $username, $activity) {
+	public function RotateLog() {
 		$param = Params::find()->one();
 		$mon = date('m',strtotime(yii::$app->controller->getNowTime()));
 		if($param->log_rotate <> $mon) {
@@ -350,11 +350,6 @@ class AdminController extends \yii\web\Controller {
 			$param->log_rotate = $mon;
 			$param->save();
 		}
-
-		$root = Yii::getAlias('@webroot/access_logs.txt');
-		$fp = fopen($root, 'a');
-		fwrite($fp, "['".yii::$app->controller->getNowTime()."','".$username."','".$activity."']\r\n");
-		fclose($fp);
 	}
 
 	public function createLog($isEnabled, $username, $activity, $name='activity') {
