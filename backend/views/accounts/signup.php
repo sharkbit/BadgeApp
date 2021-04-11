@@ -37,14 +37,14 @@ $randStr = generateRandomString();
 		</div>
 		<div class="col-xs-8 col-sm-9 col-md-5">
 			<?php if (in_array(1, json_decode(yii::$app->user->identity->privilege))) { $limit=false; } else { $limit=true; }
-			echo $form->field($model, 'privilege')->dropDownList((new User)->getPrivList($limit),['id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
+			echo $form->field($model, 'privilege')->dropDownList((new User)->getPrivList($limit),['id'=>'privilege', 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
 		<div class="col-xs-12 col-sm-6 col-md-2" id="remote_name" style="display: none;" >
 			<?= $form->field($model, 'r_user')->textInput(['maxlength' => true]) ?>
 		</div>
 		
 		<div class="col-xs-12 col-sm-6 col-md-3" id="need_cal" style="display: none;" 
-			<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
+			<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id','multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
 		<div id='dont_need_cal' ><input type='hidden' id="club-id" value=''> </div>
 	</div>
@@ -87,11 +87,13 @@ $randStr = generateRandomString();
 <p>
 <ul><li>Calendar Access not needed for Root and Admin Users</li></ul>
 </p>
-<script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
+
 <script>
   $("#need_cal").hide();$("#dont_need_cal").show();
-  
-  $("#privilege").chosen({placeholder_text_multiple:'Select Privilege',width: "100%"}).change(function(){
+
+  $("#privilege")
+    .select2({placeholder_text_multiple:'Select Privilege',width: "100%"})
+	.change(function(){
     var selectedText = " "+$(this).find("option:selected").text();
     if (selectedText.indexOf("Root")>0) {
       if (selectedText.length > 5) {
@@ -132,7 +134,9 @@ $randStr = generateRandomString();
     if(selectedText != ' ') { buildUsername();}
   });
 
-  $("#club-id").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){
+  $("#club-id")
+    .select2({placeholder_text_multiple:'Choose Clubs',width: "100%"})
+	.change(function(){
     var myCom = document.getElementById("signupform-auth_key");
     if(!myCom.value) {
       var selectedText = $(this).find("option:selected").text();

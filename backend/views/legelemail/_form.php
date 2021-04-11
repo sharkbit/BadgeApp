@@ -53,7 +53,7 @@ if(!$model->isNewRecord) {
     <?= $form->field($model, 'district')->textInput(['maxlength' => true]) ?>
 	</div>
 	<div class="col-xs-12 col-sm-12" >
-		<?php echo $form->field($model, 'groups')->dropDownList($model->getGroupList(),['class'=>"chosen_select", 'multiple'=>true, 'size'=>false]). PHP_EOL; ?>
+		<?php echo $form->field($model, 'groups')->dropDownList($model->getGroupList(),['multiple'=>true, 'size'=>false]). PHP_EOL; ?>
 	</div>
 			
 	<div class="col-xs-4 col-sm-2" <?php if($model->isNewRecord){echo 'style="display: none;"';} ?> >
@@ -80,6 +80,6 @@ if(!$model->isNewRecord) {
 
 <script>
 $(document).ready(function (e) {
-  $(".chosen_select").chosen({placeholder_text_multiple:'Choose Groups',width: "100%"});
+  $("#legelemail-groups").select2({placeholder_text_multiple:'Choose Groups',width: "100%"});
 });
  </script>

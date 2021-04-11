@@ -138,7 +138,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		} else {
 		 $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->andWhere(['not',['like', 'name', '%Shooting Bay%', false]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
 		}
-		echo $form->field($model, 'facility_id')->dropDownList($ary_fac,['value'=>json_decode($model->facility_id),'prompt'=>'Select', 'id'=>'agccal-facility_id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
+		echo $form->field($model, 'facility_id')->dropDownList($ary_fac,['value'=>json_decode($model->facility_id),'prompt'=>'Select', 'id'=>'agccal-facility_id','multiple'=>true, 'size'=>false]).PHP_EOL;
 	?>
     </div>
     <div class="col-xs-3 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="Div_Lanes_Req" <?php if($allowLanes==false) { echo ' style="display: none;"';} ?>>
@@ -381,7 +381,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 <?php ActiveForm::end(); ?>
 </div>
 </div>
-<script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
+
 <style>
   th { padding: 10px; text-align: center;}
   td { padding: 10px; white-space: nowrap }
@@ -403,7 +403,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 	runClub();
 
     document.getElementById("cal_update_item").disabled=true;
-	$("#agccal-facility_id").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){ OpenRange(); });	
+	$("#agccal-facility_id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){ OpenRange(); });	
 
   $("#re_pub").click(function (e) {
 	  e.preventDefault();

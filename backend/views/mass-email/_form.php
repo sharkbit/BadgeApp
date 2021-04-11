@@ -42,7 +42,7 @@ $form = ActiveForm::begin(['id'=>'email']); ?>
 		<?= $form->field($model, 'to_single')->checkbox() ?>
 	</div>
 	<div class="col-xs-12 col-sm-6" id="to_usr" >
-		<?=$form->field($model, 'mass_to_users')->dropDownList((new User)->getPrivList(), ['value'=>$model->mass_to_users,'prompt'=>'select','id'=>'mass_to_users', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
+		<?=$form->field($model, 'mass_to_users')->dropDownList((new User)->getPrivList(), ['value'=>$model->mass_to_users,'prompt'=>'select','id'=>'mass_to_users','multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 	</div>
 	<div class="col-xs-12 col-sm-6" id="to_email_addr" >
 		<?= $form->field($model, 'to_email')->textInput(['placeholder'=>'one@email.com; two@emails.com'])->label('To Email(s):  seperated by ;') ?>
@@ -117,7 +117,6 @@ Marc";}
 </div>
 <?php ActiveForm::end(); ?>
 
-<script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
 <script>
 
 function validateEmail(email) {
@@ -125,7 +124,7 @@ function validateEmail(email) {
   return re.test(email);
 }
 
-$("#mass_to_users").chosen({placeholder_text_multiple:'Select User Roll',width: "100%"})
+$("#mass_to_users").select2({placeholder_text_multiple:'Select User Roll',width: "100%"})
 
 	if (!document.getElementById("massemail-to_single").checked) {$("#to_email_addr").hide(); }
 	if (!document.getElementById("massemail-to_users").checked) {$("#to_usr").hide(); }

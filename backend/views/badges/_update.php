@@ -97,7 +97,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				<?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(),['disabled' =>($restrict)? true : false]).PHP_EOL; ?>
             </div>
             <div class="col-xs-12 col-sm-6">
-				<?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false),['value'=>(new clubs)->getMyClubs($model->badge_number),'class'=>"chosen_select", 'multiple'=>true,'disabled'=>($restrict)? true : false]).PHP_EOL; ?>
+				<?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false),['value'=>(new clubs)->getMyClubs($model->badge_number),'multiple'=>true,'disabled'=>($restrict)? true : false]).PHP_EOL; ?>
             </div>
 			<div  class="col-xs-12" id="primary-badge-summary">
 				<div class="row">
@@ -480,6 +480,8 @@ $ccYear = range($curYr,$curYr+25);  ?>
 	$("#online_search").hide();
 	$("#cert_cc_form_div").hide();
 
+    $("#badges-club_id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
+	
 	$(".badge_store_div").click(function(e) {
         e.preventDefault();
 		if($('#extras_store_div').is(':visible')) {

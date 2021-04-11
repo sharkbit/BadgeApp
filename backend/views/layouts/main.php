@@ -5,6 +5,7 @@
 
 use backend\assets\AppAsset;
 use backend\assets\FontAwesomeAsset;
+use backend\assets\Select2Asset;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -13,6 +14,7 @@ use common\widgets\Alert;
 
 AppAsset::register($this);
 FontAwesomeAsset::register($this);
+Select2Asset::register($this);
 
 header("Expires: Fri, 01 Jan 1990 00:00:00 GMT");
 header("Pragma: no-store, no-cache");
@@ -35,7 +37,6 @@ header("Vary: *");
 
     <link rel="stylesheet" href="<?=yii::$app->params['rootUrl']?>/css/sweetalert.css" />
     <link rel="stylesheet" href="<?=yii::$app->params['rootUrl']?>/css/waitMe.css" />
-    <link rel="stylesheet" href="<?=yii::$app->params['rootUrl']?>/css/chosen.min.css" />
     <link rel="stylesheet" type="text/css" href="<?=yii::$app->params['rootUrl']?>/font/flaticon.css" />
     <?php $this->head() ?>
 </head>
@@ -104,10 +105,7 @@ $this->beginBody() ?>
 
 <script src="<?=yii::$app->params['rootUrl']?>/js/sweetalert.min.js"></script>
 <script src="<?=yii::$app->params['rootUrl']?>/js/waitMe.js"></script>
-<script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
-<style>
-  .chosen-container-multi .chosen-choices {padding: 3px; }
-</style>
+
 <script type="text/javascript">
     var logsout;
     <?php if(isset($_SESSION['timeout'])) { ?>
@@ -227,8 +225,6 @@ var app = angular.module('agc', []);
 <?php
 if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUEST_URI'], 'badges/update')) || (strpos($_SERVER['REQUEST_URI'], 'site/new-member'))) {
 ?>
-
-    $(".chosen_select").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"});
 
 	function get_fees(memTypeId) {
 		if (memTypeId!='') {
@@ -1315,7 +1311,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'violations/')) {
 app.controller('ViolationsRecFrom', function($scope) {
     $(document).ready(function (e) {
         $("#violations-vi_rules")
-		.chosen({placeholder_text_multiple:'Select Violations',width: "100%",})
+		.select2({placeholder_text_multiple:'Select Violations',width: "100%",})
 		.change(function() {
             var cur_rules = $("#violations-vi_rules").val().toString();
 
@@ -1392,7 +1388,7 @@ app.controller('ViolationsRecFrom', function($scope) {
   ?>
 
 app.controller('BadgesDatabaseController', function($scope) {
-    $("#badgesdatabase-clubs").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"});
+   // $("#badgesdatabase-clubs").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
 });
 
 app.controller('PostPrintTransactionForm', function($scope) {

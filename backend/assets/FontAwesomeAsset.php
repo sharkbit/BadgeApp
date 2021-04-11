@@ -9,22 +9,21 @@ use yii\web\AssetBundle;
  */
 
 class FontAwesomeAsset extends AssetBundle {
-    public $sourcePath = '@bower/fontawesome';
+	public $sourcePath = '@bower/fontawesome';
 	public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
 
-    public $css = [
+	public $css = [
 		 'css/all.min.css',
-		
-    ];
+	];
 
-    public $publishOptions = [
-        'only' => [
-            'css/*',
-            'js/*',
-            'webfonts/*',
-            'sprites/*',
-            'svgs/*',
-        ],
+	public $publishOptions = [
+		'only' => [
+			'css/*',
+			'js/*',
+			'webfonts/*',
+			'sprites/*',
+			'svgs/*',
+		],
 		//"forceCopy" => YII_DEBUG,
-    ]; 
+	];
 }

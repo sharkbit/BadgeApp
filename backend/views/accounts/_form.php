@@ -25,7 +25,7 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 	<?= $form->field($model, 'badge_number')->textInput(['maxlength' => true]) ?>
 
 <?php if(array_intersect([1,2],$_SESSION['privilege'])) {
-		echo $form->field($model, 'privilege')->dropDownList($model->getPrivList(json_decode($model->privilege)), ['value'=>json_decode($model->privilege),'id'=>'privilege', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL;
+		echo $form->field($model, 'privilege')->dropDownList($model->getPrivList(json_decode($model->privilege)), ['value'=>json_decode($model->privilege),'id'=>'privilege','multiple'=>true, 'size'=>false]).PHP_EOL;
 	} else {
 		echo "<b>Privilege: </b> ".$model->getPrivilege_Names($model->privilege)."\n<br/><br/>";
 	} ?>
@@ -35,7 +35,7 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 	</div>
 
 	<div id="need_cal" <?php if(!$need_cal) {?> style="display: none;" <?php } ?>>
-	<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
+	<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 	</div>
 	<div id='dont_need_cal'<?php if($need_cal) {?> style="display: none;" <?php } ?>><input type='hidden' id="club-id" value=''> </div>
 <?php if (($model->privilege<>'') && (in_array(8,json_decode($model->privilege)))) { echo $form->field($model, 'company')->textInput(['autofocus' => true]).PHP_EOL; } ?>
@@ -49,9 +49,8 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 </div>
 <div id="error_msg"> </div>
 
-<script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
 <script>
-  $("#privilege").chosen({placeholder_text_multiple:'Select Privilege',width: "100%"}).change(function(){
+  $("#privilege").select2({placeholder_text_multiple:'Select Privilege',width: "100%"}).change(function(){
 	var selectedText = " "+$(this).find("option:selected").text();
 	console.log(selectedText.length);
 	if ((selectedText.indexOf("Root")>0) && (selectedText.length > 5)) {
@@ -87,7 +86,7 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 	}
   });
 
-  $("#club-id").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){
+  $("#club-id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){
     var myCom = document.getElementById("user-company");
     if((myCom) && (!myCom.value)) {
       var selectedText = $(this).find("option:selected").text();

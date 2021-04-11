@@ -33,7 +33,7 @@ foreach ($whitelist as $item) {
 		<?= $form->field($model, 'qb_env')->dropDownList(['dev'=>'Development','prod'=>'Production']) ?>
 	</div>
 	<div class="col-xs-12 col-sm-6">
-		<?= $form->field($model, 'whitelist')->dropDownList($wlist,['value'=>json_decode($model->whitelist),'prompt'=>'Select', 'id'=>'params-whitelist', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
+		<?= $form->field($model, 'whitelist')->dropDownList($wlist,['value'=>json_decode($model->whitelist),'prompt'=>'Select',  'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 	</div>
 	<div class="col-xs-12 col-sm-3">
 		<?= $form->field($model, 'AddWhitelist')->textInput(['maxlength' => true])->label('Add To Whitelist') ?>
@@ -113,14 +113,10 @@ foreach ($whitelist as $item) {
 </div>
 </div>
 <?php ActiveForm::end(); ?>
-
 </div>
-<script src="<?=yii::$app->params['rootUrl']?>/js/chosen.jquery.min.js"></script>
-<style>
-  .chosen-container-multi .chosen-choices {padding: 3px; }
-</style>
+
 <script>
-$("#params-whitelist").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"});
+$("#params-whitelist").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
 
 $("#params-addwhitelist").change(function(e){ 
 	var new_word = $("#params-addwhitelist").val().toUpperCase();
@@ -132,7 +128,7 @@ $("#params-addwhitelist").change(function(e){
         .html(new_word));
 		
 	$("#params-whitelist").trigger('change');
-	$(".chosen-select").trigger("chosen:updated")
+	$("#params-whitelist").trigger("select2:updated")
 	$("#params-addwhitelist").val('');
 	document.getElementById("paramsform").submit();
 	

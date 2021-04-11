@@ -30,7 +30,7 @@ use backend\models\clubs;
  <!--   <?php //= $form->field($model, 'club_id')->textInput() ?> -->
 	<div class="form-group" >
 	<?php echo Html::label("Club Name"); ?>
-	<?php echo Html::dropDownList("new_club",(new clubs)->getMyClubs($model->badge_number) ,(new clubs)->getClubList(),['id'=>'badgesdatabase-clubs', 'class'=>"chosen_select", 'multiple'=>true, 'size'=>false]), PHP_EOL; ?>
+	<?php echo Html::dropDownList("new_club",(new clubs)->getMyClubs($model->badge_number) ,(new clubs)->getClubList(),['id'=>'badgesdatabase-clubs','multiple'=>true, 'size'=>false]), PHP_EOL; ?>
 	</div>
 
 	<?= $form->field($model, 'mem_type')->dropDownList((new Badges)->getMemberShipList()).PHP_EOL; ?>
@@ -51,4 +51,6 @@ use backend\models\clubs;
 
 </div>
 
-<script>$("#badgesdatabase-clubs").chosen({placeholder_text_multiple:'Choose Clubs',width: "100%"});</script>
+<script>
+$("#badgesdatabase-clubs").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
+</script>
