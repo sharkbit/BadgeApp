@@ -14,10 +14,10 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">7.1.0",
-        "yiisoft/yii2": "~2.0.15",
-        "yiisoft/yii2-bootstrap": "~2.0.0",
-        "yiisoft/yii2-swiftmailer": "~2.0.0",
+        "php": ">=7.4.0",
+        "yiisoft/yii2": ">2.0.15",
+        "yiisoft/yii2-bootstrap": ">2.0.0",
+        "yiisoft/yii2-swiftmailer": ">2.0.0",
         "kartik-v/yii2-widget-datepicker": "@dev",
         "kartik-v/yii2-widgets": "*",
         "mpdf/mpdf": "*",
@@ -36,9 +36,9 @@
         "bower-asset/fontawesome": ">5.0"
     },
     "require-dev": {
-        "yiisoft/yii2-debug": "~2.0.0",
-        "yiisoft/yii2-gii": "~2.0.0",
-        "yiisoft/yii2-faker": "~2.0.0"
+        "yiisoft/yii2-debug": ">2.0.0",
+        "yiisoft/yii2-gii": ">2.0.0",
+        "yiisoft/yii2-faker": ">2.0.0"
     },
     "config": {
         "process-timeout": 1800,
