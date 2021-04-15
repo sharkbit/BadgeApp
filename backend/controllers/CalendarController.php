@@ -154,7 +154,7 @@ class CalendarController extends AdminController {
 			if(($EventClub->is_club=='1') || ($EventClub->is_club=='2')) {
 				if (array_intersect([1,2],$_SESSION['privilege'])) {	//if Root or admin
 					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
-				} elseif (in_array(11,$_SESSION['privilege'])) {		//if Chairmen
+				} elseif (array_intersect([11,15],$_SESSION['privilege'])) {	//if Chairmen or Shooting Bay
 					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere('event_status_id not in (4,11,12,18)')->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
 				} else {
 					$ary_event = ArrayHelper::map(agcEventStatus::find()->where(['active'=>1])->andwhere('event_status_id in (1,2,6,13,14,16,19)')->orderBy(['name'=>SORT_ASC])->asArray()->all(), $coll_a, $coll_b);
