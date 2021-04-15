@@ -30,6 +30,13 @@ if (isset($_REQUEST['AgcCal']['pagesize'])) {
 	$pagesize=20;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
+
+if (yii::$app->controller->hasPermission('calendar/shoot')) {
+	$sql="SELECT facility_id FROM associat_agcnew.facilities WHERE name like '%shoot%'";
+	$result = Yii::$app->getDb()->createCommand($sql)->queryAll();
+	$shoot = json_encode(ArrayHelper::getColumn($result, 'facility_id'));
+	$shoot = json_decode(str_replace('"','',$shoot));
+} else { $shoot =[]; }
 ?>
 	<?= $this->render('_index-tab-menu',['model'=>$model]) ?>
 
@@ -244,16 +251,18 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 							'title'=>'View',
 						]);}
 					},
-					'update' => function($url,$model) {
-						if ((yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) {
+					'update' => function($url,$model) use ($shoot) {
+						if ( ( (yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs)))) ) || 
+							( (yii::$app->controller->hasPermission('calendar/shoot')) && ( array_intersect($shoot, json_decode($model->facility_id)) ) ) ) {
 						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/calendar/update','id'=>$model->calendar_id], [
 							'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
 							'title'=>'Update',
 						]);}
 					},
-					'delete' => function($url,$model) {
-						if((yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) {
+					'delete' => function($url,$model) use ($shoot) {
+						if( ( (yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) || 
+						( (yii::$app->controller->hasPermission('calendar/shoot')) && ( array_intersect($shoot, json_decode($model->facility_id)) ) ) ) {
 							return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ',  ['/calendar/delete','id'=>$model->calendar_id,'type'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'm' : 's'),'redir'=>yii::$app->controller->getCurrentUrl()['actionId']], [
 							'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
