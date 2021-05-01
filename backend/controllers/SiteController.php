@@ -83,9 +83,18 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 			if($badgeArray){
 				// Is Badge Suspended - Revoked - Retired
 				if ($badgeArray->status=='suspended' || $badgeArray->status =='revoked' || $badgeArray->status == 'retired') {
-					Yii::$app->getSession()->setFlash('error', 'Badge '.$badgeArray->status.', Please See Staff.');
+					Yii::$app->getSession()->setFlash('error', 'Badge '.$badgeArray->status.', Please See Staff.',false);
 					return false;
 				}
+				
+				// Is badge current?
+				if (strtotime($badgeArray->expires) > strtotime($this->getNowTime())) {
+					//is ok
+				} else { 
+					Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
+					return false;
+				}
+				
 				// does member have privileges?
 				$_SESSION["badge_number"] = $badgeArray->badge_number;
 				$_SESSION["user"] = $badgeArray->first_name.' '.$badgeArray->last_name;
@@ -118,6 +127,15 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 			yii::$app->controller->createLog(true, 'SC_LoginMember-Login', 'Not a Post');
 		}
 		return false;
+	}
+	
+	public function getNowTime($offset = null) {
+		$date = new \DateTime;
+		$date->setTimezone(new \DateTimeZone(yii::$app->params['timeZone']));
+		if($offset) {
+			$date->add(new \DateInterval($offset));
+		}
+		return $date->format('Y-m-d H:i:s');
 	}
 }
 
