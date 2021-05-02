@@ -46,7 +46,6 @@ class SignupForm extends Model {
 	}
 	
 	public function CheckUnique($a) {
-		yii::$app->controller->createLog(true, 'trex-is-this',var_export($this->$a,true));
 		$user = (New User)->find()->where([$a=>$this->$a])->one();
 		if($user) {
 			$this->addError($a, "$a used by: ".$user->username.' ('.$user->full_name.')');
