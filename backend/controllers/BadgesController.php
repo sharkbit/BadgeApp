@@ -690,6 +690,7 @@ class BadgesController extends AdminController {
 			} else {
 				$mergtwo=['wcCurYr'=>$myCurYr,'wcCurHr'=>0,'wcLasYr'=>$myLasYr,'wcLasHr'=>0];
 			}
+			$mergtwo=array_merge($mergtwo,['clubs'=> (New clubs)->getMyClubs($badge_number)]);
 
 			$responceA = Json::encode($badgeArray,JSON_PRETTY_PRINT);
 			$responceB = Json::encode($mergtwo,JSON_PRETTY_PRINT);

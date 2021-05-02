@@ -525,3 +525,7 @@ DROP COLUMN `club_id`;
 -- Mass Email Reply TO
 ALTER TABLE `BadgeDB`.`mass_email` 
 ADD COLUMN `mass_reply_name` VARCHAR(100) NULL DEFAULT NULL AFTER `mass_reply_to`;
+
+-- 2.1.20 Events Get Sponsors
+ALTER TABLE `BadgeDB`.`events` 
+ADD COLUMN `sponsor` INT NULL AFTER `e_poc`;

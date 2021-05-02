@@ -177,7 +177,7 @@ class SalesController extends AdminController {
 		if(isset($_REQUEST['SalesReport']['created_at'])) {
 			$SalesReport->created_at = $_REQUEST['SalesReport']['created_at'];
 		} else {
-			$SalesReport->created_at = date('m/01/Y',strtotime(yii::$app->controller->getNowTime())).' - '.date('m/t/Y',strtotime(yii::$app->controller->getNowTime()));
+			$SalesReport->created_at = date('01/01/Y',strtotime(yii::$app->controller->getNowTime())).' - '.date('m/t/Y',strtotime(yii::$app->controller->getNowTime()));
 		}
 		return $this->render('report',[
 			'SalesReport' => $SalesReport,

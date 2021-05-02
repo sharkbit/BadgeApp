@@ -63,16 +63,33 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		<div class="col-xs-12">
 			<?php
 				$gridColumns = [
-					'club_name','short_name','new',
-					//[	'header'=>'Renew',
-					//	'value' => function($dataProvider) {
-					//		if($dataProvider['is_club']==1) {return $dataProvider['renew'];} else {return '';}
-					//	}
-					//],
-					'renew',
-					'certs',
-					'guests',
-					'students'
+					'club_name','short_name',
+					[	'attribute'=>'new',
+						'value' => function($dataProvider) {
+							if($dataProvider['new']==0) {return '';} else {return $dataProvider['new'];}
+						}
+					],
+					[	'header'=>'Renew',
+						'value' => function($dataProvider) {
+							//if($dataProvider['is_club']==1) {return $dataProvider['renew'];} else {return '';}
+							if($dataProvider['renew']==0) {return '';} else {return $dataProvider['renew'];}
+						}
+					],
+					[	'attribute'=>'certs',
+						'value' => function($dataProvider) {
+							if($dataProvider['certs']==0) {return '';} else {return $dataProvider['certs'];}
+						}
+					],
+					[	'attribute'=>'guests',
+						'value' => function($dataProvider) {
+							if($dataProvider['guests']==0) {return '';} else {return $dataProvider['guests'];}
+						}
+					],
+					[	'attribute'=>'students',
+						'value' => function($dataProvider) {
+							if(isset($dataProvider['students']) && $dataProvider['students'] >0 ) {return $dataProvider['students'];} else {return '';}
+						}
+					],
 				 ];
 
 	/*		   echo ExportMenu::widget([

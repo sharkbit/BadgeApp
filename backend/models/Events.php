@@ -4,6 +4,7 @@ namespace backend\models;
 
 use Yii;
 use backend\models\Event_Att;
+use backend\models\clubs;
 
 /**
  * This is the model class for table "Events".
@@ -20,7 +21,7 @@ class Events extends \yii\db\ActiveRecord{
     public function rules() {
         return [
            [['e_name','e_date','e_poc','e_status','e_type'], 'required'],
-           [['e_id','e_hours','e_poc'], 'number'],
+           [['e_id','e_hours','e_poc','sponsor'], 'number'],
 		   [['e_inst','e_rso'], 'string'],
        ];
     }
@@ -39,8 +40,11 @@ class Events extends \yii\db\ActiveRecord{
        ];
     }
 
+	public function getClub() {
+		return $this->hasOne(clubs::classname(),['club_id'=>'sponsor']);
+	}
+
 	public function getEvent_Att() {
-        //return $this->hasMany(Event_Att::className(), ['ea_event_id' => 'e_id']);
 		return (New Event_Att)->find()->where(['ea_event_id'=>$this->e_id,'ea_wb_out'=>1])->andwhere(['>','ea_wb_serial',0])->count();
     }
 }

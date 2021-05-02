@@ -42,12 +42,10 @@ $randStr = generateRandomString();
 		<div class="col-xs-12 col-sm-6 col-md-2" id="remote_name" style="display: none;" >
 			<?= $form->field($model, 'r_user')->textInput(['maxlength' => true]) ?>
 		</div>
-		<div class="col-xs-12 col-sm-6 col-md-3" id="need_cal" style="display: none;" >
+		<div class="col-xs-12 col-sm-6 col-md-5" id="need_cal" style="display: none;" >
 			<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id','multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
 		<div id='dont_need_cal' ><input type='hidden' id="club-id" value=''> </div>
-	</div>
-	<div class="row">
 		<div class="col-xs-12 col-sm-6 col-md-3">
 			<?= $form->field($model, 'f_name')->textInput(['autofocus' => true]).PHP_EOL ?>
 		</div>
@@ -162,7 +160,7 @@ $randStr = generateRandomString();
       crossDomain: false,
       success: function(responseData, textStatus, jqXHR) {
         responseData =  JSON.parse(responseData);
-        console.log(responseData);
+        //console.log(responseData);
         var PrimeExpTimestamp = getTimestamp(responseData.expires);
         var resExpTimestamp = Math.floor(Date.now() / 1000);
 
@@ -176,6 +174,29 @@ $randStr = generateRandomString();
           $("#signupform-email").val(responseData.email);
           buildUsername();
         }
+
+		var x = document.getElementById("need_cal");
+		if (window.getComputedStyle(x).display === "none") {
+			var need_cal=true; 
+			$("#need_cal").show();
+		} else  { var need_cal=false; }
+		
+		$('#club-id option').attr('selected', false);
+		var club = document.getElementById('club-id').options;
+	
+		var options='';
+		for (var i = 0; i < club.length; i++) {
+			if (responseData.clubs.includes(club[i].value)) {
+				options += '<option value="'+club[i].value+'" selected >'+club[i].text+'</option>';
+			} else {
+				options += '<option value="'+club[i].value+'">'+club[i].text+'</option>';
+			}
+		}
+		document.getElementById("club-id").innerHTML = options;
+		$('club-id').trigger('change');
+		$('club-id').trigger("select2:updated");
+
+		if (need_cal) {$("#need_cal").hide();}
       },
       error: function (responseData, textStatus, errorThrown) {
         $("#events-poc_name").val('Valid Badge holde not found');
@@ -192,7 +213,7 @@ $randStr = generateRandomString();
     var fname = $("#signupform-f_name").val().replace(/ |\./g,"");
     var lname = $("#signupform-l_name").val().replace(/ |\./g,"");
     var priv = '';
-   
+
 	var sel_opt =document.getElementById("privilege").value;
 	 if (sel_opt==1) {priv = 'root'; }
     else if (sel_opt==2) { priv = 'adm'; }
