@@ -13,6 +13,7 @@ use backend\models\Params;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 
+try {
 $agc_event = Events::find()->where(['e_date' => date('Y-m-d',strtotime(yii::$app->controller->getNowTime())),'e_status'=>'0'])->andWhere(['!=', 'e_type', 'cio'])->all();
 $param = Params::find()->one();
 $urlStatus = yii::$app->controller->getCurrentUrl();
@@ -360,3 +361,8 @@ foreach($agc_event as $an_event){
 
 <?php } ?>
 </script>
+
+<?php } 
+catch (Exception $e) {
+	echo '<br><br><h3>Database is Down Please notify Staff</h3>';
+} ?>
