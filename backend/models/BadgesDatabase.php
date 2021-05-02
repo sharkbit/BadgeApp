@@ -24,7 +24,6 @@ use Yii;
  * @property string $phone_op
  * @property string $ice_contact
  * @property string $ice_phone
- * @property string $club_name
  * @property integer $club_id
  * @property integer $mem_type
  * @property integer $primary
@@ -43,8 +42,9 @@ class BadgesDatabase extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
-	public $club_name;
+	public $club_id;
 	public $pagesize;
+	public $remarks_temp;
 	
     public static function tableName() {
         return 'badges';
@@ -57,15 +57,14 @@ class BadgesDatabase extends \yii\db\ActiveRecord {
         return [
             [['prefix', 'first_name', 'last_name', 'address', 'city', 'state', 'zip', 'club_id', 'mem_type', 'incep', 'expires', 'wt_date', 'remarks'], 'required'],
             [['address', 'gender', 'qrcode', 'remarks', 'status', 'soft_delete'], 'string'],
-            [['badge_number', 'club_id', 'mem_type', 'primary','email_vrfy'], 'integer'],
-            [['incep', 'expires', 'wt_date', 'created_at', 'updated_at'], 'safe'],
+            [['badge_number', 'mem_type', 'primary','email_vrfy'], 'integer'],
+            [['incep', 'club_id', 'expires', 'wt_date', 'created_at', 'updated_at'], 'safe'],
             [['prefix', 'suffix'], 'string', 'max' => 15],
             [['first_name'], 'string', 'max' => 20],
             [['last_name', 'city', 'phone', 'phone_op', 'ice_phone'], 'string', 'max' => 25],
             [['state', 'zip'], 'string', 'max' => 10],
             [['yob'], 'integer', 'min' =>1900,'max' => 9999],
             [['email', 'ice_contact'], 'string', 'max' => 40],
-            [['club_name'], 'string', 'max' => 52],
             [['wt_instru'], 'string', 'max' => 255],
             [['badge_number'], 'unique'],
         ];
@@ -94,8 +93,7 @@ class BadgesDatabase extends \yii\db\ActiveRecord {
             'phone_op' => 'Phone Op',
             'ice_contact' => 'Ice Contact',
             'ice_phone' => 'Ice Phone',
-            'club_name' => 'Club Name',
-            'club_id' => 'Club Name',
+            'club_id' => 'Club(s)',
             'mem_type' => 'Mem Type',
             'primary' => 'Primary',
             'incep' => 'Incep',

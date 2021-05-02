@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use Yii;
+use backend\models\Badges;
 use backend\models\BadgesDatabase;
 use backend\models\search\BadgesDatabaseSearch;
 use backend\controllers\SiteController;
@@ -49,7 +50,8 @@ class RangeBadgeDatabaseController extends SiteController {
 		$model = BadgesDatabase::find()->where(['badge_number'=>$badge_number])->one();
 		
 		if ($model->load(Yii::$app->request->post())) {
-			BadgesController::cleanBadgeData($model);
+			$model->remarks_temp='';
+			$model = (new Badges)->cleanBadgeData($model,true);
 
 			if ($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Badge Updated');

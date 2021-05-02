@@ -27,13 +27,8 @@ use backend\models\clubs;
     <?= $form->field($model, 'phone_op')->textInput() ?>
     <?= $form->field($model, 'ice_contact')->textInput() ?>
     <?= $form->field($model, 'ice_phone')->textInput() ?>
- <!--   <?php //= $form->field($model, 'club_id')->textInput() ?> -->
-	<div class="form-group" >
-	<?php echo Html::label("Club Name"); ?>
-	<?php echo Html::dropDownList("new_club",(new clubs)->getMyClubs($model->badge_number) ,(new clubs)->getClubList(),['id'=>'badgesdatabase-clubs','multiple'=>true, 'size'=>false]), PHP_EOL; ?>
-	</div>
-
-	<?= $form->field($model, 'mem_type')->dropDownList((new Badges)->getMemberShipList()).PHP_EOL; ?>
+    <?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false),['value'=>(new clubs)->getMyClubs($model->badge_number),'multiple'=>true]).PHP_EOL; ?>
+    <?= $form->field($model, 'mem_type')->dropDownList((new Badges)->getMemberShipList()).PHP_EOL; ?>
     <?= $form->field($model, 'primary')->textInput() ?>
     <?= $form->field($model, 'incep')->textInput() ?>
     <?= $form->field($model, 'expires')->textInput() ?>
@@ -52,5 +47,5 @@ use backend\models\clubs;
 </div>
 
 <script>
-$("#badgesdatabase-clubs").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
+$("#badgesdatabase-club_id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
 </script>
