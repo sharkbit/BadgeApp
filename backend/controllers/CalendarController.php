@@ -49,8 +49,8 @@ class CalendarController extends AdminController {
 		if ($model->load(Yii::$app->request->post())) {
 			//yii::$app->controller->createLog(true, 'trex_B_C_CalC:50 post', var_export($_POST,true));
 			// Save
-			$model->start_time 	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->start_time")) ;
-			$model->end_time	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->end_time")) ;
+			$model->start_time 	= date('H:i:s', strtotime("$model->event_date $model->start_time")) ;
+			$model->end_time	= date('H:i:s', strtotime("$model->event_date $model->end_time")) ;
 			$model->event_date .= ' 00:00:00';
 			if(!$model->rollover) { $model->rollover = 0; } else { $model->rollover = $model->rollover; }
 			$model->facility_id = str_replace('"', '',json_encode($model->facility_id));
@@ -65,8 +65,8 @@ class CalendarController extends AdminController {
 
 			if($model->recur_every) {
 				if(isset($model->recurrent_start_date)) {
-					$model->recurrent_start_date = date('Y-m-d H:i:s',strtotime(date('Y')." ".$model->recurrent_start_date));
-					$model->recurrent_end_date = date('Y-m-d H:i:s',strtotime(date('Y')." ".$model->recurrent_end_date));
+					$model->recurrent_start_date = date('m-d',strtotime(date('Y')." ".$model->recurrent_start_date));
+					$model->recurrent_end_date = date('m-d',strtotime(date('Y')." ".$model->recurrent_end_date));
 				}
 				$model->recur_week_days = $this->GetPattern($_POST);
 				if(($model->recur_week_days==null) && ((int)$model->deleted != 1 )) {
@@ -246,7 +246,7 @@ if($tst) {
 		if ((!$internal) && (isset($_POST['AgcCal']['recur_every'])) && ($_POST['AgcCal']['recur_every']==1)){
 			$real_pattern = $this->GetPattern($_POST);
 			if($real_pattern) {
-				$myEventDates = $this->getEvents($_POST['AgcCal']['recurrent_start_date'],$_POST['AgcCal']['recurrent_end_date'],$real_pattern);
+				$myEventDates = $this->getEvents(date('Y').' '.$_POST['AgcCal']['recurrent_start_date'],date('Y').' '.$_POST['AgcCal']['recurrent_end_date'],$real_pattern);
 				if(!in_array($eDate,$myEventDates)) {
 					$inPattern=array('chkpat'=>'success','inPattern'=>$eDate.' is not in the pattern scope you specified.');
 				}
@@ -458,7 +458,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 						'data'=>($force_order)? 'Forcing Priority':'Normal Priority'];
 					$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Future Events");
-					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days);
+					$myEventDates = $this->getEvents(date('Y').'-'.$model->recurrent_start_date,date('Y').'-'.$model->recurrent_end_date,$model->recur_week_days);
 
 					$model = $this->createRecCalEvent($model,$myEventDates,$force_order,false,$tst);
 					if($force_order) { return $this->redirect(['recur']); } else {
@@ -492,8 +492,8 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 
         if ($model->load(Yii::$app->request->post())) {
 
-			$model->start_time 	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->start_time")) ;
-			$model->end_time	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->end_time")) ;
+			$model->start_time 	= date('H:i:s', strtotime("$model->event_date $model->start_time")) ;
+			$model->end_time	= date('H:i:s', strtotime("$model->event_date $model->end_time")) ;
 
 			$model->club_id = (int)$model->club_id;
 			$model->event_status_id = (int)$model->event_status_id;
@@ -505,8 +505,8 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 				$model->conflict = 0;  $model->approved = 1; } else { $model->conflict = 1; }
 
 			if(isset($model->recurrent_start_date)) {
-				$model->recurrent_start_date = date('Y-m-d H:i:s',strtotime('2000 '.$model->recurrent_start_date));
-				$model->recurrent_end_date = date('Y-m-d H:i:s',strtotime('2000 '.$model->recurrent_end_date));
+				$model->recurrent_start_date = date('m-d',strtotime(date('Y').' '.$model->recurrent_start_date));
+				$model->recurrent_end_date = date('m-d',strtotime(date('Y').' '.$model->recurrent_end_date));
 			}
 
 			if($model->recur_every) {
@@ -691,7 +691,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 
 	public function getEvents($eStart, $eEnd, $ePat, $eco=false) {
 		$whatYear= intval(date('Y'))+1;
-
+ yii::$app->controller->createLog(true, 'trex_eStart', var_export($eStart,true));
 		if (strtotime($eStart) > strtotime($eEnd)) {  //start date before the end date [Nov thru Feb]
 			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) {
 				if($eco) { echo "Start B";}

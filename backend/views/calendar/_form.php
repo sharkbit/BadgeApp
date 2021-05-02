@@ -72,8 +72,8 @@ if ($model->recur_every && $model->recurrent_calendar_id != 0 ) {
     echo " (Past: <B>".$data[0]['past']."</b> Future: <B>".$data[0]['fut'].")</b><hr />";
     echo $say;
 
-    $model->recurrent_start_date = date('d M',strtotime($model->recurrent_start_date));
-    $model->recurrent_end_date = date('d M',strtotime($model->recurrent_end_date));
+    $model->recurrent_start_date = date('d M',strtotime(date('y').'-'.$model->recurrent_start_date));
+    $model->recurrent_end_date = date('d M',strtotime(date('y').'-'.$model->recurrent_end_date));
     $Div_recur='';
  }
 

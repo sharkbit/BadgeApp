@@ -525,3 +525,30 @@ DROP COLUMN `club_id`;
 -- Mass Email Reply TO
 ALTER TABLE `BadgeDB`.`mass_email` 
 ADD COLUMN `mass_reply_name` VARCHAR(100) NULL DEFAULT NULL AFTER `mass_reply_to`;
+
+--v2.2 Converted DateTime to Time fields
+ALTER TABLE `associat_agcnew`.`agc_calendar` 
+ADD COLUMN `s_time` TIME NULL DEFAULT NULL AFTER `start_time`,
+ADD COLUMN `e_time` TIME NULL DEFAULT NULL AFTER `end_time`;
+UPDATE `associat_agcnew`.`agc_calendar` SET s_time=time(start_time), e_time=time(end_time);
+
+ALTER TABLE `associat_agcnew`.`agc_calendar` 
+DROP COLUMN `end_time`,
+DROP COLUMN `start_time`;
+
+ALTER TABLE `associat_agcnew`.`agc_calendar` 
+CHANGE COLUMN `s_time` `start_time` TIME NULL DEFAULT NULL ,
+CHANGE COLUMN `e_time` `end_time` TIME NULL DEFAULT NULL ;
+
+ALTER TABLE `associat_agcnew`.`agc_calendar` 
+ADD COLUMN `recurrent_st_date` VARCHAR(5) NULL DEFAULT NULL AFTER `recurrent_start_date`,
+ADD COLUMN `recurrent_en_date` VARCHAR(5) NULL DEFAULT NULL AFTER `recurrent_end_date`;
+UPDATE `associat_agcnew`.`agc_calendar` SET recurrent_st_date=SUBSTRING(recurrent_start_date,6,5), recurrent_en_date=SUBSTRING(recurrent_end_date,6,5) where recurrent_start_date is not null;
+
+ALTER TABLE `associat_agcnew`.`agc_calendar` 
+DROP COLUMN `recurrent_start_date`,
+DROP COLUMN `recurrent_end_date`;
+
+ALTER TABLE `associat_agcnew`.`agc_calendar` 
+CHANGE COLUMN `recurrent_st_date` `recurrent_start_date` VARCHAR(5) NULL DEFAULT NULL,
+CHANGE COLUMN `recurrent_en_date` `recurrent_end_date` VARCHAR(5) NULL DEFAULT NULL;
