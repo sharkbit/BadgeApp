@@ -55,7 +55,12 @@ class AccountsController extends SiteController {
 
     public function actionCreate() {
 		$model = new SignupForm();
-		
+
+		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+			Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+			return \yii\widgets\ActiveForm::validate($model);
+		}
+
 		if ($model->load(Yii::$app->request->post())) {
 			$model->full_name= $model->f_name." ".$model->l_name;
 			$model->privilege = str_replace('"',"", json_encode($model->privilege));

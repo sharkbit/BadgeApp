@@ -29,7 +29,7 @@ $randStr = generateRandomString();
 <div class="site-signup">
 
 	 <h2><?= Html::encode($this->title) ?></h2><hr />
-	<?php $form = ActiveForm::begin(['id' => 'form_signup']); ?>
+	<?php $form = ActiveForm::begin(['id' => 'form_signup','enableAjaxValidation' => true]); ?>
 	<input hidden id='RandStr' value='<?=$randStr ?>' />
 	<div class="row">
 		<div class="col-xs-4 col-sm-3 col-md-2">

@@ -43,7 +43,6 @@ class User extends \yii\db\ActiveRecord {
 			[['company','r_user'], 'string', 'max' => 45],
             [['username'], 'unique','message' => 'This username has already been taken.'],
             [['email'], 'unique','message' => 'This email has already been taken.'],
-            [['badge_number','password_reset_token'], 'unique','message' => 'Try new password.'],
         ];
     }
 
