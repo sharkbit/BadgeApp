@@ -740,7 +740,7 @@ if($eco) {
 		if (isset($myPat->daily)) {
  if($eco) { echo "Daily<br>"; }
 			if ($myPat->daily=='wd') {
-					for ($i = $Date_Start; $i < $Date_Stop; $i = strtotime('+1 day', $i)) {
+					for ($i = $Date_Start; $i <= $Date_Stop; $i = strtotime('+1 day', $i)) {
 if($eco) { echo '<br>'.strtolower(date('D', $i)) ; }
 						if (!in_array(strtolower(date('D', $i)),['sat','sun'])) {
 if($eco) { echo "** ".date('Y-m-d',$i); }
@@ -750,7 +750,7 @@ if($eco) { echo "** ".date('Y-m-d',$i); }
 						}
 					}
 			} else {
-				for ($i = $Date_Start; $i < $Date_Stop; $i = strtotime('+'.$myPat->daily.' day', $i)) {
+				for ($i = $Date_Start; $i <= $Date_Stop; $i = strtotime('+'.$myPat->daily.' day', $i)) {
 					array_push($myEventDates,date('Y-m-d',$i));
 				}
 			}
@@ -763,7 +763,7 @@ if($eco) { echo "Weekly<br>"; }
 			} else {$skip=0;}
 
 			$cnt=0; $skip_cnt=0; $skip_now=false;
-			for ($i = $Date_Start; $i < $Date_Stop; $i = strtotime('+1 day', $i)) {
+			for ($i = $Date_Start; $i <= $Date_Stop; $i = strtotime('+1 day', $i)) {
 				$cnt++; if (($cnt==8) && ($skip>0)) {$skip_now=true;}
 				if ((in_array(strtolower(date('D', $i)),$myPat->days)) && ($skip_now==false)) {
 					if ($i >=strtotime($today)) {
@@ -782,7 +782,7 @@ if($eco) { echo "Monthly<br>"; }
 			$cnt=1;
 
 if($eco) { echo  "s: ".date('m',$Date_Start). ' e:'. (date('m',$Date_Stop)+1).'<br>'; }
-			for ($i = date('m',$Date_Start); $i < date('m',$Date_Stop)+1; $i++) {
+			for ($i = date('m',$Date_Start); $i <= date('m',$Date_Stop)+1; $i++) {
 				$skip_now=true;
 				if ($cnt == 1) {
 					$skip_now=false;
