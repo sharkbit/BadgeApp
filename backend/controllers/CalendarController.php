@@ -127,18 +127,21 @@ class CalendarController extends AdminController {
 	public function actionDelete($id,$type='s',$redir='index') {
 		$model = $this->findModel($id);
 		if ($model) {
+			$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'changed'=>'Deleted by '.$_SESSION['user'],'data'=>"Record marked as Deleted."];
+			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
+
 			if ($type=='s') {
-					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
+					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "calendar_id = ".$model->calendar_id);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Deleted Calendar item (s): ','".$model->event_name.'('.$model->calendar_id.')');
 
 			} else {
 				if ((int)$model->recurrent_calendar_id > 0) {
-					AgcCal::UpdateAll(['deleted'=>1], "recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
-					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
+					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
+					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "calendar_id = ".$model->calendar_id);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Deleted Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 
 				} else {
-					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
+					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "calendar_id = ".$model->calendar_id);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Deleted Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 				}
 			}
