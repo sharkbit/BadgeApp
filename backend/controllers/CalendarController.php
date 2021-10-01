@@ -451,7 +451,11 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 					if ((int)$model->deleted == 1 ) { return json_encode(['status'=>'error','msg'=>"Event has been deleted, can't republish"]); }
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','".$model->event_name.'('.$model->calendar_id.')');
 
-					$nowTime = yii::$app->controller->getNowTime();
+					if ($force_order) {
+						$nowTime = date('Y-01-01 00:00:00', strtotime(yii::$app->controller->getNowTime() . " + 1 year"));
+					} else {
+						$nowTime = yii::$app->controller->getNowTime();
+					}
 					$sql = "DELETE from associat_agcnew.agc_calendar where recurrent_calendar_id = ".$id." and  event_date >= '".$nowTime."'";
 					$command = Yii::$app->db->createCommand($sql);
 					$saveOut = $command->execute();
@@ -461,8 +465,9 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 						'data'=>($force_order)? 'Forcing Priority':'Normal Priority'];
 					$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Future Events");
-					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days);
+					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,True);
 
+ yii::$app->controller->createLog(true, 'trex-eDates', var_export($myEventDates,true));
 					$model = $this->createRecCalEvent($model,$myEventDates,$force_order,false,$tst);
 					if($force_order) { return $this->redirect(['recur']); } else {
 					return $this->redirect(['update', 'id' => $model->recurrent_calendar_id]);}
@@ -692,11 +697,17 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 		return $myPat;
 	}
 
-	public function getEvents($eStart, $eEnd, $ePat, $eco=false) {
+	public function getEvents($eStart, $eEnd, $ePat, $eco=true, $rePub=false) {
 		$whatYear= intval(date('Y'))+1;
 
 		if (strtotime($eStart) > strtotime($eEnd)) {  //start date before the end date [Nov thru Feb]
-			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) {
+			if($rePub) {
+				if($eco) { echo "Start E";}
+				$myEventDatesC = $this->getEventDates($whatYear.'-01-01',$eEnd,$ePat,$whatYear,$eco);
+				$myEventDatesD = $this->getEventDates($eStart,$whatYear.'-12-31',$ePat,$whatYear,$eco);
+				$datesFound = array_merge($myEventDatesC,$myEventDatesD);
+			}
+			elseif (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) {
 				if($eco) { echo "Start B";}
 				$myEventDatesA = $this->getEventDates(date('Y').'-01-01',$eEnd,$ePat,date('Y'),$eco);
 				$myEventDatesB = $this->getEventDates($eStart,date('Y').'-12-31',$ePat,date('Y'),$eco);
@@ -710,7 +721,11 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 				$datesFound = array_merge($myEventDatesA,$myEventDatesB);
 			}
 		} else {  // normal date run [Feb thru June]
-			if (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) { // rollover
+			if ($rePub) {
+				if($eco) { echo "Start F";}
+				$datesFound = $this->getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco);
+			}
+			elseif (strtotime(yii::$app->controller->getNowTime()) > strtotime(date('Y').'-06-01 00:00:00')) { // rollover
 				if($eco) { echo "Start D";}
 				$myEventDatesA = $this->getEventDates($eStart,$eEnd,$ePat,date('Y'),$eco);
 				$myEventDatesB = $this->getEventDates($eStart,$eEnd,$ePat,$whatYear,$eco);
