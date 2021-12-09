@@ -5,7 +5,8 @@
 <div class="remarks-box">
     <div class="timeline-centered">
     <?php 
-    if(!empty($remakrs_logs))
+    if(!empty($remakrs_logs)) {
+	rsort($remakrs_logs);
     foreach ($remakrs_logs as $log) { ?>
         <article class="timeline-entry">
             <div class="timeline-entry-inner">
@@ -23,7 +24,7 @@
             </div>
         </article>
         
-    <?php } ?> 
+    <?php } } ?> 
             <article class="timeline-entry begin">
                 <div class="timeline-entry-inner">
                     <div class="timeline-icon" style="-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg);">
