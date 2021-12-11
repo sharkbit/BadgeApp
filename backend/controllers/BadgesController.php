@@ -492,6 +492,9 @@ class BadgesController extends AdminController {
 				if($model->payment_method <> 'creditnow') {
 					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee-$model->discounts ];
 					$MyCart = "[".rtrim( json_encode($MyCart),",")."]";
+					if(isset($_POST['cart'])) {
+						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
+					}
 
 					$savercpt = new CardReceipt();
 					$model->cc_x_id = 'x'.rand(100000000,1000000000);
@@ -998,6 +1001,9 @@ class BadgesController extends AdminController {
 				if($needRecpt) {
 					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee-$model->discount ];
 					$MyCart = "[".rtrim( json_encode($MyCart),",")."]";
+					if(isset($_POST['cart'])) {
+						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
+					}
 					$savercpt = new CardReceipt();
 					$savercpt->id = $model->cc_x_id;
 					$savercpt->badge_number = $model->badge_number;
