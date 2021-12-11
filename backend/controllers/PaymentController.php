@@ -64,8 +64,10 @@ class PaymentController extends AdminController {
 				if($myPost['first_name']=='') {$err=true;}  else { $first_name=trim($myPost['first_name']); }
 				if($myPost['last_name']=='') { $err=true;}  else { $last_name=trim($myPost['last_name']); }
 				if($myPost['mem_type']=='') { $err=true;}  else  { $memType=trim($myPost['mem_type']); }
-				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ])."]";
-
+				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
+				if(isset($_POST['cart'])) {
+					$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
+				}
 			} elseif($UseSub=='cert') {	// Certificate
 				$myPost=$_POST['Badges'];
 				if($model->cert_amount_due=='') { $err = true; } else { $cc_amount = $model->cert_amount_due; }
@@ -102,6 +104,7 @@ class PaymentController extends AdminController {
 				$MyCart = "[".json_encode(["item"=>"Guest Bracelet Fee","sku"=>$confParams->guest_sku,"ea"=>number_format($price_ea, 2, '.', ''),"qty"=>$model->guest_count,"price"=>number_format($cc_amount, 2, '.', '') ])."]";
 
 			} else {   		// Create
+			yii::$app->controller->createLog(true, 'trex-PC-fr-create', var_export($_POST,true));
 				if($model->amt_due=='') { $err = true; } 	else { $cc_amount = $model->amt_due; }
 				$Badge_price = $model->badge_fee - $model->discounts;
 				if($model->state=='') { $err = true; }		else { $cc_state = $model->state; }
@@ -111,7 +114,10 @@ class PaymentController extends AdminController {
 				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
 				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
 				if($model->mem_type=='') { $err = true; } 	else { $memType=trim($model->mem_type); }
-				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ])."]";
+				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
+				if(isset($_POST['cart'])) {
+					$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
+				}
 			}
 
 			if($model->cc_cvc=='') { $err = true; }
