@@ -14,7 +14,7 @@ $confParams  = Params::findOne('1');
 
 $is_dev=false;
 if(yii::$app->controller->hasPermission('sales/all')) {
-	$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card'];
+	$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card','online'=>'On Line'];
 	$pgLimited=false;
 } else {
 	$myList=[];
