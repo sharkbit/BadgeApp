@@ -63,13 +63,15 @@ class CardReceiptSearch extends CardReceipt {
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
+        if(isset($this->tx_date)) {
+			$query->andWhere($this->getWhere($this->tx_date,'tx_date'));
+		}
+		$query->andFilterWhere([
             'id' => $this->id,
         ]);
 		
 		if(isset($this->badge_number)) { $query->andFilterWhere(['like', 'badge_number', $this->badge_number]); }
-        if(isset($this->tx_date)) { $query->andFilterWhere(['like', 'tx_date', $this->tx_date]); }
-		if(isset($this->cart)) { $query->andFilterWhere(['like', 'cart', $this->cart]); }
+        if(isset($this->cart)) { $query->andFilterWhere(['like', 'cart', $this->cart]); }
 		if(isset($this->name)) { $query->andFilterWhere(['like', 'name', $this->name]); }
 		if(isset($this->amount)) { $query->andFilterWhere(['like', 'amount', $this->amount]); }
 		if(isset($this->tx_type)) { $query->andFilterWhere(['like', 'tx_type', $this->tx_type]); }
@@ -87,5 +89,26 @@ class CardReceiptSearch extends CardReceipt {
 		
 //yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
-    }
+	}
+
+	private function getWhere($mydate,$field) {
+		$two=false;
+		$query='';
+		if(isset($mydate) && $mydate!='') {
+			$two=strpos($mydate,'-');
+			if($two) {
+				if(strtotime(substr($mydate,0,10)) == strtotime(substr($mydate,13,23))) {
+					$query=" ".$field." like '".date('Y-m-d',strtotime(substr($mydate,0,10)))."%'";
+				} else {
+					$query=" ".$field." >= '".date('Y-m-d',strtotime(substr($mydate,0,10)))." 00:00' AND ".
+					            "".$field." <= '".date('Y-m-d',strtotime(substr($mydate,13,23)))." 23:59'";
+				}
+			} else {
+				$query=" ".$field." like '".date('Y-m-d',strtotime($mydate))."%'";
+			}
+		} else {
+			$query=" ".$field." like '".date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))."%'";
+		}
+		return $query;
+	}
 }
