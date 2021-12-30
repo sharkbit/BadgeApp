@@ -104,7 +104,6 @@ class PaymentController extends AdminController {
 				$MyCart = "[".json_encode(["item"=>"Guest Bracelet Fee","sku"=>$confParams->guest_sku,"ea"=>number_format($price_ea, 2, '.', ''),"qty"=>$model->guest_count,"price"=>number_format($cc_amount, 2, '.', '') ])."]";
 
 			} else {   		// Create
-			yii::$app->controller->createLog(true, 'trex-PC-fr-create', var_export($_POST,true));
 				if($model->amt_due=='') { $err = true; } 	else { $cc_amount = $model->amt_due; }
 				$Badge_price = $model->badge_fee - $model->discounts;
 				if($model->state=='') { $err = true; }		else { $cc_state = $model->state; }
