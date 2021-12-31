@@ -106,6 +106,17 @@ foreach ($whitelist as $item) {
 	<?= $form->field($model, 'qb_oa2_refresh_date')->textInput(['disabled'=>true,'maxlength'=>true]) ?>
 	</div>
 </div>
+
+<h3>Discounts</h2>
+<div class="row">
+	<div class="col-xs-6 col-sm-6">
+	<?= $form->field($model, 'sku_student')->textInput(['maxlength'=>true]) ?>
+	</div>
+	<div class="col-xs-6 col-sm-6">
+	<?= $form->field($model, 'sku_wc_discount')->textInput(['maxlength'=>true]) ?>
+	</div>
+</div>
+
 <div class="row">    
 	<div class="form-group">
 		<?= Html::submitButton('Update', ['class' => 'btn btn-primary pull-right']) ?>

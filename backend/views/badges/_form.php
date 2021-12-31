@@ -185,8 +185,7 @@ $confParams  = Params::findOne('1');
                     <?= $form->field($model, 'badge_fee')->textInput(['readOnly'=>true,'class'=>'form-control Money']); ?>
                 </div>
 				<div class="col-xs-6 col-sm-12">
-                <?= $form->field($model, 'discounts')->widget(MaskMoney::classname(), [
-                        'pluginOptions' => ['allowNegative' => false]]); ?>
+					<?= $form->field($model, 'discounts')->dropDownList(['n:0'=>'None','s:10'=>'Student'],['value'=>'n:0','multiple'=>true,'size'=>2]).PHP_EOL; ?>
                 </div>
 				<div id="div_friend_block" style="display:none" >
                 <div class="col-xs-6 col-sm-12" >
@@ -318,7 +317,15 @@ $confParams  = Params::findOne('1');
 		$("#cart").val(JSON.stringify(cart));
 
 		var badgeFee = parseInt($("#badges-badge_fee").val());
-		var discount = parseInt($("#badges-discounts").val());
+		var discount = 0;   
+        for (var option of document.getElementById('badges-discounts').options)	{
+			if (option.selected) {
+				if(option.value.length > 2){
+					var d_opt=option.value.split(":")
+					discount +=d_opt[1];
+				}
+			}
+		}
 		var amountDue = badgeFee - discount;
 		if(amountDue<0) {
 			amountDue = 0.00;

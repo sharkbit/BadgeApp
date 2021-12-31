@@ -295,7 +295,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 
 		<?= $form1->field($badgeSubscriptions, 'badge_fee')->textInput(['readOnly'=>true]).PHP_EOL; ?>
 		<?= $form1->field($badgeSubscriptions, 'redeemable_credit')->textInput(['value'=>'']).PHP_EOL; ?>
-		<?= $form1->field($badgeSubscriptions, 'discount')->textInput([]).PHP_EOL; ?>
+		<?= $form1->field($badgeSubscriptions, 'discount')->dropDownList(['n:0'=>'None'],['value'=>'n:0','multiple'=>true,'size'=>2]).PHP_EOL; ?>
 		<div class="col-xs-12">
 		<p class="pull-right"><a href="" class="badge_store_div" > Extras </a></p></div>
 		<div class="form-group" id="extras_store_div" style="display:none" > <!-- class="col-xs-12 col-sm-12"  -->
@@ -524,7 +524,16 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		$("#cart").val(JSON.stringify(cart));
 
 		var badgeFee = $("#badgesubscriptions-badge_fee").val();
-		var discount = $("#badgesubscriptions-discount").val();
+		var discount = 0;   
+        for (var option of document.getElementById('badgesubscriptions-discount').options)	{
+			if (option.selected) {
+				if(option.value.length > 2){
+					var d_opt=option.value.split(":")
+					discount +=d_opt[1];
+				}
+			}
+		}
+		
 		var amountDue = badgeFee - discount;
 		if(amountDue<0) {
 			amountDue = 0.00;

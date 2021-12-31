@@ -30,12 +30,11 @@ class PaymentController extends AdminController {
 		} elseif(isset($_POST['Guest']['payment_type'])) {
 			$model = new Guest();
 			$UseSub = 'guest';
-//  yii::$app->controller->createLog(false, 'trex_C_PayCtl:132', var_export($_POST,true));
 		} else {
 			$model = new Badges();
 			$UseSub = false;
 		}
-
+//yii::$app->controller->createLog(true, 'trex_C_PayCtl', var_export($_REQUEST,true));
 		if ($model->load(Yii::$app->request->post())) {
 			$confParams = Params::findOne('1');
 
@@ -56,7 +55,6 @@ class PaymentController extends AdminController {
 			if($UseSub=='update') {	// Update
 				$myPost=$_POST['Badges'];
 				if($model->amount_due=='') { $err = true; } else { $cc_amount = $model->amount_due; }
-				$Badge_price = $model->badge_fee - $_POST['BadgeSubscriptions']['discount'];
 				if($myPost['state']=='') { $err = true; }   else { $cc_state = $myPost['state']; }
 				if($myPost['zip']=='') { $err = true; }     else { $cc_zip = $myPost['zip']; }
 				if($myPost['address']=='') { $err = true; } else { $cc_address = $myPost['address']; }
@@ -64,7 +62,17 @@ class PaymentController extends AdminController {
 				if($myPost['first_name']=='') {$err=true;}  else { $first_name=trim($myPost['first_name']); }
 				if($myPost['last_name']=='') { $err=true;}  else { $last_name=trim($myPost['last_name']); }
 				if($myPost['mem_type']=='') { $err=true;}  else  { $memType=trim($myPost['mem_type']); }
-				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
+				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
+				// not storing multiple discounts yet.					
+				if(is_array($_POST['BadgeSubscriptions']['discount'])) {
+					foreach ($_POST['BadgeSubscriptions']['discount'] as $d_item ) {
+						$d_discount = explode(":",$d_item);
+						if($d_discount[0]=='w'){
+							$MyCart = json_encode(array_merge(json_decode($MyCart),
+							[ ["item"=>'Discount - Work Credits',"sku"=>$confParams->sku_wc_discount,"ea"=>'-'.$d_discount[1] ,"qty"=>"1","price"=>'-'.$d_discount[1] ] ] ) );
+						}
+					}
+				}
 				if(isset($_POST['cart'])) {
 					$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
 				}
@@ -105,7 +113,6 @@ class PaymentController extends AdminController {
 
 			} else {   		// Create
 				if($model->amt_due=='') { $err = true; } 	else { $cc_amount = $model->amt_due; }
-				$Badge_price = $model->badge_fee - $model->discounts;
 				if($model->state=='') { $err = true; }		else { $cc_state = $model->state; }
 				if($model->zip=='') { $err = true; }		else { $cc_zip = $model->zip; }
 				if($model->address=='') { $err = true; }	else { $cc_address = $model->address; }
@@ -113,7 +120,24 @@ class PaymentController extends AdminController {
 				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
 				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
 				if($model->mem_type=='') { $err = true; } 	else { $memType=trim($model->mem_type); }
-				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
+				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
+					// not storing multiple discounts yet.					
+				if(is_array($_POST['Badges']['discounts'])) {
+					$discount=0;
+					foreach ($_POST['Badges']['discounts'] as $d_item ) {
+						$d_discount = explode(":",$d_item);
+						if($d_discount[0]=='s'){	
+							$stu =  (new StoreItems)->find()->where(['sku'=>$confParams->sku_student])->one();
+							yii::$app->controller->createLog(true, 'trex-sku_student', var_export($stu,true));
+							if($stu){
+								$discount += $stu->price;
+								$MyCart = json_encode(array_merge(json_decode($MyCart),
+									[ ["item"=>'Discount - Student',"sku"=>$confParams->sku_student,"ea"=>'-'.$stu->price ,"qty"=>"1","price"=>'-'.$stu->price ] ] ) );
+							}
+						}
+					}
+					$model->discounts=$discount;
+				} else { $model->discounts=0; }
 				if(isset($_POST['cart'])) {
 					$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
 				}
