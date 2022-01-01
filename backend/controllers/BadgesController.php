@@ -1053,7 +1053,7 @@ class BadgesController extends AdminController {
 				}
 
 				$badgeRecords->expires = $myexpires;
-				$badgeRecords->work_credits = $badgeRecords->work_credits - $model->redeemable_credit;
+				$badgeRecords->work_credits = (int)$badgeRecords->work_credits - (int)$model->redeemable_credit;
 				$badgeRecords->sticker = $model->sticker;
 				$badgeRecords->wt_date = $wt_date_reIssue !=null ? $wt_date_reIssue : $badgeRecords->wt_date;
 				$badgeRecords->wt_instru = $wt_date_reIssue !=null ? $wt_instru_reIssue : $badgeRecords->wt_instru;
