@@ -530,3 +530,31 @@ ADD COLUMN `mass_reply_name` VARCHAR(100) NULL DEFAULT NULL AFTER `mass_reply_to
 ALTER TABLE `BadgeDB`.`params` 
 ADD COLUMN `sku_student` INT NULL DEFAULT NULL AFTER `check_ip_name`,
 ADD COLUMN `sku_wc_discount` INT NULL DEFAULT NULL AFTER `sku_student`;
+
+-- RSO Report
+CREATE TABLE `BadgeDB`.`rso_reports` (
+  `id` INT NOT NULL,
+  `rso` VARCHAR(255) NOT NULL,
+  `date` DATE NOT NULL,
+  `shift` VARCHAR(2) NOT NULL,
+  `shift_anom` TEXT NULL DEFAULT NULL,
+  `notes` TEXT NULL DEFAULT NULL,
+  `par_50` INT NULL,
+  `par_100` INT NULL,
+  `par_200` INT NULL,
+  `par_steel` INT NULL,
+  `par_nm_hq` INT NULL,
+  `par_m_hq` INT NULL,
+  `par_trap` INT NULL,
+  `par_arch` INT NULL,
+  `par_pel` INT NULL,
+  `par_spr` INT NULL,
+  `par_cio_stu` INT NULL,
+  `par_act` INT NULL,
+  `cash_bos` DECIMAL(7,2) NULL,
+  `cash_eos` DECIMAL(7,2) NULL,
+  `closing` TEXT NULL DEFAULT NULL,
+  `closed` INT(1) NULL DEFAULT 0,
+  `remarks` TEXT NULL DEFAULT NULL,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  PRIMARY KEY (`id`));
