@@ -16,23 +16,36 @@ class RsoRptController extends AdminController {
 	 */
 
 	public function actionCurrent() {
-		yii::$app->controller->createLog(true, 'trex_B-C-RSO_Cur-Req', var_export($_REQUEST,true));
-		$model = new RsoReports();
-
-		if ($model->load(Yii::$app->request->post())) {
+		if(Yii::$app->request->post()) {
+			$model = $this->findModel($_POST['RsoReports']['id']);
+			$model->load(Yii::$app->request->post());
+			$model->rso = str_replace('"',"", json_encode($model->rso));
 			$model->save();
-	//		$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Privilege Created : '.$model->id);
-	//		Yii::$app->getSession()->setFlash('success', 'Privilege has been created');
-	//		return $this->redirect(['index', 'id' => $model->id]);
-	//	} else {
+			if($model->closed==1) {
+				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
+				return $this->redirect(['index']);
+			}
 		}
-			return $this->render('current', [
-				'model' => $model,
-			]);
-	//	}
+
+		elseif(Yii::$app->request->get()) {
+			if($_GET['close']==1) {
+				$model = $this->findModel($_GET['id']);
+				$model->closed = 1;
+				$model->rso = str_replace('"',"", json_encode($model->rso));
+				$model->save();
+				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
+				return $this->redirect(['index']);
+			}
+		}
+		$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date'=>SORT_DESC])->one();
+		if(!$model) {$model = new RsoReports;}
+
+		return $this->render('current', [
+			'model' => $model,
+		]);
 	}
 
-	public function actionDelete() {
+	public function actionDelete($id=1) {
 		Yii::$app->getSession()->setFlash('error', 'Do you really want This?  Function not written yet.');
 		//Verify no user has selected permission
 			//delete if none
@@ -50,20 +63,19 @@ class RsoRptController extends AdminController {
 	}
 
 	public function actionUpdate($id=1) {
-		yii::$app->controller->createLog(true, 'trex_B-C-RSO_Cur-Req', var_export($_REQUEST,true));
 		$model = $this->findModel($id);
 
 		if ($model->load(Yii::$app->request->post())) {
 			if (!$model->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
-			yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));	
-			}	
+			yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
+			}
 
 		if($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Report has been updated.');
 			 } else {
-				 yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));	
+				 yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
 			 }
 			return $this->redirect(['update', 'id' => $model->id]);
 		} else {

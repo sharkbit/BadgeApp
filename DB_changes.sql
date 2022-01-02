@@ -532,29 +532,34 @@ ADD COLUMN `sku_student` INT NULL DEFAULT NULL AFTER `check_ip_name`,
 ADD COLUMN `sku_wc_discount` INT NULL DEFAULT NULL AFTER `sku_student`;
 
 -- RSO Report
-CREATE TABLE `BadgeDB`.`rso_reports` (
-  `id` INT NOT NULL,
-  `rso` VARCHAR(255) NOT NULL,
-  `date` DATE NOT NULL,
-  `shift` VARCHAR(2) NOT NULL,
-  `shift_anom` TEXT NULL DEFAULT NULL,
-  `notes` TEXT NULL DEFAULT NULL,
-  `par_50` INT NULL,
-  `par_100` INT NULL,
-  `par_200` INT NULL,
-  `par_steel` INT NULL,
-  `par_nm_hq` INT NULL,
-  `par_m_hq` INT NULL,
-  `par_trap` INT NULL,
-  `par_arch` INT NULL,
-  `par_pel` INT NULL,
-  `par_spr` INT NULL,
-  `par_cio_stu` INT NULL,
-  `par_act` INT NULL,
-  `cash_bos` DECIMAL(7,2) NULL,
-  `cash_eos` DECIMAL(7,2) NULL,
-  `closing` TEXT NULL DEFAULT NULL,
-  `closed` INT(1) NULL DEFAULT 0,
-  `remarks` TEXT NULL DEFAULT NULL,
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  PRIMARY KEY (`id`));
+DROP TABLE IF EXISTS `rso_reports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rso_reports` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `rso` varchar(255) NOT NULL,
+  `shift` varchar(2) NOT NULL,
+  `date` datetime DEFAULT NULL,
+  `shift_anom` text,
+  `notes` text,
+  `par_50` int DEFAULT NULL,
+  `par_100` int DEFAULT NULL,
+  `par_200` int DEFAULT NULL,
+  `par_steel` int DEFAULT NULL,
+  `par_nm_hq` int DEFAULT NULL,
+  `par_m_hq` int DEFAULT NULL,
+  `par_trap` int DEFAULT NULL,
+  `par_arch` int DEFAULT NULL,
+  `par_pel` int DEFAULT NULL,
+  `par_spr` int DEFAULT NULL,
+  `par_cio_stu` int DEFAULT NULL,
+  `par_act` int DEFAULT NULL,
+  `cash_bos` decimal(7,2) DEFAULT NULL,
+  `cash_eos` decimal(7,2) DEFAULT NULL,
+  `closing` text,
+  `closed` int DEFAULT '0',
+  `remarks` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;

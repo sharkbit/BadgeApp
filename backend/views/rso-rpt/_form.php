@@ -3,41 +3,39 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 if($model->isNewRecord) {
-	$model->date = date("Y-m-d",strtotime(yii::$app->controller->getNowTime()));
+	$model->date = date("Y-m-d H:i:s",strtotime(yii::$app->controller->getNowTime()));
 }
 ?>
 
-<div class="rso_rpt-form">
-<?php $form = ActiveForm::begin(['id'=>'rsoreportsform']); ?>
+<div class="rso_rpt-form" ng-controller="RsoReportFrom">
+<?php $form = ActiveForm::begin([
+                'action' => ['/rso-rpt/current'],
+                'method' => 'post',
+                'id'=>'rsoreportsformFilter'
+            ]); ?>
 
-<h2>Active Report</h2>
+<h2>Active Report:</h2>
 <div class="row">
 	<?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
 	<div class="col-xs-12 col-sm-2">
 		<?= $form->field($model, 'date')->textInput(['readonly' => true,'maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-6 col-sm-2">
-		<?= $form->field($model, 'shift')->dropDownList(['a'=>'aaa','b'=>'bbb']) ?>
+		<?= $form->field($model, 'shift')->dropDownList(['m'=>'Morning','e'=>'Evening']) ?>
 	</div>
-	<div class="col-xs-6 col-sm-3">
-		<?= $form->field($model, 'rso').PHP_EOL; ?>
+	<div class="col-xs-6 col-sm-8">
+		<?= $form->field($model, 'rso')->dropDownList($model->listRSOs(),['value'=>json_decode($model->rso),'multiple'=>true]).PHP_EOL; ?>
 	</div>
-	<div class="col-xs-6 col-sm-5">
+	<div class="col-xs-12 col-sm-12">
 		<?= $form->field($model, 'shift_anom')->textarea(['rows' => '1']).PHP_EOL; ?>
 	</div>
 	<div class="col-xs-12 col-sm-12">
 		<?= $form->field($model, 'notes')->textarea(['rows' => '1']).PHP_EOL; ?>
 	</div>
-	<div class="col-xs-12 col-sm-3">
-		<?php // $form->field($model, 'notes')->textInput(['maxlength' => true]) ?>
-	</div>
-	<div class="col-xs-12 col-sm-12">
-		<?php //  $form->field($model, 'notes').PHP_EOL; ?>
-	</div>
 </div>
 
-<h3>Participation</h3>
-<div class="row">
+<h3>Participation:</h3>
+<div class="row" style="background-color:WhiteSmoke;">
 	<div class="col-xs-3 col-sm-2 col-md-1">
 	<?= $form->field($model, 'par_50')->textInput(['maxlength'=>true]) ?>
 	</div>
@@ -77,7 +75,7 @@ if($model->isNewRecord) {
 </div>
 
 <h3>Cash:</h3>
-<div class="row">
+<div class="row" style="background-color:#ecf9f2;">
 	<div class="col-xs-6 col-sm-2">
 	<?= $form->field($model, 'cash_bos')->textInput(['maxlength'=>true]) ?>
 	</div>
@@ -95,7 +93,7 @@ if($model->isNewRecord) {
 
 <?php if(yii::$app->controller->hasPermission('params/update')) { ?>
 <div class="col-xs-6 col-sm-6">
-	<?= $form->field($model, 'closed')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'closed')->checkbox() ?>
 </div>
 <div class="col-xs-12 col-sm-6">
 	<?= $form->field($model, 'remarks')->textarea(['rows' => '1']).PHP_EOL; ?>
@@ -106,9 +104,7 @@ if($model->isNewRecord) {
 	<div class="col-xs-12 col-sm-12">
 		<div class="btn-group pull-right">
 			<?= Html::submitButton('<i class="fa fa-check" aria-hidden="true"></i> Save ', ['class' => 'btn btn-success','id'=>'save_btn']).PHP_EOL;  ?>
-
-			<?php // = Html::a('<i class="fa fa-check" aria-hidden="true"></i> Save ', ['current'], ['class' => 'btn btn-success ']) ?>
-			<?= Html::a('<i class="fa fa-check-double" aria-hidden="true"></i> Finalize ', ['curent'], ['class' => 'btn btn-warning ']) ?>
+			<?= Html::a('<i class="fa fa-check-double" aria-hidden="true"></i> Finalize ', ['current?id='.$model->id.'&close=1'], ['class' => 'btn btn-warning ']) ?>
 		</div>
 	</div>
 </div>
@@ -116,3 +112,10 @@ if($model->isNewRecord) {
 
 <?php ActiveForm::end(); ?>
 </div>
+
+<script>
+  $(document).ready(function (e) {
+    $("#rsoreports-rso").select2({placeholder_text_multiple:'Select RSOs',width: "100%",})
+  });
+</script>
+

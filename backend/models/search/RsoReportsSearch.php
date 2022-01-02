@@ -14,8 +14,7 @@ class RsoReportsSearch extends RsoReports {
 
     public function rules() {
         return [
-			//[['cash_bos','cash_eos','id','rso','par_50','par_100','par_200'], 'integer'],
-			[['closing','date','notes','shift','shift_anom'], 'safe'],
+			[['closed','date','rso','shift'], 'safe'],
         ];
     }
 
@@ -44,10 +43,22 @@ class RsoReportsSearch extends RsoReports {
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-        ]);
+        if(isset($this->id)) { $query->andFilterWhere(['id' => $this->id,]); }
 
+		if(isset($this->date) && ($this->date <>'')) {
+			$query->andFilterWhere(['like', 'date', $this->date]);}
+
+		if((isset($this->rso)) && ($this->rso!=''))	 {
+			$query->andWhere("JSON_CONTAINS(rso,'".$this->rso."')");
+		}
+
+		if(isset($this->shift) && ($this->shift <>'')) {
+			$query->andFilterWhere(['shift' => $this->shift,]);}
+
+		if(isset($this->closed) && ($this->closed <>'')) {
+			$query->andFilterWhere(['closed' => $this->closed,]);}
+        
+//yii::$app->controller->createLog(false, 'trex-B_M_S_RSO Rtp Query OK: ', var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }
 }
