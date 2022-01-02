@@ -38,6 +38,7 @@ class RsoReports extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'rso' => "RSO's",
+			'shift_anom'=> 'Shift Anomalies',
 			'par_50'=>'50 yrd',
 			'par_100'=>'100 yrd',
 			'par_200'=>'200 yrd',
@@ -52,6 +53,7 @@ class RsoReports extends \yii\db\ActiveRecord {
 			'par_act'=>'ACT',
 			'cash_bos'=>'Cash BOS',
 			'cash_eos'=>'Cash EOS',
+			'closing'=>'Closing Notes',
         ];
     }
 

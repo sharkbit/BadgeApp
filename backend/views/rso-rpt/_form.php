@@ -95,9 +95,6 @@ if($model->isNewRecord) {
 <div class="col-xs-6 col-sm-6">
 	<?= $form->field($model, 'closed')->checkbox() ?>
 </div>
-<div class="col-xs-12 col-sm-6">
-	<?= $form->field($model, 'remarks')->textarea(['rows' => '1']).PHP_EOL; ?>
-</div>
 <?php } ?>
 
 <div class="row">
@@ -111,6 +108,32 @@ if($model->isNewRecord) {
 <br />
 
 <?php ActiveForm::end(); ?>
+
+<?php if(yii::$app->controller->hasPermission('params/update')) { ?>
+<div class="row">
+	<div class="col-xs-12">
+		<?php 
+		$remakrs_logs = json_decode($model->remarks,true);
+		if(!empty($remakrs_logs)) {
+			rsort($remakrs_logs);
+		}
+		else {
+			$remakrs_logs = null;
+		}  
+	?>
+	</div>
+	<div class="col-xs-12">
+         <div class="row">
+            <div class="col-xs-12">
+                <h3> Remarks history </h3>
+            </div>
+            <div class="col-xs-12">
+                <?=$this->render('/badges/_remarks',['remakrs_logs'=>$remakrs_logs])?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
 </div>
 
 <script>

@@ -16,5 +16,11 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 	<li class="<?php if($urlStatus['actionId']=='stats')echo'active'; ?>"> 
 		<a href="<?=Url::to(['/rso-rpt/stats'])?>"> <span class="glyphicon glyphicon-stats"></span> Stats</a></li>
 <?php } ?>
+	<li class="<?php if($urlStatus['actionId']=='Stickers')echo'active'; ?>"> 
+		<a href="<?=Url::to(['/rso-rpt/index'])?>"> <span class="glyphicon glyphicon-sound-dolby"></span> Stickers</a></li>
+	<li class="<?php if($urlStatus['actionId']=='tickets')echo'active'; ?>"> 
+		<a href="<?=Url::to(['/rso-rpt/index'])?>"> <span class="glyphicon glyphicon-erase"></span> Tickets?</a></li>
+	<li class="<?php if($urlStatus['actionId']=='and')echo'active'; ?>"> 
+		<a href="<?=Url::to(['/rso-rpt/index'])?>"> <span class="glyphicon glyphicon-question-sign"></span> ...?</a></li>
 </ul>
 <br/>

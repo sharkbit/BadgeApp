@@ -18,8 +18,11 @@ class RsoRptController extends AdminController {
 	public function actionCurrent() {
 		if(Yii::$app->request->post()) {
 			$model = $this->findModel($_POST['RsoReports']['id']);
+			if(!$model) {$model = new RsoReports;}
 			$model->load(Yii::$app->request->post());
 			$model->rso = str_replace('"',"", json_encode($model->rso));
+			$model->closed=(int)$model->closed;
+			$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
 			$model->save();
 			if($model->closed==1) {
 				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
@@ -32,6 +35,7 @@ class RsoRptController extends AdminController {
 				$model = $this->findModel($_GET['id']);
 				$model->closed = 1;
 				$model->rso = str_replace('"',"", json_encode($model->rso));
+				$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
 				$model->save();
 				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
 				return $this->redirect(['index']);
@@ -71,7 +75,9 @@ class RsoRptController extends AdminController {
             // $query->where('0=1');
 			yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
 			}
-
+			$model->rso = str_replace('"',"", json_encode($model->rso));
+			$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
+			$model->closed=(int)$model->closed;
 		if($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Report has been updated.');
 			 } else {
@@ -85,11 +91,53 @@ class RsoRptController extends AdminController {
 		}
 	}
 
+	protected function AddRemarks($model, $comment) {
+		
+		$items=$model->getDirtyAttributes();
+		$obejectWithkeys = [
+            'rso' => "RSO's",
+			'shift_anom'=> 'Shift Anomalies',
+			'notes'=>'Notes',
+			'cash_bos'=>'Cash BOS',
+			'cash_eos'=>'Cash EOS',
+			'closing'=>'Closing Notes',
+			'closed'=>'Closed',
+		];
+
+		$responce = [];
+		foreach($items as $key => $item) {
+			if(array_key_exists($key,$obejectWithkeys)) {
+				$responce[] = $obejectWithkeys[$key];
+			}
+		}
+		sort($responce);
+		$dirty=implode(", ",$responce);
+			
+		$remarksOld = json_decode($model->remarks,true);
+		if($dirty) {
+			$cmnt = "Updated: ".$dirty;
+			$nowRemakrs = [
+				'created_at' => $this->getNowTime(),
+				'data' => $cmnt,
+				'changed' => $comment,
+			];
+			
+			if($remarksOld != '') {
+				array_push($remarksOld,$nowRemakrs);
+			} else {
+				$remarksOld = [
+					$nowRemakrs,
+				];
+			}
+		}		
+		return json_encode($remarksOld,true);
+	}
+
 	protected function findModel($id) {
 		if (($model = RsoReports::findOne($id)) !== null) {
 			return $model;
 		} else {
-			throw new NotFoundHttpException('The requested page does not exist.');
+			return false;
 		}
 	}
 }
