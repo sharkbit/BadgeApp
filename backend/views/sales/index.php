@@ -125,8 +125,8 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 					<tr><td>$X.41 </td> <td> - Pick Up Card</td></tr>
 					<tr><td>$X.41 </td> <td> - Expired Card</td></tr>
 					</table>
-				<a href='https://developer.elavon.com/#/api/eb6e9106-0172-4305-bc5a-b3ebe832f823.rcosoomi/versions/5180a9f2-741b-439c-bced-5c84a822f39b.rcosoomi/test_cards' target=cc_number > Cards</a> -
-				<a href="https://developer.elavon.com/content/home/test_cards/ELAVON%20STP%20Test%20Host%20Pre-programmed%20Responses%20-%20Rev%2004162019.pdf" target=cc_info >Other Test Codes</a>
+				<a href='https://developer.elavon.com/na/docs/commerce-sdk/1.0.0/test-cards' target=cc_number > Cards</a> -
+				<a href="https://developer.elavon.com/na/docs/viaconex/1.0.0/integration-guide/api_reference/cvv2_cvc2_cid_response" target=cc_info >Other Test Codes</a>
 				<?php } ?>
 				</div>
 				<div class="col-sm-6">
