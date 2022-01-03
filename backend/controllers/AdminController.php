@@ -32,6 +32,7 @@ class AdminController extends \yii\web\Controller {
 		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/update','legelemail/delete'],
 		'Params' => ['params/update'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
+		'Rso Report'=>['rso-rpt/current','rso-rpt/delete','rso-rpt/index','rso-rpt/update'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
 		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/create','sales/delete','sales/stock','sales/update','sales/inventory','sales/report'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
@@ -48,6 +49,7 @@ class AdminController extends \yii\web\Controller {
 		'Clubs' => ['clubs/index','clubs/create','clubs/update','clubs/view','clubs/badge-rosters'],
 		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/remove-att','events/update','events/view'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/delete','guest/stats'],
+		'Rso Report'=>['rso-rpt/current','rso-rpt/index'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
 		'sales' => ['sales/all','sales/create','sales/stock','sales/report','sales/update'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
@@ -61,6 +63,7 @@ class AdminController extends \yii\web\Controller {
 		'Clubs' => ['clubs/index','clubs/view'],
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all'],
+		'Rso Report'=>['rso-rpt/index'],
 		'Rules'=> ['rules/index','rules/view'],
 		'sales' => ['sales/all'],
 		'violations' => ['violations/all'],
@@ -81,6 +84,7 @@ class AdminController extends \yii\web\Controller {
 		'Events' => ['events/approve','events/index','events/close','events/create','events/reg','events/return','events/remove-att','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert'],
 		'Guest' => ['guest/all','guest/modify','guest/update'],
+		'Rso Report'=>['rso-rpt/current','rso-rpt/index'],
 		'sales' => ['sales/all'],
 		'violations' => ['violations/all','violations/create','violations/report','violations/update'],
 	];
@@ -91,6 +95,7 @@ class AdminController extends \yii\web\Controller {
 		'Events' => ['events/approve','events/index','events/close','events/create','events/reg','events/return','events/remove-att','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert'],
 		'Guest' => ['guest/all','guest/modify','guest/update'],
+		'Rso Report'=>['rso-rpt/current','rso-rpt/index'],
 		'sales' => ['sales/all'],
 		'violations' => ['violations/all','violations/create','violations/update'],
 	];
@@ -100,6 +105,7 @@ class AdminController extends \yii\web\Controller {
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all'],
 		'sales' => ['sales/all','sales/report'],
+		'Rso Report'=>['rso-rpt/index'],
 		'violations' => ['violations/all'],
 		'Work Credits'=>['work-credits/all'],
 	];
