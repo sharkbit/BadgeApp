@@ -563,3 +563,8 @@ CREATE TABLE `rso_reports` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+
+-- Tax Rates
+ALTER TABLE `BadgeDB`.`store_items` 
+ADD COLUMN `tax_rate` DECIMAL(5,3) NULL AFTER `new_badge`;

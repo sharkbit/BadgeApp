@@ -30,8 +30,10 @@ use yii\widgets\ActiveForm;
 	    <?= $form->field($model, 'sku')->textInput(['readonly'=>($model->type=='Category')? true:false,'maxlength'=>true]) ?>
 	    
 		<?= $form->field($model, 'price')->textInput(['readonly'=>($model->type=='Category')? true:false,'maxlength'=>true]) ?>
+		
+		<?= $form->field($model, 'tax_rate')->textInput(['readonly'=>($model->type=='Category')? true:false,'maxlength'=>true])->label('Tax Rate (0.065)') ?>
 	    
-		<?= $form->field($model, 'stock')->textInput(['placeholder'=>'Optional','readonly'=>($model->type=='Category')? true:false,'maxlength'=>true]) ?>
+		<?= $form->field($model, 'stock')->textInput(['readonly'=>($model->type=='Category')? true:false,'placeholder'=>'Optional','readonly'=>($model->type=='Category')? true:false,'maxlength'=>true]) ?>
 	    
 		<?= $form->field($model, 'active')->dropDownList(['1'=>'Yes','0'=>'No'],['readonly'=>($model->type=='Category')? true:false,'value'=>$model->active]).PHP_EOL; ?>	
 		

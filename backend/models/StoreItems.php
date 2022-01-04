@@ -25,7 +25,7 @@ class StoreItems extends \yii\db\ActiveRecord {
         return [
             [['item','sku','type','img'], 'string'],
 			[['item_id','paren','stock','active','new_badge'], 'integer'],
-			[['price'], 'number'],
+			[['price','tax_rate'], 'number'],
         ];
     }
 
