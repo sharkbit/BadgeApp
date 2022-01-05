@@ -530,3 +530,41 @@ ADD COLUMN `mass_reply_name` VARCHAR(100) NULL DEFAULT NULL AFTER `mass_reply_to
 ALTER TABLE `BadgeDB`.`params` 
 ADD COLUMN `sku_student` INT NULL DEFAULT NULL AFTER `check_ip_name`,
 ADD COLUMN `sku_wc_discount` INT NULL DEFAULT NULL AFTER `sku_student`;
+
+-- RSO Report
+DROP TABLE IF EXISTS `rso_reports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rso_reports` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `rso` varchar(255) NOT NULL,
+  `shift` varchar(2) NOT NULL,
+  `date` datetime DEFAULT NULL,
+  `shift_anom` text,
+  `notes` text,
+  `par_50` int DEFAULT NULL,
+  `par_100` int DEFAULT NULL,
+  `par_200` int DEFAULT NULL,
+  `par_steel` int DEFAULT NULL,
+  `par_nm_hq` int DEFAULT NULL,
+  `par_m_hq` int DEFAULT NULL,
+  `par_trap` int DEFAULT NULL,
+  `par_arch` int DEFAULT NULL,
+  `par_pel` int DEFAULT NULL,
+  `par_spr` int DEFAULT NULL,
+  `par_cio_stu` int DEFAULT NULL,
+  `par_act` int DEFAULT NULL,
+  `cash_bos` decimal(7,2) DEFAULT NULL,
+  `cash_eos` decimal(7,2) DEFAULT NULL,
+  `closing` text,
+  `closed` int DEFAULT '0',
+  `remarks` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+-- Tax Rates
+ALTER TABLE `BadgeDB`.`store_items` 
+ADD COLUMN `tax_rate` DECIMAL(5,3) NULL AFTER `new_badge`;

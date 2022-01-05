@@ -1299,6 +1299,14 @@ app.controller('GuestFrom', function($scope) {
 
 <?php
 }
+if(strpos($_SERVER['REQUEST_URI'], 'rso-rpt')) {
+?>
+app.controller('RsoReportFrom', function($scope) {
+
+});
+
+<?php
+}
 if(strpos($_SERVER['REQUEST_URI'], 'violations/')) {
 ?>
 

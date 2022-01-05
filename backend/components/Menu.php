@@ -50,6 +50,10 @@ class Menu extends Widget{
 			'url' => '/violations/index',
 		],
 		[
+			'label'=>'RSO Reports',
+			'url' => '/rso-rpt/current',
+		],
+		[
 			'label'=>'Store',
 			'url' => '/sales/index',
 			'self'=>true,

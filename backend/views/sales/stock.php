@@ -58,6 +58,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			'item',
             'sku',
 			'price',
+			'tax_rate',
 			'stock',
 			'img',
 			[	'attribute' => 'new_badge',
