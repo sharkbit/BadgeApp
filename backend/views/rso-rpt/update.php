@@ -1,7 +1,5 @@
 <?php
 
-
-
 /* @var $this yii\web\View */
 /* @var $model backend\models\Params */
 /* @var $form yii\widgets\ActiveForm */

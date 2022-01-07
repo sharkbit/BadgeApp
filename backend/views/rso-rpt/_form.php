@@ -32,6 +32,19 @@ if($model->isNewRecord) {
 	<div class="col-xs-12 col-sm-12">
 		<?= $form->field($model, 'notes')->textarea(['rows' => '1']).PHP_EOL; ?>
 	</div>
+
+	<div class="col-xs-6 col-sm-3">
+		<?= $form->field($model, 'wb_color')->dropDownList(['g'=>'Green','b'=>'Blue','r'=>'Red','l'=>'Lavender','k'=>'Black'],['prompt'=>'select']) ?>
+	</div>
+	<div class="col-xs-6 col-sm-3">
+		<?= $form->field($model, 'mics')->dropDownList(['o'=>'Mics Set Out','s'=>'Mics Stores in closet','t'=>'Mics in Trap 3'],['prompt'=>'select']) ?>
+	</div>
+	<div class="col-xs-12 col-sm-2">
+		<?= $form->field($model, 'wb_trap_cases')->textInput(['maxlength'=>true]) ?>
+	</div>
+	<div class="col-xs-12 col-sm-2">
+		<B> Badge Sticker Numbers comming to a tab near you one day.
+	</div>
 </div>
 
 <h3>Participation:</h3>
@@ -49,12 +62,6 @@ if($model->isNewRecord) {
 	<?= $form->field($model, 'par_steel')->textInput(['maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_nm_hq')->textInput(['maxlength'=>true]) ?>
-	</div>
-	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_m_hq')->textInput(['maxlength'=>true]) ?>
-	</div>
-	<div class="col-xs-3 col-sm-2 col-md-1">
 	<?= $form->field($model, 'par_trap')->textInput(['maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
@@ -64,13 +71,19 @@ if($model->isNewRecord) {
 	<?= $form->field($model, 'par_pel')->textInput(['maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
+	<?= $form->field($model, 'par_act')->textInput(['maxlength'=>true]) ?>
+	</div>
+	<div class="col-xs-3 col-sm-2 col-md-1">
 	<?= $form->field($model, 'par_spr')->textInput(['maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_cio_stu')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_nm_hq')->textInput(['maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_act')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_m_hq')->textInput(['maxlength'=>true]) ?>
+	</div>
+	<div class="col-xs-3 col-sm-2 col-md-1">
+	<?= $form->field($model, 'par_cio_stu')->textInput(['maxlength'=>true]) ?>
 	</div>
 </div>
 
@@ -91,7 +104,7 @@ if($model->isNewRecord) {
 	</div>
 </div>
 
-<?php if(yii::$app->controller->hasPermission('params/update')) { ?>
+<?php if(yii::$app->controller->hasPermission('rso-rpt/close_mod')) { ?>
 <div class="col-xs-6 col-sm-6">
 	<?= $form->field($model, 'closed')->checkbox() ?>
 </div>
@@ -109,7 +122,7 @@ if($model->isNewRecord) {
 
 <?php ActiveForm::end(); ?>
 
-<?php if(yii::$app->controller->hasPermission('params/update')) { ?>
+<?php if(yii::$app->controller->hasPermission('rso-rpt/remarks')) { ?>
 <div class="row">
 	<div class="col-xs-12">
 		<?php 

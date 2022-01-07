@@ -25,10 +25,10 @@ class RsoReports extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-			[['date','rso'], 'required'],
-			[['closed','id','par_50','par_100','par_200','par_steel','par_nm_hq','par_m_hq','par_trap','par_arch','par_pel','par_spr','par_cio_stu','par_act'], 'integer'],
+			[['date','mics','rso','wb_color','wb_trap_cases'], 'required'],
+			[['closed','id','par_50','par_100','par_200','par_steel','par_nm_hq','par_m_hq','par_trap','par_arch','par_pel','par_spr','par_cio_stu','par_act','wb_trap_cases'], 'integer'],
 			[['cash_bos','cash_eos'],'number'],
-			[['closing','notes','remarks','rso','shift','shift_anom'], 'safe'],
+			[['wb_color','closing','mics','notes','remarks','rso','shift','shift_anom'], 'safe'],
 		];
     }
 
@@ -37,7 +37,7 @@ class RsoReports extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'rso' => "RSO's",
+			'rso' => "RSO's",
 			'shift_anom'=> 'Shift Anomalies',
 			'par_50'=>'50 yrd',
 			'par_100'=>'100 yrd',
@@ -48,12 +48,15 @@ class RsoReports extends \yii\db\ActiveRecord {
 			'par_trap'=>'Trap',
 			'par_arch'=>'Archery',
 			'par_pel'=>'Pellet',
-			'par_spr'=>'SPR',
+			'par_spr'=>'SG Ptrn Rnr',
 			'par_cio_stu'=>'CIO Students',
-			'par_act'=>'ACT',
+			'par_act'=>'Action Rng',
 			'cash_bos'=>'Cash BOS',
 			'cash_eos'=>'Cash EOS',
 			'closing'=>'Closing Notes',
+			'mics'=>'MICs Status',
+			'wb_trap_cases'=>' Wobbel Trap Cases',
+			'wb_color'=> 'Wristband Color',
         ];
     }
 

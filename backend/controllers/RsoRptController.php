@@ -66,6 +66,12 @@ class RsoRptController extends AdminController {
 		]);
 	}
 
+	public function actionSticker() {
+		return $this->render('stickers', [
+				//'model' => $model,
+			]);
+	}
+
 	public function actionUpdate($id=1) {
 		$model = $this->findModel($id);
 

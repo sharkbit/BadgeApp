@@ -568,3 +568,9 @@ CREATE TABLE `rso_reports` (
 -- Tax Rates
 ALTER TABLE `BadgeDB`.`store_items` 
 ADD COLUMN `tax_rate` DECIMAL(5,3) NULL AFTER `new_badge`;
+
+-- More RSO Report
+ALTER TABLE `BadgeDB`.`rso_reports` 
+ADD COLUMN `wb_color` VARCHAR(3) NULL DEFAULT NULL AFTER `notes`,
+ADD COLUMN `mics` VARCHAR(3) NULL DEFAULT NULL AFTER `wb_color`,
+ADD COLUMN `wb_trap_cases` INT NULL DEFAULT NULL AFTER `mics`;
