@@ -14,7 +14,7 @@ class RsoReportsSearch extends RsoReports {
 
     public function rules() {
         return [
-			[['closed','date','rso','shift'], 'safe'],
+			[['closed','date_open','rso','shift'], 'safe'],
         ];
     }
 
@@ -45,8 +45,8 @@ class RsoReportsSearch extends RsoReports {
         // grid filtering conditions
         if(isset($this->id)) { $query->andFilterWhere(['id' => $this->id,]); }
 
-		if(isset($this->date) && ($this->date <>'')) {
-			$query->andFilterWhere(['like', 'date', $this->date]);}
+		if(isset($this->date_open) && ($this->date_open <>'')) {
+			$query->andFilterWhere(['like', 'date_open', $this->date_open]);}
 
 		if((isset($this->rso)) && ($this->rso!=''))	 {
 			$query->andWhere("JSON_CONTAINS(rso,'".$this->rso."')");

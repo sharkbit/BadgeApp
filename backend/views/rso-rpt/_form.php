@@ -3,7 +3,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 if($model->isNewRecord) {
-	$model->date = date("Y-m-d H:i:s",strtotime(yii::$app->controller->getNowTime()));
+	$model->date_open = date("Y-m-d H:i:s",strtotime(yii::$app->controller->getNowTime()));
 }
 ?>
 
@@ -18,7 +18,7 @@ if($model->isNewRecord) {
 <div class="row">
 	<?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
 	<div class="col-xs-12 col-sm-2">
-		<?= $form->field($model, 'date')->textInput(['readonly' => true,'maxlength'=>true]) ?>
+		<?= $form->field($model, 'date_open')->textInput(['readonly' => true,'maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-6 col-sm-2">
 		<?= $form->field($model, 'shift')->dropDownList(['m'=>'Morning','e'=>'Evening']) ?>

@@ -23,25 +23,43 @@ class RsoRptController extends AdminController {
 			$model->rso = str_replace('"',"", json_encode($model->rso));
 			$model->closed=(int)$model->closed;
 			$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
-			$model->save();
-			if($model->closed==1) {
-				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
-				return $this->redirect(['index']);
+			if($model->save()) {
+				if($model->closed==1) {
+					$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
+					return $this->redirect(['index']);
+				}
+			} else {
+				Yii::$app->getSession()->setFlash('error', json_encode($model->errors));
+				yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:33 NOT VALID', var_export($model,true));
+				return $this->render('current', [
+					'model' => $model,
+				]);
 			}
+			
 		}
-
 		elseif(Yii::$app->request->get()) {
 			if($_GET['close']==1) {
 				$model = $this->findModel($_GET['id']);
 				$model->closed = 1;
 				$model->rso = str_replace('"',"", json_encode($model->rso));
 				$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
-				$model->save();
-				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
-				return $this->redirect(['index']);
+				if ($model->save()) {
+					$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
+					return $this->redirect(['index']);
+				} else {
+					Yii::$app->getSession()->setFlash('error', json_encode($model->errors));
+					yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:51 NOT VALID', var_export($model->errors,true));
+					return $this->render('current', [
+						'model' => $model,
+					]);
+				}
+					
 			}
+		} else {
+			
+			yii::$app->controller->createLog(true, 'trex-rso-broke', var_export($_REQUEST,true));
 		}
-		$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date'=>SORT_DESC])->one();
+		$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date_open'=>SORT_DESC])->one();
 		if(!$model) {$model = new RsoReports;}
 
 		return $this->render('current', [
@@ -101,13 +119,16 @@ class RsoRptController extends AdminController {
 		
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
-            'rso' => "RSO's",
+			'mics'=>'MICs Status',
+			'rso' => "RSO's",
 			'shift_anom'=> 'Shift Anomalies',
 			'notes'=>'Notes',
 			'cash_bos'=>'Cash BOS',
 			'cash_eos'=>'Cash EOS',
 			'closing'=>'Closing Notes',
 			'closed'=>'Closed',
+			'wb_trap_cases'=>' Wobbel Trap Cases',
+			'wb_color'=> 'Wristband Color',
 		];
 
 		$responce = [];

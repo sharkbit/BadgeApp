@@ -25,10 +25,11 @@ class RsoReports extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-			[['date','mics','rso','wb_color','wb_trap_cases'], 'required'],
+			[['date_open','mics','rso','wb_color','wb_trap_cases'], 'required'],
 			[['closed','id','par_50','par_100','par_200','par_steel','par_nm_hq','par_m_hq','par_trap','par_arch','par_pel','par_spr','par_cio_stu','par_act','wb_trap_cases'], 'integer'],
 			[['cash_bos','cash_eos'],'number'],
 			[['wb_color','closing','mics','notes','remarks','rso','shift','shift_anom'], 'safe'],
+			[['date_open','date_close'],'safe'],
 		];
     }
 
@@ -37,6 +38,8 @@ class RsoReports extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
+			'date_close'=>'Date Closed',
+			'date_open'=>'Date Open',
 			'rso' => "RSO's",
 			'shift_anom'=> 'Shift Anomalies',
 			'par_50'=>'50 yrd',

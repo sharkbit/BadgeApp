@@ -574,3 +574,7 @@ ALTER TABLE `BadgeDB`.`rso_reports`
 ADD COLUMN `wb_color` VARCHAR(3) NULL DEFAULT NULL AFTER `notes`,
 ADD COLUMN `mics` VARCHAR(3) NULL DEFAULT NULL AFTER `wb_color`,
 ADD COLUMN `wb_trap_cases` INT NULL DEFAULT NULL AFTER `mics`;
+
+ALTER TABLE `BadgeDB`.`rso_reports` 
+ADD COLUMN `date_close` DATETIME NULL DEFAULT NULL AFTER `date_open`,
+CHANGE COLUMN `date` `date_open` DATETIME NULL DEFAULT NULL ;
