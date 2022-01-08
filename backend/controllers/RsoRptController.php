@@ -30,7 +30,7 @@ class RsoRptController extends AdminController {
 				}
 			} else {
 				Yii::$app->getSession()->setFlash('error', json_encode($model->errors));
-				yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:33 NOT VALID', var_export($model,true));
+				yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:33 NOT VALID', var_export($model->errors,true));
 				return $this->render('current', [
 					'model' => $model,
 				]);
