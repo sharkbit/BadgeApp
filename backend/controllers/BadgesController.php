@@ -1446,13 +1446,14 @@ class BadgesController extends AdminController {
 
 	public function UpdateQR($model) {
 		if(strlen($model->qrcode)<>14) {
+			$clubs = (new clubs)::getMyClubs($model->badge_number);
 			$characters = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 			$randomString = '';
 			for ($i = 0; $i < 2; $i++) {
 				$randomString .= $characters[rand(0, 32 - 1)];
 			}
 
-			$model->qrcode = str_pad($model->club_id, 2, '0', STR_PAD_LEFT)." ".$model->mem_type." ".str_pad($_GET['badge_number'], 5, '0', STR_PAD_LEFT)." ".$randomString;
+			$model->qrcode = str_pad($clubs[0], 2, '0', STR_PAD_LEFT)." ".$model->mem_type." ".str_pad($_GET['badge_number'], 5, '0', STR_PAD_LEFT)." ".$randomString;
 			$model->status = "approved";
 			if ($model->save(false)) {Yii::$app->getSession()->setFlash('success', 'Badge QR code Update!  Account set to Approved!');}
 		}
