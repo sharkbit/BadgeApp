@@ -30,7 +30,7 @@ class CardReceipt extends \yii\db\ActiveRecord {
           // [['type', 'status'], 'required'],
            [['authCode','cardNum','cardType','cart','status','tx_type','tx_date','id','name'], 'string'],
 		   [['badge_number','expYear','expMonth'], 'integer'],
-           [['amount'], 'number'],
+           [['amount','tax'], 'number'],
        ];
     }
 

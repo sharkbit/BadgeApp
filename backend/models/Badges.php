@@ -36,6 +36,7 @@ class Badges extends \yii\db\ActiveRecord {
 	public $payment_method;
 	public $sticker;
 	public $subcat;
+	public $tax;
 	public $work_credits;
 	public $remarks_temp;
 
@@ -53,7 +54,7 @@ class Badges extends \yii\db\ActiveRecord {
 			[['address', 'gender', 'qrcode','status','cc_num','cc_x_id'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip','club_id', 'mem_type','sticker','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
-			[['badge_fee', 'amt_due'], 'number'],
+			[['badge_fee', 'amt_due','tax'], 'number'],
 			[['prefix', 'suffix'], 'string', 'max' => 15],
 			['email', 'string', 'max' => 60],
 			['email', 'filter', 'filter' => 'trim'],

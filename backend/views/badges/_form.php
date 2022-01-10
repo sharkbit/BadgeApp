@@ -207,15 +207,17 @@ $confParams  = Params::findOne('1');
 					<p class="pull-right"><a href="" class="badge_store_div" > Extras </a></p>
 				</div>
 					<div  class="form-group" id="extras_store_div" style="display:none" > <!--   -->
+					<style type="text/css"> .right { text-align:right; } </style>
 					<table id='store_items' border=1 width="100%">
 					<tr><th>Item</th><th>Ea</th><th>Qty #</th><th>Price</th></tr>
 	<?php $ItemsList = StoreItems::find()->where(['like','type','inventory'])->andWhere(['active'=>1])->all();
 			foreach($ItemsList as $item){
-				echo '<tr><td><input type="hidden" name="item" value="'.$item['item'].'" />'.$item['item'].
-					'<input type=hidden name="sku" value="'.$item['sku'].'" /></td>'.
+				echo '<tr><td><input type="hidden" name="item" value="'.htmlspecialchars($item['item']).'" />'.$item['item'].
+					'<input type=hidden name="sku" value="'.$item['sku'].'" />'.
+					'<input type=hidden name="tax_rate" value="'.$item['tax_rate'].'" /></td>'.
 					'<td><input type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
-					'<td><input type="text" name="qty" size="3" value=0 onKeyUp="doCalcNew()" /></td>'.
-					'<td><input type="text" name="price" size="3" readonly /></td></tr>'."\n";
+					'<td><input class="right" type="text" name="qty" size="3" value=0 onKeyUp="doCalcNew()" /></td>'.
+					'<td><input class="right" type="text" name="price" size="3" readonly /></td></tr>'."\n";
 			} ?>
 					</table>
 					<input type="hidden" name="cart" id="cart" >
@@ -224,6 +226,7 @@ $confParams  = Params::findOne('1');
                 <div class="col-xs-12 col-sm-12">
                     <?= $form->field($model, 'amt_due')->widget(MaskMoney::classname(), [
                         'pluginOptions' => ['allowNegative' => false,]]); ?>
+					<?= $form->field($model, 'tax')->hiddenInput()->label(false).PHP_EOL;?>
                 </div>
                 <div class="col-xs-12 col-sm-12">
       <?php if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
@@ -289,9 +292,10 @@ $confParams  = Params::findOne('1');
 		var arrSku = new Array();
 		var arrEa = new Array();
 		var arrQty = new Array();
+		var arrTax = new Array();
 		var arrPrice = new Array();
 		var cart =  new Array();
-		var ItemTotal = 0;
+		var ItemTotal = 0; var TaxTotal = 0; var TotalTotal = 0;
 		var ContainerIDElements = new Array( 'input');
 		//var ContainerIDElements = new Array('input', 'textarea', 'select');
 
@@ -301,6 +305,7 @@ $confParams  = Params::findOne('1');
 				if(els[j].name == 'item') arrItem.push(els[j]);
 				if(els[j].name == 'sku') arrSku.push(els[j]);
 				if(els[j].name == 'ea') arrEa.push(els[j]);
+				if(els[j].name == 'tax_rate') arrTax.push(els[j]);
 				if(els[j].name == 'qty') arrQty.push(els[j]);
 				if(els[j].name == 'price') arrPrice.push(els[j]);
 			}
@@ -308,8 +313,12 @@ $confParams  = Params::findOne('1');
 
 		for( var j = 0; j < arrEa.length; j++ ) {
 			if(Number(arrQty[j].value)>0) {
-				arrPrice[j].value = parseFloat(Math.round(Number(arrEa[j].value) * Number(arrQty[j].value) * 100) / 100).toFixed(2);
-				ItemTotal += Number(arrPrice[j].value);
+				var itto = parseFloat(Math.round((Number(arrEa[j].value) * Number(arrQty[j].value)) * 100) / 100).toFixed(2);
+				var tato = parseFloat(Math.round((Number(arrEa[j].value) * Number(arrQty[j].value) * Number(arrTax[j].value)) * 100) / 100).toFixed(2);
+				arrPrice[j].value = parseFloat(Number(itto) + Number(tato)).toFixed(2);
+				ItemTotal += Number(itto);
+				TaxTotal += Number(tato);
+				TotalTotal += Number(arrPrice[j].value);
 				var item = { "item":arrItem[j].value, "sku":arrSku[j].value, "ea":arrEa[j].value, "qty":arrQty[j].value, "price":arrPrice[j].value };
 				cart.push(item);
 			} else { arrPrice[j].value=null; }
@@ -330,10 +339,11 @@ $confParams  = Params::findOne('1');
 		if(amountDue<0) {
 			amountDue = 0.00;
 		}
-		amountDue = amountDue + ItemTotal;
+		amountDue = amountDue + TotalTotal;
+		$("#badges-tax").val(TaxTotal.toFixed(2));
 		$("#badges-amt_due-disp").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
 		$("#badges-amt_due").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
-		console.log('Badge Total: '+badgeFee+ '; Grand total: '+ amountDue);
+		console.log('Badge Total: '+badgeFee+ '; Tax: '+ TaxTotal+ '; Grand total: '+ amountDue);
 	}
 
 	function ProcessSwipe(cleanUPC) {

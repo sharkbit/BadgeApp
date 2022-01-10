@@ -96,6 +96,7 @@ class SalesController extends AdminController {
 				$savercpt->badge_number = $model->badge_number;
 				$savercpt->tx_date = $this->getNowTime();
 				$savercpt->tx_type = $model->payment_method;
+				$savercpt->tax = $_REQUEST['Sales']['tax'];
 				$savercpt->amount = $model->total;
 				$savercpt->name = $model->first_name.' '.$model->last_name;
 				$savercpt->cart = $model->cart;

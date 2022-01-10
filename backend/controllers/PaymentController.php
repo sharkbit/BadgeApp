@@ -52,6 +52,7 @@ class PaymentController extends AdminController {
 				$merchantPIN = $confParams->conv_d_pin;
 			}
 			$err = false;
+			$tax = 0;
 			if($UseSub=='update') {	// Update
 				$myPost=$_POST['Badges'];
 				if($model->amount_due=='') { $err = true; } else { $cc_amount = $model->amount_due; }
@@ -62,6 +63,7 @@ class PaymentController extends AdminController {
 				if($myPost['first_name']=='') {$err=true;}  else { $first_name=trim($myPost['first_name']); }
 				if($myPost['last_name']=='') { $err=true;}  else { $last_name=trim($myPost['last_name']); }
 				if($myPost['mem_type']=='') { $err=true;}  else  { $memType=trim($myPost['mem_type']); }
+				$tax = $model->tax;
 				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
 				// not storing multiple discounts yet.					
 				if(is_array($_POST['BadgeSubscriptions']['discount'])) {
@@ -99,15 +101,17 @@ class PaymentController extends AdminController {
 				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
 				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
 				if($model->cart=='') { $err = true; } 		else { $MyCart=$model->cart; }
+				$tax = $model->tax;
 
 			} elseif($UseSub=='guest') {  // Guest Bands
 				if($model->amount_due=='') { $err = true; }	else { $cc_amount = $model->amount_due; }
-				if($model->g_state=='') { $err = true; }	else { $cc_state = $model->g_state; }
-				if($model->g_zip=='') { $err = true; }		else { $cc_zip = $model->g_zip; }
+				if($model->cc_state=='') { $err = true; }	else { $cc_state = $model->cc_state; }
+				if($model->cc_zip=='') { $err = true; }		else { $cc_zip = $model->cc_zip; }
 				if($model->cc_address=='') { $err = true; }	else { $cc_address = $model->cc_address; }
 				if($model->cc_city=='') { $err = true; }	else { $cc_city = $model->cc_city; }
-				if($model->g_first_name=='') { $err = true;}else { $first_name=trim($model->g_first_name); }
-				if($model->g_last_name=='') { $err = true;} else { $last_name=trim($model->g_last_name); }
+				if($model->cc_name=='') { $err = true;}     else { $arr=preg_split("/\s+(?=\S*+$)/",$model->cc_name); $first_name=$arr[0];$last_name=$arr[1];}
+				//if($model->g_last_name=='') { $err = true;} else { $last_name=trim($model->g_last_name); }
+				$tax = $model->tax;
 				$price_ea=($cc_amount / $model->guest_count);
 				$MyCart = "[".json_encode(["item"=>"Guest Bracelet Fee","sku"=>$confParams->guest_sku,"ea"=>number_format($price_ea, 2, '.', ''),"qty"=>$model->guest_count,"price"=>number_format($cc_amount, 2, '.', '') ])."]";
 
@@ -120,6 +124,7 @@ class PaymentController extends AdminController {
 				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
 				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
 				if($model->mem_type=='') { $err = true; } 	else { $memType=trim($model->mem_type); }
+				$tax = $model->tax;
 				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
 					// not storing multiple discounts yet.					
 				if(is_array($_POST['Badges']['discounts'])) {
@@ -182,6 +187,7 @@ class PaymentController extends AdminController {
 						$savercpt->tx_date = $this->getNowTime();
 						$savercpt->tx_type = 'creditnow';
 						$savercpt->status = 'APPROVED';
+						$savercpt->tax = $tax;
 						$savercpt->amount = $response['ssl_amount'];
 						$savercpt->authCode = $response['ssl_approval_code'];
 						$savercpt->name = $first_name.' '.$last_name;

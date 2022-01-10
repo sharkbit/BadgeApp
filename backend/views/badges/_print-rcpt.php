@@ -36,6 +36,7 @@ $subscript = BadgeSubscriptions::find()->where(['cc_x_id'=>$MyRcpt->id])->one();
 	if(isset($subscript->discount) && $subscript->discount > 0)
 		{echo "Discount: ".number_format($subscript->discount,2)."</br>\n";}
 	
+	echo "<b>Tax: ".$MyRcpt->tax."</b></br /> \n";
 	echo "<b>Total: ".$MyRcpt->amount."</b></p> <hr />\n";
 
 	if (isset($subscript->transaction_type)) {

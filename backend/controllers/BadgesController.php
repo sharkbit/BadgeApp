@@ -520,6 +520,7 @@ class BadgesController extends AdminController {
 					$savercpt->tx_date = $this->getNowTime();
 					$savercpt->tx_type = $model->payment_method;
 					$savercpt->amount = $model->amt_due;
+					$savercpt->tax = $model->tax;
 					$savercpt->name = $model->first_name.' '.$model->last_name;
 					$savercpt->cart = $MyCart;
 					$savercpt->cashier = $_SESSION['user'];
@@ -1042,6 +1043,7 @@ class BadgesController extends AdminController {
 					$savercpt->tx_date = $this->getNowTime();
 					$savercpt->tx_type = $model->payment_type;
 					$savercpt->amount = $model->amount_due;
+					$savercpt->tax = $model->tax;
 					$savercpt->name = $badgeRecords->first_name;
 					$savercpt->cart = $MyCart;
 					$savercpt->cashier = $_SESSION['user'];

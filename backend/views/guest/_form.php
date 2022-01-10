@@ -33,12 +33,8 @@ if(!yii::$app->controller->hasPermission('guest/modify')) {
 	$isguest = false;
 }
 
-$confParams  = Params::findOne('1');
-$sql="SELECT * FROM store_items WHERE sku=".$confParams->guest_sku;
-$connection = Yii::$app->getDb();
-$command = $connection->createCommand($sql);
-$guest_count = $command->queryAll();
-$guest_price = $guest_count[0]['price'];
+$confParams = Params::findOne('1');
+$guest_band = (new backend\models\StoreItems)->find()->where(['sku'=>$confParams->guest_sku])->one();
 
 if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->qb_token)>2 || strlen($confParams->qb_oa2_refresh_token)>2))  {
 	if($confParams->qb_env == 'prod') {
@@ -182,10 +178,11 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 	<?php if($model->isNewRecord) { ?>
 	  <div class="col-xs-12 col-sm-4">
 		<div class="row summary-block-payment" style="margin: 0px;<?=$Payment_block?>" id="Div_Payment_Block">
-			<h3>$<?=$guest_price ?>  per Shooter</h3><hr />
-			<input type="hidden" id='guest_price' value='<?=$guest_price ?>' />
+			<h3>$<?=$guest_band->price ?>  per Shooter</h3><hr />
+			<input type="hidden" id='guest_price' value='<?=$guest_band->price ?>' />
 			<?= $form->field($model, 'guest_count')->dropDownList(['1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8,'9'=>9,'10'=>10,'11'=>11,'12'=>12,'13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'18'=>18,'19'=>19],['value'=>'1'])->label('Shooter Count').PHP_EOL; ?>
-			<?= $form->field($model, 'amount_due')->textInput(['value' => $guest_price]).PHP_EOL; ?>
+			<?= $form->field($model, 'amount_due')->textInput(['value' => number_format(($guest_band->price+$guest_band->price*$guest_band->tax_rate),2)]).PHP_EOL; ?>
+			<?= $form->field($model, 'tax')->hiddenInput()->label(false).PHP_EOL; ?>
 			<?= $form->field($model, 'payment_type')->dropdownList($myList,['value'=>'cash']).PHP_EOL;?>
 			<div id="cc_form_div" style="margin-left: 1px">
 				<div id="CC_success">
@@ -275,7 +272,8 @@ $('#GuestForm').on('submit', function() {
     function RefreshAmount() {
 		var guest_price = document.getElementById("guest_price").value
 		var guest_count = parseInt(document.getElementById("guest-guest_count").value);
-		document.getElementById("guest-amount_due").value = (guest_price * guest_count).toFixed(2);
+		document.getElementById("guest-amount_due").value = (guest_price * guest_count + (guest_price * guest_count * <?=$guest_band->tax_rate ?>)).toFixed(2);
+		document.getElementById("guest-tax").value = (guest_price * guest_count * <?=$guest_band->tax_rate ?>);
 	};
 
  <?php if($model->isNewRecord) { ?>
@@ -283,7 +281,8 @@ $('#GuestForm').on('submit', function() {
         addTime();
         var guest_price = document.getElementById("guest_price").value;
 		var guest_count = parseInt(document.getElementById("guest-guest_count").value);
-		document.getElementById("guest-amount_due").value = (guest_price * guest_count).toFixed(2);
+		document.getElementById("guest-amount_due").value = (guest_price * guest_count + (guest_price * guest_count * <?=$guest_band->tax_rate ?>)).toFixed(2);
+		document.getElementById("guest-tax").value = (guest_price * guest_count * <?=$guest_band->tax_rate ?>);
 		if(guest_count>1) {
 			document.getElementById("save_btn").innerHTML = 'Add Next Guest';
 		} else {

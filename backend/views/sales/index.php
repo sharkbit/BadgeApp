@@ -64,6 +64,7 @@ $ccYear = range($curYr,$curYr+25);
 echo $this->render('_view-tab-menu').PHP_EOL; ?>
 
 <?php $form = ActiveForm::begin([ 'id'=>'SalesForm' ]); ?>
+<style type="text/css"> .right { text-align:right; } </style>
 <div class="sales-update">
 
    <!-- <h3><?= Html::encode($this->title) ?></h3> -->
@@ -107,7 +108,9 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			<hr>
 			<div class="row">
 				<div class="col-sm-6">
+					<?= $form->field($model, 'tax')->textInput(['readonly'=>true]).PHP_EOL; ?>
 					<?= $form->field($model, 'cart')->hiddenInput(['id'=>'sales-cart'])->label(false).PHP_EOL; ?>
+					<div id='totals'> </div>
 				</div>
 				<div class="col-sm-6">
 					<?= $form->field($model, 'total')->textInput(['id'=>'sales-total','readonly'=>($pgLimited)?true : (($is_dev)?false : true)]).PHP_EOL; ?>
@@ -159,11 +162,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 						<?= Html::Button('<i class="fa fa-credit-card"> Process</i>', ['id'=>'sales-Process_CC','class' => 'btn btn-danger']), PHP_EOL ?>
 					</div>
 
-					</div>
+				</div>
 
 				<div class="col-xs-12">
-						<p id="cc_info"> </p>
-					</div>
+					<p id="cc_info"> </p>
+				</div>
 				</div>
 				<div class="help-block" ></div>
 
@@ -181,7 +184,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			<table id='sales_items' border=1 width="100%">
 			<tr><th>Item</th><th>Ea</th><th>Qty #</th><th>Price</th></tr>
 	<?php
-		$sql="SELECT s1.item_id,s2.item AS cat,s1.item,s1.sku,s1.price,s1.`type`".
+		$sql="SELECT s1.item_id,s2.item AS cat,s1.item,s1.sku,s1.price,s1.tax_rate,s1.`type`".
 			" FROM store_items AS s1 JOIN store_items AS s2 ON (s1.paren=s2.item_id)".
 			" WHERE s1.active=1".
 			" ORDER BY `cat`,`type`,item;";
@@ -196,11 +199,12 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				$colo ="bgcolor='#f3f3f3'";
 				if($item['sku']== $confParams->guest_sku && $guest_total>0) {$item_qty = $guest_total.' onKeyUp="doCalcSale()"';} else {$item_qty = '0 onKeyUp="doCalcSale()"';}
 
-				echo '<tr '.$colo.'><td><input type="hidden" name="item" value="'.$item['item'].'" />'.$item['item'].
-					'<input type=hidden name="sku" value="'.$item['sku'].'" /></td>'.
-					'<td><input type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
-					'<td><input type="text" name="qty" size="3" value='.$item_qty.' /></td>'.
-					'<td><input type="text" name="price" size="3" readonly /></td></tr>'."\n";
+				echo '<tr '.$colo.">\n\t<td>".'<input type="hidden" name="item" value="'.htmlspecialchars($item['item']).'" />'.$item['item'].
+					"\n\t".'<input type=hidden name="sku" value="'.$item['sku'].'" />'.
+					"\n\t".'<input type=hidden name="tax_rate" value="'.$item['tax_rate'].'" /></td>'.
+					"\n\t".'<td><input class="right" type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
+					"\n\t".'<td><input class="right" type="text" name="qty" size="3" value='.$item_qty.' /></td>'.
+					"\n\t".'<td><input class="right" type="text" name="price" size="3" readonly /></td></tr>'."\n";
 			} ?>
 			</table>
 			</div>
@@ -219,9 +223,10 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 		var arrSku = new Array();
 		var arrEa = new Array();
 		var arrQty = new Array();
+		var arrTax = new Array();
 		var arrPrice = new Array();
 		var cart =  new Array();
-		var ItemTotal = 0;
+		var ItemTotal = 0; var TaxTotal = 0; var TotalTotal = 0;
 		var ContainerIDElements = new Array( 'input');
 
 		for( var i = 0; i < ContainerIDElements.length; i++ ){
@@ -230,6 +235,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				if(els[j].name == 'item') arrItem.push(els[j]);
 				if(els[j].name == 'sku') arrSku.push(els[j]);
 				if(els[j].name == 'ea') arrEa.push(els[j]);
+				if(els[j].name == 'tax_rate') arrTax.push(els[j]);
 				if(els[j].name == 'qty') arrQty.push(els[j]);
 				if(els[j].name == 'price') arrPrice.push(els[j]);
 			}
@@ -237,16 +243,23 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 
 		for( var j = 0; j < arrEa.length; j++ ) {
 			if(Number(arrQty[j].value)>0) {
-				arrPrice[j].value = parseFloat(Math.round(Number(arrEa[j].value) * Number(arrQty[j].value) * 100) / 100).toFixed(2);
-				ItemTotal += Number(arrPrice[j].value);
+				var itto = parseFloat(Math.round((Number(arrEa[j].value) * Number(arrQty[j].value)) * 100) / 100).toFixed(2);
+				var tato = parseFloat(Math.round((Number(arrEa[j].value) * Number(arrQty[j].value) * Number(arrTax[j].value)) * 100) / 100).toFixed(2);
+				arrPrice[j].value = parseFloat(Number(itto) + Number(tato)).toFixed(2);
+				ItemTotal += Number(itto);
+				TaxTotal += Number(tato);
+				TotalTotal += Number(arrPrice[j].value);
 				var item = { "item":arrItem[j].value, "sku":arrSku[j].value, "ea":arrEa[j].value, "qty":arrQty[j].value, "price":arrPrice[j].value };
 				cart.push(item);
 			} else { arrPrice[j].value=null; }
 		}
 		$("#sales-cart").val(JSON.stringify(cart));
-
-		$("#sales-total").val(parseFloat(Math.round(ItemTotal * 100) / 100).toFixed(2));
-		console.log('Grand total: '+ ItemTotal);
+		$("#sales-tax").val(TaxTotal.toFixed(2));
+		$("#sales-total").val(parseFloat(Math.round(TotalTotal * 100) / 100).toFixed(2));
+		$("#totals").html('<table border=1 style="width:150px"><tr><td>Item Total:</td><td class="right"> '+ItemTotal.toFixed(2)+' </td></tr>'+
+			'<tr><td> Tax Total: </td><td class="right">'+TaxTotal.toFixed(2)+'</td></tr><tr><td> Grand Total: </td><td class="right"> <b>'+ TotalTotal.toFixed(2)+"</b></td></tr></table>");
+		console.log('Item Total: '+ItemTotal.toFixed(2)+', Tax Total: '+TaxTotal.toFixed(2)+', Grand total: '+ TotalTotal.toFixed(2));
+		console.log(cart);
 	}
 
 	function getReporterName(badgeNumber) {
