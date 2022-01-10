@@ -220,7 +220,7 @@ if($att_count>0) {
 	});
 
 	$("#event_close").click(function() {
-		if (confirm('Are you sure you want to Perminatly Close this Event?')) {
+		if (confirm('Are you sure you want to Permanently Close this Event?')) {
 		jQuery.ajax({
 			method: 'POST',
 			url: '<?=yii::$app->params['rootUrl']?>/events/close?id='+<?=$model->e_id?>,
@@ -254,7 +254,7 @@ if($att_count>0) {
 				}
 			},
 			error: function (responseData, textStatus, errorThrown) {
-				$("#badge_name").html('Valid Badge holde not found');
+				$("#badge_name").html('Valid Badge Holder not found');
 				console.log("e_view:212"+responseData);
 			},
 		});
@@ -309,7 +309,7 @@ if($att_count>0) {
 
 				if(document.getElementById("event_att-ea_type").value=='cio' && (!ea_wb_serial)) {
 					console.log('yes yes:300');
-					alert("A Wrist Band is required for this individule.");
+					alert("A Wrist Band is required for this individual.");
 					return;
 				}
 				if(ea_wb_serial) {ea_serial='&e_wb='+ea_wb_serial;}

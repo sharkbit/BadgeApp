@@ -999,7 +999,7 @@ app.controller('WorkCreditFrom', function($scope) {
                         //$("#workcredits-badge_holder_name").readOnly = true;
                     },
                     error: function (responseData, textStatus, errorThrown) {
-                        $("#workcredits-badge_holder_name").val('Valid Badge holde not found');
+                        $("#workcredits-badge_holder_name").val('Valid Badge Holder not found');
                         console.log("fail "+responseData);
                     },
                 });
