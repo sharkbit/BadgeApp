@@ -564,10 +564,12 @@ CREATE TABLE `rso_reports` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-
 -- Tax Rates
 ALTER TABLE `BadgeDB`.`store_items` 
 ADD COLUMN `tax_rate` DECIMAL(5,3) NULL AFTER `new_badge`;
+
+ALTER TABLE `BadgeDB`.`cc_receipts` 
+ADD COLUMN `tax` DECIMAL(5,2) NOT NULL DEFAULT 0.00 AFTER `amount`;
 
 -- More RSO Report
 ALTER TABLE `BadgeDB`.`rso_reports` 
