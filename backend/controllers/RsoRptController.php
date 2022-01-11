@@ -41,6 +41,7 @@ class RsoRptController extends AdminController {
 			if($_GET['close']==1) {
 				$model = $this->findModel($_GET['id']);
 				$model->closed = 1;
+				$model->date_close = $this->getNowTime();
 				$model->rso = str_replace('"',"", json_encode($model->rso));
 				$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
 				if ($model->save()) {

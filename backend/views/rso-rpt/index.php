@@ -20,6 +20,7 @@ if (isset($_REQUEST['RsoReportsSearch']['pagesize'])) {
 } else {
 	$pagesize=20;
 }
+$dataProvider->pagination = ['pageSize' => $pagesize];
 ?>
 
 <?=$this->render('_view-tab-menu').PHP_EOL ?>
@@ -61,7 +62,7 @@ if (isset($_REQUEST['RsoReportsSearch']['pagesize'])) {
 				'visible' => (yii::$app->controller->hasPermission('params/update')) ? true : false,
 				'headerOptions' => ['style' => 'width:5%'],
 			],
-			[	'attribute'=>'date',
+			[	'attribute'=>'date_open',
 				'headerOptions' => ['style' => 'width:10%'],
 			],
 			[	'attribute' => 'rso',
