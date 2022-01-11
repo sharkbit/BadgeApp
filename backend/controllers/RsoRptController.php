@@ -20,12 +20,9 @@ class RsoRptController extends AdminController {
 			$model = $this->findModel($_POST['RsoReports']['id']);
 			if(!$model) {$model = new RsoReports;}
 			$model->load(Yii::$app->request->post());
-			$model->rso = str_replace('"',"", json_encode($model->rso));
-			$model->closed=(int)$model->closed;
 			$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
 			if($model->save()) {
 				if($model->closed==1) {
-					$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
 					return $this->redirect(['index']);
 				}
 			} else {
@@ -42,8 +39,7 @@ class RsoRptController extends AdminController {
 				$model = $this->findModel($_GET['id']);
 				$model->closed = 1;
 				$model->date_close = $this->getNowTime();
-				$model->rso = str_replace('"',"", json_encode($model->rso));
-				$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
+				$model->remarks=$this->AddRemarks($model,'Closed By '.$_SESSION['user']);
 				if ($model->save()) {
 					$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
 					return $this->redirect(['index']);
@@ -96,14 +92,12 @@ class RsoRptController extends AdminController {
 
 		if ($model->load(Yii::$app->request->post())) {
 			if (!$model->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-			yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
+				// uncomment the following line if you do not want to return any records when validation fails
+				// $query->where('0=1');
+				yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
 			}
-			$model->rso = str_replace('"',"", json_encode($model->rso));
 			$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
-			$model->closed=(int)$model->closed;
-		if($model->save()) {
+			if($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Report has been updated.');
 			 } else {
 				 yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
@@ -117,6 +111,9 @@ class RsoRptController extends AdminController {
 	}
 
 	protected function AddRemarks($model, $comment) {
+		$model->closed=(int)$model->closed;
+		$model->rso = str_replace('"',"", json_encode($model->rso));
+		$model->wb_trap_cases = (int)$model->wb_trap_cases;
 		
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
