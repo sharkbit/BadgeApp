@@ -76,6 +76,17 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				},
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'rso',(new RsoReports)->listRSOs(),['class'=>'form-control','prompt' => 'All']),
 			],
+			[	'attribute'=>'wb_color',
+				'value' => function($model) {
+					switch ($model->wb_color){
+					case 'g': return 'Green';
+					case 'b': return 'Blue';
+					case 'r': return 'Red';
+					case 'l': return 'Lavender';
+					case 'k': return 'Black';
+					}
+				}
+			],
 			[	'attribute'=>'shift',
 				'value'=>function($model) {
 					if($model->shift=='m') {return 'Morning';}

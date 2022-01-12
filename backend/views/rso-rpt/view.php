@@ -37,8 +37,26 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/up
 			'cash_bos',
 			'cash_eos',
 			'wb_trap_cases',
-			'wb_color',
-			'mics',
+			[	'attribute'=>'wb_color',
+				'value' => function($model) {
+				  switch ($model->wb_color){
+					case 'g': return 'Green';
+					case 'b': return 'Blue';
+					case 'r': return 'Red';
+					case 'l': return 'Lavender';
+					case 'k': return 'Black';
+				  }
+				}
+			],
+			[	'attribute'=>'mics',
+				'value' => function($model) {
+				  switch ($model->mics){
+					case 'o': return 'Mics Set Out';
+					case 's': return 'Mics Stores in closet';
+					case 't': return 'Mics in Trap 3';
+				  }
+				}
+			],
 			'notes',
 			'shift',
 			'shift_anom',
