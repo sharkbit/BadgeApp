@@ -110,6 +110,18 @@ class RsoRptController extends AdminController {
 		}
 	}
 
+	public function actionView($id=1) {
+		$model = RsoReports::find()->where(['id'=>$id])->one();
+		if ($model) {
+			return $this->render('view', [
+				'model' => $model,
+			]);
+		} else {
+			Yii::$app->getSession()->setFlash('error', 'Report not found.');
+			return $this->redirect(['index']);
+		}
+	}
+
 	protected function AddRemarks($model, $comment) {
 		$model->closed=(int)$model->closed;
 		$model->rso = str_replace('"',"", json_encode($model->rso));
