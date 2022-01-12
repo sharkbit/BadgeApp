@@ -182,7 +182,7 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 			<input type="hidden" id='guest_price' value='<?=$guest_band->price ?>' />
 			<?= $form->field($model, 'guest_count')->dropDownList(['1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8,'9'=>9,'10'=>10,'11'=>11,'12'=>12,'13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'18'=>18,'19'=>19],['value'=>'1'])->label('Shooter Count').PHP_EOL; ?>
 			<?= $form->field($model, 'amount_due')->textInput(['value' => number_format(($guest_band->price+$guest_band->price*$guest_band->tax_rate),2)]).PHP_EOL; ?>
-			<?= $form->field($model, 'tax')->hiddenInput()->label(false).PHP_EOL; ?>
+			<?= $form->field($model, 'tax')->hiddenInput(['value'=>$guest_band->tax_rate])->label(false).PHP_EOL; ?>
 			<?= $form->field($model, 'payment_type')->dropdownList($myList,['value'=>'cash']).PHP_EOL;?>
 			<div id="cc_form_div" style="margin-left: 1px">
 				<div id="CC_success">
