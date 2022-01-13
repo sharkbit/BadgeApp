@@ -6,6 +6,7 @@ use Yii;
 use backend\controllers\AdminController;
 use backend\models\RsoReports;
 use backend\models\search\RsoReportsSearch;
+use backend\models\search\StickersSearch;
 
 /**
  * ParamsController implements the CRUD actions for RsoReports model.
@@ -77,9 +78,37 @@ class RsoRptController extends AdminController {
 	}
 
 	public function actionSticker() {
+yii::$app->controller->createLog(true, 'trex_sticker', var_export($_REQUEST,true));
+		if (isset($_REQUEST['sticker_add']) && ($_REQUEST['sticker_add']==1)) {
+			$x = (int)$_REQUEST['StickersSearch']['start'];
+			$yr = (int)$_REQUEST['StickersSearch']['yr'];
+			do {
+				$stkr = new \backend\models\Stickers;
+				$stkr->sticker=$yr.'-'.str_pad($x, 4, '0', STR_PAD_LEFT);
+				$stkr->status='adm';
+				if(!$stkr->save()) {
+					yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:33 NOT VALID', var_export($stkr->errors,true));
+					echo 'broke';
+					exit;
+				}
+				$x++;
+			} while ($x < (int)$_REQUEST['StickersSearch']['end']);
+		}
+
+		if (isset($_REQUEST['sticker_move']) && ($_REQUEST['sticker_move']==1)) {
+//yii::$app->controller->createLog(true, 'trex_sticker', var_export($_REQUEST,true));
+			echo "move";
+			exit;
+		}
+
+		$searchModel = new StickersSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+
 		return $this->render('stickers', [
-				//'model' => $model,
-			]);
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+		]);
 	}
 
 	public function actionUpdate($id=1) {
@@ -163,6 +192,11 @@ class RsoRptController extends AdminController {
 			}
 		}		
 		return json_encode($remarksOld,true);
+	}
+
+	public function getYear() {
+		$yr = date('Y');
+		return [($yr-1)=>$yr-1,$yr=>$yr,$yr+1=>$yr+1];
 	}
 
 	protected function findModel($id) {

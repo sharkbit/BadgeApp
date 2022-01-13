@@ -32,7 +32,7 @@ class AdminController extends \yii\web\Controller {
 		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/update','legelemail/delete'],
 		'Params' => ['params/update'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
-		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/delete','rso-rpt/index','rso-rpt/remarks','rso-rpt/sticker','rso-rpt/update','rso-rpt/view'],
+		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/delete','rso-rpt/index','rso-rpt/remarks','rso-rpt/sticker','rso-rpt/update','rso-rpt/view','sticker/add','sticker/move'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
 		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/create','sales/delete','sales/stock','sales/update','sales/inventory','sales/report'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
