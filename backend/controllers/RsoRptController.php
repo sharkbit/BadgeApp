@@ -32,7 +32,6 @@ class RsoRptController extends AdminController {
 					'model' => $model,
 				]);
 			}
-			
 		}
 		elseif(Yii::$app->request->get()) {
 			if($_GET['close']==1) {
@@ -50,11 +49,7 @@ class RsoRptController extends AdminController {
 						'model' => $model,
 					]);
 				}
-					
 			}
-		} else {
-			
-			yii::$app->controller->createLog(true, 'trex-rso-broke', var_export($_REQUEST,true));
 		}
 		$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date_open'=>SORT_DESC])->one();
 		if(!$model) {$model = new RsoReports;}

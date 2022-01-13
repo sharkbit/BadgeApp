@@ -4,6 +4,7 @@ use yii\widgets\ActiveForm;
 
 if($model->isNewRecord) {
 	$model->date_open = date("Y-m-d H:i:s",strtotime(yii::$app->controller->getNowTime()));
+	$model->par_50 = $model->par_100 = $model->par_200 = $model->par_steel = $model->par_nm_hq = $model->par_m_hq = $model->par_trap = $model->par_arch = $model->par_pel = $model->par_spr = $model->par_cio_stu = $model->par_act =0;
 }
 ?>
 
@@ -112,7 +113,9 @@ if($model->isNewRecord) {
 
 <div class="row">
 	<div class="col-xs-12 col-sm-12">
+		
 		<div class="btn-group pull-right">
+		<br />Save Report Often & <b>Prior to Finalizing</b><br />
 			<?= Html::submitButton('<i class="fa fa-check" aria-hidden="true"></i> Save ', ['class' => 'btn btn-success','id'=>'save_btn']).PHP_EOL;  ?>
 			<?= Html::a('<i class="fa fa-check-double" aria-hidden="true"></i> Finalize ', ['current?id='.$model->id.'&close=1'], ['class' => 'btn btn-warning ']) ?>
 		</div>

@@ -49,7 +49,7 @@ class AdminController extends \yii\web\Controller {
 		'Clubs' => ['clubs/index','clubs/create','clubs/update','clubs/view','clubs/badge-rosters'],
 		'Events' => ['events/approve','events/add-att','events/index','events/close','events/create','events/delete','events/reg','events/remove-att','events/update','events/view'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/delete','guest/stats'],
-		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/index','rso-rpt/sticker','rso-rpt/update','rso-rpt/view'],
+		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/index','rso-rpt/remarks','rso-rpt/sticker','rso-rpt/update','rso-rpt/view','sticker/add','sticker/move'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
 		'sales' => ['sales/all','sales/create','sales/stock','sales/report','sales/update'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
@@ -95,7 +95,7 @@ class AdminController extends \yii\web\Controller {
 		'Events' => ['events/approve','events/index','events/close','events/create','events/reg','events/return','events/remove-att','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert'],
 		'Guest' => ['guest/all','guest/modify','guest/update'],
-		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/index','rso-rpt/sticker','rso-rpt/update','rso-rpt/view'],
+		'Rso Report'=>['rso-rpt/current','rso-rpt/index','rso-rpt/sticker','rso-rpt/view'],
 		'sales' => ['sales/all'],
 		'violations' => ['violations/all','violations/create','violations/update'],
 	];
