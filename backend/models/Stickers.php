@@ -31,8 +31,24 @@ class Stickers extends \yii\db\ActiveRecord{
     public function attributeLabels() {
         return [
 			's_id' => 'Id',
-			'stkrs'=>'Stickers (Numbers Only, Not Year)',
+			'stkrs'=>'Stickers (Numbers Only)',
 			'yr'=>'Year',
        ];
     }
+
+	public function listStickerStatus($stat=false) {
+		if($stat) {
+			switch ($stat){
+				case 'adm': return 'Admin';
+				case 'rso': return 'RSO';
+				case 'isu': return 'Issued';
+				case 'mis': return 'Missing?';
+				case 'wha': return '????';
+				default: return $stat;
+			}
+		}
+		else {
+			return ['adm'=>'Admin','rso'=>'RSO','isu'=>'Issued','mis'=>'Missing?','wha'=>'???'];
+		}
+	}
 }

@@ -66,11 +66,13 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		<h2 class='pull-right'>Move Stickers:</h2>
 	</div>
 	<div class="col-xs-2 col-sm-1">
-		<?= $form->field($searchModel, 'to')->dropDownlist(['adm'=>'Admin','rso'=>'RSO','isu'=>'Issued'],['prompt'=>'select']); ?>
+		<?= $form->field($searchModel, 'yr')->dropDownlist(yii::$app->controller->getYear()); ?>
 	</div>
 	<div class="col-xs-4 col-sm-2">
 		<?= $form->field($searchModel, 'stkrs')->textinput(['placeholder'=>'2,4,7-9']); ?>
 	</div>
+	<div class="col-xs-2 col-sm-1">
+		<?= $form->field($searchModel, 'to')->dropDownlist(['adm'=>'Admin','rso'=>'RSO','isu'=>'Issued'],['prompt'=>'select']); ?>
 	</div>
 	<div class="col-xs-1">
 		<div class=" form-group btn-group ">
@@ -114,11 +116,43 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		'columns' => [
 			[	'attribute'=>'s_id',	],
 			[	'attribute'=>'sticker',	],
-			[	'attribute'=>'status',	],
+			[	'attribute'=>'status',
+				'value' => function($model) { return $model->listStickerStatus($model->status); },
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new backend\models\Stickers)->listStickerStatus(),['class'=>'form-control','prompt' => 'All']),
+			],
 			[	'attribute'=>'holder',	],
 			[	'attribute'=>'updated',	],
+			[
+				'header' => 'Actions',
+				'class' => 'yii\grid\ActionColumn',
+				'headerOptions' => ['style' => 'width:5%'],
+				'template'=>'{update}{delete}',
+				'buttons'=>[
+					'update' => function ($url, $model) {
+						if (yii::$app->controller->hasPermission('rso-rpt/sticker-update')) {
+						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/rso-rpt/sticker-update','id'=>$model->s_id],
+						[	'data-toggle'=>'tooltip',
+							'data-placement'=>'top',
+							'title'=>'Edit',
+							'class'=>'edit_item',
+						]); }
+					},
+					'delete' => function($url,$model) {
+						if (yii::$app->controller->hasPermission('rso-rpt/sticker-delete')) {
+						return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', ['/rso-rpt/sticker-delete','id'=>$model->s_id], [
+							'data-toggle'=>'tooltip',
+							'data-placement'=>'top',
+							'title'=>'Delete',
+							'data' => [
+								'confirm' => 'Are you sure you want to delete this item?',
+								'method' => 'post',
+							],
+						]); }
+					},
+				],
 			],
-		]); ?>
+		],
+	]); ?>
 </div>
 </div>
 
@@ -137,5 +171,11 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			$("#Move-Stickers").hide();
 			$("#Add-Stickers").show();
 		});
+		
+		$("#stickerssearch-stkrs").keyup(function(e){
+			var self = $(this);
+			self.val(self.val().replace(/[^0-9\,\-]/g, ''));
+		});
+		
    });
 </script>

@@ -7,7 +7,8 @@ use yii\widgets\DetailView;
 /* @var $form yii\widgets\ActiveForm */
 
 $this->title = 'View RSO Report #'.$model->id;
-$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/update']];
+$this->params['breadcrumbs'][] = ['label' => 'RSO Reports', 'url' => ['rso-rpt/index']];
+$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/view?id='.$model->id]];
 
 ?>
 
