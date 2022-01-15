@@ -584,6 +584,13 @@ class BadgesController extends AdminController {
 				} else {
 				  //echo'<pre>'; print_r($badgeSubscriptionsModel->getErrors()); die();
 				}
+				$stker = (new \backend\models\Stickers)::find()->where(['sticker'=>$model->sticker])->one();
+				if($stker){
+					$stker->status = 'isu';
+					$stker->holder = $model->badge_number;
+					$stker->updated =  $this->getNowTime();
+					$stker->save();
+				}
 
 				$this->createLog($this->getNowTime(), $_SESSION['user'], "Issued new Badge','".$model->badge_number." for ".$model->first_name." ".$model->last_name);
 				Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been created');
@@ -1087,6 +1094,14 @@ class BadgesController extends AdminController {
 					}
 
 					$badgeRecords->work_credits = 0;
+				}
+
+				$stker = (new \backend\models\Stickers)::find()->where(['sticker'=>$model->sticker])->one();
+				if($stker){
+					$stker->status = 'isu';
+					$stker->holder = $model->badge_number;
+					$stker->updated =  $this->getNowTime();
+					$stker->save();
 				}
 
 				if($dirty) {$cmnt = "Updated: ".$dirty; } else { $cmnt = ''; }

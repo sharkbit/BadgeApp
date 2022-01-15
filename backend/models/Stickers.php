@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "sticker".
@@ -35,6 +36,22 @@ class Stickers extends \yii\db\ActiveRecord{
 			'yr'=>'Year',
        ];
     }
+
+	public function getList() {
+		if (array_intersect([1,2,10], json_decode(yii::$app->user->identity->privilege))) { $whr='adm';}
+		elseif (array_intersect([3,6], json_decode(yii::$app->user->identity->privilege))) { $whr='rso';}
+		else {$whr='x';}
+		$sticker = (new Stickers)->find()->where(['status'=>$whr])->limit(15)->orderBy('sticker')->all();
+		if($sticker){
+			$use = ArrayHelper::map($sticker,'sticker','sticker');
+			$tmpstkr = substr(array_values($use)[0],0,5).'zzzz';
+			$use = array_merge($use,[$tmpstkr=>$tmpstkr]);
+			return $use;
+		} else {
+			return ['fix'=>'No Free Stickers. See Admin'];
+		}
+		
+	}
 
 	public function listStickerStatus($stat=false) {
 		if($stat) {
