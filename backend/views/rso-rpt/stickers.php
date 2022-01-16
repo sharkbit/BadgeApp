@@ -11,8 +11,8 @@ use kartik\widgets\ActiveForm;
 $this->title = 'Badge Stickers';
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/sticker']];
 
-if (isset($_REQUEST['StickersSearch']['pagesize'])) { 
-	$pagesize = $_REQUEST['StickersSearch']['pagesize']; 
+if (isset($_REQUEST['StickersSearch']['pagesize'])) {
+	$pagesize = $_REQUEST['StickersSearch']['pagesize'];
 	$_SESSION['pagesize'] = $_REQUEST['StickersSearch']['pagesize'];
 } elseif (isset($_SESSION['pagesize'])) {
 	$pagesize = $_SESSION['pagesize'];
@@ -23,6 +23,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 ?>
 
 <?=$this->render('_view-tab-menu').PHP_EOL ?>
+
 <div class="rsoreports-search">
 <?php $form = ActiveForm::begin([
 	'method' => 'post',
@@ -114,7 +115,10 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
 		'columns' => [
-			[	'attribute'=>'s_id',	],
+			[	'attribute'=>'s_id',
+				'visible' => (yii::$app->controller->hasPermission('params/update')) ? true : false,
+				'headerOptions' => ['style' => 'width:5%'],
+			],
 			[	'attribute'=>'sticker',	],
 			[	'attribute'=>'status',
 				'value' => function($model) { return $model->listStickerStatus($model->status); },
@@ -165,17 +169,17 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			$("#Move-Stickers").show();
 			$("#Add-Stickers").hide();
 		});
-		
+
 		$("#java-show-add").click(function(e) {
             e.preventDefault();
 			$("#Move-Stickers").hide();
 			$("#Add-Stickers").show();
 		});
-		
+
 		$("#stickerssearch-stkrs").keyup(function(e){
 			var self = $(this);
 			self.val(self.val().replace(/[^0-9\,\-]/g, ''));
 		});
-		
+
    });
 </script>

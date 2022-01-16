@@ -586,6 +586,7 @@ class BadgesController extends AdminController {
 				}
 				$stker = (new \backend\models\Stickers)::find()->where(['sticker'=>$model->sticker])->one();
 				if($stker){
+					yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Issued ".$model->sticker.' to Badge '.$model->badge_number);
 					$stker->status = 'isu';
 					$stker->holder = $model->badge_number;
 					$stker->updated =  $this->getNowTime();
@@ -1098,6 +1099,7 @@ class BadgesController extends AdminController {
 
 				$stker = (new \backend\models\Stickers)::find()->where(['sticker'=>$model->sticker])->one();
 				if($stker){
+					yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Issued ".$model->sticker.' to Badge '.$model->badge_number);
 					$stker->status = 'isu';
 					$stker->holder = $model->badge_number;
 					$stker->updated =  $this->getNowTime();

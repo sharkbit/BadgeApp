@@ -44,10 +44,13 @@ class StickersSearch extends Stickers {
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->s_id,
-        ]);
 
-        return $dataProvider;
+		if(isset($this->s_id)) 		{ $query->andFilterWhere(['s_id' => $this->s_id]); }
+		if(isset($this->sticker)) { $query->andFilterWhere(['like', 'sticker', $this->sticker]); }
+		if(isset($this->status)) 	{ $query->andFilterWhere(['status' => $this->status]); }
+		if(isset($this->holder)) 	{ $query->andFilterWhere(['holder' => $this->holder]); }
+		if(isset($this->updated)) { $query->andFilterWhere(['like', 'updated', $this->updated]); }
+
+		return $dataProvider;
     }
 }

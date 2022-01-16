@@ -128,6 +128,10 @@ class RsoRptController extends AdminController {
 		$searchModel = new StickersSearch();
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+		if (array_intersect([3,6], json_decode(yii::$app->user->identity->privilege))) {
+			$dataProvider->query->andWhere(['status'=>'rso']);
+		}
+
 		return $this->render('stickers', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
