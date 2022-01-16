@@ -50,10 +50,10 @@ class Badges extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name', 'last_name', 'address', 'city','state', 'zip', 'gender', 'mem_type', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
+			[['first_name', 'last_name', 'address', 'city','state', 'zip', 'gender', 'mem_type','club_id', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
 			[['address', 'gender', 'qrcode','status','cc_num','cc_x_id'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
-			[['badge_number','zip','club_id', 'mem_type','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
+			[['badge_number','zip', 'mem_type','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
 			[['badge_fee', 'amt_due','tax'], 'number'],
 			[['prefix', 'suffix'], 'string', 'max' => 15],
 			['email', 'string', 'max' => 60],
