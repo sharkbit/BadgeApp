@@ -40,10 +40,17 @@ class Stickers extends \yii\db\ActiveRecord{
     }
 
 	public function getList() {
-		if (array_intersect([1,2,10], json_decode(yii::$app->user->identity->privilege))) { $whr='adm';}
-		elseif (array_intersect([3,6], json_decode(yii::$app->user->identity->privilege))) { $whr='rso';}
+		$limit=15;
+		if (array_intersect([1,2], json_decode(yii::$app->user->identity->privilege))) {
+			$whr="status='adm' OR status='cas'"; $limit=150; }
+		elseif ((in_array(3, json_decode(yii::$app->user->identity->privilege))) && (in_array(10, json_decode(yii::$app->user->identity->privilege)))) {
+			$whr="status='rso' OR status='cas'"; $limit=150;}
+		elseif (array_intersect([10], json_decode(yii::$app->user->identity->privilege))) {
+			$whr=['status'=>'cas']; }
+		elseif (array_intersect([3,6], json_decode(yii::$app->user->identity->privilege))) {
+			$whr=['status'=>'rso']; }
 		else {$whr='x';}
-		$sticker = (new Stickers)->find()->where(['status'=>$whr])->limit(15)->orderBy('sticker')->all();
+		$sticker = (new Stickers)->find()->where($whr)->limit($limit)->orderBy('sticker')->all();
 		if($sticker){
 			$use = ArrayHelper::map($sticker,'sticker','sticker');
 			$tmpstkr = substr(array_values($use)[0],0,5).'zzzz';
@@ -59,16 +66,16 @@ class Stickers extends \yii\db\ActiveRecord{
 		if($stat) {
 			switch ($stat){
 				case 'adm': return 'Admin';
+				case 'cas': return 'Casher';
 				case 'rso': return 'RSO';
 				case 'isu': return 'Issued';
-				case 'mis': return 'Missing?';
+				case 'mis': return 'Missing';
 				case 'ret': return 'Retired';
-				case 'wha': return '????';
 				default: return $stat;
 			}
 		}
 		else {
-			return ['adm'=>'Admin','rso'=>'RSO','isu'=>'Issued','mis'=>'Missing?','ret'=>'Retired','wha'=>'???'];
+			return ['adm'=>'Admin','cas'=>'Casher','rso'=>'RSO','isu'=>'Issued','mis'=>'Missing?','ret'=>'Retired'];
 		}
 	}
 }
