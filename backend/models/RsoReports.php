@@ -28,7 +28,7 @@ class RsoReports extends \yii\db\ActiveRecord {
 			[['date_open','mics','rso','wb_color','wb_trap_cases'], 'required'],
 			[['closed','id','par_50','par_100','par_200','par_steel','par_nm_hq','par_m_hq','par_trap','par_arch','par_pel','par_spr','par_cio_stu','par_act','wb_trap_cases'], 'integer'],
 			[['cash_bos','cash_eos'],'number'],
-			[['wb_color','closing','mics','notes','remarks','rso','shift','shift_anom'], 'safe'],
+			[['wb_color','closing','mics','notes','remarks','rso','shift','shift_anom','stickers'], 'safe'],
 			[['date_open','date_close'],'safe'],
 		];
     }
@@ -72,6 +72,44 @@ class RsoReports extends \yii\db\ActiveRecord {
 			}
 		}
 		return ArrayHelper::map($rsoList, 'id', 'name');
+	}
+	
+	public function getStickerCount($who='rso') {
+		$stkr = (new \backend\models\Stickers)->find()->where(['status'=>$who])->all();
+		$cnt=0;
+		$list = [];
+		foreach($stkr as $lick) {
+			$list = $this->reduce_ranges($list,(int)substr($lick->sticker,-4));
+			$cnt++;
+		}
+		$replace=['"','[',']'];
+		return $cnt.': '.str_replace($replace,'',json_encode($list));
+	}
+
+	public function reduce_ranges($reduced, $value) {
+		static $in_range, $previous;
+		// Reset
+		if ($in_range === NULL) {
+			$in_range = FALSE;
+			$previous = NULL;
+		}
+		// In a range
+		if (isset($previous) && $value == $previous + 1) {
+			if (!$in_range) {
+				$in_range = TRUE;
+			}
+			// Update the range
+			end($reduced);
+			$key = key($reduced);
+			$start = strtok($reduced[$key], "-");
+			$reduced[$key] = $start."-".$value;
+		// Not in a range
+		} else {
+			$reduced[] = $value;
+			$in_range = FALSE;
+		}
+		$previous = $value;
+		return $reduced;
 	}
 }
 

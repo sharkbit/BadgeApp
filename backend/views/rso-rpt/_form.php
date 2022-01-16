@@ -43,8 +43,8 @@ if($model->isNewRecord) {
 	<div class="col-xs-12 col-sm-2">
 		<?= $form->field($model, 'wb_trap_cases')->textInput(['maxlength'=>true]) ?>
 	</div>
-	<div class="col-xs-12 col-sm-2">
-		<B> Badge Sticker Numbers comming to a tab near you one day.
+	<div class="col-xs-12 col-sm-4">
+		<?= $form->field($model, 'stickers')->textInput(['value'=>$model->getStickerCount('rso'),'readonly' => true,'maxlength'=>true]) ?>
 	</div>
 </div>
 

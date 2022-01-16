@@ -581,7 +581,7 @@ ALTER TABLE `BadgeDB`.`rso_reports`
 ADD COLUMN `date_close` DATETIME NULL DEFAULT NULL AFTER `date_open`,
 CHANGE COLUMN `date` `date_open` DATETIME NULL DEFAULT NULL ;
 
--- Sticker
+-- Sticker v2.1.12
 DROP TABLE IF EXISTS `sticker`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -595,3 +595,7 @@ CREATE TABLE `sticker` (
   UNIQUE KEY `s_id_UNIQUE` (`s_id`),
   UNIQUE KEY `sticker_UNIQUE` (`sticker`)
 )
+
+-- Rso Stickers
+ALTER TABLE `BadgeDB`.`rso_reports` 
+ADD COLUMN `stickers` TEXT NULL DEFAULT NULL AFTER `cash_eos`;

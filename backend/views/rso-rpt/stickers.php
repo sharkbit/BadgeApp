@@ -108,6 +108,15 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 </div>
 <?php ActiveForm::end(); ?>
 
+<div class="row" style="background-color:WhiteSmoke;">
+<div class="col-xs-12 col-sm-6">
+	<p style='margin:6px;'><b>Cashier: <?=(new \backend\models\RsoReports)->getStickerCount('cas'); ?></b></p>
+</div>
+<div class="col-xs-12 col-sm-6">
+	<p style='margin:6px;'><b>RSO: <?=(new \backend\models\RsoReports)->getStickerCount('rso'); ?></b> </p>
+</div>
+</div>
+
 <div class="row">
 <div class="col-xs-12">
 
