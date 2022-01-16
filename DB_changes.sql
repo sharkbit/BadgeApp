@@ -580,3 +580,18 @@ ADD COLUMN `wb_trap_cases` INT NULL DEFAULT NULL AFTER `mics`;
 ALTER TABLE `BadgeDB`.`rso_reports` 
 ADD COLUMN `date_close` DATETIME NULL DEFAULT NULL AFTER `date_open`,
 CHANGE COLUMN `date` `date_open` DATETIME NULL DEFAULT NULL ;
+
+-- Sticker
+DROP TABLE IF EXISTS `sticker`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sticker` (
+  `s_id` int NOT NULL AUTO_INCREMENT,
+  `sticker` varchar(10) DEFAULT NULL,
+  `status` varchar(4) DEFAULT NULL,
+  `holder` int DEFAULT NULL,
+  `updated` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`s_id`),
+  UNIQUE KEY `s_id_UNIQUE` (`s_id`),
+  UNIQUE KEY `sticker_UNIQUE` (`sticker`)
+)

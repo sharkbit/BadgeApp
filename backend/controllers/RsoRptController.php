@@ -3,9 +3,12 @@
 namespace backend\controllers;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use backend\controllers\AdminController;
 use backend\models\RsoReports;
+use backend\models\Stickers;
 use backend\models\search\RsoReportsSearch;
+use backend\models\search\StickersSearch;
 
 /**
  * ParamsController implements the CRUD actions for RsoReports model.
@@ -44,7 +47,7 @@ class RsoRptController extends AdminController {
 					return $this->redirect(['index']);
 				} else {
 					Yii::$app->getSession()->setFlash('error', json_encode($model->errors));
-					yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:51 NOT VALID', var_export($model->errors,true));
+					yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:50 NOT VALID', var_export($model->errors,true));
 					return $this->render('current', [
 						'model' => $model,
 					]);
@@ -77,9 +80,88 @@ class RsoRptController extends AdminController {
 	}
 
 	public function actionSticker() {
+		if (isset($_REQUEST['sticker_add']) && ($_REQUEST['sticker_add']==1)) {
+			$x = (int)$_REQUEST['StickersSearch']['start'];
+			$yr = (int)$_REQUEST['StickersSearch']['yr'];
+			yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Adding ".$yr.' - '.$_REQUEST['StickersSearch']['start'].' - '.$_REQUEST['StickersSearch']['end']);
+			$chk = ArrayHelper::getColumn(Stickers::find()->where(['like','sticker',$yr."%",false])->all(),'sticker');
+			do {
+				$new_stkr = $yr.'-'.str_pad($x, 4, '0', STR_PAD_LEFT);
+				if(in_array($new_stkr,$chk)) { $x++; continue; }
+				$stkr = new Stickers;
+				$stkr->sticker = $new_stkr;
+				$stkr->status = 'adm';
+				$stkr->save();
+				$x++;
+			} while ($x < (int)$_REQUEST['StickersSearch']['end']+1);
+		}
+
+		if (isset($_REQUEST['sticker_move']) && ($_REQUEST['sticker_move']==1)) {
+			$yr = (int)$_REQUEST['StickersSearch']['yr_mv'];
+			yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Moving ".$yr.' - '.$_REQUEST['StickersSearch']['stkrs'].' to '.$_REQUEST['StickersSearch']['to']);
+			$moving=explode(',',$_REQUEST['StickersSearch']['stkrs']);
+
+			foreach($moving as $rng) {
+				if(strpos($rng,'-')) {
+					$rng_a = explode('-',$rng);
+					$y=$rng_a[0];
+					do {
+						$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($y, 4, '0', STR_PAD_LEFT)])->andwhere(['in','status',['rso','adm']])->one();
+						//$stker = Stickers::find()->where("sticker ='".$yr.'-'.str_pad($y, 4, '0', STR_PAD_LEFT)."' AND `status` in ('adm','rso')")->one();
+						if($stker){
+							$stker->status = $_REQUEST['StickersSearch']['to'];
+							$stker->updated =  $this->getNowTime();
+							$stker->save();
+								yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:116 sticker', $yr.'-'.$y.' yes');
+						} else {
+							yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:116 sticker', $yr.'-'.$y.' nope');
+							//exit;
+						}
+						$y++;
+					} while ($y < $rng_a[1]+1);
+				} else {
+					$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($rng, 4, '0', STR_PAD_LEFT)])->andwhere(['in','status',['rso','adm']])->one();
+					if($stker) {
+						$stker->status = $_REQUEST['StickersSearch']['to'];
+						$stker->updated =  $this->getNowTime();
+						$stker->save();
+					}
+				}
+			}
+		}
+
+		$searchModel = new StickersSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+		if (array_intersect([3,6], json_decode(yii::$app->user->identity->privilege))) {
+			$dataProvider->query->andWhere(['status'=>'rso']);
+		}
+
 		return $this->render('stickers', [
-				//'model' => $model,
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+		]);
+	}
+
+	public function actionStickerUpdate($id=1) {
+		$model =  (new Stickers)->find()->where(['s_id'=>$id])->one();
+		if ($model->load(Yii::$app->request->post())) {
+			$model->updated = $this->getNowTime();
+			if($model->save()) {
+				yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Updated ".$model->sticker);
+				return $this->redirect(['rso-rpt/sticker']);
+			}
+		}
+		return $this->render('/rso-rpt/sticker-update',[
+				'model' => $model,
 			]);
+	}
+
+	public function actionStickerDelete($id=1) {
+		Yii::$app->getSession()->setFlash('error', 'Do you really want This?  Function not written yet.');
+		//Verify no user has selected permission
+			//delete if none
+		return $this->redirect(['/rso-rpt/sticker']);
 	}
 
 	public function actionUpdate($id=1) {
@@ -121,7 +203,7 @@ class RsoRptController extends AdminController {
 		$model->closed=(int)$model->closed;
 		$model->rso = str_replace('"',"", json_encode($model->rso));
 		$model->wb_trap_cases = (int)$model->wb_trap_cases;
-		
+
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
 			'mics'=>'MICs Status',
@@ -144,7 +226,7 @@ class RsoRptController extends AdminController {
 		}
 		sort($responce);
 		$dirty=implode(", ",$responce);
-			
+
 		$remarksOld = json_decode($model->remarks,true);
 		if($dirty) {
 			$cmnt = "Updated: ".$dirty;
@@ -153,7 +235,7 @@ class RsoRptController extends AdminController {
 				'data' => $cmnt,
 				'changed' => $comment,
 			];
-			
+
 			if($remarksOld != '') {
 				array_push($remarksOld,$nowRemakrs);
 			} else {
@@ -161,8 +243,13 @@ class RsoRptController extends AdminController {
 					$nowRemakrs,
 				];
 			}
-		}		
+		}
 		return json_encode($remarksOld,true);
+	}
+
+	public function getYear() {
+		$yr = date('Y');
+		return [($yr-1)=>$yr-1,$yr=>$yr,$yr+1=>$yr+1];
 	}
 
 	protected function findModel($id) {

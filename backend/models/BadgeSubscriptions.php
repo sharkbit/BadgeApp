@@ -46,7 +46,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['badge_number', 'valid_from', 'valid_true', 'payment_type', 'status', 'created_at','badge_fee'], 'required'],
+            [['badge_number', 'valid_from', 'valid_true', 'payment_type', 'status','sticker','created_at','badge_fee'], 'required'],
             ['amount_due', 'required', 'when' => function ($model) {
                 $currentUrl = yii::$app->controller->getCurrentUrl();
                 if($currentUrl['controllerId']=='badges'&&$currentUrl['actionId']=='update') {
@@ -57,7 +57,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
             [['valid_from', 'valid_true', 'created_at','badge_fee','mem_id','mem_type','expires','redeemable_credit','transaction_type','club_id','wt_date','wt_instru','is_migrated'], 'safe'],
 			[['amount_due','paid_amount','tax'],'number'],
 			[['cc_cvc','cc_exp_yr','cc_exp_mo'],'integer'],
-            [['sticker'],'required'],
+			[['sticker'],'string','min'=>8, 'max'=>10],
             [['payment_type','status','cc_num','cc_x_id'], 'string'],
         ];
     }
