@@ -67,13 +67,13 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		<h2 class='pull-right'>Move Stickers:</h2>
 	</div>
 	<div class="col-xs-2 col-sm-1">
-		<?= $form->field($searchModel, 'yr')->dropDownlist(yii::$app->controller->getYear()); ?>
+		<?= $form->field($searchModel, 'yr_mv')->dropDownlist(yii::$app->controller->getYear()); ?>
 	</div>
 	<div class="col-xs-4 col-sm-2">
 		<?= $form->field($searchModel, 'stkrs')->textinput(['placeholder'=>'2,4,7-9']); ?>
 	</div>
 	<div class="col-xs-2 col-sm-1">
-		<?= $form->field($searchModel, 'to')->dropDownlist(['adm'=>'Admin','rso'=>'RSO','isu'=>'Issued'],['prompt'=>'select']); ?>
+		<?= $form->field($searchModel, 'to')->dropDownlist($searchModel->listStickerStatus(),['prompt'=>'select']); ?>
 	</div>
 	<div class="col-xs-1">
 		<div class=" form-group btn-group ">

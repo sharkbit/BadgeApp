@@ -81,9 +81,9 @@ class RsoRptController extends AdminController {
 
 	public function actionSticker() {
 		if (isset($_REQUEST['sticker_add']) && ($_REQUEST['sticker_add']==1)) {
-			yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Adding ".$_REQUEST['StickersSearch']['start'].' - '.$_REQUEST['StickersSearch']['end']);
 			$x = (int)$_REQUEST['StickersSearch']['start'];
 			$yr = (int)$_REQUEST['StickersSearch']['yr'];
+			yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Adding ".$yr.' - '.$_REQUEST['StickersSearch']['start'].' - '.$_REQUEST['StickersSearch']['end']);
 			$chk = ArrayHelper::getColumn(Stickers::find()->where(['like','sticker',$yr."%",false])->all(),'sticker');
 			do {
 				$new_stkr = $yr.'-'.str_pad($x, 4, '0', STR_PAD_LEFT);
@@ -93,12 +93,12 @@ class RsoRptController extends AdminController {
 				$stkr->status = 'adm';
 				$stkr->save();
 				$x++;
-			} while ($x < (int)$_REQUEST['StickersSearch']['end']);
+			} while ($x < (int)$_REQUEST['StickersSearch']['end']+1);
 		}
 
 		if (isset($_REQUEST['sticker_move']) && ($_REQUEST['sticker_move']==1)) {
-			yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Moving ".$_REQUEST['StickersSearch']['stkrs'].' to '.$_REQUEST['StickersSearch']['to']);
-			$yr = (int)$_REQUEST['StickersSearch']['yr'];
+			$yr = (int)$_REQUEST['StickersSearch']['yr_mv'];
+			yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Moving ".$yr.' - '.$_REQUEST['StickersSearch']['stkrs'].' to '.$_REQUEST['StickersSearch']['to']);
 			$moving=explode(',',$_REQUEST['StickersSearch']['stkrs']);
 
 			foreach($moving as $rng) {
@@ -106,16 +106,21 @@ class RsoRptController extends AdminController {
 					$rng_a = explode('-',$rng);
 					$y=$rng_a[0];
 					do {
-						$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($y, 4, '0', STR_PAD_LEFT)])->one();
+						$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($y, 4, '0', STR_PAD_LEFT)])->andwhere(['in','status',['rso','adm']])->one();
+						//$stker = Stickers::find()->where("sticker ='".$yr.'-'.str_pad($y, 4, '0', STR_PAD_LEFT)."' AND `status` in ('adm','rso')")->one();
 						if($stker){
 							$stker->status = $_REQUEST['StickersSearch']['to'];
 							$stker->updated =  $this->getNowTime();
 							$stker->save();
+								yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:116 sticker', $yr.'-'.$y.' yes');
+						} else {
+							yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:116 sticker', $yr.'-'.$y.' nope');
+							//exit;
 						}
 						$y++;
 					} while ($y < $rng_a[1]+1);
 				} else {
-					$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($rng, 4, '0', STR_PAD_LEFT)])->one();
+					$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($rng, 4, '0', STR_PAD_LEFT)])->andwhere(['in','status',['rso','adm']])->one();
 					if($stker) {
 						$stker->status = $_REQUEST['StickersSearch']['to'];
 						$stker->updated =  $this->getNowTime();

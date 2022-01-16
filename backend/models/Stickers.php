@@ -15,6 +15,7 @@ class Stickers extends \yii\db\ActiveRecord{
 	public $end;
 	public $to;
 	public $yr;
+	public $yr_mv;
 	public $stkrs;
 
     public static function tableName() {
@@ -25,7 +26,7 @@ class Stickers extends \yii\db\ActiveRecord{
         return [
            [['status','sticker','updated','to','stkrs'], 'safe'],
            [['s_id','holder'], 'number'],
-		   [['end','start','yr'],'integer'],
+		   [['end','start','yr','yr_mv'],'integer'],
        ];
     }
 
@@ -34,6 +35,7 @@ class Stickers extends \yii\db\ActiveRecord{
 			's_id' => 'Id',
 			'stkrs'=>'Stickers (Numbers Only)',
 			'yr'=>'Year',
+			'yr_mv'=>'Year',
        ];
     }
 
@@ -48,7 +50,7 @@ class Stickers extends \yii\db\ActiveRecord{
 			$use = array_merge($use,[$tmpstkr=>$tmpstkr]);
 			return $use;
 		} else {
-			return ['fix'=>'No Free Stickers. See Admin'];
+			return ['fix'=>'No Stickers. See Admin'];
 		}
 		
 	}
@@ -60,12 +62,13 @@ class Stickers extends \yii\db\ActiveRecord{
 				case 'rso': return 'RSO';
 				case 'isu': return 'Issued';
 				case 'mis': return 'Missing?';
+				case 'ret': return 'Retired';
 				case 'wha': return '????';
 				default: return $stat;
 			}
 		}
 		else {
-			return ['adm'=>'Admin','rso'=>'RSO','isu'=>'Issued','mis'=>'Missing?','wha'=>'???'];
+			return ['adm'=>'Admin','rso'=>'RSO','isu'=>'Issued','mis'=>'Missing?','ret'=>'Retired','wha'=>'???'];
 		}
 	}
 }

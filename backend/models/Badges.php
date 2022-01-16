@@ -64,7 +64,8 @@ class Badges extends \yii\db\ActiveRecord {
 			[['first_name','last_name'], 'string', 'max' => 35],
 			[['phone_op','ice_phone'], 'match', 'pattern' => '/^[- 0-9() +]+$/', 'message' => 'Not a valid phone number.'],
 			[['city', 'phone', 'phone_op', 'ice_phone'], 'string', 'max' => 25],
-			[['sticker','zip'], 'string', 'max' => 10],
+			[['sticker'],'string','min'=>8, 'max'=>10],
+			[['zip'], 'string', 'max' => 10],
 			[['wt_instru'], 'string', 'max' => 255],
 			['primary', 'required', 'when' => function ($model) {
 					return $model->mem_type == '51';},
