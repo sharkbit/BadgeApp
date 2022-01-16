@@ -107,15 +107,10 @@ class RsoRptController extends AdminController {
 					$y=$rng_a[0];
 					do {
 						$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($y, 4, '0', STR_PAD_LEFT)])->andwhere(['in','status',['rso','adm']])->one();
-						//$stker = Stickers::find()->where("sticker ='".$yr.'-'.str_pad($y, 4, '0', STR_PAD_LEFT)."' AND `status` in ('adm','rso')")->one();
 						if($stker){
 							$stker->status = $_REQUEST['StickersSearch']['to'];
 							$stker->updated =  $this->getNowTime();
 							$stker->save();
-								yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:116 sticker', $yr.'-'.$y.' yes');
-						} else {
-							yii::$app->controller->createLog(false, 'trex-c-RSO-rpt:116 sticker', $yr.'-'.$y.' nope');
-							//exit;
 						}
 						$y++;
 					} while ($y < $rng_a[1]+1);
