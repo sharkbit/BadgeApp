@@ -443,7 +443,7 @@ class BadgesController extends AdminController {
 				$badge = (new Badges)->find()->where("concat(first_name,' ',last_name) = \"".$ier->cashier."\"")->one();
 				if($badge) {
 					echo $ier->cashier.' - '.$badge->badge_number."<br>";
-					CardReceipt::updateAll(['cashier_badge' => $badge->badge_number], 'cashier = '.$ier->cashier);
+					CardReceipt::updateAll(['cashier_badge' => $badge->badge_number], "cashier = \"".$ier->cashier.'"');
 				}
 				else {echo $ier->cashier.'<br>';}
 			}
