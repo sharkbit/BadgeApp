@@ -1366,19 +1366,19 @@ app.controller('ViolationsRecFrom', function($scope) {
     });
 
     function getReporterName(badgeNumber,field_name) {
-        jQuery.ajax({
+		jQuery.ajax({
             method: 'GET',
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {
-                if(responseData) {
-                    responseData = JSON.parse(responseData);
+			  responseData = JSON.parse(responseData);
+			  if(responseData.badge_number) {
                     $("#violations-"+field_name).val(responseData.first_name+' '+responseData.last_name);
 					return responseData.first_name+' '+responseData.last_name;
                 } else { $("#violations-"+field_name).val('Not Found'); }
             },
             error: function (responseData, textStatus, errorThrown) {
-                console.log("Error:" +responseData);
+				console.log(responseData);
             },
         });
     };
@@ -1398,7 +1398,7 @@ app.controller('PostPrintTransactionForm', function($scope) {
 });
 
 app.controller('ViolationsReport', function($scope) {
-    $(".btn-group").hide();
+//    $(".btn-group").hide();
 });
 
 $( document ).ready(function() {
