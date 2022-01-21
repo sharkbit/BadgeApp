@@ -110,7 +110,7 @@ if($model->isNewRecord) {
 	<?= $form->field($model, 'closing')->textarea(['rows' => '1']).PHP_EOL; ?>
 	</div>
 	<div class="col-xs-12 col-sm-12">
-	<?= $form->field($model, 'violations')->textInput(['value'=>$model->getViolations($model),'readonly' => true,'maxlength'=>true]) ?>
+	<?= $form->field($model, 'violations')->textarea(['value'=>$model->getViolations($model),'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
 	</div>
 </div>
 

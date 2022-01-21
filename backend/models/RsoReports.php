@@ -25,7 +25,7 @@ class RsoReports extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-			[['date_open','mics','rso','wb_color','wb_trap_cases'], 'required'],
+			[['cash_bos','date_open','mics','rso','wb_color','wb_trap_cases'], 'required'],
 			[['closed','id','par_50','par_100','par_200','par_steel','par_nm_hq','par_m_hq','par_trap','par_arch','par_pel','par_spr','par_cio_stu','par_act','wb_trap_cases'], 'integer'],
 			[['cash_bos','cash_eos'],'number'],
 			[['cash','checks','wb_color','closing','mics','notes','remarks','rso','shift','shift_anom','stickers','violations'], 'safe'],
@@ -75,9 +75,10 @@ class RsoReports extends \yii\db\ActiveRecord {
 	}
 
 	public function getCash($what='cash',$model) {
-		if($model->closed) {$whr_date="(tx_date > '".$model->date_open."' AND tx_date < '".$model->date_close."')";} else {$whr_date="tx_date > '".$model->date_open."'";}
+		if($model->closed) {$whr="(tx_date > '".$model->date_open."' AND tx_date < '".$model->date_close."')";} else {$whr="tx_date > '".$model->date_open."'";}
+		if($model->rso) { $whr .='AND (cashier_badge in ('.trim($model->rso,"\[\]").'))'; }
 
-		$tx = (new \backend\models\CardReceipt)->find()->where(['tx_type'=>$what])->andWhere($whr_date)->andWhere('cashier_badge in ('.trim($model->rso,"\[\]").')')->orderBy(['tx_date'=>'desc'])->all();
+		$tx = (new \backend\models\CardReceipt)->find()->where(['tx_type'=>$what])->andWhere($whr)->orderBy(['tx_date'=>'desc'])->all();
 		$cnt=0;
 		$cash_total=0;
 		$cartSum =  new \stdClass();
@@ -107,7 +108,21 @@ class RsoReports extends \yii\db\ActiveRecord {
 	}
 
 	public function getViolations($model) {
-		return "ohh ahh";
+		if($model->closed) {$whr="(vi_date > '".$model->date_open."' AND vi_date < '".$model->date_close."')";} else {$whr="vi_date > '".$model->date_open."'";}
+		if($model->rso) { $whr .= ' AND (badge_reporter in ('.trim($model->rso,"\[\]").'))'; }
+		$violat = (new \backend\models\Violations)->find()->where($whr)->orderBy(['vi_date'=>'desc'])->all();
+
+		if($violat) {
+			$cnt=0;
+			$viSum='';
+			foreach ($violat as $incident) {
+				$cnt++;
+				if($incident->vi_override) {$clas=4;} else {$clas=$incident->vi_type;}
+				$viSum .= "- C$clas, $incident->vi_rules \n";
+			}
+			$violatSum =$cnt." Incident(s):\n".$viSum;
+		} else { $violatSum='None'; }
+		return $violatSum;
 	}
 
 	public function getStickerCount($who='rso') {
