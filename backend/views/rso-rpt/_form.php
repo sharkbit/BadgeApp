@@ -96,12 +96,21 @@ if($model->isNewRecord) {
 	<div class="col-xs-6 col-sm-2">
 	<?= $form->field($model, 'cash_eos')->textInput(['maxlength'=>true]) ?>
 	</div>
+	<div class="col-xs-12 col-sm-4">
+	<?= $form->field($model, 'cash')->textarea(['value'=>$model->getCash('cash',$model),'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
+	</div>
+	<div class="col-xs-12 col-sm-4">
+	<?= $form->field($model, 'checks')->textarea(['value'=>$model->getCash('check',$model),'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
+	</div>
 </div>
 
 <h3>More Notes:</h3>
 <div class="row">
 	<div class="col-xs-12 col-sm-12">
 	<?= $form->field($model, 'closing')->textarea(['rows' => '1']).PHP_EOL; ?>
+	</div>
+	<div class="col-xs-12 col-sm-12">
+	<?= $form->field($model, 'violations')->textInput(['value'=>$model->getViolations($model),'readonly' => true,'maxlength'=>true]) ?>
 	</div>
 </div>
 

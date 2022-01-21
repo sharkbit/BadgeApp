@@ -53,7 +53,7 @@ $subscript = BadgeSubscriptions::find()->where(['cc_x_id'=>$MyRcpt->id])->one();
 		echo "<p>Paid By: ".$MyRcpt->tx_type."</p>\n";
 	}
 	echo "<p>Date: ".$MyRcpt->tx_date."</p>\n";
-	echo "<p>Cashier: ".$MyRcpt->cashier."</p>";
+	echo "<p>Cashier: ".yii::$app->controller->decodeBadgeName((int)$MyRcpt->cashier_badge)."</p>";
 	echo "<p><b>Thank You for your Purchase</b></p> \n";
 	?>
 </div>

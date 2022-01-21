@@ -14,7 +14,6 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/vi
 
 <?=$this->render('_view-tab-menu').PHP_EOL ?>
 
-
 <div class="col-xs-12 col-sm-8">
 	<div class="block-badge-view">
 
@@ -32,6 +31,8 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/vi
 				},
 			],
 			'date_open',
+			[	'attribute'=>'shift',
+				'value' => function($model) { if($model->shift=='m') {return 'Morning';} else {return 'Evening';} }, ],
 			[	'attribute'=>	'date_close',
 				'visible' => ($model->closed==1) ? true : false,
 			],
@@ -59,9 +60,12 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/vi
 				}
 			],
 			'notes',
-			'shift',
 			'shift_anom',
 			'closing',
+			'stickers',
+			'cash',
+			'checks',
+			'violations',
 			'par_50','par_100','par_200','par_steel','par_nm_hq','par_m_hq','par_trap','par_arch','par_pel','par_spr','par_cio_stu','par_act',
 			[	'attribute'=>'remarks',
 				'format'=>'raw',

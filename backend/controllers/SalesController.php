@@ -101,6 +101,7 @@ class SalesController extends AdminController {
 				$savercpt->name = $model->first_name.' '.$model->last_name;
 				$savercpt->cart = $model->cart;
 				$savercpt->cashier = $_SESSION['user'];
+				if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
 				if($savercpt->save()) {
 					yii::$app->controller->createLog(true, $_SESSION['user'], "Saved Rcpt','".$model->badge_number);
 					if($this->CheckGuest($model)) {return $this->redirect(['/guest']);}

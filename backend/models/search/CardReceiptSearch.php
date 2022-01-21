@@ -17,7 +17,7 @@ class CardReceiptSearch extends CardReceipt {
      */
     public function rules() {
         return [
-           [['cart','tx_type','tx_date','id','name','cashier'], 'safe'],
+           [['cart','tx_type','tx_date','id','name'], 'safe'],
 		   [['badge_number'], 'integer'],
            [['amount'], 'number'],
        ];
@@ -75,7 +75,7 @@ class CardReceiptSearch extends CardReceipt {
 		if(isset($this->name)) { $query->andFilterWhere(['like', 'name', $this->name]); }
 		if(isset($this->amount)) { $query->andFilterWhere(['like', 'amount', $this->amount]); }
 		if(isset($this->tx_type)) { $query->andFilterWhere(['like', 'tx_type', $this->tx_type]); }
-		if(isset($this->cashier)) {
+	/*	if(isset($this->cashier)) {
 			if(strpos(trim($this->cashier),",")>0) {
 				$cashiers = explode(",", trim($this->cashier));
 				$sqlWhere='';
@@ -85,7 +85,7 @@ class CardReceiptSearch extends CardReceipt {
 				yii::$app->controller->createLog(false, 'trex', var_export("(".rtrim($sqlWhere," or ").")",true));
 				$query->andWhere("(".rtrim($sqlWhere," or ").")"); 
 			} else { $query->andFilterWhere(['like', 'cashier', $this->cashier]); }
-		}
+		} */
 		
 //yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;

@@ -599,3 +599,12 @@ CREATE TABLE `sticker` (
 -- Rso Stickers
 ALTER TABLE `BadgeDB`.`rso_reports` 
 ADD COLUMN `stickers` TEXT NULL DEFAULT NULL AFTER `cash_eos`;
+
+-- RSO Report Final  #187 & #189
+ALTER TABLE `BadgeDB`.`rso_reports` 
+ADD COLUMN `cash` TEXT NULL DEFAULT NULL AFTER `closing`,
+ADD COLUMN `checks` TEXT NULL DEFAULT NULL AFTER `cash`,
+ADD COLUMN `violations` TEXT NULL DEFAULT NULL AFTER `checks`;
+
+ALTER TABLE `BadgeDB`.`cc_receipts` 
+ADD COLUMN `cashier_badge` INT NULL DEFAULT NULL AFTER `cashier`;

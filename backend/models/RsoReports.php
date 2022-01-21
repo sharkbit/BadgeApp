@@ -28,7 +28,7 @@ class RsoReports extends \yii\db\ActiveRecord {
 			[['date_open','mics','rso','wb_color','wb_trap_cases'], 'required'],
 			[['closed','id','par_50','par_100','par_200','par_steel','par_nm_hq','par_m_hq','par_trap','par_arch','par_pel','par_spr','par_cio_stu','par_act','wb_trap_cases'], 'integer'],
 			[['cash_bos','cash_eos'],'number'],
-			[['wb_color','closing','mics','notes','remarks','rso','shift','shift_anom','stickers'], 'safe'],
+			[['cash','checks','wb_color','closing','mics','notes','remarks','rso','shift','shift_anom','stickers','violations'], 'safe'],
 			[['date_open','date_close'],'safe'],
 		];
     }
@@ -73,7 +73,43 @@ class RsoReports extends \yii\db\ActiveRecord {
 		}
 		return ArrayHelper::map($rsoList, 'id', 'name');
 	}
-	
+
+	public function getCash($what='cash',$model) {
+		if($model->closed) {$whr_date="(tx_date > '".$model->date_open."' AND tx_date < '".$model->date_close."')";} else {$whr_date="tx_date > '".$model->date_open."'";}
+
+		$tx = (new \backend\models\CardReceipt)->find()->where(['tx_type'=>$what])->andWhere($whr_date)->andWhere('cashier_badge in ('.trim($model->rso,"\[\]").')')->orderBy(['tx_date'=>'desc'])->all();
+		$cnt=0;
+		$cash_total=0;
+		$cartSum =  new \stdClass();
+		foreach ($tx as $rec) {
+			$cash_total += $rec->amount;
+			$cnt++;
+
+			foreach (json_decode($rec->cart) as $anItem) {
+				$notFound=true;
+				foreach ($cartSum as &$s_item) {
+					if ((isset($s_item->sku)) && ($s_item->sku==$anItem->sku)) {
+						$notFound=false;
+						$s_item->qty += (int)$anItem->qty;
+						$s_item->price += $anItem->price;
+					}
+				}
+				if ($notFound) {
+					$cartSum = (object) array_merge((array) $cartSum, (array) [$anItem]);
+				}
+			}
+		}
+		$prdy = "\n";
+		foreach ($cartSum as $pi) {
+			$prdy .= '- SKU:'.$pi->sku.', '.$pi->item.', QTY: '.$pi->qty.', Total: $'.number_format($pi->price,2,'.',',')."\n";
+		}
+		return "$cnt transactions: \$".number_format($cash_total, 2, '.', ',').", Item Sumary:". htmlspecialchars($prdy); //json_encode($cartSum);
+	}
+
+	public function getViolations($model) {
+		return "ohh ahh";
+	}
+
 	public function getStickerCount($who='rso') {
 		$stkr = (new \backend\models\Stickers)->find()->where(['status'=>$who])->all();
 		$cnt=0;
@@ -111,5 +147,29 @@ class RsoReports extends \yii\db\ActiveRecord {
 		$previous = $value;
 		return $reduced;
 	}
+
+	public function SumCart($cartSum,$cart) {
+	/*	$theCart = (object) json_decode($cart);
+		foreach ($theCart as $cartItem) {
+			yii::$app->controller->createLog(true, 'trex-140-cartItem', var_export($cartItem,true));
+			$found = false;
+			foreach ($cartSum as &$sum_item){
+				
+				yii::$app->controller->createLog(true, 'trex-141-sum_item', var_export($sum_item,true));
+				if($sum_item->sku == $cartItem->sku) {
+					$found = true;
+					echo 'hi';
+				}
+			}
+			if (!$found) {
+				$cartSum = (object) array_merge((array) $cartSum,(array) $cartItem);
+			}
+		} 
+		return $cartSum;
+		*/
+		
+		return array_merge( (array) $cartSum, (array) $cart);
+	}
+
 }
 

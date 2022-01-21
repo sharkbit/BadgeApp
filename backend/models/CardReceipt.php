@@ -28,8 +28,8 @@ class CardReceipt extends \yii\db\ActiveRecord {
     public function rules() {
         return [
           // [['type', 'status'], 'required'],
-           [['authCode','cardNum','cardType','cart','status','tx_type','tx_date','id','name'], 'string'],
-		   [['badge_number','expYear','expMonth'], 'integer'],
+           [['authCode','cardNum','cardType','cart','status','tx_type','tx_date','id','name','cashier'], 'string'],
+		   [['badge_number','expYear','expMonth','cashier_badge'], 'integer'],
            [['amount','tax'], 'number'],
        ];
     }

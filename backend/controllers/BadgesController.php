@@ -91,6 +91,7 @@ class BadgesController extends AdminController {
 					$savercpt->name = $badgeArray->first_name.' '.$badgeArray->last_name;
 					$savercpt->cart = "[".json_encode($MyCart)."]";
 					$savercpt->cashier = $_SESSION['user'];
+					if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
 					if($savercpt->save()) {
 						yii::$app->controller->createLog(true, $_SESSION['user'], "Saved Rcpt','".$model->badge_number);
 					} else {
@@ -435,6 +436,20 @@ class BadgesController extends AdminController {
 			exit;
 			//return $this->redirect(['/calendar/recur']);
 		}
+		elseif(isset($_GET['cashier'])) { //  /badges/api-check?cashier=1
+			echo "<div class='col-xs-12'><br /><br /><br /><br />";
+			$cashier = (new CardReceipt)->find()->select('cashier')->distinct()->where('cashier_badge is null')->all();
+			foreach ($cashier as $ier){
+				$badge = (new Badges)->find()->where("concat(first_name,' ',last_name) = \"".$ier->cashier."\"")->one();
+				if($badge) {
+					echo $ier->cashier.' - '.$badge->badge_number."<br>";
+					CardReceipt::updateAll(['cashier_badge' => $badge->badge_number], 'cashier = '.$ier->cashier);
+				}
+				else {echo $ier->cashier.'<br>';}
+			}
+			echo "</div>";
+			return $this->render('_blank');
+		}
 		else {
 			var_dump($_GET);
 			exit;
@@ -524,6 +539,7 @@ class BadgesController extends AdminController {
 					$savercpt->name = $model->first_name.' '.$model->last_name;
 					$savercpt->cart = $MyCart;
 					$savercpt->cashier = $_SESSION['user'];
+					if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
 					if($savercpt->save()) {
 						yii::$app->controller->createLog(true, $_SESSION['user'], "Saved Rcpt','".$model->badge_number);
 					} else {
@@ -624,6 +640,10 @@ class BadgesController extends AdminController {
 	public function actionDelete($id,$back_to=null) {
 		$badge_id = Badges::find()->where(['id' => $id])->one();
 
+		$reciepts = CardReceipt::find()->where(['cashier_badge'=>$badge_id->badge_number])->all();
+		if($reciepts) { // Fail
+			Yii::$app->getSession()->setFlash('error', 'Can not Delete Member that was a Cashier!');
+		} else {
 		$sql="SELECT * from violations WHERE badge_involved like '%".$badge_id->badge_number."%'";
 		$command = Yii::$app->getDb()->createCommand($sql);
 		$ViolationsCheck = $command->queryAll();
@@ -646,6 +666,7 @@ class BadgesController extends AdminController {
 			Yii::$app->getSession()->setFlash('success', "Member Deleted.");
 		} else {
 			Yii::$app->getSession()->setFlash('error', 'Can not Delete Member with Violations!');
+		}
 		}
 		if (!$back_to) {
 			return $this->redirect('index');
@@ -1057,6 +1078,7 @@ class BadgesController extends AdminController {
 					$savercpt->name = $badgeRecords->first_name;
 					$savercpt->cart = $MyCart;
 					$savercpt->cashier = $_SESSION['user'];
+					if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
 					if($savercpt->save()) {
 						yii::$app->controller->createLog(true, $_SESSION['user'], "Saved Rcpt','".$model->badge_number);
 					} else {

@@ -73,7 +73,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			'footer' => "$".number_format($dataProvider->query->sum('amount'), 2, '.', ','),
 		],
 		[ 
-			'attribute'=>'cashier',
+			'attribute'=>'cashier_badge',
 			'label' => 'Cashier (Use commas to seperate multiple Cashiers when filtering.',
 			'headerOptions' => ['width' => '300'],
 			//'captionOptions' => ['tooltip' => 'test test',]
