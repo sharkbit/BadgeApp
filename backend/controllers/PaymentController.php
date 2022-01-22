@@ -30,12 +30,11 @@ class PaymentController extends AdminController {
 		} elseif(isset($_POST['Guest']['payment_type'])) {
 			$model = new Guest();
 			$UseSub = 'guest';
-//  yii::$app->controller->createLog(false, 'trex_C_PayCtl:132', var_export($_POST,true));
 		} else {
 			$model = new Badges();
 			$UseSub = false;
 		}
-
+//yii::$app->controller->createLog(true, 'trex_C_PayCtl', var_export($_REQUEST,true));
 		if ($model->load(Yii::$app->request->post())) {
 			$confParams = Params::findOne('1');
 
@@ -53,10 +52,10 @@ class PaymentController extends AdminController {
 				$merchantPIN = $confParams->conv_d_pin;
 			}
 			$err = false;
+			$tax = 0;
 			if($UseSub=='update') {	// Update
 				$myPost=$_POST['Badges'];
 				if($model->amount_due=='') { $err = true; } else { $cc_amount = $model->amount_due; }
-				$Badge_price = $model->badge_fee - $_POST['BadgeSubscriptions']['discount'];
 				if($myPost['state']=='') { $err = true; }   else { $cc_state = $myPost['state']; }
 				if($myPost['zip']=='') { $err = true; }     else { $cc_zip = $myPost['zip']; }
 				if($myPost['address']=='') { $err = true; } else { $cc_address = $myPost['address']; }
@@ -64,8 +63,21 @@ class PaymentController extends AdminController {
 				if($myPost['first_name']=='') {$err=true;}  else { $first_name=trim($myPost['first_name']); }
 				if($myPost['last_name']=='') { $err=true;}  else { $last_name=trim($myPost['last_name']); }
 				if($myPost['mem_type']=='') { $err=true;}  else  { $memType=trim($myPost['mem_type']); }
-				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ])."]";
-
+				$tax = $model->tax;
+				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
+				// not storing multiple discounts yet.					
+				if(is_array($_POST['BadgeSubscriptions']['discount'])) {
+					foreach ($_POST['BadgeSubscriptions']['discount'] as $d_item ) {
+						$d_discount = explode(":",$d_item);
+						if($d_discount[0]=='w'){
+							$MyCart = json_encode(array_merge(json_decode($MyCart),
+							[ ["item"=>'Discount - Work Credits',"sku"=>$confParams->sku_wc_discount,"ea"=>'-'.$d_discount[1] ,"qty"=>"1","price"=>'-'.$d_discount[1] ] ] ) );
+						}
+					}
+				}
+				if(isset($_POST['cart'])) {
+					$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
+				}
 			} elseif($UseSub=='cert') {	// Certificate
 				$myPost=$_POST['Badges'];
 				if($model->cert_amount_due=='') { $err = true; } else { $cc_amount = $model->cert_amount_due; }
@@ -89,21 +101,22 @@ class PaymentController extends AdminController {
 				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
 				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
 				if($model->cart=='') { $err = true; } 		else { $MyCart=$model->cart; }
+				$tax = $model->tax;
 
 			} elseif($UseSub=='guest') {  // Guest Bands
 				if($model->amount_due=='') { $err = true; }	else { $cc_amount = $model->amount_due; }
-				if($model->g_state=='') { $err = true; }	else { $cc_state = $model->g_state; }
-				if($model->g_zip=='') { $err = true; }		else { $cc_zip = $model->g_zip; }
+				if($model->cc_state=='') { $err = true; }	else { $cc_state = $model->cc_state; }
+				if($model->cc_zip=='') { $err = true; }		else { $cc_zip = $model->cc_zip; }
 				if($model->cc_address=='') { $err = true; }	else { $cc_address = $model->cc_address; }
 				if($model->cc_city=='') { $err = true; }	else { $cc_city = $model->cc_city; }
-				if($model->g_first_name=='') { $err = true;}else { $first_name=trim($model->g_first_name); }
-				if($model->g_last_name=='') { $err = true;} else { $last_name=trim($model->g_last_name); }
+				if($model->cc_name=='') { $err = true;}     else { $arr=preg_split("/\s+(?=\S*+$)/",$model->cc_name); $first_name=$arr[0];$last_name=$arr[1];}
+				//if($model->g_last_name=='') { $err = true;} else { $last_name=trim($model->g_last_name); }
+				$tax = $model->tax;
 				$price_ea=($cc_amount / $model->guest_count);
 				$MyCart = "[".json_encode(["item"=>"Guest Bracelet Fee","sku"=>$confParams->guest_sku,"ea"=>number_format($price_ea, 2, '.', ''),"qty"=>$model->guest_count,"price"=>number_format($cc_amount, 2, '.', '') ])."]";
 
 			} else {   		// Create
 				if($model->amt_due=='') { $err = true; } 	else { $cc_amount = $model->amt_due; }
-				$Badge_price = $model->badge_fee - $model->discounts;
 				if($model->state=='') { $err = true; }		else { $cc_state = $model->state; }
 				if($model->zip=='') { $err = true; }		else { $cc_zip = $model->zip; }
 				if($model->address=='') { $err = true; }	else { $cc_address = $model->address; }
@@ -111,7 +124,28 @@ class PaymentController extends AdminController {
 				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
 				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
 				if($model->mem_type=='') { $err = true; } 	else { $memType=trim($model->mem_type); }
-				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['sku'],"ea"=>$cc_amount ,"qty"=>"1","price"=>$cc_amount ])."]";
+				$tax = $model->tax;
+				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
+					// not storing multiple discounts yet.					
+				if(is_array($_POST['Badges']['discounts'])) {
+					$discount=0;
+					foreach ($_POST['Badges']['discounts'] as $d_item ) {
+						$d_discount = explode(":",$d_item);
+						if($d_discount[0]=='s'){	
+							$stu =  (new StoreItems)->find()->where(['sku'=>$confParams->sku_student])->one();
+							yii::$app->controller->createLog(true, 'trex-sku_student', var_export($stu,true));
+							if($stu){
+								$discount += $stu->price;
+								$MyCart = json_encode(array_merge(json_decode($MyCart),
+									[ ["item"=>'Discount - Student',"sku"=>$confParams->sku_student,"ea"=>'-'.$stu->price ,"qty"=>"1","price"=>'-'.$stu->price ] ] ) );
+							}
+						}
+					}
+					$model->discounts=$discount;
+				} else { $model->discounts=0; }
+				if(isset($_POST['cart'])) {
+					$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
+				}
 			}
 
 			if($model->cc_cvc=='') { $err = true; }
@@ -153,6 +187,7 @@ class PaymentController extends AdminController {
 						$savercpt->tx_date = $this->getNowTime();
 						$savercpt->tx_type = 'creditnow';
 						$savercpt->status = 'APPROVED';
+						$savercpt->tax = $tax;
 						$savercpt->amount = $response['ssl_amount'];
 						$savercpt->authCode = $response['ssl_approval_code'];
 						$savercpt->name = $first_name.' '.$last_name;

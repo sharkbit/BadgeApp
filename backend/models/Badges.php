@@ -36,6 +36,7 @@ class Badges extends \yii\db\ActiveRecord {
 	public $payment_method;
 	public $sticker;
 	public $subcat;
+	public $tax;
 	public $work_credits;
 	public $remarks_temp;
 
@@ -49,11 +50,11 @@ class Badges extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name', 'last_name', 'address', 'city','state', 'zip', 'gender', 'mem_type', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
+			[['first_name', 'last_name', 'address', 'city','state', 'zip', 'gender', 'mem_type','club_id', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
 			[['address', 'gender', 'qrcode','status','cc_num','cc_x_id'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
-			[['badge_number','zip','club_id', 'mem_type','sticker','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
-			[['badge_fee', 'discounts', 'amt_due'], 'number'],
+			[['badge_number','zip', 'mem_type','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
+			[['badge_fee', 'amt_due','tax'], 'number'],
 			[['prefix', 'suffix'], 'string', 'max' => 15],
 			['email', 'string', 'max' => 60],
 			['email', 'filter', 'filter' => 'trim'],
@@ -63,6 +64,7 @@ class Badges extends \yii\db\ActiveRecord {
 			[['first_name','last_name'], 'string', 'max' => 35],
 			[['phone_op','ice_phone'], 'match', 'pattern' => '/^[- 0-9() +]+$/', 'message' => 'Not a valid phone number.'],
 			[['city', 'phone', 'phone_op', 'ice_phone'], 'string', 'max' => 25],
+			[['sticker'],'string','min'=>8, 'max'=>10],
 			[['zip'], 'string', 'max' => 10],
 			[['wt_instru'], 'string', 'max' => 255],
 			['primary', 'required', 'when' => function ($model) {

@@ -127,18 +127,21 @@ class CalendarController extends AdminController {
 	public function actionDelete($id,$type='s',$redir='index') {
 		$model = $this->findModel($id);
 		if ($model) {
+			$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'changed'=>'Deleted by '.$_SESSION['user'],'data'=>"Record marked as Deleted."];
+			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
+
 			if ($type=='s') {
-					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
+					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "calendar_id = ".$model->calendar_id);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Deleted Calendar item (s): ','".$model->event_name.'('.$model->calendar_id.')');
 
 			} else {
 				if ((int)$model->recurrent_calendar_id > 0) {
-					AgcCal::UpdateAll(['deleted'=>1], "recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
-					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
+					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
+					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "calendar_id = ".$model->calendar_id);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Deleted Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 
 				} else {
-					AgcCal::UpdateAll(['deleted'=>1], "calendar_id = ".$model->calendar_id);
+					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "calendar_id = ".$model->calendar_id);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Deleted Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 				}
 			}
@@ -740,7 +743,7 @@ if($eco) {
 		if (isset($myPat->daily)) {
  if($eco) { echo "Daily<br>"; }
 			if ($myPat->daily=='wd') {
-					for ($i = $Date_Start; $i < $Date_Stop; $i = strtotime('+1 day', $i)) {
+					for ($i = $Date_Start; $i <= $Date_Stop; $i = strtotime('+1 day', $i)) {
 if($eco) { echo '<br>'.strtolower(date('D', $i)) ; }
 						if (!in_array(strtolower(date('D', $i)),['sat','sun'])) {
 if($eco) { echo "** ".date('Y-m-d',$i); }
@@ -750,7 +753,7 @@ if($eco) { echo "** ".date('Y-m-d',$i); }
 						}
 					}
 			} else {
-				for ($i = $Date_Start; $i < $Date_Stop; $i = strtotime('+'.$myPat->daily.' day', $i)) {
+				for ($i = $Date_Start; $i <= $Date_Stop; $i = strtotime('+'.$myPat->daily.' day', $i)) {
 					array_push($myEventDates,date('Y-m-d',$i));
 				}
 			}
@@ -763,7 +766,7 @@ if($eco) { echo "Weekly<br>"; }
 			} else {$skip=0;}
 
 			$cnt=0; $skip_cnt=0; $skip_now=false;
-			for ($i = $Date_Start; $i < $Date_Stop; $i = strtotime('+1 day', $i)) {
+			for ($i = $Date_Start; $i <= $Date_Stop; $i = strtotime('+1 day', $i)) {
 				$cnt++; if (($cnt==8) && ($skip>0)) {$skip_now=true;}
 				if ((in_array(strtolower(date('D', $i)),$myPat->days)) && ($skip_now==false)) {
 					if ($i >=strtotime($today)) {
@@ -782,7 +785,7 @@ if($eco) { echo "Monthly<br>"; }
 			$cnt=1;
 
 if($eco) { echo  "s: ".date('m',$Date_Start). ' e:'. (date('m',$Date_Stop)+1).'<br>'; }
-			for ($i = date('m',$Date_Start); $i < date('m',$Date_Stop)+1; $i++) {
+			for ($i = date('m',$Date_Start); $i <= date('m',$Date_Stop)+1; $i++) {
 				$skip_now=true;
 				if ($cnt == 1) {
 					$skip_now=false;

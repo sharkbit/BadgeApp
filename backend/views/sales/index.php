@@ -14,7 +14,7 @@ $confParams  = Params::findOne('1');
 
 $is_dev=false;
 if(yii::$app->controller->hasPermission('sales/all')) {
-	$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card'];
+	$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card','online'=>'On Line'];
 	$pgLimited=false;
 } else {
 	$myList=[];
@@ -64,6 +64,7 @@ $ccYear = range($curYr,$curYr+25);
 echo $this->render('_view-tab-menu').PHP_EOL; ?>
 
 <?php $form = ActiveForm::begin([ 'id'=>'SalesForm' ]); ?>
+<style type="text/css"> .right { text-align:right; } </style>
 <div class="sales-update">
 
    <!-- <h3><?= Html::encode($this->title) ?></h3> -->
@@ -73,8 +74,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 		<div class="col-sm-6"><br />
 			<div class="row">
 				<div class="col-sm-3">
-				<?php echo Html::checkbox('sales-ForGuest' ,'',['id'=>'sales-ForGuest']), PHP_EOL; ?> For a Guest?
+				<?php echo Html::checkbox('sales-ForGuest' ,'',['id'=>'sales-ForGuest']), PHP_EOL; ?> For a Guest? 
 				<?= $form->field($model, 'pgLimited')->hiddenInput(['id'=>'pgLimited','value'=>$pgLimited])->label(false).PHP_EOL; ?>
+				</div>
+				<div class="col-sm-3" id="div_PayCash" style="display:none">
+				<?php echo Html::checkbox('sales-PayCash' ,'',['id'=>'sales-PayCash']), PHP_EOL; ?> Paying Cash? 
 				</div>
 			</div>
 			<div class="row">
@@ -107,7 +111,9 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			<hr>
 			<div class="row">
 				<div class="col-sm-6">
+					<?= $form->field($model, 'tax')->textInput(['readonly'=>true]).PHP_EOL; ?>
 					<?= $form->field($model, 'cart')->hiddenInput(['id'=>'sales-cart'])->label(false).PHP_EOL; ?>
+					<div id='totals'> </div>
 				</div>
 				<div class="col-sm-6">
 					<?= $form->field($model, 'total')->textInput(['id'=>'sales-total','readonly'=>($pgLimited)?true : (($is_dev)?false : true)]).PHP_EOL; ?>
@@ -125,8 +131,8 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 					<tr><td>$X.41 </td> <td> - Pick Up Card</td></tr>
 					<tr><td>$X.41 </td> <td> - Expired Card</td></tr>
 					</table>
-				<a href='https://developer.elavon.com/#/api/eb6e9106-0172-4305-bc5a-b3ebe832f823.rcosoomi/versions/5180a9f2-741b-439c-bced-5c84a822f39b.rcosoomi/test_cards' target=cc_number > Cards</a> -
-				<a href="https://developer.elavon.com/content/home/test_cards/ELAVON%20STP%20Test%20Host%20Pre-programmed%20Responses%20-%20Rev%2004162019.pdf" target=cc_info >Other Test Codes</a>
+				<a href='https://developer.elavon.com/na/docs/commerce-sdk/1.0.0/test-cards' target=cc_number > Cards</a> -
+				<a href="https://developer.elavon.com/na/docs/viaconex/1.0.0/integration-guide/api_reference/cvv2_cvc2_cid_response" target=cc_info >Other Test Codes</a>
 				<?php } ?>
 				</div>
 				<div class="col-sm-6">
@@ -159,11 +165,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 						<?= Html::Button('<i class="fa fa-credit-card"> Process</i>', ['id'=>'sales-Process_CC','class' => 'btn btn-danger']), PHP_EOL ?>
 					</div>
 
-					</div>
+				</div>
 
 				<div class="col-xs-12">
-						<p id="cc_info"> </p>
-					</div>
+					<p id="cc_info"> </p>
+				</div>
 				</div>
 				<div class="help-block" ></div>
 
@@ -179,15 +185,14 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			<p class="pull-right"><a href="" class="badge_sales_div" > Extras </a></p>
 			<div class="form-group" id="extras_sales_div" > <!-- style="display:none"  class="col-xs-12 col-sm-12"  -->
 			<table id='sales_items' border=1 width="100%">
-			<tr><th>Item</th><th>Ea</th><th>Qty #</th><th>Price</th></tr>
+			<tr><th>Item</th><th>Stock</th><th>Ea</th><th>Qty #</th><th>Price</th></tr>
 	<?php
-		$sql="SELECT s1.item_id,s2.item AS cat,s1.item,s1.sku,s1.price,s1.`type`".
+		$sql="SELECT s1.item_id,s2.item AS cat,s1.item,s1.sku,s1.stock,s1.price,s1.tax_rate,s1.`type`".
 			" FROM store_items AS s1 JOIN store_items AS s2 ON (s1.paren=s2.item_id)".
 			" WHERE s1.active=1".
 			" ORDER BY `cat`,`type`,item;";
 			$command = Yii::$app->db->createCommand($sql);
 			$ItemsList = $command->queryAll();
-
 			$curCat='';
 			foreach($ItemsList as $item){
 				if($curCat <> $item['cat']) {
@@ -195,12 +200,15 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				}
 				$colo ="bgcolor='#f3f3f3'";
 				if($item['sku']== $confParams->guest_sku && $guest_total>0) {$item_qty = $guest_total.' onKeyUp="doCalcSale()"';} else {$item_qty = '0 onKeyUp="doCalcSale()"';}
+				if((int)$item['stock'] > 0) { $item_stock='<center>'.(int)$item['stock'].'</center>'; } else { $item_stock=''; }
 
-				echo '<tr '.$colo.'><td><input type="hidden" name="item" value="'.$item['item'].'" />'.$item['item'].
-					'<input type=hidden name="sku" value="'.$item['sku'].'" /></td>'.
-					'<td><input type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
-					'<td><input type="text" name="qty" size="3" value='.$item_qty.' /></td>'.
-					'<td><input type="text" name="price" size="3" readonly /></td></tr>'."\n";
+				echo '<tr '.$colo.">\n\t<td>".'<input type="hidden" name="item" value="'.htmlspecialchars($item['item']).'" />'.$item['item'].
+					"\n\t".'<input type=hidden name="sku" value="'.$item['sku'].'" />'.
+					"\n\t".'<input type=hidden name="tax_rate" value="'.$item['tax_rate'].'" /></td>'.
+					"\n\t".'<td>'.$item_stock.' </td>'.
+					"\n\t".'<td><input class="right" type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
+					"\n\t".'<td><input class="right" type="text" name="qty" size="3" value='.$item_qty.' /></td>'.
+					"\n\t".'<td><input class="right" type="text" name="price" size="3" readonly /></td></tr>'."\n";
 			} ?>
 			</table>
 			</div>
@@ -219,9 +227,10 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 		var arrSku = new Array();
 		var arrEa = new Array();
 		var arrQty = new Array();
+		var arrTax = new Array();
 		var arrPrice = new Array();
 		var cart =  new Array();
-		var ItemTotal = 0;
+		var ItemTotal = 0; var TaxTotal = 0; var TotalTotal = 0;
 		var ContainerIDElements = new Array( 'input');
 
 		for( var i = 0; i < ContainerIDElements.length; i++ ){
@@ -230,6 +239,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				if(els[j].name == 'item') arrItem.push(els[j]);
 				if(els[j].name == 'sku') arrSku.push(els[j]);
 				if(els[j].name == 'ea') arrEa.push(els[j]);
+				if(els[j].name == 'tax_rate') arrTax.push(els[j]);
 				if(els[j].name == 'qty') arrQty.push(els[j]);
 				if(els[j].name == 'price') arrPrice.push(els[j]);
 			}
@@ -237,16 +247,23 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 
 		for( var j = 0; j < arrEa.length; j++ ) {
 			if(Number(arrQty[j].value)>0) {
-				arrPrice[j].value = parseFloat(Math.round(Number(arrEa[j].value) * Number(arrQty[j].value) * 100) / 100).toFixed(2);
-				ItemTotal += Number(arrPrice[j].value);
+				var itto = parseFloat(Math.round((Number(arrEa[j].value) * Number(arrQty[j].value)) * 100) / 100).toFixed(2);
+				var tato = parseFloat(Math.round((Number(arrEa[j].value) * Number(arrQty[j].value) * Number(arrTax[j].value)) * 100) / 100).toFixed(2);
+				arrPrice[j].value = parseFloat(Number(itto) + Number(tato)).toFixed(2);
+				ItemTotal += Number(itto);
+				TaxTotal += Number(tato);
+				TotalTotal += Number(arrPrice[j].value);
 				var item = { "item":arrItem[j].value, "sku":arrSku[j].value, "ea":arrEa[j].value, "qty":arrQty[j].value, "price":arrPrice[j].value };
 				cart.push(item);
 			} else { arrPrice[j].value=null; }
 		}
 		$("#sales-cart").val(JSON.stringify(cart));
-
-		$("#sales-total").val(parseFloat(Math.round(ItemTotal * 100) / 100).toFixed(2));
-		console.log('Grand total: '+ ItemTotal);
+		$("#sales-tax").val(TaxTotal.toFixed(2));
+		$("#sales-total").val(parseFloat(Math.round(TotalTotal * 100) / 100).toFixed(2));
+		$("#totals").html('<table border=1 style="width:150px"><tr><td>Item Total:</td><td class="right"> '+ItemTotal.toFixed(2)+' </td></tr>'+
+			'<tr><td> Tax Total: </td><td class="right">'+TaxTotal.toFixed(2)+'</td></tr><tr><td> Grand Total: </td><td class="right"> <b>'+ TotalTotal.toFixed(2)+"</b></td></tr></table>");
+		console.log('Item Total: '+ItemTotal.toFixed(2)+', Tax Total: '+TaxTotal.toFixed(2)+', Grand total: '+ TotalTotal.toFixed(2));
+		console.log(cart);
 	}
 
 	function getReporterName(badgeNumber) {
@@ -390,6 +407,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 
 	$("#sales-ForGuest").change(function() {
         if (document.getElementById("sales-ForGuest").checked == true){
+			$("#div_PayCash").show();
 			$("#sales-badge_number").val('99999');
 			document.getElementById("sales-badge_number").readOnly  = true;
 			document.getElementById("sales-first_name").readOnly  = false;
@@ -410,6 +428,8 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			document.getElementById("sales-address").value  = '';
 			document.getElementById("sales-email").value  = '';
 		} else {
+			document.getElementById("sales-PayCash").checked = false;
+			$("#div_PayCash").hide();
 			if (document.getElementById("pgLimited").value == true){
 				document.getElementById("sales-badge_number").value = document.getElementById("m_bn").value;
 			} else {
@@ -432,6 +452,21 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 		    }
 		}
     });
+
+	$("#sales-PayCash").change(function() {
+		if (document.getElementById("sales-PayCash").checked == true){
+				document.getElementById("sales-payment_method").value  = 'cash';
+				getReporterName(99999);
+			} else {
+				document.getElementById("sales-first_name").value  = '';
+				document.getElementById("sales-last_name").value  = '';
+				document.getElementById("sales-city").value  = '';
+				document.getElementById("sales-state").value  = '';
+				document.getElementById("sales-zip").value  = '';
+				document.getElementById("sales-address").value  = '';
+				document.getElementById("sales-email").value  = '';
+			}
+	});
 
 	function ProcessSwipe(cleanUPC) {
 

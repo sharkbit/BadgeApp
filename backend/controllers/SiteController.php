@@ -86,15 +86,6 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 					Yii::$app->getSession()->setFlash('error', 'Badge '.$badgeArray->status.', Please See Staff.',false);
 					return false;
 				}
-				
-				// Is badge current?
-				if (strtotime($badgeArray->expires) > strtotime($this->getNowTime())) {
-					//is ok
-				} else { 
-					Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
-					return false;
-				}
-				
 				// does member have privileges?
 				$_SESSION["badge_number"] = $badgeArray->badge_number;
 				$_SESSION["user"] = $badgeArray->first_name.' '.$badgeArray->last_name;
@@ -112,8 +103,22 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 							$_SESSION['timeout'] = $chk_priv->timeout; }
 						} else { $_SESSION['timeout'] = $chk_priv->timeout; }
 					}
+					if (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) {
+						if(array_intersect([3,6],$_SESSION['privilege'])) { // do nothing
+						} else {
+							unset($_SESSION);
+							Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
+							return false;
+						}
+					}
 					return Yii::$app->user->login(User::findIdentity($userArray->id), 0);
 				} else {  // Default Privilege for members
+					// Is badge current?
+					if (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) {
+						unset($_SESSION);
+						Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
+						return false;
+					}
 					$_SESSION['privilege']=array(5);
 					$priv = Privileges::find()->where(['id'=>5])->one();
 					$_SESSION['timeout'] = $priv->timeout;
@@ -128,7 +133,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 		}
 		return false;
 	}
-	
+
 	public function getNowTime($offset = null) {
 		$date = new \DateTime;
 		$date->setTimezone(new \DateTimeZone(yii::$app->params['timeZone']));
@@ -242,14 +247,14 @@ class SiteController extends AdminController {
 			} else {
 				$this->log_access("member",$_SERVER['REMOTE_ADDR'],$_REQUEST['LoginMemberForm']['badge'],'FAIL');
 			}
-		} 
+		}
 		return $this->render('login-member', [
 			'model' => $model,
 		]);
 	}
 
 	public function actionLogout($url=false) {
-		if (in_array(5, $_SESSION['privilege'])) {$ReDir=false;} else {$ReDir=true;} 
+		if (in_array(5, $_SESSION['privilege'])) {$ReDir=false;} else {$ReDir=true;}
 		Yii::$app->user->logout();
 		if (($url) && ($ReDir)) {
 			return $this->redirect(['login-member', 'url' => $url]);
@@ -286,7 +291,7 @@ class SiteController extends AdminController {
 					(New clubs)->saveClub($model->badge_number, $model->club_id, false);
 
 					yii::$app->controller->sendVerifyEmail($model->email,'new',$model);
-		
+
 					//Auto Login!
 					$badgeArray = Badges::find()->where(['badge_number'=>$model->badge_number])->one();
 					$_SESSION["badge_number"] = $badgeArray->badge_number;
@@ -297,7 +302,7 @@ class SiteController extends AdminController {
 					$_SESSION['timeout'] = $priv->timeout;
 					Yii::$app->user->login(User::findIdentity(0), 0);
 					$this->createLog($this->getNowTime(), $_SESSION['user'], "Self-Registered new Badge','".$model->badge_number);
-				
+
 					return $this->redirect(['/badges/photo-add', 'badge' => $model->badge_number]);
 				} else {
 					Yii::$app->getSession()->setFlash('error', 'Something Broke?');
@@ -306,7 +311,7 @@ class SiteController extends AdminController {
 				}
 			}
 		}
-		
+
 		$model->badge_number = (new Badges)->getFirstFreeBadge();
 		return $this->render('new-member',[
 			'model'=> $model
