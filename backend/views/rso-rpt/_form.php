@@ -25,7 +25,7 @@ if($model->isNewRecord) {
 		<?= $form->field($model, 'shift')->dropDownList(['m'=>'Morning','e'=>'Evening']) ?>
 	</div>
 	<div class="col-xs-6 col-sm-8">
-		<?= $form->field($model, 'rso')->dropDownList($model->listRSOs(),['value'=>json_decode($model->rso),'multiple'=>true]).PHP_EOL; ?>
+		<?= $form->field($model, 'rso')->dropDownList($model->listRSOs(),['value'=>json_decode($model->rso),'multiple'=>true])->label("All RSO's on Shift").PHP_EOL; ?>
 	</div>
 	<div class="col-xs-12 col-sm-12">
 		<?= $form->field($model, 'shift_anom')->textarea(['rows' => '1']).PHP_EOL; ?>

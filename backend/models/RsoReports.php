@@ -118,7 +118,7 @@ class RsoReports extends \yii\db\ActiveRecord {
 			foreach ($violat as $incident) {
 				$cnt++;
 				if($incident->vi_override) {$clas=4;} else {$clas=$incident->vi_type;}
-				$viSum .= "- C$clas, $incident->vi_rules \n";
+				$viSum .= "- C$clas - BG: $incident->badge_involved - ".(new \backend\models\RuleList)->getRuleNames($incident->vi_rules) .", Summary: ".$incident->vi_sum."\n";
 			}
 			$violatSum =$cnt." Incident(s):\n".$viSum;
 		} else { $violatSum='None'; }
