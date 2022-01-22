@@ -74,8 +74,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 		<div class="col-sm-6"><br />
 			<div class="row">
 				<div class="col-sm-3">
-				<?php echo Html::checkbox('sales-ForGuest' ,'',['id'=>'sales-ForGuest']), PHP_EOL; ?> For a Guest?
+				<?php echo Html::checkbox('sales-ForGuest' ,'',['id'=>'sales-ForGuest']), PHP_EOL; ?> For a Guest? 
 				<?= $form->field($model, 'pgLimited')->hiddenInput(['id'=>'pgLimited','value'=>$pgLimited])->label(false).PHP_EOL; ?>
+				</div>
+				<div class="col-sm-3" id="div_PayCash" style="display:none">
+				<?php echo Html::checkbox('sales-PayCash' ,'',['id'=>'sales-PayCash']), PHP_EOL; ?> Paying Cash? 
 				</div>
 			</div>
 			<div class="row">
@@ -403,6 +406,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 
 	$("#sales-ForGuest").change(function() {
         if (document.getElementById("sales-ForGuest").checked == true){
+			$("#div_PayCash").show();
 			$("#sales-badge_number").val('99999');
 			document.getElementById("sales-badge_number").readOnly  = true;
 			document.getElementById("sales-first_name").readOnly  = false;
@@ -423,6 +427,8 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			document.getElementById("sales-address").value  = '';
 			document.getElementById("sales-email").value  = '';
 		} else {
+			document.getElementById("sales-PayCash").checked = false;
+			$("#div_PayCash").hide();
 			if (document.getElementById("pgLimited").value == true){
 				document.getElementById("sales-badge_number").value = document.getElementById("m_bn").value;
 			} else {
@@ -445,6 +451,20 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 		    }
 		}
     });
+
+	$("#sales-PayCash").change(function() {
+		if (document.getElementById("sales-PayCash").checked == true){
+				 getReporterName(99999);
+			} else {
+				document.getElementById("sales-first_name").value  = '';
+				document.getElementById("sales-last_name").value  = '';
+				document.getElementById("sales-city").value  = '';
+				document.getElementById("sales-state").value  = '';
+				document.getElementById("sales-zip").value  = '';
+				document.getElementById("sales-address").value  = '';
+				document.getElementById("sales-email").value  = '';
+			}
+	});
 
 	function ProcessSwipe(cleanUPC) {
 
