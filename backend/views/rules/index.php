@@ -62,8 +62,8 @@ echo $this->render('/violations/_view-tab-menu').PHP_EOL ?>
 			'buttons'=> [
 				'update' => function ($url, $model) {
 					if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||
-					((yii::$app->controller->hasPermission('clubs/update')) && (!array_intersect([1,2],json_decode(yii::$app->user->identity->privilege))))) {
-					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/clubs/update','id'=>$model->id], [
+					((yii::$app->controller->hasPermission('rules/update')) && (!array_intersect([1,2],json_decode(yii::$app->user->identity->privilege))))) {
+					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/rules/update','id'=>$model->id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',
 						'title'=>'Edit',
@@ -71,8 +71,8 @@ echo $this->render('/violations/_view-tab-menu').PHP_EOL ?>
 					]); }
 				},
 				'delete' => function($url,$model) {
-					if(yii::$app->controller->hasPermission('clubs/delete'))  {
-					return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', ['/clubs/delete','id'=>$model->id], [
+					if(yii::$app->controller->hasPermission('rules/delete'))  {
+					return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', ['/rules/delete','id'=>$model->id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',
 						'title'=>'Delete',
@@ -83,7 +83,7 @@ echo $this->render('/violations/_view-tab-menu').PHP_EOL ?>
 					]); }
 				},
 				'view' => function($url,$model) {
-					return  Html::a(' <span class="glyphicon glyphicon-eye-open"></span> ', ['/clubs/view','id'=>$model->id], [
+					return  Html::a(' <span class="glyphicon glyphicon-eye-open"></span> ', ['/rules/view','id'=>$model->id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',
 						'title'=>'View',

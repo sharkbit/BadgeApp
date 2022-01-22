@@ -7,32 +7,30 @@ Running on CentOs with PHP 7.4
 Steps to install:
 
 1. Install proper php modules:
- - yum install php74 php74-php-fpm php74-php-gd php74-php-json php74-php-mbstring php74-php-mysqlnd php74-php-xml php74-php-xmlrpc php74-php-opcache php-pdo php-mbst* php-intl* php-dom* php-mysq* --skip-broken
- - yum install composer
+   - yum install php74 php74-php-fpm php74-php-gd php74-php-json php74-php-mbstring php74-php-mysqlnd php74-php-xml php74-php-xmlrpc php74-php-opcache php-pdo php-mbst* php-intl* php-dom* php-mysq* --skip-broken
+   - yum install composer
 2. Clone Repo:
- - git clone ssh://git@github.com:22/sharkbit/BadgeApp.git
+   - git clone ssh://git@github.com:22/sharkbit/BadgeApp.git
 3. Run Composer Intstall
- - composer install --prefer-dist --no-progress --no-suggest
+   - composer install --prefer-dist --no-progress --no-suggest
 4. Update directory permissions:
- - chown -R www-data.\<proper group> <root Git Dir>
- - find \<root Git Dir> -type f -exec chmod 664 {} \\;
- - find \<root Git Dir> -type d -exec chmod 775 {} \\;
-
-
-5. Apache Setup DocumentRoot 
- - "/var/www/badgeApp/"
-6. Test site /Requirements.php and verify green on required items.
-7. Update DocumentRoot to proper launch point:
-  - DocumentRoot "/var/www/badgeApp/backend/web/"
-8. Configure your DB user and password in:
-  - ./common/config/main-local.php
-9. Configure Cookie and Debugging in:
-  - ./backend/config/main-local.php
-10. Configure mail settings in:
- - ./backend/config/params.php
-10. Run App by going to  /
-
-
+   - chown -R www-data.\<proper group> <root Git Dir>
+   - find \<root Git Dir> -type f -exec chmod 664 {} \\;
+   - find \<root Git Dir> -type d -exec chmod 775 {} \\;
+ 5. Apache Setup DocumentRoot 
+    - "/var/www/badgeApp/"
+ 6. Test site /Requirements.php and verify green on required items.
+ 7. Update DocumentRoot to proper launch point:
+    - DocumentRoot "/var/www/badgeApp/backend/web/"
+ 8. Copy .htaccess.template to .htaccess
+    - ./backend/web/.htacceess.template -> .htaccess
+ 9. Configure your DB user and password in:
+    - ./common/config/main-local.php
+10. Configure Cookie and Debugging in:
+    - ./backend/config/main-local.php
+11. Configure mail settings in:
+    - ./backend/config/params.php
+12. Run App by going to  /
 
 
 Built On: Yii 2 Advanced Project Template

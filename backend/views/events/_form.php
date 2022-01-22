@@ -152,7 +152,7 @@ if(!yii::$app->controller->hasPermission('events/approve')) {
 				}
 			},
 			error: function (responseData, textStatus, errorThrown) {
-				$("#events-poc_name").val('Valid Badge holde not found');
+				$("#events-poc_name").val('Valid Badge Holder not found');
 				console.log("fail "+responseData);
 			},
 		});

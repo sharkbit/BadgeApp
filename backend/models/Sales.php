@@ -22,6 +22,7 @@ class Sales extends \yii\db\ActiveRecord {
 	public $state;
 	public $email;
 	public $cart;
+	public $tax;
 	public $total;
 	public $payment_method;
 	public $cc_num;
@@ -43,7 +44,7 @@ class Sales extends \yii\db\ActiveRecord {
             [['badge_number', 'total','payment_method','first_name','last_name','address','city','state','zip'], 'required'],
             [['first_name','last_name','address','city','state','email','cart','payment_method','cc_num','cc_exp_mo','cc_exp_yr','cc_x_id'], 'string'],
 			[['badge_number','zip'], 'integer'],
-            [['total','cc_cvc'], 'number'],
+            [['total','cc_cvc','tax'], 'number'],
         ];
     }
 

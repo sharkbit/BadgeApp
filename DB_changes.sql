@@ -526,6 +526,93 @@ DROP COLUMN `club_id`;
 ALTER TABLE `BadgeDB`.`mass_email` 
 ADD COLUMN `mass_reply_name` VARCHAR(100) NULL DEFAULT NULL AFTER `mass_reply_to`;
 
+-- Discounts
+ALTER TABLE `BadgeDB`.`params` 
+ADD COLUMN `sku_student` INT NULL DEFAULT NULL AFTER `check_ip_name`,
+ADD COLUMN `sku_wc_discount` INT NULL DEFAULT NULL AFTER `sku_student`;
+
+-- RSO Report
+DROP TABLE IF EXISTS `rso_reports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rso_reports` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `rso` varchar(255) NOT NULL,
+  `shift` varchar(2) NOT NULL,
+  `date` datetime DEFAULT NULL,
+  `shift_anom` text,
+  `notes` text,
+  `par_50` int DEFAULT NULL,
+  `par_100` int DEFAULT NULL,
+  `par_200` int DEFAULT NULL,
+  `par_steel` int DEFAULT NULL,
+  `par_nm_hq` int DEFAULT NULL,
+  `par_m_hq` int DEFAULT NULL,
+  `par_trap` int DEFAULT NULL,
+  `par_arch` int DEFAULT NULL,
+  `par_pel` int DEFAULT NULL,
+  `par_spr` int DEFAULT NULL,
+  `par_cio_stu` int DEFAULT NULL,
+  `par_act` int DEFAULT NULL,
+  `cash_bos` decimal(7,2) DEFAULT NULL,
+  `cash_eos` decimal(7,2) DEFAULT NULL,
+  `closing` text,
+  `closed` int DEFAULT '0',
+  `remarks` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- Tax Rates
+ALTER TABLE `BadgeDB`.`store_items` 
+ADD COLUMN `tax_rate` DECIMAL(5,3) DEFAULT 0 AFTER `new_badge`;
+
+ALTER TABLE `BadgeDB`.`cc_receipts` 
+ADD COLUMN `tax` DECIMAL(5,2) NOT NULL DEFAULT 0.00 AFTER `amount`;
+
+-- More RSO Report
+ALTER TABLE `BadgeDB`.`rso_reports` 
+ADD COLUMN `wb_color` VARCHAR(3) NULL DEFAULT NULL AFTER `notes`,
+ADD COLUMN `mics` VARCHAR(3) NULL DEFAULT NULL AFTER `wb_color`,
+ADD COLUMN `wb_trap_cases` INT NULL DEFAULT NULL AFTER `mics`;
+
+ALTER TABLE `BadgeDB`.`rso_reports` 
+ADD COLUMN `date_close` DATETIME NULL DEFAULT NULL AFTER `date_open`,
+CHANGE COLUMN `date` `date_open` DATETIME NULL DEFAULT NULL ;
+
+-- Sticker v2.1.12
+DROP TABLE IF EXISTS `sticker`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sticker` (
+  `s_id` int NOT NULL AUTO_INCREMENT,
+  `sticker` varchar(10) DEFAULT NULL,
+  `status` varchar(4) DEFAULT NULL,
+  `holder` int DEFAULT NULL,
+  `updated` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`s_id`),
+  UNIQUE KEY `s_id_UNIQUE` (`s_id`),
+  UNIQUE KEY `sticker_UNIQUE` (`sticker`)
+)
+
+-- Rso Stickers
+ALTER TABLE `BadgeDB`.`rso_reports` 
+ADD COLUMN `stickers` TEXT NULL DEFAULT NULL AFTER `cash_eos`;
+
+-- RSO Report Final  #187 & #189
+ALTER TABLE `BadgeDB`.`rso_reports` 
+ADD COLUMN `cash` TEXT NULL DEFAULT NULL AFTER `closing`,
+ADD COLUMN `checks` TEXT NULL DEFAULT NULL AFTER `cash`,
+ADD COLUMN `violations` TEXT NULL DEFAULT NULL AFTER `checks`;
+
+ALTER TABLE `BadgeDB`.`cc_receipts` 
+ADD COLUMN `cashier_badge` INT NULL DEFAULT NULL AFTER `cashier`;
+
+-- Add Kits to Store #178
+ALTER TABLE `BadgeDB`.`store_items` 
+ADD COLUMN `kit_items` TEXT NULL DEFAULT NULL AFTER `stock`;
+
 -- 2.1.20 Events Get Sponsors
 ALTER TABLE `BadgeDB`.`events` 
 ADD COLUMN `sponsor` INT NULL AFTER `e_poc`;

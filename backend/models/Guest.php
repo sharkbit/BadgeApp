@@ -39,6 +39,7 @@ class Guest extends \yii\db\ActiveRecord {
 	public $cc_exp_mo;
 	public $cc_exp_yr;
 	public $cc_x_id;
+	public $tax;
 
     public static function tableName() {
         return 'guest';
@@ -58,7 +59,7 @@ class Guest extends \yii\db\ActiveRecord {
 			[['g_state','cc_state','g_paid'], 'string', 'max' => 2],
 			['cc_num','string','min'=>15],
 			['cc_cvc','string','min'=>3],
-			[['g_zip'],'number'],
+			[['g_zip','tax'],'number'],
 			[['cc_name','cc_address','cc_city','cc_state','cc_zip','cc_num','cc_cvc'], 'required', 'when' => function ($model) {
 				return $model->payment_type == 'creditnow';},
 			'whenClient' => "function (attribute, value) { return $('#guest-payment_type').val() == 'creditnow'; }"
