@@ -6,9 +6,9 @@ use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
- * This is the model class for table "privilege".
+ * This is the model class for table "store_items".
  *
- * @property integer $id
+ * @property integer $item_id
  */
 class StoreItems extends \yii\db\ActiveRecord {
     /**
@@ -26,6 +26,7 @@ class StoreItems extends \yii\db\ActiveRecord {
             [['item','sku','type','img'], 'string'],
 			[['item_id','paren','stock','active','new_badge'], 'integer'],
 			[['price','tax_rate'], 'number'],
+			['kit_items', 'safe'],
         ];
     }
 
@@ -45,6 +46,11 @@ class StoreItems extends \yii\db\ActiveRecord {
 			'new_badge' => 'Badge List'
         ];
     }
+
+	public function InventoriedItems(){
+		$storeitem = $this::find()->where(['type'=>'Inventory'])->orderBy('item')->all();
+		return ArrayHelper::map($storeitem, 'sku', 'item');
+	}
 
 	public function getTypes($limit=false) {
 		$myTypes = $this::find()->groupBy(['type'])->all();

@@ -118,7 +118,7 @@ class SalesController extends AdminController {
 			yii::$app->controller->createLog(true, 'trex_C_SC', var_export($model,true));
 			exit;
 
-		} 
+		}
 		else {
 			return $this->render('index', [
                 'model' => $model,
@@ -145,7 +145,7 @@ class SalesController extends AdminController {
 	public function actionInventory () {
 		$dataService = PaymentController::OAuth();
 		$confParams = Params::findOne('1');
-		
+
 		return $this->render('inventory', [
 			'dataService' => $dataService,
 			'confParams' => $confParams
@@ -155,7 +155,7 @@ class SalesController extends AdminController {
 	public function actionPrintRcpt ($x_id, $badge_number=null) {  //Reciept Email or Print
 		$MyRcpt = CardReceipt::findOne($x_id,$badge_number);
 		if($MyRcpt) {
-			 return $this->render('print-rcpt',[ 'MyRcpt' => $MyRcpt ] ); 
+			 return $this->render('print-rcpt',[ 'MyRcpt' => $MyRcpt ] );
 		} else {
 			Yii::$app->getSession()->setFlash('error', 'Reciept Not Found.');
 			return $this->redirect($_SERVER['HTTP_REFERER']);
@@ -175,7 +175,7 @@ class SalesController extends AdminController {
 
 	public function actionReport() {
 		$SalesReport = new SalesReport;
-		
+
 		if(isset($_REQUEST['SalesReport']['created_at'])) {
 			$SalesReport->created_at = $_REQUEST['SalesReport']['created_at'];
 		} else {
@@ -205,7 +205,8 @@ class SalesController extends AdminController {
 				$model->paren=NULL;
 				$model->sku=NULL;
 			}
-			
+			$model->kit_items = str_replace('"','', json_encode($model->kit_items));
+
         	if($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Item has been updated');
 			} else { Yii::$app->getSession()->setFlash('success', 'Item update Failed'); }
@@ -232,6 +233,16 @@ class SalesController extends AdminController {
 			if($model->type=='Inventory') {
 				$model->stock = $model->stock - $item->qty;
 				$model->save();
+			} elseif($model->type=='Kits') {
+				if($model->kit_items) {
+					foreach(json_decode($model->kit_items) as $kititem) {
+						$KitModel = (New StoreItems)->find()->where(['sku'=>$kititem])->one();
+						$KitModel->stock = $KitModel->stock - $item->qty;
+						$KitModel->save();
+					}
+				} else {
+					Yii::$app->getSession()->setFlash('error', 'Kit has no Parts!');
+				}
 			}
 		}
 	}

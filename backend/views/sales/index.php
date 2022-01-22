@@ -185,15 +185,14 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			<p class="pull-right"><a href="" class="badge_sales_div" > Extras </a></p>
 			<div class="form-group" id="extras_sales_div" > <!-- style="display:none"  class="col-xs-12 col-sm-12"  -->
 			<table id='sales_items' border=1 width="100%">
-			<tr><th>Item</th><th>Ea</th><th>Qty #</th><th>Price</th></tr>
+			<tr><th>Item</th><th>Stock</th><th>Ea</th><th>Qty #</th><th>Price</th></tr>
 	<?php
-		$sql="SELECT s1.item_id,s2.item AS cat,s1.item,s1.sku,s1.price,s1.tax_rate,s1.`type`".
+		$sql="SELECT s1.item_id,s2.item AS cat,s1.item,s1.sku,s1.stock,s1.price,s1.tax_rate,s1.`type`".
 			" FROM store_items AS s1 JOIN store_items AS s2 ON (s1.paren=s2.item_id)".
 			" WHERE s1.active=1".
 			" ORDER BY `cat`,`type`,item;";
 			$command = Yii::$app->db->createCommand($sql);
 			$ItemsList = $command->queryAll();
-
 			$curCat='';
 			foreach($ItemsList as $item){
 				if($curCat <> $item['cat']) {
@@ -201,10 +200,12 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				}
 				$colo ="bgcolor='#f3f3f3'";
 				if($item['sku']== $confParams->guest_sku && $guest_total>0) {$item_qty = $guest_total.' onKeyUp="doCalcSale()"';} else {$item_qty = '0 onKeyUp="doCalcSale()"';}
+				if((int)$item['stock'] > 0) { $item_stock='<center>'.(int)$item['stock'].'</center>'; } else { $item_stock=''; }
 
 				echo '<tr '.$colo.">\n\t<td>".'<input type="hidden" name="item" value="'.htmlspecialchars($item['item']).'" />'.$item['item'].
 					"\n\t".'<input type=hidden name="sku" value="'.$item['sku'].'" />'.
 					"\n\t".'<input type=hidden name="tax_rate" value="'.$item['tax_rate'].'" /></td>'.
+					"\n\t".'<td>'.$item_stock.' </td>'.
 					"\n\t".'<td><input class="right" type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
 					"\n\t".'<td><input class="right" type="text" name="qty" size="3" value='.$item_qty.' /></td>'.
 					"\n\t".'<td><input class="right" type="text" name="price" size="3" readonly /></td></tr>'."\n";
@@ -454,7 +455,8 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 
 	$("#sales-PayCash").change(function() {
 		if (document.getElementById("sales-PayCash").checked == true){
-				 getReporterName(99999);
+				document.getElementById("sales-payment_method").value  = 'cash';
+				getReporterName(99999);
 			} else {
 				document.getElementById("sales-first_name").value  = '';
 				document.getElementById("sales-last_name").value  = '';

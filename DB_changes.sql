@@ -608,3 +608,8 @@ ADD COLUMN `violations` TEXT NULL DEFAULT NULL AFTER `checks`;
 
 ALTER TABLE `BadgeDB`.`cc_receipts` 
 ADD COLUMN `cashier_badge` INT NULL DEFAULT NULL AFTER `cashier`;
+
+-- Add Kits to Store #178
+ALTER TABLE `BadgeDB`.`store_items` 
+ADD COLUMN `kit_items` TEXT NULL DEFAULT NULL AFTER `stock`;
+

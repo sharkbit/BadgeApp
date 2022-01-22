@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 <div class="row">
 	<div class="col-xs-6">
 		<?php $form = ActiveForm::begin(); ?>
-		
+
 		<?php if ($model->isNewRecord) {
 			echo $form->field($model, 'type')->dropDownList($model->getTypes(),['prompt'=>$model->isNewRecord ? 'Select': '']).PHP_EOL;
 		} else {
@@ -23,22 +23,25 @@ use yii\widgets\ActiveForm;
 			}
 		} ?>
 
-		<?php if($model->type!='Category'){echo $form->field($model, 'paren')->dropDownList($model->getGroups()).PHP_EOL; } ?>	
-		
+		<?php if($model->type!='Category'){echo $form->field($model, 'paren')->dropDownList($model->getGroups()).PHP_EOL; } ?>
+
 		<?= $form->field($model, 'item')->textInput(['maxlength'=>true])->label("Item Name") ?>
-		
+
 	    <?= $form->field($model, 'sku')->textInput(['readonly'=>($model->type=='Category')? true:false,'maxlength'=>true]) ?>
-	    
+
 		<?= $form->field($model, 'price')->textInput(['readonly'=>($model->type=='Category')? true:false,'maxlength'=>true]) ?>
-		
+
 		<?= $form->field($model, 'tax_rate')->textInput(['readonly'=>($model->type=='Category')? true:false,'maxlength'=>true])->label('Tax Rate (0.065)') ?>
-	    
+
+<?php if($model->type=='Kits') { ?>
+		<?= $form->field($model, 'kit_items')->dropDownList($model->InventoriedItems(),['value'=>json_decode($model->kit_items),'multiple'=>true]) ?>
+<?php } else { ?>
 		<?= $form->field($model, 'stock')->textInput(['readonly'=>($model->type=='Category')? true:false,'placeholder'=>'Optional','readonly'=>($model->type=='Category')? true:false,'maxlength'=>true]) ?>
-	    
-		<?= $form->field($model, 'active')->dropDownList(['1'=>'Yes','0'=>'No'],['readonly'=>($model->type=='Category')? true:false,'value'=>$model->active]).PHP_EOL; ?>	
-		
-	    <?= $form->field($model, 'new_badge')->dropDownList(['1'=>'Yes','0'=>'No'],['readonly'=>($model->type=='Category')? true:false,'value'=>$model->new_badge]).PHP_EOL; ?>	
-	
+<?php } ?>
+		<?= $form->field($model, 'active')->dropDownList(['1'=>'Yes','0'=>'No'],['readonly'=>($model->type=='Category')? true:false,'value'=>$model->active]).PHP_EOL; ?>
+
+	    <?= $form->field($model, 'new_badge')->dropDownList(['1'=>'Yes','0'=>'No'],['readonly'=>($model->type=='Category')? true:false,'value'=>$model->new_badge]).PHP_EOL; ?>
+
 	    <div class="form-group">
 	        <?= Html::submitButton('Update', ['class' => 'btn btn-primary pull-right']) ?>
 	    </div>
@@ -49,6 +52,10 @@ use yii\widgets\ActiveForm;
 </div>
 
 <script>
+  $(document).ready(function (e) {
+    $("#storeitems-kit_items").select2({placeholder_text_multiple:'Select items',width: "100%",})
+  });
+
  $("#storeitems-type").change(function() {
 	 console.log('h1');
         var myType = document.getElementById("storeitems-type").value;

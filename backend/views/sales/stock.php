@@ -23,14 +23,6 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 <p> </p>
 
 <div class="row">
-     <div class="col-xs-4">
-
-    </div>
-	<?php if(yii::$app->controller->hasPermission('badges/all')) {
-	//echo $this->render('_search',['model'=>$searchModel,'badgesModel'=>$badgesModel]).PHP_EOL; 
-	} ?>
-</div>
-<div class="row">
 
     <div class="col-xs-12">
 	<?php if(yii::$app->controller->hasPermission('sales/create')) { ?>
@@ -59,7 +51,9 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
             'sku',
 			'price',
 			'tax_rate',
-			'stock',
+			[	'attribute'=>'stock',
+				'value' => function($model, $attribute) { if($model->type=='Kits') { return ''; } else { return $model->stock; } },
+			],
 			'img',
 			[	'attribute' => 'new_badge',
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'new_badge',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All']),
@@ -99,7 +93,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 					},
 				],
             ],
-	
+
         ],
     ]); ?>
     </div>

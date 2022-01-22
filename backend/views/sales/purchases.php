@@ -40,8 +40,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
     <div class="col-xs-12"> 
 	<?php
 	$gridColumns = [
-		[
-			'attribute'=>'badge_number',
+		[	'attribute'=>'badge_number',
 			'contentOptions' =>['style' => 'width:100px'],
 			'format' => 'raw',
 			'value'=>function ($data) {
@@ -50,8 +49,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		],
 		'name',
 		'tx_date',
-		[
-			'attribute'=>'cart',
+		[	'attribute'=>'cart',
 			'format' => 'raw',
 			'value' => function($model, $attribute) use ($showsku) {
 				$items='';
@@ -67,20 +65,17 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			},
 			'footer'=>'Total:',
 		],
-		[
-			'attribute'=>'amount',
+		[	'attribute'=>'amount',
 			'headerOptions' => ['width' => '100'],
 			'footer' => "$".number_format($dataProvider->query->sum('amount'), 2, '.', ','),
 		],
-		[ 
-			'attribute'=>'cashier_badge',
+		[ 	'attribute'=>'cashier_badge',
+			'value' => function($model, $attribute) { return yii::$app->controller->decodeBadgeName((int)$model->cashier_badge); },
 			'label' => 'Cashier (Use commas to seperate multiple Cashiers when filtering.',
 			'headerOptions' => ['width' => '300'],
-			//'captionOptions' => ['tooltip' => 'test test',]
 		],
 		'tx_type',
-		[
-			'header' => 'Actions',
+		[	'header' => 'Actions',
 			'class' => 'yii\grid\ActionColumn',
 			'template'=>' {print} ',
 			'buttons'=>[

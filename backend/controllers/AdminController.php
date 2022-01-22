@@ -65,7 +65,7 @@ class AdminController extends \yii\web\Controller {
 		'Guest' => ['guest/all'],
 		'Rso Report'=>['rso-rpt/index','rso-rpt/view'],
 		'Rules'=> ['rules/index','rules/view'],
-		'sales' => ['sales/all'],
+		'sales' => ['sales/all','sales/stock'],
 		'violations' => ['violations/all'],
 		'Work Credits'=>['work-credits/all'],
 	];
@@ -74,7 +74,7 @@ class AdminController extends \yii\web\Controller {
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
-		'sales' => ['sales/all','sales/report'],
+		'sales' => ['sales/all','sales/report','sales/stock'],
 		'Guest' => ['guest/update'],
 	];
 
@@ -85,7 +85,7 @@ class AdminController extends \yii\web\Controller {
 		'Membership Type'=>['membership-type/ajaxmoney-convert'],
 		'Guest' => ['guest/all','guest/modify','guest/update'],
 		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/index','rso-rpt/sticker','rso-rpt/update','rso-rpt/view'],
-		'sales' => ['sales/all'],
+		'sales' => ['sales/all','sales/stock'],
 		'violations' => ['violations/all','violations/create','violations/report','violations/update'],
 	];
 
@@ -96,7 +96,7 @@ class AdminController extends \yii\web\Controller {
 		'Membership Type'=>['membership-type/ajaxmoney-convert'],
 		'Guest' => ['guest/all','guest/modify','guest/update'],
 		'Rso Report'=>['rso-rpt/current','rso-rpt/index','rso-rpt/sticker','rso-rpt/view'],
-		'sales' => ['sales/all'],
+		'sales' => ['sales/all','sales/stock'],
 		'violations' => ['violations/all','violations/create','violations/update'],
 	];
 
@@ -104,7 +104,7 @@ class AdminController extends \yii\web\Controller {
 		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all'],
-		'sales' => ['sales/all','sales/report'],
+		'sales' => ['sales/all','sales/stock','sales/report'],
 		'Rso Report'=>['rso-rpt/index'],
 		'violations' => ['violations/all'],
 		'Work Credits'=>['work-credits/all'],
