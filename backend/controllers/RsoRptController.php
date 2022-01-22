@@ -143,6 +143,7 @@ class RsoRptController extends AdminController {
 
 	public function actionStickerUpdate($id=1) {
 		$model =  (new Stickers)->find()->where(['s_id'=>$id])->one();
+		if($model) {
 		if ($model->load(Yii::$app->request->post())) {
 			$model->updated = $this->getNowTime();
 			if($model->save()) {
@@ -153,6 +154,7 @@ class RsoRptController extends AdminController {
 		return $this->render('/rso-rpt/sticker-update',[
 				'model' => $model,
 			]);
+		} else  { $this->redirect(['/rso-rpt/sticker']); }
 	}
 
 	public function actionStickerDelete($id=1) {
@@ -164,25 +166,26 @@ class RsoRptController extends AdminController {
 
 	public function actionUpdate($id=1) {
 		$model = $this->findModel($id);
-
-		if ($model->load(Yii::$app->request->post())) {
-			if (!$model->validate()) {
-				// uncomment the following line if you do not want to return any records when validation fails
-				// $query->where('0=1');
-				yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
+		if($model) {
+			if ($model->load(Yii::$app->request->post())) {
+				if (!$model->validate()) {
+					// uncomment the following line if you do not want to return any records when validation fails
+					// $query->where('0=1');
+					yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
+				}
+				$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
+				if($model->save()) {
+					Yii::$app->getSession()->setFlash('success', 'Report has been updated.');
+				 } else {
+					 yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
+				 }
+				return $this->redirect(['update', 'id' => $model->id]);
+			} else {
+				return $this->render('update', [
+					'model' => $model,
+				]);
 			}
-			$model->remarks=$this->AddRemarks($model,'Updated by '.$_SESSION['user']);
-			if($model->save()) {
-				Yii::$app->getSession()->setFlash('success', 'Report has been updated.');
-			 } else {
-				 yii::$app->controller->createLog(false, 'trex-m-s-bs:112 NOT VALID', var_export($model->errors,true));
-			 }
-			return $this->redirect(['update', 'id' => $model->id]);
-		} else {
-			return $this->render('update', [
-				'model' => $model,
-			]);
-		}
+		} else { return $this->redirect(['index']); }
 	}
 
 	public function actionView($id=1) {
