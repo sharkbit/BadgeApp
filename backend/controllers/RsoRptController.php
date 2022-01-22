@@ -55,7 +55,11 @@ class RsoRptController extends AdminController {
 			}
 		}
 		$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date_open'=>SORT_DESC])->one();
-		if(!$model) {$model = new RsoReports;}
+		if(!$model) {
+			$model = new RsoReports;
+			$model->date_open = $this->getNowTime();
+			$model->save(false);
+		}
 
 		return $this->render('current', [
 			'model' => $model,
