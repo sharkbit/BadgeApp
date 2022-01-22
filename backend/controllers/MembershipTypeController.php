@@ -35,19 +35,16 @@ class MembershipTypeController extends AdminController {
 			if (isset($feeArray->sku_half) && (date('Y-m-d', $nowNumbers) >= date('Y-07-01', $nowNumbers)) && (date('Y-m-d', $nowNumbers) <= date('Y-'.$confParams->sell_date, $nowNumbers)) && ($from=='n') && ((int)$feeArray->fullprice->price < 301 )) {
 				//discount
 				$Half_Price = $feeArray->halfprice->price;
-				$discount = $feeArray->fullprice->price - $feeArray->halfprice->price;
 				$item_sku=$feeArray->halfprice->sku;
 				$item_name=$feeArray->halfprice->item;
 			} else {
 				$Half_Price = $Full_Price;
-				$discount = 0;
 				$item_sku=$feeArray->fullprice->sku;
 				$item_name=$feeArray->fullprice->item;
 			}
 		} else {
 			$Full_Price=0;
 			$Half_Price = 0;
-			$discount = 0;
 			$item_sku='Free';
 			$item_name="Free $feeArray->type Badge";
 		}
@@ -55,7 +52,6 @@ class MembershipTypeController extends AdminController {
 		$feeOffer = [
             'badgeFee'=>$Full_Price,
             'badgeSpecialFee' =>$Half_Price,
-            'discount'=>$discount,
 			'item_sku'=>$item_sku,
 			'item_name'=>$item_name
         ];

@@ -91,6 +91,7 @@ class BadgesController extends AdminController {
 					$savercpt->name = $badgeArray->first_name.' '.$badgeArray->last_name;
 					$savercpt->cart = "[".json_encode($MyCart)."]";
 					$savercpt->cashier = $_SESSION['user'];
+					if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
 					if($savercpt->save()) {
 						yii::$app->controller->createLog(true, $_SESSION['user'], "Saved Rcpt','".$model->badge_number);
 					} else {
@@ -435,6 +436,20 @@ class BadgesController extends AdminController {
 			exit;
 			//return $this->redirect(['/calendar/recur']);
 		}
+		elseif(isset($_GET['cashier'])) { //  /badges/api-check?cashier=1
+			echo "<div class='col-xs-12'><br /><br /><br /><br />";
+			$cashier = (new CardReceipt)->find()->select('cashier')->distinct()->where('cashier_badge is null')->all();
+			foreach ($cashier as $ier){
+				$badge = (new Badges)->find()->where("concat(first_name,' ',last_name) = \"".$ier->cashier."\"")->one();
+				if($badge) {
+					echo $ier->cashier.' - '.$badge->badge_number."<br>";
+					CardReceipt::updateAll(['cashier_badge' => $badge->badge_number], "cashier = \"".$ier->cashier.'"');
+				}
+				else {echo $ier->cashier.'<br>';}
+			}
+			echo "</div>";
+			return $this->render('_blank');
+		}
 		else {
 			var_dump($_GET);
 			exit;
@@ -490,8 +505,28 @@ class BadgesController extends AdminController {
 			$saved=$model->save(); 
 			if($saved) {
 				if($model->payment_method <> 'creditnow') {
-					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee-$model->discounts ];
+					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ];
 					$MyCart = "[".rtrim( json_encode($MyCart),",")."]";
+					if(isset($_POST['cart'])) {
+						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
+					}
+
+					// not storing multiple discounts yet.					
+					if(is_array($_POST['Badges']['discounts'])) {
+						$discount=0;
+						foreach ($_POST['Badges']['discounts'] as $d_item ) {
+							$d_discount = explode(":",$d_item);
+							if($d_discount[0]=='s'){	
+								$stu =  (new StoreItems)->find()->where(['sku'=>$confParams->sku_student])->one();
+								if($stu){
+									$discount += $stu->price;
+									$MyCart = json_encode(array_merge(json_decode($MyCart),
+										[ ["item"=>'Discount - Student',"sku"=>$confParams->sku_student,"ea"=>'-'.$stu->price ,"qty"=>"1","price"=>'-'.$stu->price ] ] ) );
+								}
+							}
+						}
+						$model->discounts=$discount;
+					} else { $model->discounts=0; }
 
 					$savercpt = new CardReceipt();
 					$model->cc_x_id = 'x'.rand(100000000,1000000000);
@@ -500,9 +535,11 @@ class BadgesController extends AdminController {
 					$savercpt->tx_date = $this->getNowTime();
 					$savercpt->tx_type = $model->payment_method;
 					$savercpt->amount = $model->amt_due;
+					$savercpt->tax = $model->tax;
 					$savercpt->name = $model->first_name.' '.$model->last_name;
 					$savercpt->cart = $MyCart;
 					$savercpt->cashier = $_SESSION['user'];
+					if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
 					if($savercpt->save()) {
 						yii::$app->controller->createLog(true, $_SESSION['user'], "Saved Rcpt','".$model->badge_number);
 					} else {
@@ -563,6 +600,14 @@ class BadgesController extends AdminController {
 				} else {
 				  //echo'<pre>'; print_r($badgeSubscriptionsModel->getErrors()); die();
 				}
+				$stker = (new \backend\models\Stickers)::find()->where(['sticker'=>$model->sticker])->one();
+				if($stker){
+					yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Issued ".$model->sticker.' to Badge '.$model->badge_number);
+					$stker->status = 'isu';
+					$stker->holder = $model->badge_number;
+					$stker->updated =  $this->getNowTime();
+					$stker->save();
+				}
 
 				$this->createLog($this->getNowTime(), $_SESSION['user'], "Issued new Badge','".$model->badge_number." for ".$model->first_name." ".$model->last_name);
 				Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been created');
@@ -595,6 +640,10 @@ class BadgesController extends AdminController {
 	public function actionDelete($id,$back_to=null) {
 		$badge_id = Badges::find()->where(['id' => $id])->one();
 
+		$reciepts = CardReceipt::find()->where(['cashier_badge'=>$badge_id->badge_number])->all();
+		if($reciepts) { // Fail
+			Yii::$app->getSession()->setFlash('error', 'Can not Delete Member that was a Cashier!');
+		} else {
 		$sql="SELECT * from violations WHERE badge_involved like '%".$badge_id->badge_number."%'";
 		$command = Yii::$app->getDb()->createCommand($sql);
 		$ViolationsCheck = $command->queryAll();
@@ -617,6 +666,7 @@ class BadgesController extends AdminController {
 			Yii::$app->getSession()->setFlash('success', "Member Deleted.");
 		} else {
 			Yii::$app->getSession()->setFlash('error', 'Can not Delete Member with Violations!');
+		}
 		}
 		if (!$back_to) {
 			return $this->redirect('index');
@@ -694,7 +744,9 @@ class BadgesController extends AdminController {
 			$responceA = Json::encode($badgeArray,JSON_PRETTY_PRINT);
 			$responceB = Json::encode($mergtwo,JSON_PRETTY_PRINT);
 			$responce=trim(rtrim($responceA,"}")).",".ltrim($responceB,"{");
-		} else {$responce=['success'=>false];}
+		} else {
+			$responce=Json::encode(['success'=>false]);
+		}
 
 		if($rtn){
 			return Json::decode($responce);
@@ -962,6 +1014,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionRenewMembership($membership_id) {
+		$confParams  = Params::findOne('1');
 		$model = new BadgeSubscriptions();
 		$badgeRecords = Badges::find()->where(['badge_number'=>$membership_id])->one();
 		$badgeRecords->load(Yii::$app->request->post());
@@ -988,25 +1041,44 @@ class BadgesController extends AdminController {
 			$model->valid_true = $myexpires;
 			$model->status = 'active';
 			$model->created_at = $this->getNowTime();
-			$model->badge_fee = $model->badge_fee;
-			$model->paid_amount = $model->badge_fee - $model->discount;
+			$model->paid_amount = $model->amount_due;
+			
+// not storing multiple discounts yet.					
+			if(is_array($_POST['BadgeSubscriptions']['discount'])) {
+				foreach ($_POST['BadgeSubscriptions']['discount'] as $d_item ) {
+					$d_discount = explode(":",$d_item);
+					$model->discount += number_format($d_discount[1],2);
+					if($d_discount[0]=='w'){
+						$d_cart = json_encode( [ ["item"=>'Discount - Work Credits',"sku"=>$confParams->sku_wc_discount,"ea"=>'-'.$d_discount[1] ,"qty"=>"1","price"=>'-'.$d_discount[1] ] ] );
+					}
+				}
+			} else { $model->discount=0; }
+			
 			$model->transaction_type = 'RENEW';
 			$model->club_id = $badgeRecords->club_id;
 			if($model->cc_x_id =='') {$model->cc_x_id = 'x'.rand(100000000,1000000000); }
 
 			if($model->save()) {
 				if($needRecpt) {
-					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee-$model->discount ];
+					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ];
 					$MyCart = "[".rtrim( json_encode($MyCart),",")."]";
+					if(isset($d_cart)) {
+						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($d_cart)));
+					}
+					if(isset($_POST['cart'])) {
+						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
+					}
 					$savercpt = new CardReceipt();
 					$savercpt->id = $model->cc_x_id;
 					$savercpt->badge_number = $model->badge_number;
 					$savercpt->tx_date = $this->getNowTime();
 					$savercpt->tx_type = $model->payment_type;
 					$savercpt->amount = $model->amount_due;
+					$savercpt->tax = $model->tax;
 					$savercpt->name = $badgeRecords->first_name;
 					$savercpt->cart = $MyCart;
 					$savercpt->cashier = $_SESSION['user'];
+					if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
 					if($savercpt->save()) {
 						yii::$app->controller->createLog(true, $_SESSION['user'], "Saved Rcpt','".$model->badge_number);
 					} else {
@@ -1015,7 +1087,7 @@ class BadgesController extends AdminController {
 				}
 
 				$badgeRecords->expires = $myexpires;
-				$badgeRecords->work_credits = $badgeRecords->work_credits - $model->redeemable_credit;
+				$badgeRecords->work_credits = (int)$badgeRecords->work_credits - (int)$model->redeemable_credit;
 				$badgeRecords->sticker = $model->sticker;
 				$badgeRecords->wt_date = $wt_date_reIssue !=null ? $wt_date_reIssue : $badgeRecords->wt_date;
 				$badgeRecords->wt_instru = $wt_date_reIssue !=null ? $wt_instru_reIssue : $badgeRecords->wt_instru;
@@ -1047,6 +1119,15 @@ class BadgesController extends AdminController {
 					}
 
 					$badgeRecords->work_credits = 0;
+				}
+
+				$stker = (new \backend\models\Stickers)::find()->where(['sticker'=>$model->sticker])->one();
+				if($stker){
+					yii::$app->controller->createLog(true, $_SESSION['user'],"Sticker','Issued ".$model->sticker.' to Badge '.$model->badge_number);
+					$stker->status = 'isu';
+					$stker->holder = $model->badge_number;
+					$stker->updated =  $this->getNowTime();
+					$stker->save();
 				}
 
 				if($dirty) {$cmnt = "Updated: ".$dirty; } else { $cmnt = ''; }
@@ -1408,13 +1489,14 @@ class BadgesController extends AdminController {
 
 	public function UpdateQR($model) {
 		if(strlen($model->qrcode)<>14) {
+			$clubs = (new clubs)::getMyClubs($model->badge_number);
 			$characters = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 			$randomString = '';
 			for ($i = 0; $i < 2; $i++) {
 				$randomString .= $characters[rand(0, 32 - 1)];
 			}
 
-			$model->qrcode = str_pad($model->club_id, 2, '0', STR_PAD_LEFT)." ".$model->mem_type." ".str_pad($_GET['badge_number'], 5, '0', STR_PAD_LEFT)." ".$randomString;
+			$model->qrcode = str_pad($clubs[0], 2, '0', STR_PAD_LEFT)." ".$model->mem_type." ".str_pad($_GET['badge_number'], 5, '0', STR_PAD_LEFT)." ".$randomString;
 			$model->status = "approved";
 			if ($model->save(false)) {Yii::$app->getSession()->setFlash('success', 'Badge QR code Update!  Account set to Approved!');}
 		}

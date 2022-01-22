@@ -4,10 +4,12 @@ use backend\models\AgcCal;
 use backend\models\agcEventStatus;
 use backend\models\agcFacility;
 use backend\models\agcRangeStatus;
+use kartik\grid\GridView; 
 use kartik\daterange\DateRangePicker;
 use kartik\widgets\ActiveForm;
+use kartik\export\ExportMenu;
 use yii\helpers\Html;
-use yii\grid\GridView;
+/*use yii\grid\GridView; */
 use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
 
@@ -42,55 +44,14 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 
 	<h2><?= Html::encode($this->title) ?></h2>
 
-<div class="calendar-index">
-<?php $form = ActiveForm::begin([
-	//'action' => ['index'],
-	'method' => 'post',
-	'id'=>'calendarFilter',
-]); ?>
 <div class="row">
-
-	<div class="col-xs-12 col-sm-3" <?php if(($urlStatus['actionId']=='recur')||($urlStatus['actionId']=='conflict')) {echo ' style="display: none"'; } ?>>
-		<?=  $form->field($searchModel, 'SearchTime', [
-		'options'=>['class'=>'drp-container form-group']
-		])->widget(DateRangePicker::classname(), [
-		//'presetDropdown'=>true,
-		//'hideInput'=>true,
-		'convertFormat'=>true,
-		'pluginOptions' => [
-			'opens'=>'left',
-			'locale'=>['format'=>'Y-m-d','separator'=>' - ',],
-		]])->label('Date:'); ?>
-	</div>
-	<div class="col-xs-4 col-sm-2">
-		<?= $form->field($model, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
-	</div>
-	<div class="col-xs-4 col-sm-2"><br />
-		<?= Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Search', ['class' => 'btn btn-primary']) ?>
-		<?= Html::a('<i class="fa fa-eraser" aria-hidden="true"></i> Reset',['index?reset=true'], ['class' => 'btn btn-danger']) ?>
-	</div>
-	<div class="col-xs-4  col-sm-2 pull-right">
-		<?php if (yii::$app->controller->hasPermission('calendar/create')) { ?>
-		<div class="btn btn-group pull-right">
-		<?php if($urlStatus['actionId']=='recur') {$extra='?recur=1';} else {$extra='';} ?>
-			<?= Html::a('Create Event', ['create'.$extra], ['class' => 'btn btn-success']) ?>
-		</div > <?php } ?>
-	</div>
-</div>
-<?php ActiveForm::end(); ?>
-<div class="row">
-<div class="col-xs-12">
-
+	<div class="col-xs-12"> 
 	<?php Pjax::begin(); ?>
-	<?= GridView::widget([
-		'dataProvider' => $dataProvider,
-		'filterModel' => $searchModel,
-		'columns' => [
+	<?php
+	$gridColumns = [
 			[	'attribute'=>'club_id',
 				'format'=>'raw',
 				'value'=>function($model) {
-		//yii::$app->controller->createLog(false, 'trex:V_C_i', var_export($model->calendar_id,true));
-
 					return @$model->clubs->short_name.' <img src="/images/note.png" title="'.@$model->clubs->club_name.'" style="width:18px" />'; },
 				'headerOptions' => ['style' => 'width:10%']
 			],
@@ -275,10 +236,74 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 					},
 				]
 			],
-		],
-	]); ?>
+		];
+		?>
 	<?php Pjax::end(); ?>
+<div class="calendar-index">
+
+<?php $form = ActiveForm::begin([
+	//'action' => ['index'],
+	'method' => 'post',
+	'id'=>'calendarFilter',
+]); ?>
+<div class="row">
+	<div class="col-xs-12 col-sm-3" <?php if(($urlStatus['actionId']=='recur')||($urlStatus['actionId']=='conflict')) {echo ' style="display: none"'; } ?>>
+		<?=  $form->field($searchModel, 'SearchTime', [
+		'options'=>['class'=>'drp-container form-group']
+		])->widget(DateRangePicker::classname(), [
+		//'presetDropdown'=>true,
+		//'hideInput'=>true,
+		'convertFormat'=>true,
+		'pluginOptions' => [
+			'opens'=>'left',
+			'locale'=>['format'=>'Y-m-d','separator'=>' - ',],
+		]])->label('Date range:'); ?>
+	</div>
+	<div class="col-xs-4 col-sm-2">
+		<?= $form->field($model, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
+	</div>
+	<div class="col-xs-4 col-sm-2"><br />
+		<?= Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Search', ['class' => 'btn btn-primary']) ?>
+		<?= Html::a('<i class="fa fa-eraser" aria-hidden="true"></i> Reset',['index?reset=true'], ['class' => 'btn btn-danger']) ?>
+	</div>
+
+	<div class="col-xs-4 col-sm-2" > <p> <br /></p>
+		Export Data - 
+		<?=ExportMenu::widget([
+			'dataProvider' => $dataProvider,
+			'filterModel' => $searchModel,
+			'columns' => $gridColumns,
+			'fontAwesome' => true,
+			'batchSize' => 0,
+			'filename'=>  $this->title,
+			'target' => '_blank',
+			'folder' => '@webroot/export', // this is default save folder on server
+			'exportConfig' => [
+				ExportMenu::FORMAT_HTML => false,
+				ExportMenu::FORMAT_EXCEL => false,
+				ExportMenu::FORMAT_EXCEL_X => false,
+				//ExportMenu::FORMAT_PDF => false
+			]
+		]) . "<br /> <br />\n";?>
+	</div>
+
+	<div class="col-xs-4  col-sm-2 pull-right">
+		<?php if (yii::$app->controller->hasPermission('calendar/create')) { ?>
+		<div class="btn btn-group pull-right">
+		<?php if($urlStatus['actionId']=='recur') {$extra='?recur=1';} else {$extra='';} ?>
+			<?= Html::a('Create Event', ['create'.$extra], ['class' => 'btn btn-success']) ?>
+		</div > <?php } ?>
+	</div>
 </div>
+	<?php ActiveForm::end(); ?>
+</div>
+	<?php
+		echo GridView::widget([
+		'dataProvider' => $dataProvider,
+		'filterModel' => $searchModel,
+		'columns' => $gridColumns,
+	]); ?>
+	
 </div>
 </div>
 <p>* is a Recurring Event</p>

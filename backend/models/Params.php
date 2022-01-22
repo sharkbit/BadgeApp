@@ -67,6 +67,8 @@ class Params extends \yii\db\ActiveRecord {
 			'qb_oa2_access_date' =>  'QB OA2 Access Exp Date',
 			'qb_oa2_refresh_token'=> 'QB OA2 Refresh Token',
 			'qb_oa2_refresh_date' => 'QB OA2 Refresh Exp Date',
+			'sku_student'=>'CIO Student Wristband SKU',
+			'sku_wc_discount'=>'Work Credits SKU',
         ];
     }
 }

@@ -21,6 +21,9 @@ class PostPrintTransactions extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
+
+	public $pagesize;
+
     public static function tableName() {
         return 'post_print_transactions';
     }

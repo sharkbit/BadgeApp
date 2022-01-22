@@ -11,6 +11,16 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel backend\models\search\PostPrintTransactionsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+if (isset($_REQUEST['PostPrintTransactionsSearch']['pagesize'])) {
+	$pagesize = $_REQUEST['PostPrintTransactionsSearch']['pagesize'];
+	$_SESSION['pagesize'] = $_REQUEST['PostPrintTransactionsSearch']['pagesize'];
+} elseif (isset($_SESSION['pagesize'])) {
+	$pagesize = $_SESSION['pagesize'];
+} else {
+	$pagesize=20;
+}
+$dataProvider->pagination = ['pageSize' => $pagesize];
+
 $this->title = 'Print Transactions'; // - '.date('M d, Y',strtotime(yii::$app->controller->getNowTime()));
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/post-print-transactions']];
@@ -18,17 +28,19 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/po
 <h2><?= Html::encode($this->title) ?></h2>
 <div class="clubs-index" ng-controller="PostPrintTransactionForm">
 	<div class="row">
-         <div class="col-xs-5">
-            <?=html::a('<i class="fa fa-download" aria-hidden="true"></i> Export as CSV',['#'],['id'=>'customExportCsv','class'=>'btn btn-primary'])?>
-        </div>
-        
-        <div class="col-xs-5">
-             <?php $form = ActiveForm::begin([
+	 <?php $form = ActiveForm::begin([
                 'id'=>'postPrintTransactionForm',
                 'action' => ['/badges/post-print-transactions'],
                 'method' => 'get',
             ]); ?>
-			
+        <div class="col-xs-4">
+            <?=html::a('<i class="fa fa-download" aria-hidden="true"></i> Export as CSV',['#'],['id'=>'customExportCsv','class'=>'btn btn-primary'])?>
+        </div>
+		<div class="col-xs-2" style="min-width:100px">
+			<?= $form->field($searchModel, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200],['value'=>$pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
+		</div>
+        <div class="col-xs-4">
+
 <?=  $form->field($searchModel, 'created_at', [
 		'options'=>['class'=>'drp-container form-group']
 		])->widget(DateRangePicker::classname(), [
@@ -37,9 +49,10 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/po
 			'pluginOptions' => [
 				'opens'=>'left',
 				'locale'=>['format'=>'MM/DD/YYYY'],
-			]])->label(false); ?>
+			]]); ?>
 		</div>
 		<div class="col-xs-2">
+			<br />
 			<?= Html::submitButton('<i class="fa fa-search pull-right" aria-hidden="true"></i> Search', ['class' => 'btn btn-primary']) ?>
             <?php ActiveForm::end(); ?>
         </div>
@@ -49,7 +62,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/po
 	</div></div>
     <div class="row">
         <div class="col-xs-12">
-            <?php 
+            <?php
 
                 $gridColumns = [
                     [
@@ -105,9 +118,9 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/po
                     'dataProvider' => $dataProvider,
                     'columns' => $gridColumns,
                 ]);
-                     
+
             ?>
         </div>
-       
+
     </div>
 </div>

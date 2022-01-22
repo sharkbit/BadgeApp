@@ -32,7 +32,7 @@
         "phpmailer/phpmailer": ">=6.0",
 		
 		"league/omnipay": "^3",
-		"markroland/converge-api-php": "^0.4",
+		"markroland/converge-api-php": ">0.4",
         "bower-asset/fontawesome": ">5.0"
     },
     "require-dev": {
@@ -44,7 +44,10 @@
         "process-timeout": 1800,
 		"asset-installer-paths": {
 			"bower-asset-library": "vendor/bower" 
-		} 
+		},
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        } 
 	},
 	"repositories": [
 		{

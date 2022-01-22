@@ -238,8 +238,6 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
 					responseData = JSON.parse(responseData);
 					$("#badges-badge_fee").val(parseFloat(Math.round(responseData.badgeFee * 100) / 100).toFixed(2));
 
-					$("#badges-discounts-disp").val(responseData.discount);
-					$("#badges-discounts").val(responseData.discount);
 					$("#badges-item_name").val(responseData.item_name);
 					$("#badges-item_sku").val(responseData.item_sku);
 					$("#badges-amt_due-disp").val(responseData.badgeSpecialFee);
@@ -415,9 +413,23 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                                 responseData.redeemableCredit='0';
                             }
                             console.log(responseData);
-                            $("#badgesubscriptions-redeemable_credit").val(responseData.redeemableCredit);
-                            $("#badgesubscriptions-discount").val(parseFloat(Math.round(responseData.discount * 100) / 100).toFixed(2));
-                            $("#badgesubscriptions-amount_due").val(responseData.amountDue);
+							var wc_discount=parseFloat(Math.round(responseData.discount * 100) / 100).toFixed(2);
+							if (wc_discount>0){
+								var sel_x = document.getElementById("badgesubscriptions-discount");
+								sel_x.remove(1); sel_x.remove(0); 
+								sel_x.selectedIndex = 0;
+								var option0 = document.createElement("option");
+								option0.text = "None";
+								option0.value = "n:0";
+								sel_x.add(option0);
+								var option = document.createElement("option");
+								option.text = "W/C";
+								option.value = "w:"+wc_discount;
+								option.selected= true;
+								sel_x.add(option);
+                                $("#badgesubscriptions-redeemable_credit").val(responseData.redeemableCredit);
+							}
+                            
 	                        doCalcUp();
                         },
                         error: function (responseData, textStatus, errorThrown) {
@@ -570,9 +582,7 @@ app.controller("CreateBadgeController", function($scope) {
                         $scope.fee = responseData;
                         $("#badges-badge_fee").val(parseFloat(Math.round(responseData.badgeFee * 100) / 100).toFixed(2));
 
-                        $("#badges-discounts-disp").val(responseData.discount);
-                        $("#badges-discounts").val(responseData.discount);
-						$("#badges-item_name").val(responseData.item_name);
+                        $("#badges-item_name").val(responseData.item_name);
 						$("#badges-item_sku").val(responseData.item_sku);
                         $("#badges-amt_due-disp").val(responseData.badgeSpecialFee);
                         $("#badges-amt_due").val(responseData.badgeSpecialFee);
@@ -615,19 +625,13 @@ app.controller("CreateBadgeController", function($scope) {
                 crossDomain: false,
                 success: function(responseData, textStatus, jqXHR) {
                     console.log(responseData);
-                    //$("#badges-badge_fee-disp").val(responseData.BadgeFee);
-                    //$("#badges-badge_fee").val(responseData.badgeFee);
-                    $("#badges-discounts-disp").val(responseData.discount);
-                    $("#badges-discounts").val(responseData.discount);
                     $("#badges-amt_due-disp").val(responseData.amountDue);
                     $("#badges-amt_due").val(responseData.amountDue);
 
                     console.log("Is it? "+responseData.redeemableCredit);
-                    //document.getElementById("badges-FriendCredits").value = responseData.redeemableCredit;
                     $("#badges-FriendCredits").val(responseData.redeemableCredit);
 
                     $("p#badges-FrendStatus").html("Using "+responseData.redeemableCredit+" Credits from "+friendBadge);
-                   // console.log(responseData);
                     doCalcNew();
                     console.log('line 612');
                 },
@@ -870,17 +874,7 @@ app.controller('UpdateBadgeController', function($scope) {
         });
 
         $("#badgesubscriptions-discount").change(function() {
-            var badgeFee = parseInt($("#badgesubscriptions-badge_fee").val());
-            var discount = parseInt($("#badgesubscriptions-discount").val());
-            var amountDue = badgeFee - discount;
-            if(amountDue<0) {
-                amountDue = 0.00;
-            }
-            if(discount>badgeFee) {
-                discount = badgeFee;
-            }
-            $("#badgesubscriptions-discount").val(parseFloat(Math.round(discount * 100) / 100).toFixed(2));
-            $("#badgesubscriptions-amount_due").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
+			doCalcUp();
         });
 
         family_badge_view('hide');
@@ -1005,7 +999,7 @@ app.controller('WorkCreditFrom', function($scope) {
                         //$("#workcredits-badge_holder_name").readOnly = true;
                     },
                     error: function (responseData, textStatus, errorThrown) {
-                        $("#workcredits-badge_holder_name").val('Valid Badge holde not found');
+                        $("#workcredits-badge_holder_name").val('Valid Badge Holder not found');
                         console.log("fail "+responseData);
                     },
                 });
@@ -1305,6 +1299,14 @@ app.controller('GuestFrom', function($scope) {
 
 <?php
 }
+if(strpos($_SERVER['REQUEST_URI'], 'rso-rpt')) {
+?>
+app.controller('RsoReportFrom', function($scope) {
+
+});
+
+<?php
+}
 if(strpos($_SERVER['REQUEST_URI'], 'violations/')) {
 ?>
 
@@ -1364,19 +1366,19 @@ app.controller('ViolationsRecFrom', function($scope) {
     });
 
     function getReporterName(badgeNumber,field_name) {
-        jQuery.ajax({
+		jQuery.ajax({
             method: 'GET',
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {
-                if(responseData) {
-                    responseData = JSON.parse(responseData);
+			  responseData = JSON.parse(responseData);
+			  if(responseData.badge_number) {
                     $("#violations-"+field_name).val(responseData.first_name+' '+responseData.last_name);
 					return responseData.first_name+' '+responseData.last_name;
                 } else { $("#violations-"+field_name).val('Not Found'); }
             },
             error: function (responseData, textStatus, errorThrown) {
-                console.log("Error:" +responseData);
+				console.log(responseData);
             },
         });
     };
@@ -1396,7 +1398,7 @@ app.controller('PostPrintTransactionForm', function($scope) {
 });
 
 app.controller('ViolationsReport', function($scope) {
-    $(".btn-group").hide();
+//    $(".btn-group").hide();
 });
 
 $( document ).ready(function() {
