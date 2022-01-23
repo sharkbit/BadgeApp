@@ -10,7 +10,7 @@ Steps to install:
    - yum install php74 php74-php-fpm php74-php-gd php74-php-json php74-php-mbstring php74-php-mysqlnd php74-php-xml php74-php-xmlrpc php74-php-opcache php-pdo php-mbst* php-intl* php-dom* php-mysq* --skip-broken
    - yum install composer
 2. Clone Repo:
-   - git clone ssh://git@github.com:22/sharkbit/BadgeApp.git
+   - git clone https://github.com/sharkbit/BadgeApp.git
 3. Run Composer Intstall
    - composer install --prefer-dist --no-progress --no-suggest
 4. Update directory permissions:
