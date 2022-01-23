@@ -17,8 +17,8 @@ Steps to install:
    - composer install --prefer-dist --no-progress --no-suggest
 4. Update directory permissions:
    - sudo chown -R www-data.\<proper group> .
-   - sudo find \<root Git Dir> -type f -exec chmod 664 {} \\;
-   - sudo find \<root Git Dir> -type d -exec chmod 775 {} \\;
+   - sudo find . -type f -exec chmod 664 {} \\;
+   - sudo find . -type d -exec chmod 775 {} \\;
  5. Apache Setup DocumentRoot 
     - "/var/www/badgeApp/"
  6. Test site /Requirements.php and verify green on required items.
