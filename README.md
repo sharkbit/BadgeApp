@@ -12,6 +12,7 @@ Steps to install:
 2. Clone Repo:
    - git clone https://github.com/sharkbit/BadgeApp.git
 3. Run Composer Intstall
+   - cd BadgeApp
    - composer install --prefer-dist --no-progress --no-suggest
 4. Update directory permissions:
    - chown -R www-data.\<proper group> <root Git Dir>
