@@ -197,6 +197,7 @@ class PaymentController extends AdminController {
 						$savercpt->expMonth = '0';
 						if(is_string($MyCart)) {$savercpt->cart = $MyCart;} else {$savercpt->cart = json_encode($MyCart);}
 						$savercpt->cashier = $_SESSION['user'];
+						if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
 						if($savercpt->save()) {
 							yii::$app->controller->createLog(true, $_SESSION['user'], 'Processed_CC for '.$savercpt->name.' $'.
 								$savercpt->amount.', AuthCode: '.$savercpt->authCode.', Card: '.$savercpt->cardNum);

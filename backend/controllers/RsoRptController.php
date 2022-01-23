@@ -55,7 +55,11 @@ class RsoRptController extends AdminController {
 			}
 		}
 		$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date_open'=>SORT_DESC])->one();
-		if(!$model) {$model = new RsoReports;}
+		if(!$model) {
+			$model = new RsoReports;
+			$model->date_open = $this->getNowTime();
+			$model->save(false);
+		}
 
 		return $this->render('current', [
 			'model' => $model,
@@ -63,9 +67,14 @@ class RsoRptController extends AdminController {
 	}
 
 	public function actionDelete($id=1) {
-		Yii::$app->getSession()->setFlash('error', 'Do you really want This?  Function not written yet.');
-		//Verify no user has selected permission
-			//delete if none
+		$model = $this->findModel($id);
+		if($model->delete()) {
+			Yii::$app->getSession()->setFlash('success', 'Report Deleted.');
+			yii::$app->controller->createLog(true, $_SESSION['user'],"RSO Report','RSO Report #$id Deleted");
+			
+		} else {
+			Yii::$app->getSession()->setFlash('error', 'Record not deleted!');
+		}
 		return $this->redirect(['index']);
 	}
 

@@ -613,6 +613,11 @@ ADD COLUMN `cashier_badge` INT NULL DEFAULT NULL AFTER `cashier`;
 ALTER TABLE `BadgeDB`.`store_items` 
 ADD COLUMN `kit_items` TEXT NULL DEFAULT NULL AFTER `stock`;
 
--- 2.1.20 Events Get Sponsors
+-- Rso Report #150
+ALTER TABLE `BadgeDB`.`rso_reports` 
+CHANGE COLUMN `rso` `rso` VARCHAR(255) NULL DEFAULT NULL,
+CHANGE COLUMN `shift` `shift` VARCHAR(2) NULL DEFAULT NULL ;
+
+-- #151 Events Get Sponsors
 ALTER TABLE `BadgeDB`.`events` 
 ADD COLUMN `sponsor` INT NULL AFTER `e_poc`;

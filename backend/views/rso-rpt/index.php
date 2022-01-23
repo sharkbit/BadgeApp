@@ -69,10 +69,12 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'value' => function($model) {
 					$rsos=json_decode($model->rso);
 					$names='';
-					foreach ($rsos as $badge) {
-						$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
-					}
-					return $names;
+					if($rsos) {
+						foreach ($rsos as $badge) {
+							$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
+						}
+						return $names;
+					} else { return ""; } 
 				},
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'rso',(new RsoReports)->listRSOs(),['class'=>'form-control','prompt' => 'All']),
 			],

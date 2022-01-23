@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 					if($model->e_status=='0') {return 'Open';}
 					elseif($model->e_status=='2') {return 'Canceled';} else { return 'Closed';}
 				},
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'e_status',[0=>'Open',1=>'Closed',2=>'Cancled'],['class'=>'form-control','prompt' => 'All']),
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'e_status',[0=>'Open',1=>'Closed',2=>'Canceled'],['class'=>'form-control','prompt' => 'All']),
 				'headerOptions' => ['style' => 'width:10%'] ],
 			[
 				'attribute'=>'e_poc',
