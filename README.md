@@ -16,7 +16,7 @@ Steps to install:
    - cd BadgeApp
    - composer install --prefer-dist --no-progress --no-suggest
 4. Update directory permissions:
-   - sudo chown -R www-data.<proper group> <root Git Dir> .
+   - sudo chown -R www-data.\<proper group> .
    - sudo find \<root Git Dir> -type f -exec chmod 664 {} \\;
    - sudo find \<root Git Dir> -type d -exec chmod 775 {} \\;
  5. Apache Setup DocumentRoot 
