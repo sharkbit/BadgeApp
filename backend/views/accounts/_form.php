@@ -52,9 +52,9 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 <script>
   $("#privilege").select2({placeholder_text_multiple:'Select Privilege',width: "100%"}).change(function(){
 	var selectedText = " "+$(this).find("option:selected").text();
-	console.log(selectedText.length);
+	//console.log(selectedText.length);
 	if ((selectedText.indexOf("Root")>0) && (selectedText.length > 5)) {
-	  console.log('only root');
+	 // console.log('only root');
       $("#error_msg").html('<center><p style="color:red;"><b>Root should not have any other privilages!.</b></p></center>');
     } else if (selectedText==" ") {
 	  $("#error_msg").html('<p style="color:red"><b>User Will be Deleted!</b></p>');
@@ -65,7 +65,7 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 	} else {
 	  $("#error_msg").html('');
 	}
-	
+
 	if ((selectedText.indexOf("CIO")>0) || (selectedText.indexOf("Calendar")>0)) {
 		if (selectedText.indexOf("CIO")>0) { $("#cio_hide").show(); }
 		$("#need_cal").show(); $("#dont_need_cal").hide();
@@ -77,13 +77,34 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 	if (selectedText.indexOf("Remote Access")>0) {
 		$("#remote_name").show();
 		var rem_usr = document.getElementById("user-r_user").value;
-		console.log(rem_usr);
+		//console.log(rem_usr);
 		if ((!rem_usr) || (rem_usr=='')) {
 			document.getElementById("user-r_user").value = document.getElementById("user-badge_number").value
 		}
 	} else {
 		$("#remote_name").hide();
 	}
+
+	var username = $("#user-username").val();
+    var priv = '';
+
+	var sel_opt =document.getElementById("privilege").value;
+	if (sel_opt==1) {priv = 'root'; }
+    else if (sel_opt==2) { priv = 'adm'; }
+    else if (sel_opt==6) { priv = 'rsol'; }
+    else if (sel_opt==3) { priv = 'rso';}
+    else if (sel_opt==10) { priv = 'cash'; }
+    else if (sel_opt==9) { priv = 'cal'; }
+    else if (sel_opt==7) { priv = 'wc';}
+    else if (sel_opt==8) { priv = 'cio';  }
+    else if (sel_opt==4) { priv = 'view'; }
+	else if (sel_opt==12) { priv = 'Arso'; }
+	else if (sel_opt==13) { priv = 'adv'; }
+    else if (sel_opt==5) { alert('Do not use Member'); priv = 'Do not use Member'; }
+
+	document.getElementById("user-username").readOnly=false;
+    $("#user-username").val(priv+'.'+username.substr(username.indexOf(".") + 1));
+	document.getElementById("user-username").readOnly=true;
   });
 
   $("#club-id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){

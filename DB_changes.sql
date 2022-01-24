@@ -617,3 +617,7 @@ ADD COLUMN `kit_items` TEXT NULL DEFAULT NULL AFTER `stock`;
 ALTER TABLE `BadgeDB`.`rso_reports` 
 CHANGE COLUMN `rso` `rso` VARCHAR(255) NULL DEFAULT NULL,
 CHANGE COLUMN `shift` `shift` VARCHAR(2) NULL DEFAULT NULL ;
+
+-- #151 Events Get Sponsors
+ALTER TABLE `BadgeDB`.`events` 
+ADD COLUMN `sponsor` INT NULL AFTER `e_poc`;

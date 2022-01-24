@@ -15,7 +15,7 @@ class EventsSearch extends Events {
 
     public function rules() {
         return [
-			[['e_poc'], 'integer'],
+			[['e_poc','sponsor'], 'integer'],
             [['e_name','e_inst','e_status','e_type'], 'safe']
         ];
     }
@@ -51,6 +51,9 @@ class EventsSearch extends Events {
 		if(isset($this->e_poc)) { $query->andFilterWhere(['e_poc'=>$this->e_poc]); }
 		if(isset($this->e_status)) { $query->andFilterWhere(['e_status'=>$this->e_status]); }
 		if(isset($this->e_type)) { $query->andFilterWhere(['e_type'=>$this->e_type]); }
+		if(isset($this->sponsor)) { $query->andFilterWhere(['sponsor'=>$this->sponsor]); }
+
+//yii::$app->controller->createLog(true, 'trex-b-m-s-es', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }
 }
