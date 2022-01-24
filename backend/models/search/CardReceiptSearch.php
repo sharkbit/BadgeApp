@@ -17,7 +17,7 @@ class CardReceiptSearch extends CardReceipt {
      */
     public function rules() {
         return [
-           [['cart','tx_type','tx_date','id','name'], 'safe'],
+           [['cart','tx_type','tx_date','id','name','cashier_badge'], 'safe'],
 		   [['badge_number'], 'integer'],
            [['amount'], 'number'],
        ];
@@ -40,7 +40,8 @@ class CardReceiptSearch extends CardReceipt {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = CardReceipt::find();
+        $query = CardReceipt::find()
+		->joinWith(['badges']);
 
         // add conditions that should always apply here
 
@@ -49,7 +50,7 @@ class CardReceiptSearch extends CardReceipt {
         ]);
 
         $this->load($params);
-		
+
 		if(!isset($params['sort'])) { $query->orderBy( ['tx_date' => SORT_DESC] ); }
 
 		if(!yii::$app->controller->hasPermission('sales/all')) {
@@ -63,30 +64,29 @@ class CardReceiptSearch extends CardReceipt {
         }
 
         // grid filtering conditions
-        if(isset($this->tx_date)) {
-			$query->andWhere($this->getWhere($this->tx_date,'tx_date'));
+        if((isset($this->tx_date)) && (strpos(trim($this->tx_date)," ")>0)) {
+			$txDate = explode(" ", trim($this->tx_date));
+			$query->andFilterWhere(['>=','tx_date' , $txDate[0] ]);
+			$query->andFilterWhere(['<','tx_date', $txDate[2] ]);
 		}
-		$query->andFilterWhere([
-            'id' => $this->id,
-        ]);
-		
+
+		//if(isset($this->id)) { $query->andFilterWhere(['id' => $this->id ]); }
 		if(isset($this->badge_number)) { $query->andFilterWhere(['like', 'badge_number', $this->badge_number]); }
         if(isset($this->cart)) { $query->andFilterWhere(['like', 'cart', $this->cart]); }
 		if(isset($this->name)) { $query->andFilterWhere(['like', 'name', $this->name]); }
 		if(isset($this->amount)) { $query->andFilterWhere(['like', 'amount', $this->amount]); }
 		if(isset($this->tx_type)) { $query->andFilterWhere(['like', 'tx_type', $this->tx_type]); }
-	/*	if(isset($this->cashier)) {
-			if(strpos(trim($this->cashier),",")>0) {
-				$cashiers = explode(",", trim($this->cashier));
+		if(isset($this->cashier_badge)) {
+			if(strpos(trim($this->cashier_badge),",")>0) {
+				$cashier_badge = explode(",", trim($this->cashier_badge));
 				$sqlWhere='';
-				foreach($cashiers as $them) { 
-					$sqlWhere .= 'cashier like "%'.trim($them).'%" or '; 
+				foreach($cashier_badge as $them) {
+					$sqlWhere .= " CONCAT(badges.first_name,' ',badges.last_name) like '%". $them."%' or ";
 				}
-				yii::$app->controller->createLog(false, 'trex', var_export("(".rtrim($sqlWhere," or ").")",true));
-				$query->andWhere("(".rtrim($sqlWhere," or ").")"); 
-			} else { $query->andFilterWhere(['like', 'cashier', $this->cashier]); }
-		} */
-		
+				$query->andWhere("(".rtrim($sqlWhere," or ").")");
+			} else { $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->cashier_badge."'"); }
+		}
+
 //yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
 	}

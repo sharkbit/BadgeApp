@@ -69,6 +69,10 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			'headerOptions' => ['width' => '100'],
 			'footer' => "$".number_format($dataProvider->query->sum('amount'), 2, '.', ','),
 		],
+	//	[	'attribute'=>'badges',
+	//		'value'=>function($model) {
+	//			return @$model->badges->first_name.' '.@$model->badges->last_name;}
+	//	],
 		[ 	'attribute'=>'cashier_badge',
 			'value' => function($model, $attribute) { return yii::$app->controller->decodeBadgeName((int)$model->cashier_badge); },
 			'label' => 'Cashier (Use commas to seperate multiple Cashiers when filtering.',
@@ -134,7 +138,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			'hideInput'=>false,
 			'pluginOptions' => [
 				'opens'=>'left',
-				'locale'=>['format'=>'MM/DD/YYYY'],
+				'locale'=>['format'=>'YYYY/MM/DD'],
 			]])->label('Date range:'); ?>
 	</div>
 	<div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2">

@@ -54,5 +54,9 @@ class CardReceipt extends \yii\db\ActiveRecord {
 			'amount' => 'Amount'
        ];
     }
+
+	public function getBadges(){
+		 return $this->hasOne(\backend\models\Badges::className(), ['badge_number' => 'cashier_badge']);
+	}
 }
 
