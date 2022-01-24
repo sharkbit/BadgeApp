@@ -87,7 +87,7 @@ if(yii::$app->controller->hasPermission('violations/delete')) {
 				'template'=>$myTemplate,
 				'buttons'=>[
 					'view' => function ($url, $model) {
-						return  Html::a(' <span class="glyphicon glyphicon-eye-open"></span>', ['view','id'=>$model->id],
+						return  Html::a(' <span class="glyphicon glyphicon-eye-open"></span>', ['/violations/view','id'=>$model->id],
 						[	'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
 							'title'=>'View',
@@ -95,7 +95,7 @@ if(yii::$app->controller->hasPermission('violations/delete')) {
 						]);
 					},
 					'update' => function ($url, $model) {
-						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span>', ['update','id'=>$model->id],
+						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span>', ['/violations/update','id'=>$model->id],
 						[	'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
 							'title'=>'Edit',
@@ -103,7 +103,7 @@ if(yii::$app->controller->hasPermission('violations/delete')) {
 						]);
 					},
 					'delete' => function($url,$model) {
-						return  Html::a(' <span class="glyphicon glyphicon-trash"></span>', $url,
+						return  Html::a(' <span class="glyphicon glyphicon-trash"></span>', ['/violations/delete','id'=>$model->id],
 						[	'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
 							'title'=>'Delete',
