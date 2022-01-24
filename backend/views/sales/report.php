@@ -63,7 +63,8 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		<div class="col-xs-12">
 			<?php
 				$gridColumns = [
-					'club_name','short_name',
+					'club_name',
+					'short_name',
 					[	'attribute'=>'new',
 						'value' => function($dataProvider) {
 							if($dataProvider['new']==0) {return '';} else {return $dataProvider['new'];}

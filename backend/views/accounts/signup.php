@@ -177,13 +177,13 @@ $randStr = generateRandomString();
 
 		var x = document.getElementById("need_cal");
 		if (window.getComputedStyle(x).display === "none") {
-			var need_cal=true; 
+			var need_cal=true;
 			$("#need_cal").show();
 		} else  { var need_cal=false; }
-		
+
 		$('#club-id option').attr('selected', false);
 		var club = document.getElementById('club-id').options;
-	
+
 		var options='';
 		for (var i = 0; i < club.length; i++) {
 			if (responseData.clubs.includes(club[i].value)) {
@@ -215,7 +215,7 @@ $randStr = generateRandomString();
     var priv = '';
 
 	var sel_opt =document.getElementById("privilege").value;
-	 if (sel_opt==1) {priv = 'root'; }
+	if (sel_opt==1) {priv = 'root'; }
     else if (sel_opt==2) { priv = 'adm'; }
     else if (sel_opt==6) { priv = 'rsol'; }
     else if (sel_opt==3) { priv = 'rso';}

@@ -52,37 +52,55 @@ class Clubs extends \yii\db\ActiveRecord {
         ];
     }
 
-    public function getClubList($use_short=false,$restrict=false,$allow_members=false) {
+    public function getClubList($use_short=false,$restrict=false,$allow_members=false,$add_CIO=false) {
 		if($use_short) {$field='short_name';} else {$field='club_name';}
-		
+
 		if($allow_members==2) { $where = ['status'=>'0','allow_self'=>'1']; }
-		elseif($allow_members) { $where = ['status'=>'0','is_club'=>'1']; } else { $where = ['status'=>'0']; }		
+		elseif($allow_members) { $where = ['status'=>'0','is_club'=>'1']; } else { $where = ['status'=>'0']; }
 		$clubArray = Clubs::find()
 			->where($where )
 			->orderBy(['is_club'=> SORT_DESC,$field => SORT_ASC ])
 			->all();
-		
-		if($restrict) {			
+
+		if($restrict) {
 			$myClubs='';
 			foreach ($clubArray as $key=>$value) {
 				if(in_array($value->club_id,json_decode($restrict))) {
 					$myClubs.= '"'.$value->club_id.'":"'.$value->$field.'",';
 				}
 			}
-			return json_decode('{'.rtrim($myClubs,',').'}');
+			$ClubList = json_decode('{'.rtrim($myClubs,',').'}');
 		}
 		else {
-			return ArrayHelper::map($clubArray,'club_id',$field);
+			$ClubList = ArrayHelper::map($clubArray,'club_id',$field);
 		}
+
+		if (($add_CIO) && (in_array(8,$_SESSION['privilege']))) {
+			$usr = (new \backend\models\User)->find()->where(['badge_number'=>$_SESSION['badge_number']])->one();
+			if($usr) {
+				 foreach (json_decode($usr->clubs) as $club_id) {
+					$notFound=true;
+					foreach ($ClubList as $key => $value) {
+						if ($club_id==$key) { $notFound=false; }
+					}
+					if ($notFound) {
+						$addClub=Clubs::find()->where(['club_id'=>$club_id])->one();
+						(object) $ClubList = (array)$ClubList + (array)[$addClub->club_id=>$addClub->$field];
+					}
+				 }
+			 }
+		}
+
+		return $ClubList;
     }
-	
+
     public function getAvoid($restrict=false) {
 		$clubArray = Clubs::find()
 			->where(['status'=>'0'])
 			->orderBy(['is_club'=> SORT_DESC ])
 			->all();
-		
-		if($restrict) {			
+
+		if($restrict) {
 			$myClubs='';
 			foreach ($clubArray as $key=>$value) {
 				if(in_array($value->club_id,json_decode($restrict))) {

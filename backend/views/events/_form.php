@@ -1,9 +1,9 @@
 <?php
 
-use backend\models\clubs;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
+use backend\models\clubs;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\Events */
@@ -22,7 +22,7 @@ foreach ($_SESSION['privilege'] as $priv_chk){
 }
 
 if(!yii::$app->controller->hasPermission('events/approve')) {
-	$clubList=(new clubs)->getClubList(false, json_encode((New clubs)->getMyClubs($_SESSION['badge_number'])));
+	$clubList=(new clubs)->getClubList(false, json_encode((New clubs)->getMyClubs($_SESSION['badge_number'])),false,true);
 } else {
 	$clubList=(new clubs)->getClubList();
 } ?>
