@@ -51,7 +51,7 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'RSO Reports',
-			'url' => '/rso-rpt/current',
+			'url' => '/rso-rpt/index',
 		],
 		[
 			'label'=>'Store',

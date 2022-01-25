@@ -55,10 +55,14 @@ class RsoRptController extends AdminController {
 			}
 		}
 		$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date_open'=>SORT_DESC])->one();
-		if(!$model) {
+		if((!$model) && (array_intersect([3,6],$_SESSION['privilege']))) {
 			$model = new RsoReports;
 			$model->date_open = $this->getNowTime();
 			$model->save(false);
+			$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Opened RSO Report: '.$model->id);
+		} else {
+			Yii::$app->getSession()->setFlash('error', "RSOs Must Open Report");
+			return $this->redirect('index');
 		}
 
 		return $this->render('current', [

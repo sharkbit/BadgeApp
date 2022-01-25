@@ -6,10 +6,9 @@ use yii\widgets\DetailView;
 /* @var $model backend\models\Params */
 /* @var $form yii\widgets\ActiveForm */
 
-$this->title = 'View RSO Report #'.$model->id;
+$this->title = 'View RSO Report for '.$model->date_open.' Shift: '.$model->shift;
 $this->params['breadcrumbs'][] = ['label' => 'RSO Reports', 'url' => ['rso-rpt/index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/view?id='.$model->id]];
-
 ?>
 
 <?=$this->render('_view-tab-menu').PHP_EOL ?>
