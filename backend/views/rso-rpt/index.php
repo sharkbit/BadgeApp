@@ -58,10 +58,6 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
 		'columns' => [
-			[	'attribute'=>'id',
-				'visible' => (yii::$app->controller->hasPermission('params/update')) ? true : false,
-				'headerOptions' => ['style' => 'width:5%'],
-			],
 			[	'attribute'=>'date_open',
 				'headerOptions' => ['style' => 'width:10%'],
 			],

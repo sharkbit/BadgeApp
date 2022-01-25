@@ -54,7 +54,7 @@ class CardReceiptSearch extends CardReceipt {
 		if(!isset($params['sort'])) { $query->orderBy( ['tx_date' => SORT_DESC] ); }
 
 		if(!yii::$app->controller->hasPermission('sales/all')) {
-			$query->andFilterWhere(['badge_number'=>$_SESSION["badge_number"]]);
+			$query->andFilterWhere(['cc_receipts.badge_number'=>$_SESSION["badge_number"]]);
 		}
 
         if (!$this->validate()) {
@@ -71,12 +71,12 @@ class CardReceiptSearch extends CardReceipt {
 		}
 
 		//if(isset($this->id)) { $query->andFilterWhere(['id' => $this->id ]); }
-		if(isset($this->badge_number)) { $query->andFilterWhere(['like', 'badge_number', $this->badge_number]); }
+		if(isset($this->badge_number)) { $query->andFilterWhere(['like', 'cc_receipts.badge_number', $this->badge_number]); }
         if(isset($this->cart)) { $query->andFilterWhere(['like', 'cart', $this->cart]); }
 		if(isset($this->name)) { $query->andFilterWhere(['like', 'name', $this->name]); }
 		if(isset($this->amount)) { $query->andFilterWhere(['like', 'amount', $this->amount]); }
 		if(isset($this->tx_type)) { $query->andFilterWhere(['like', 'tx_type', $this->tx_type]); }
-		if(isset($this->cashier_badge)) {
+		if((isset($this->cashier_badge)) && ($this->cashier_badge != '')) {
 			if(strpos(trim($this->cashier_badge),",")>0) {
 				$cashier_badge = explode(",", trim($this->cashier_badge));
 				$sqlWhere='';
@@ -84,7 +84,7 @@ class CardReceiptSearch extends CardReceipt {
 					$sqlWhere .= " CONCAT(badges.first_name,' ',badges.last_name) like '%". $them."%' or ";
 				}
 				$query->andWhere("(".rtrim($sqlWhere," or ").")");
-			} else { $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->cashier_badge."'"); }
+			} else { $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->cashier_badge."%'"); }
 		}
 
 //yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));

@@ -26,7 +26,7 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 ?>
 
 <h2><?= Html::encode($this->title) ?></h2>
-<div class="clubs-index" > <!-- ng-controller="SalesReportForm">-->
+<div class="clubs-index" ng-controller="SalesReportForm">
 	<div class="row">
 		 <div class="col-xs-5">
 	  <!--	  <?=html::a('<i class="fa fa-download" aria-hidden="true"></i> Export as CSV',['#'],['id'=>'customExportCsv','class'=>'btn btn-primary'])?> -->
@@ -72,7 +72,6 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 					],
 					[	'header'=>'Renew',
 						'value' => function($dataProvider) {
-							//if($dataProvider['is_club']==1) {return $dataProvider['renew'];} else {return '';}
 							if($dataProvider['renew']==0) {return '';} else {return $dataProvider['renew'];}
 						}
 					],
@@ -88,7 +87,8 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 					],
 					[	'attribute'=>'students',
 						'value' => function($dataProvider) {
-							if(isset($dataProvider['students']) && $dataProvider['students'] >0 ) {return $dataProvider['students'];} else {return '';}
+							yii::$app->controller->createLog(true, 'trexstudents', var_export($dataProvider['students'],true));
+							if(isset($dataProvider['students']) && (int)$dataProvider['students'] >0 ) {return $dataProvider['students'];} else {return '';}
 						}
 					],
 				 ];

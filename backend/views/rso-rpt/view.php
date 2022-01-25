@@ -24,10 +24,12 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/vi
 				'value' => function($model) {
 					$rsos=json_decode($model->rso);
 					$names='';
-					foreach ($rsos as $badge) {
-						$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
-					}
-					return $names;
+					if($rsos) {
+						foreach ($rsos as $badge) {
+							$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
+						}
+						return $names;
+					} else { return ""; } 
 				},
 			],
 			'date_open',
@@ -72,10 +74,12 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/vi
 				'value' => function($model) {
 					$remarks=json_decode($model->remarks);
 					$remark='';
-					foreach ($remarks as $item) {
-						$remark .= $item->created_at.' - '.$item->changed.' - '.$item->data."<br /> \n";
-					}
-					return $remark;
+					if($remarks) {
+						foreach ($remarks as $item) {
+							$remark .= $item->created_at.' - '.$item->changed.' - '.$item->data."<br /> \n";
+						}
+						return $remark;
+					} else { return ""; } 
 				},
 				'visible' => (yii::$app->controller->hasPermission('rso-rpt/remarks')) ? true : false,
 			],

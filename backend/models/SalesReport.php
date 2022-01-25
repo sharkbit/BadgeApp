@@ -46,7 +46,7 @@ clASs SalesReport extends \yii\db\ActiveRecord {
 				"(SELECT count(*) FROM BadgeDB.guest where ".$this->getWhere($mydate,'time_in')." AND badge_number in ".
 					"(select badge_number from badge_to_club btc where btc.club_id=c.club_id)) as guests, ".
 				"(SELECT SUM( (select count(*) FROM BadgeDB.event_attendee WHERE ea_event_id=e_id)) as sum ".
-					"FROM BadgeDB.events where ".$this->getWhere($mydate,'e_date')." and sponsor=c.club_id group by sponsor ) as stu ".
+					"FROM BadgeDB.events where ".$this->getWhere($mydate,'e_date')." and sponsor=c.club_id group by sponsor ) as students ".
 				"FROM clubs c WHERE c.`status`=0 ORDER BY c.is_club desc,c.club_name; ";
 
 			$dataProvider = new \yii\data\SqlDataProvider([

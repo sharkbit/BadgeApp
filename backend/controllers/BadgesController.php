@@ -1076,7 +1076,7 @@ class BadgesController extends AdminController {
 					$savercpt->tx_type = $model->payment_type;
 					$savercpt->amount = $model->amount_due;
 					$savercpt->tax = $model->tax;
-					$savercpt->name = $badgeRecords->first_name;
+					$savercpt->name = $badgeRecords->first_name.' '.$badgeRecords->last_name;
 					$savercpt->cart = $MyCart;
 					$savercpt->cashier = $_SESSION['user'];
 					if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
