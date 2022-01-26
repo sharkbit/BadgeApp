@@ -55,19 +55,21 @@ class RsoRptController extends AdminController {
 			}
 		}
 		$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date_open'=>SORT_DESC])->one();
+		
 		if((!$model) && (array_intersect([3,6],$_SESSION['privilege']))) {
 			$model = new RsoReports;
 			$model->date_open = $this->getNowTime();
 			$model->save(false);
 			$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Opened RSO Report: '.$model->id);
-		} else {
+		} elseif (!$model) {
 			Yii::$app->getSession()->setFlash('error', "RSOs Must Open Report");
 			return $this->redirect('index');
+		} elseif (array_intersect([1,3,6],$_SESSION['privilege'])) {
+			return $this->render('current', [ 'model' => $model, ]);
+		} else {
+			Yii::$app->getSession()->setFlash('error', "RSOs Only");
+			return $this->redirect('index');
 		}
-
-		return $this->render('current', [
-			'model' => $model,
-		]);
 	}
 
 	public function actionDelete($id=1) {
