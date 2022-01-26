@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'sponsor',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
 				'format' => 'raw',
 				'value'=>function($model) {
-					if(isset($model->sponsor)) { return $model->club->club_name; } else { return ''; }
+					if(isset($model->sponsor)) { return $model->clubs->club_name; } else { return ''; }
 				},
 				'headerOptions' => ['style' => 'width:25%']
             ],
@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 				'headerOptions' => ['style' => 'width:10%'] ],
 			[
 				'attribute'=>'e_poc',
-				'value'=>function($model) { return $model->e_poc; },
+				'value'=>function($model) { return $model->badges->first_name.' '.$model->badges->last_name; },
 				'headerOptions' => ['style' => 'width:10%']
 			],
 			[

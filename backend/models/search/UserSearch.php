@@ -17,7 +17,7 @@ class UserSearch extends User {
 	public function rules() {
 		return [
 			[['id', 'status', 'created_at', 'updated_at','badge_number'], 'integer'],
-			[['username', 'email', 'full_name','company', 'privilege', 'auth_key', 'password_hash', 'password_reset_token'], 'safe'],
+			[['username', 'email', 'full_name','company', 'privilege', 'password_hash', 'password_reset_token'], 'safe'],
 		];
 	}
 
@@ -71,7 +71,6 @@ class UserSearch extends User {
 		if(isset($this->badge_number))	{ $query->andFilterWhere(['like', 'badge_number', $this->badge_number]); }
 		if(isset($this->full_name))		{ $query->andFilterWhere(['like', 'full_name', $this->full_name]); }
 		if((isset($this->privilege)) && ($this->privilege!=''))		{ $query->andWhere("JSON_CONTAINS(privilege,'".$this->privilege."')"); }
-		if(isset($this->auth_key))		{ $query->andFilterWhere(['like', 'auth_key', $this->auth_key]); }
 		if(isset($this->password_hash))	{ $query->andFilterWhere(['like', 'password_hash', $this->password_hash]); }
 		if(isset($this->password_reset_token))	{ $query->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token]); }
 

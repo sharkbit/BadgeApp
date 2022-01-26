@@ -32,7 +32,7 @@ class Events extends \yii\db\ActiveRecord{
 			'e_date' => 'Date',
 			'e_inst' => 'Instructor Name(s)',
 			'e_name' => 'Event Name',
-			'e_poc' => 'POC Badge #',
+			'e_poc' => 'POC',
 			'e_rso' => 'RSO',
 			'e_status' => 'Status',
 			'e_type' => 'Event Type',
@@ -40,7 +40,11 @@ class Events extends \yii\db\ActiveRecord{
        ];
     }
 
-	public function getClub() {
+	public function getBadges() {
+		return $this->hasOne(\backend\models\Badges::classname(),['badge_number'=>'e_poc']);
+	}
+
+	public function getClubs() {
 		return $this->hasOne(clubs::classname(),['club_id'=>'sponsor']);
 	}
 
