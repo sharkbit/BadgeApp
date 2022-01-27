@@ -284,7 +284,6 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
                     $("#sales-zip").val(responseData.zip);
 					$("#sales-address").val(responseData.address);
 					$("#sales-email").val(responseData.email);
-					console.log("e-v:"+responseData.email_vrfy);
 					if(responseData.email_vrfy==1) {
 						$("#email_check").html('<br /><i class="fa fa-thumbs-up" title="Email Verified"></i>');
 					} else {
