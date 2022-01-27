@@ -84,6 +84,10 @@ class RsoRptController extends AdminController {
 		return $this->redirect(['index']);
 	}
 
+	public function actionHelp() {
+		return $this->render('help');
+	}
+
 	public function actionIndex() {
 		$searchModel = new RsoReportsSearch();
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
