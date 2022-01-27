@@ -103,8 +103,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				<div class="col-sm-3">
 					<?= $form->field($model, 'state')->textInput(['id'=>'sales-state']).PHP_EOL; ?>
 				</div>
-				<div class="col-sm-8">
+				<div class="col-sm-7">
 					<?= $form->field($model, 'email')->textInput(['id'=>'sales-email']).PHP_EOL; ?>
+				</div>
+				<div class="col-xs-2 col-sm-1" id="email_check">
+					<br /><i class="fa fa-thumbs-down" title="Email Not Verified"></i>
 				</div>
 			</div>
 			<div class="help-block" ></div>
@@ -281,6 +284,12 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
                     $("#sales-zip").val(responseData.zip);
 					$("#sales-address").val(responseData.address);
 					$("#sales-email").val(responseData.email);
+					console.log("e-v:"+responseData.email_vrfy);
+					if(responseData.email_vrfy==1) {
+						$("#email_check").html('<br /><i class="fa fa-thumbs-up" title="Email Verified"></i>');
+					} else {
+						$("#email_check").html('<br /><i class="fa fa-thumbs-down" title="Email Not Verified"></i>');
+					}
 				} else { $("#sales-f_name").val('Not Found'); }
             },
             error: function (responseData, textStatus, errorThrown) {
