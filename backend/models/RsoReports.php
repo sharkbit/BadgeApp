@@ -27,7 +27,7 @@ class RsoReports extends \yii\db\ActiveRecord {
         return [
 			[['cash_bos','date_open','mics','rso','wb_color','wb_trap_cases'], 'required'],
 			[['closed','id','par_50','par_100','par_200','par_steel','par_nm_hq','par_m_hq','par_trap','par_arch','par_pel','par_spr','par_cio_stu','par_act','wb_trap_cases'], 'integer'],
-			[['cash_bos','cash_eos'],'number'],
+			[['cash_bos','cash_eos'],'number','max'=>99999.99],
 			[['cash','checks','wb_color','closing','mics','notes','remarks','rso','shift','shift_anom','stickers','violations'], 'safe'],
 			[['date_open','date_close'],'safe'],
 		];
