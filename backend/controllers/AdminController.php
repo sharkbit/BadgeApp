@@ -75,7 +75,7 @@ class AdminController extends \yii\web\Controller {
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
 		'sales' => ['sales/all','sales/report','sales/stock'],
-		'Guest' => ['guest/update'],
+		'Guest' => ['guest/all','guest/modify','guest/update'],
 	];
 
 	public $rsoLeadPermission = [
