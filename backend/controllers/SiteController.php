@@ -122,7 +122,14 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 					$_SESSION['privilege']=array(5);
 					$priv = Privileges::find()->where(['id'=>5])->one();
 					$_SESSION['timeout'] = $priv->timeout;
-					return Yii::$app->user->login(User::findIdentity(0), 0);
+					$rtn = User::findIdentity(0);
+					if($rtn) {
+						return Yii::$app->user->login($rtn, 0);
+					} else {
+						unset($_SESSION);
+						Yii::$app->getSession()->setFlash('error', ' Default user missing from DB: id 0 => Member.',false);
+						return false;
+					}
 				}
 			} else {
 				Yii::$app->getSession()->setFlash('error', 'Please Verify your Barcode and Badge Number!  SPACES ARE IMPORTANT');
