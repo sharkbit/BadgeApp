@@ -1,6 +1,8 @@
 <?php
 
+use yii\helpers\Html;
 use yii\widgets\DetailView;
+use backend\models\RsoReports;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\Params */
@@ -9,10 +11,29 @@ use yii\widgets\DetailView;
 $this->title = 'View RSO Report for '.$model->date_open.' Shift: '.$model->shift;
 $this->params['breadcrumbs'][] = ['label' => 'RSO Reports', 'url' => ['rso-rpt/index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/view?id='.$model->id]];
+
+$rpt_pre = RsoReports::find()->where(['<','date_open',$model->date_open])->orderBy(['date_open'=>SORT_DESC])->one();
+$rpt_nxt = RsoReports::find()->where(['>','date_open',$model->date_open])->orderBy(['date_open'=>SORT_ASC])->one();
 ?>
 
 <?=$this->render('_view-tab-menu').PHP_EOL ?>
 
+<div class="row ">
+	<div class="col-xs-6 ">
+	<?php if($rpt_pre) {
+		echo Html::a('<i class="fa fa-refresh"> </i> Prev: '.$rpt_pre->date_open,['/rso-rpt/view?id='.$rpt_pre->id],['class' => 'btn btn-info']); 
+	}  else {
+		echo Html::a(' First ','',['class' => 'btn btn-warning']); 
+	} ?>
+	</div>
+	<div class="col-xs-6 ">
+	<?php if($rpt_nxt) {
+		echo Html::a('<i class="fa fa-refresh"> </i> Next: '.$rpt_nxt->date_open,['/rso-rpt/view?id='.$rpt_nxt->id],['class' => 'btn btn-info']); 
+	} else {
+		echo Html::a(' Last ','',['class' => 'btn btn-warning']); 
+	} ?>
+	</div>
+</div><br />
 <div class="col-xs-12 col-sm-8">
 	<div class="block-badge-view">
 
