@@ -56,7 +56,7 @@ if(!yii::$app->controller->hasPermission('events/approve')) {
 	</div>
 	<div class="col-xs-2 col-sm-2">
 	<?php if(yii::$app->controller->hasPermission('events/approve')) {
-			echo $form->field($model, 'e_poc')->textInput(['maxlength' => true]);
+			echo $form->field($model, 'e_poc')->textInput(['maxlength' => true])->label('POC Badge');
 		} elseif ($model->isNewRecord) {
 			echo $form->field($model, 'e_poc')->textInput(['value'=>$_SESSION['badge_number'],'maxlength' => true,'readOnly'=>true]);
 		} else {

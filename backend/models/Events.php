@@ -20,7 +20,7 @@ class Events extends \yii\db\ActiveRecord{
 
     public function rules() {
         return [
-           [['e_name','e_date','e_poc','e_status','e_type'], 'required'],
+           [['e_name','e_date','e_poc','e_status','e_type','sponsor'], 'required'],
            [['e_id','e_hours','e_poc','sponsor'], 'number'],
 		   [['e_inst','e_rso'], 'string'],
        ];
