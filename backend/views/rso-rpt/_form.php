@@ -6,6 +6,8 @@ if($model->isNewRecord) {
 	$model->date_open = date("Y-m-d H:i:s",strtotime(yii::$app->controller->getNowTime()));
 	$model->par_50 = $model->par_100 = $model->par_200 = $model->par_steel = $model->par_nm_hq = $model->par_m_hq = $model->par_trap = $model->par_arch = $model->par_pel = $model->par_spr = $model->par_cio_stu = $model->par_act =0;
 }
+
+$rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->date_open])->orderBy(['date_open'=>SORT_DESC])->one();
 ?>
 
 <div class="rso_rpt-form" ng-controller="RsoReportFrom">
@@ -15,14 +17,28 @@ if($model->isNewRecord) {
                 'id'=>'rsoreportsformFilter'
             ]); ?>
 
+<?php if($rpt_pre) { ?>
+<h3>Previous Report:</h3>
+<div class="row">
+	<div class="col-xs-12 col-sm-12">
+		<div class="form-group ">
+		 <?php  
+		 echo Html::label('Closing Remarks','prev_close',[ 'class'=>"control-label"])."<br />\n";
+		 echo Html::textArea('prev_close',$rpt_pre->closing,['readonly' => true,'rows'=>1,'id'=>'prev_close','class'=>"form-control"]).PHP_EOL;
+		  ?>
+		</div>
+	</div>
+</div>
+<?php } ?>
+
 <h2>Active Report:</h2>
 <div class="row">
-	<?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
+	<?= $form->field($model, 'id')->hiddenInput()->label(false).PHP_EOL ?>
 	<div class="col-xs-12 col-sm-2">
-		<?= $form->field($model, 'date_open')->textInput(['readonly' => true,'maxlength'=>true]) ?>
+		<?= $form->field($model, 'date_open')->textInput(['readonly' => true,'maxlength'=>true]).PHP_EOL ?>
 	</div>
 	<div class="col-xs-6 col-sm-2">
-		<?= $form->field($model, 'shift')->dropDownList(['m'=>'Morning','e'=>'Evening']) ?>
+		<?= $form->field($model, 'shift')->dropDownList(['m'=>'Morning','e'=>'Evening']).PHP_EOL ?>
 	</div>
 	<div class="col-xs-6 col-sm-8">
 		<?= $form->field($model, 'rso')->dropDownList($model->listRSOs(),['value'=>json_decode($model->rso),'multiple'=>true])->label("All RSO's on Shift").PHP_EOL; ?>
@@ -38,7 +54,7 @@ if($model->isNewRecord) {
 		<?= $form->field($model, 'wb_color')->dropDownList(['g'=>'Green','b'=>'Blue','r'=>'Red','l'=>'Lavender','k'=>'Black'],['prompt'=>'select']) ?>
 	</div>
 	<div class="col-xs-6 col-sm-3">
-		<?= $form->field($model, 'mics')->dropDownList(['o'=>'Mics Set Out','s'=>'Mics Stores in closet','t'=>'Mics in Trap 3'],['prompt'=>'select']) ?>
+		<?= $form->field($model, 'mics')->dropDownList(['o'=>'Mics Set Out','s'=>'Mics stored in closet','t'=>'Mics in Trap 3'],['prompt'=>'select']) ?>
 	</div>
 	<div class="col-xs-12 col-sm-2">
 		<?= $form->field($model, 'wb_trap_cases')->textInput(['maxlength'=>true]) ?>

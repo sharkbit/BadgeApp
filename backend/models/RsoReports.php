@@ -58,7 +58,7 @@ class RsoReports extends \yii\db\ActiveRecord {
 			'cash_eos'=>'Cash EOS',
 			'closing'=>'Closing Notes',
 			'mics'=>'MICs Status',
-			'wb_trap_cases'=>' Wobbel Trap Cases',
+			'wb_trap_cases'=>'Wobble Trap Cases',
 			'wb_color'=> 'Wristband Color',
         ];
     }

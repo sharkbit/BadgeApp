@@ -76,7 +76,7 @@ $rpt_nxt = RsoReports::find()->where(['>','date_open',$model->date_open])->order
 				'value' => function($model) {
 				  switch ($model->mics){
 					case 'o': return 'Mics Set Out';
-					case 's': return 'Mics Stores in closet';
+					case 's': return 'Mics stored in closet';
 					case 't': return 'Mics in Trap 3';
 				  }
 				}
