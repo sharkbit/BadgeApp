@@ -59,8 +59,10 @@ class RsoRptController extends AdminController {
 		if((!$model) && (array_intersect([3,6],$_SESSION['privilege']))) {
 			$model = new RsoReports;
 			$model->date_open = $this->getNowTime();
+			$model->remarks=$this->AddRemarks($model,'Opened By '.$_SESSION['user']);
 			$model->save(false);
 			$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Opened RSO Report: '.$model->id);
+			return $this->render('current', [ 'model' => $model, ]);
 		} elseif (!$model) {
 			Yii::$app->getSession()->setFlash('error', "RSOs Must Open Report");
 			return $this->redirect('index');
