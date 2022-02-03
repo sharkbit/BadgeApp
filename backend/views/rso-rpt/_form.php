@@ -11,11 +11,8 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 ?>
 
 <div class="rso_rpt-form" ng-controller="RsoReportFrom">
-<?php $form = ActiveForm::begin([
-                'action' => ['/rso-rpt/current'],
-                'method' => 'post',
-                'id'=>'rsoreportsformFilter'
-            ]); ?>
+<?php $form = ActiveForm::begin(['action' => ['/rso-rpt/current'],'method' => 'post',
+                'id'=>'rsoreportsformFilter','enableAjaxValidation' => true]); ?>
 
 <?php if($rpt_pre) { ?>
 <h3>Previous Report:</h3>
@@ -34,13 +31,13 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 <h2>Active Report:</h2>
 <div class="row">
 	<?= $form->field($model, 'id')->hiddenInput()->label(false).PHP_EOL ?>
-	<div class="col-xs-12 col-sm-2">
+	<div class="col-xs-6 col-sm-3 col-md-2">
 		<?= $form->field($model, 'date_open')->textInput(['readonly' => true,'maxlength'=>true]).PHP_EOL ?>
 	</div>
 	<div class="col-xs-6 col-sm-2">
 		<?= $form->field($model, 'shift')->dropDownList(['m'=>'Morning','e'=>'Evening']).PHP_EOL ?>
 	</div>
-	<div class="col-xs-6 col-sm-8">
+	<div class="col-xs-12 col-sm-7 col-md-8">
 		<?= $form->field($model, 'rso')->dropDownList($model->listRSOs(),['value'=>json_decode($model->rso),'multiple'=>true])->label("All RSO's on Shift").PHP_EOL; ?>
 	</div>
 	<div class="col-xs-12 col-sm-12">

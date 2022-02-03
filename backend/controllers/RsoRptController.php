@@ -19,7 +19,15 @@ class RsoRptController extends AdminController {
 	 */
 
 	public function actionCurrent() {
-		if(Yii::$app->request->post()) {
+		if (Yii::$app->request->isAjax){
+			if(!$model->load(Yii::$app->request->post())) {
+				$model = $this->findModel($_POST['RsoReports']['id']);
+			}
+			$model->save();
+			Yii::$app->response->format = Response::FORMAT_JSON;
+			return ActiveForm::validate($model);
+		}
+		elseif(Yii::$app->request->post()) {
 			$model = $this->findModel($_POST['RsoReports']['id']);
 			if(!$model) {$model = new RsoReports;}
 			$model->load(Yii::$app->request->post());
