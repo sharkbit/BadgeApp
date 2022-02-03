@@ -59,6 +59,7 @@ $rpt_nxt = RsoReports::find()->where(['>','date_open',$model->date_open])->order
 				'visible' => ($model->closed==1) ? true : false,
 			],
 			'cash_bos',
+			'cash_drop',
 			'cash_eos',
 			'wb_trap_cases',
 			[	'attribute'=>'wb_color',

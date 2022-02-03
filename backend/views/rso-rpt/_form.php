@@ -103,16 +103,19 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 
 <h3>Cash:</h3>
 <div class="row" style="background-color:#ecf9f2;">
-	<div class="col-xs-6 col-sm-2">
+	<div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
 	<?= $form->field($model, 'cash_bos')->textInput(['maxlength'=>true]) ?>
 	</div>
-	<div class="col-xs-6 col-sm-2">
+	<div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
+	<?= $form->field($model, 'cash_drop')->textInput(['maxlength'=>true]) ?>
+	</div>
+	<div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
 	<?= $form->field($model, 'cash_eos')->textInput(['maxlength'=>true]) ?>
 	</div>
-	<div class="col-xs-12 col-sm-4">
+	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
 	<?= $form->field($model, 'cash')->textarea(['value'=>$model->getCash('cash',$model),'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
 	</div>
-	<div class="col-xs-12 col-sm-4">
+	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
 	<?= $form->field($model, 'checks')->textarea(['value'=>$model->getCash('check',$model),'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
 	</div>
 </div>

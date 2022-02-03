@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 use backend\controllers\AdminController;
 use backend\models\RsoReports;
 use backend\models\Stickers;
@@ -20,9 +22,11 @@ class RsoRptController extends AdminController {
 
 	public function actionCurrent() {
 		if (Yii::$app->request->isAjax){
+			$model = $this->findModel($_POST['RsoReports']['id']);
 			if(!$model->load(Yii::$app->request->post())) {
-				$model = $this->findModel($_POST['RsoReports']['id']);
+				yii::$app->controller->createLog(true, 'trex-notload', 'not loaded?');
 			}
+			$this->CleanModel($model);
 			$model->save();
 			Yii::$app->response->format = Response::FORMAT_JSON;
 			return ActiveForm::validate($model);
@@ -229,10 +233,19 @@ class RsoRptController extends AdminController {
 		}
 	}
 
-	protected function AddRemarks($model, $comment) {
+	private function CleanModel(&$model) {
 		$model->closed=(int)$model->closed;
 		$model->rso = str_replace('"',"", json_encode($model->rso));
 		$model->wb_trap_cases = (int)$model->wb_trap_cases;
+		$model->cash_bos = number_format((float)$model->cash_bos,2,'.','');
+		$model->cash_eos = number_format((float)$model->cash_bos,2,'.','');
+		$model->cash_drop = number_format((float)$model->cash_bos,2,'.','');
+		$model->cash = trim($model->cash);
+		$model->checks = trim($model->checks);
+	}
+
+	protected function AddRemarks($model, $comment) {
+		$this->CleanModel($model);
 
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
@@ -241,6 +254,7 @@ class RsoRptController extends AdminController {
 			'shift_anom'=> 'Shift Anomalies',
 			'notes'=>'Notes',
 			'cash_bos'=>'Cash BOS',
+			'cash_drop'=>'Cash Droped',
 			'cash_eos'=>'Cash EOS',
 			'closing'=>'Closing Notes',
 			'closed'=>'Closed',
