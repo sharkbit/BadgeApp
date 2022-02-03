@@ -119,8 +119,7 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 	<?= $form->field($model, 'checks')->textarea(['value'=>$model->getCash('check',$model),'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
 	</div>
 </div>
-
-<h3>More Notes:</h3>
+<p> </p>
 <div class="row">
 	<div class="col-xs-12 col-sm-12">
 	<?= $form->field($model, 'closing')->textarea(['rows' => '1']).PHP_EOL; ?>
