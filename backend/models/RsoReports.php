@@ -55,7 +55,7 @@ class RsoReports extends \yii\db\ActiveRecord {
 			'par_cio_stu'=>'CIO Students',
 			'par_act'=>'Action Rng',
 			'cash_bos'=>'Cash BOS',
-			'cash_drop'=>'Cash Droped',
+			'cash_drop'=>'Cash Dropped',
 			'cash_eos'=>'Cash EOS',
 			'closing'=>'Pass Down',
 			'mics'=>'MICs Status',

@@ -238,8 +238,8 @@ class RsoRptController extends AdminController {
 		$model->rso = str_replace('"',"", json_encode($model->rso));
 		$model->wb_trap_cases = (int)$model->wb_trap_cases;
 		$model->cash_bos = number_format((float)$model->cash_bos,2,'.','');
-		$model->cash_eos = number_format((float)$model->cash_bos,2,'.','');
-		$model->cash_drop = number_format((float)$model->cash_bos,2,'.','');
+		$model->cash_eos = number_format((float)$model->cash_eos,2,'.','');
+		$model->cash_drop = number_format((float)$model->cash_drop,2,'.','');
 		$model->cash = trim($model->cash);
 		$model->checks = trim($model->checks);
 	}
