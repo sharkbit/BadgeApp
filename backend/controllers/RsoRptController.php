@@ -26,7 +26,7 @@ class RsoRptController extends AdminController {
 			if(!$model->load(Yii::$app->request->post())) {
 				yii::$app->controller->createLog(true, 'trex-notload', 'not loaded?');
 			}
-			$this->CleanModel($model);
+			$model->remarks=$this->AddRemarks($model,'AutoSave for '.$_SESSION['user']);
 			$model->save();
 			Yii::$app->response->format = Response::FORMAT_JSON;
 			return ActiveForm::validate($model);
