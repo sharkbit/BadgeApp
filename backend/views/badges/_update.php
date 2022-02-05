@@ -56,17 +56,6 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		}
 	}
 
-	$free_renew=false;
-	if ($model->mem_type==70 || $model->mem_type==99) {
-		if ($hide_Renew) {  //check for active sticker
-			$sticker_check = \backend\models\BadgeSubscriptions::find()
-				->where(['badge_number'=>$model->badge_number,'status'=>'active'])
-				->orderBy(['created_at'=>'desc'])->one();
-				
-		yii::$app->controller->createLog(true, 'trex-created_at', $sticker_check->valid_true.' - '.$nextExpire);
-		}
-	}
-
 	// Show Certifications?
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }
 	if ($model->canRenew($model->status)) {} else { $hide_Cert=true; }

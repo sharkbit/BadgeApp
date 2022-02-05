@@ -55,7 +55,6 @@ class RsoRptController extends AdminController {
 				$model->date_close = $this->getNowTime();
 				$model->remarks=$this->AddRemarks($model,'Closed By '.$_SESSION['user']);
 				if ($model->save()) {
-					$this->SendNotification($model);
 					$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
 					return $this->redirect(['index']);
 				} else {
@@ -68,7 +67,7 @@ class RsoRptController extends AdminController {
 			}
 		}
 		$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date_open'=>SORT_DESC])->one();
-
+		
 		if((!$model) && (array_intersect([3,6],$_SESSION['privilege']))) {
 			$model = new RsoReports;
 			$model->date_open = $this->getNowTime();
@@ -92,7 +91,7 @@ class RsoRptController extends AdminController {
 		if($model->delete()) {
 			Yii::$app->getSession()->setFlash('success', 'Report Deleted.');
 			yii::$app->controller->createLog(true, $_SESSION['user'],"RSO Report','RSO Report #$id Deleted");
-
+			
 		} else {
 			Yii::$app->getSession()->setFlash('error', 'Record not deleted!');
 		}
@@ -303,37 +302,5 @@ class RsoRptController extends AdminController {
 		} else {
 			return false;
 		}
-	}
-
-	protected function SendNotification($model) {
-		//$sendTo ='get email address(es)';
-		return false;
-
-		$email = AdminController::emailSetup();
-		if (!$email) {
-			Yii::$app->getSession()->setFlash('error', 'Email System disabled'); echo "email-setup failed";
-			yii::$app->controller->createLog(true, 'Mass-Email:', 'Disabled');
-			return false;
-		}
-
-		try {
-			$email->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$sendTo.'>');
-			$email->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
-			$email->addAddress($sendTo);
-			$email->Subject = $subj = 'RSO Report: '.$model->date_open;
-			$url = $_SERVER['HTTP_ORIGIN']."/rso-rpt/view?id=".$model->id;
-			$email->Body = "<p>Hello,</p>\n".
-				"<p> RSO Report has been Finilized, link below:</p>\n".
-				"<p>&emsp; <a href=\"".$url."\">".$url."</a></p>\n".
-				"<p>By ". $_SESSION['user']."</p>";
-			$email->send();
-			yii::$app->controller->createEmailLog(true, 'RSOreport-Email', "Sent to ".$sendTo.', '.$subj);
-		} catch (Exception $e) {
-			//echo 'Message could not be sent.';
-			//echo 'Mailer Error: ' . $email->ErrorInfo;
-			yii::$app->controller->createEmailLog(true, 'Mass-Email Email Error: ', var_export($email->ErrorInfo,true));
-		}
-		
-		return true;
 	}
 }
