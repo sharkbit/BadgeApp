@@ -73,28 +73,28 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 	<?= $form->field($model, 'par_200')->textInput(['maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_steel')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_steel')->textInput(['title'=>'Steel Rental','maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_trap')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_trap')->textInput(['title'=>'Trap Range','maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_arch')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_arch')->textInput(['title'=>'Arcery Range','maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_pel')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_pel')->textInput(['title'=>'Pellet Range','maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_act')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_act')->textInput(['title'=>'Action Range (Shooting Bays)','maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_spr')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_spr')->textInput(['title'=>'Shotgun Pattern Range','maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_nm_hq')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_nm_hq')->textInput(['title'=>'Non Member Hunter Qualification','maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
-	<?= $form->field($model, 'par_m_hq')->textInput(['maxlength'=>true]) ?>
+	<?= $form->field($model, 'par_m_hq')->textInput(['title'=>'Member Hunter Qualification','maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-3 col-sm-2 col-md-1">
 	<?= $form->field($model, 'par_cio_stu')->textInput(['maxlength'=>true]) ?>
@@ -122,7 +122,7 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 <p> </p>
 <div class="row">
 	<div class="col-xs-12 col-sm-12">
-	<?= $form->field($model, 'closing')->textarea(['rows' => '1']).PHP_EOL; ?>
+	<?= $form->field($model, 'closing')->textarea(['title'=>'Information Next Shift Should Know','rows' => '1']).PHP_EOL; ?>
 	</div>
 	<div class="col-xs-12 col-sm-12">
 	<?= $form->field($model, 'violations')->textarea(['value'=>$model->getViolations($model),'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
@@ -179,6 +179,14 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 <script>
   $(document).ready(function (e) {
     $("#rsoreports-rso").select2({placeholder_text_multiple:'Select RSOs',width: "100%",})
+	
+    $("textarea").each(function () {
+      this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
+    }).on("input", function () {
+      this.style.height = "auto";
+      this.style.height = (this.scrollHeight) + "px";
+    });
+
   });
 </script>
 
