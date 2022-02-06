@@ -7,6 +7,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use backend\controllers\AdminController;
+use backend\models\Params;
 use backend\models\RsoReports;
 use backend\models\Stickers;
 use backend\models\search\RsoReportsSearch;
@@ -112,6 +113,20 @@ class RsoRptController extends AdminController {
 			'dataProvider' => $dataProvider,
 		]);
 	}
+
+    public function actionSettings($id=1) {
+        $model = Params::findOne($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+			$model->rso_email = json_encode($model->rso_email);
+			$model->save();
+            return $this->redirect(['settings']);
+        } else {
+            return $this->render('settings', [
+                'model' => $model,
+            ]);
+        }
+    }
 
 	public function actionSticker() {
 		if (isset($_REQUEST['sticker_add']) && ($_REQUEST['sticker_add']==1)) {
@@ -306,34 +321,36 @@ class RsoRptController extends AdminController {
 	}
 
 	protected function SendNotification($model) {
-		//$sendTo ='get email address(es)';
-		return false;
+		$Param = Params::findOne($id);
+		$emailz = json_decode($param->rso_email);
+		if ($emailz) {
+			$email = AdminController::emailSetup();
+			if (!$email) {
+				Yii::$app->getSession()->setFlash('error', 'Email System disabled'); echo "email-setup failed";
+				yii::$app->controller->createLog(true, 'Mass-Email:', 'Disabled');
+				return false;
+			}
 
-		$email = AdminController::emailSetup();
-		if (!$email) {
-			Yii::$app->getSession()->setFlash('error', 'Email System disabled'); echo "email-setup failed";
-			yii::$app->controller->createLog(true, 'Mass-Email:', 'Disabled');
-			return false;
+			foreach($emailz as $sendTo) {
+				try {
+					$email->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$sendTo.'>');
+					$email->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
+					$email->addAddress($sendTo);
+					$email->Subject = $subj = 'RSO Report: '.$model->date_open;
+					$url = $_SERVER['HTTP_ORIGIN']."/rso-rpt/view?id=".$model->id;
+					$email->Body = "<p>Hello,</p>\n".
+						"<p> RSO Report has been Finilized, link below:</p>\n".
+						"<p>&emsp; <a href=\"".$url."\">".$url."</a></p>\n".
+						"<p>By ". $_SESSION['user']."</p>";
+					$email->send();
+					yii::$app->controller->createEmailLog(true, 'RSOreport-Email', "Sent to ".$sendTo.', '.$subj);
+				} catch (Exception $e) {
+					//echo 'Message could not be sent.';
+					//echo 'Mailer Error: ' . $email->ErrorInfo;
+					yii::$app->controller->createEmailLog(true, 'Mass-Email Email Error: ', var_export($email->ErrorInfo,true));
+				}
+			}
 		}
-
-		try {
-			$email->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$sendTo.'>');
-			$email->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
-			$email->addAddress($sendTo);
-			$email->Subject = $subj = 'RSO Report: '.$model->date_open;
-			$url = $_SERVER['HTTP_ORIGIN']."/rso-rpt/view?id=".$model->id;
-			$email->Body = "<p>Hello,</p>\n".
-				"<p> RSO Report has been Finilized, link below:</p>\n".
-				"<p>&emsp; <a href=\"".$url."\">".$url."</a></p>\n".
-				"<p>By ". $_SESSION['user']."</p>";
-			$email->send();
-			yii::$app->controller->createEmailLog(true, 'RSOreport-Email', "Sent to ".$sendTo.', '.$subj);
-		} catch (Exception $e) {
-			//echo 'Message could not be sent.';
-			//echo 'Mailer Error: ' . $email->ErrorInfo;
-			yii::$app->controller->createEmailLog(true, 'Mass-Email Email Error: ', var_export($email->ErrorInfo,true));
-		}
-		
 		return true;
 	}
 }

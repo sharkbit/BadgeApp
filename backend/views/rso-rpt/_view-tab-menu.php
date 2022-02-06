@@ -18,5 +18,10 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 <?php } ?>
 	<li class="<?php if($urlStatus['actionId']=='help') echo 'active'; ?>"> 
 		<a href="<?=Url::to(['/rso-rpt/help'])?>"> <span class="glyphicon glyphicon-info-sign"></span> Help </a></li>
+<?php if(yii::$app->controller->hasPermission('rso-rpt/settings')) { ?>
+	<li class="<?php if($urlStatus['actionId']=='settings') echo 'active'; ?>"> 
+		<a href="<?=Url::to(['/rso-rpt/settings'])?>"> <span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+<?php } ?>		
+		
 </ul>
 <br/>

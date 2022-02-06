@@ -625,3 +625,7 @@ ADD COLUMN `sponsor` INT NULL AFTER `e_poc`;
 -- Added Field Cash Drop to RSO Report
 ALTER TABLE `BadgeDB`.`rso_reports` 
 ADD COLUMN `cash_drop` DECIMAL(7,2) NULL DEFAULT 0.00 AFTER `cash_bos`;
+
+-- Email list for RSO report #195
+ALTER TABLE `BadgeDB`.`params` 
+ADD COLUMN `rso_email` TEXT NULL DEFAULT NULL AFTER `status`;
