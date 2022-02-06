@@ -105,7 +105,7 @@ class RsoReports extends \yii\db\ActiveRecord {
 		foreach ($cartSum as $pi) {
 			$prdy .= '- SKU:'.$pi->sku.', '.$pi->item.', QTY: '.$pi->qty.', Total: $'.number_format($pi->price,2,'.',',')."\n";
 		}
-		return "$cnt transactions: \$".number_format($cash_total, 2, '.', ',').", Item Sumary:". htmlspecialchars($prdy); //json_encode($cartSum);
+		return "$cnt transactions: \$".number_format($cash_total, 2, '.', ',').", Item Summary:". htmlspecialchars($prdy); //json_encode($cartSum);
 	}
 
 	public function getViolations($model) {
