@@ -9,6 +9,7 @@ use kartik\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 
 $this->title = 'Badge Stickers';
+$this->params['breadcrumbs'][] = ['label' => 'RSO Reports', 'url' => ['rso-rpt/index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/sticker']];
 
 if (isset($_REQUEST['StickersSearch']['pagesize'])) {

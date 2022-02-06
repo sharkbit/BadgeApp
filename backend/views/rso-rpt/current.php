@@ -5,6 +5,7 @@
 /* @var $form yii\widgets\ActiveForm */
 
 $this->title = 'Current RSO Report';
+$this->params['breadcrumbs'][] = ['label' => 'RSO Reports', 'url' => ['rso-rpt/index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/current']];
 ?>
 

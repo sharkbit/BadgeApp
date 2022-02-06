@@ -22,8 +22,9 @@ function MakeDropdown($dlist) {
 	} else { return []; }
 }
 
-$this->title = 'Current RSO Report';
-$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/current']];
+$this->title = 'RSO Report Settings';
+$this->params['breadcrumbs'][] = ['label' => 'RSO Reports', 'url' => ['rso-rpt/index']];
+$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/settings']];
 ?>
 
 <?=$this->render('_view-tab-menu').PHP_EOL ?>
