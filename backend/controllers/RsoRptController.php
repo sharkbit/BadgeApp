@@ -56,8 +56,8 @@ class RsoRptController extends AdminController {
 				$model->date_close = $this->getNowTime();
 				$model->remarks=$this->AddRemarks($model,'Closed By '.$_SESSION['user']);
 				if ($model->save()) {
-					$this->SendNotification($model);
 					$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Closed RSO Report: '.$model->id);
+					$this->SendNotification($model);
 					return $this->redirect(['index']);
 				} else {
 					Yii::$app->getSession()->setFlash('error', json_encode($model->errors));
@@ -327,11 +327,12 @@ class RsoRptController extends AdminController {
 			$email = AdminController::emailSetup();
 			if (!$email) {
 				Yii::$app->getSession()->setFlash('error', 'Email System disabled'); echo "email-setup failed";
-				yii::$app->controller->createLog(true, 'Mass-Email:', 'Disabled');
+				yii::$app->controller->createLog(true, 'Email:', 'Disabled, cant Send RSO Report');
 				return false;
 			}
 
 			foreach($emailz as $sendTo) {
+				yii::$app->controller->createLog(true, 'RSOreport-Email', 'Send RSO Report to: '.$sendTo);
 				try {
 					$email->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$sendTo.'>');
 					$email->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
@@ -347,7 +348,7 @@ class RsoRptController extends AdminController {
 				} catch (Exception $e) {
 					//echo 'Message could not be sent.';
 					//echo 'Mailer Error: ' . $email->ErrorInfo;
-					yii::$app->controller->createEmailLog(true, 'Mass-Email Email Error: ', var_export($email->ErrorInfo,true));
+					yii::$app->controller->createEmailLog(true, 'RSOreport Email Error: ', var_export($email->ErrorInfo,true));
 				}
 			}
 		}
