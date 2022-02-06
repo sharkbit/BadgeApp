@@ -173,15 +173,19 @@ class AccountsController extends SiteController {
 	}
 
     public function actionRequestPasswordReset($id) {
-        $model = new PasswordResetRequestForm();
-        $resetToken = $model->tokenGenerate($id);
-        if($resetToken!=null) {
-            return $this->redirect(['/accounts/reset-password','token'=>$resetToken]);
-        }
-        else {
-            Yii::$app->session->setFlash('error', 'Could not complete your request please try again later.!');
-            return $this->redirect([Yii::$app->request->referrer ?: Yii::$app->homeUrl]);
-        }
+		if ((in_array(1,json_decode(yii::$app->user->identity->privilege))) || (yii::$app->user->id==$id)) { 
+			$model = new PasswordResetRequestForm();
+			$resetToken = $model->tokenGenerate($id);
+			if($resetToken!=null) {
+				return $this->redirect(['/accounts/reset-password','token'=>$resetToken]);
+			}
+			else {
+				Yii::$app->session->setFlash('error', 'Could not complete your request please try again later.!');
+				return $this->redirect([Yii::$app->request->referrer ?: Yii::$app->homeUrl]);
+			}
+		} else {
+			return $this->redirect([Yii::$app->request->referrer ?: Yii::$app->homeUrl]);
+		}
     }
 
     public function actionResetPassword($token) {
