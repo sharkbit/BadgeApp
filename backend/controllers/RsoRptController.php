@@ -270,11 +270,11 @@ class RsoRptController extends AdminController {
 			'shift_anom'=> 'Shift Anomalies',
 			'notes'=>'Notes',
 			'cash_bos'=>'Cash BOS',
-			'cash_drop'=>'Cash Droped',
+			'cash_drop'=>'Cash Dropped',
 			'cash_eos'=>'Cash EOS',
 			'closing'=>'Closing Notes',
 			'closed'=>'Closed',
-			'wb_trap_cases'=>' Wobbel Trap Cases',
+			'wb_trap_cases'=>' Wobble Trap Cases',
 			'wb_color'=> 'Wristband Color',
 		];
 
