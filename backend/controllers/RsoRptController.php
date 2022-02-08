@@ -321,7 +321,7 @@ class RsoRptController extends AdminController {
 	}
 
 	protected function SendNotification($model) {
-		$Param = Params::findOne('1');
+		$param = Params::findOne('1');
 		$emailz = json_decode($param->rso_email);
 		if ($emailz) {
 			$email = AdminController::emailSetup();
@@ -332,18 +332,17 @@ class RsoRptController extends AdminController {
 			}
 
 			foreach($emailz as $sendTo) {
-				yii::$app->controller->createLog(true, 'RSOreport-Email', 'Send RSO Report to: '.$sendTo);
 				try {
-					$email->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$sendTo.'>');
-					$email->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
+						$email->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
 					$email->addAddress($sendTo);
 					$email->Subject = $subj = 'RSO Report: '.$model->date_open;
-					$url = $_SERVER['HTTP_ORIGIN']."/rso-rpt/view?id=".$model->id;
+					$url = yii::$app->params['rootUrl']."/rso-rpt/view?id=".$model->id;
 					$email->Body = "<p>Hello,</p>\n".
 						"<p> RSO Report has been Finilized, link below:</p>\n".
 						"<p>&emsp; <a href=\"".$url."\">".$url."</a></p>\n".
 						"<p>By ". $_SESSION['user']."</p>";
 					$email->send();
+					$email->ClearAddresses(); 
 					yii::$app->controller->createEmailLog(true, 'RSOreport-Email', "Sent to ".$sendTo.', '.$subj);
 				} catch (Exception $e) {
 					//echo 'Message could not be sent.';
