@@ -321,7 +321,7 @@ class RsoRptController extends AdminController {
 	}
 
 	protected function SendNotification($model) {
-		$Param = Params::findOne($id);
+		$Param = Params::findOne('1');
 		$emailz = json_decode($param->rso_email);
 		if ($emailz) {
 			$email = AdminController::emailSetup();
