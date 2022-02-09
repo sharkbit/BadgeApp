@@ -788,6 +788,11 @@ class BadgesController extends AdminController {
 		return Json::encode(['output'=>'', 'selected'=>'']);
 	}
 
+	public function actionHelp($badge_number) {
+		$model = Badges::find()->where(['badge_number'=>$badge_number])->one();
+		return $this->render('help',['model' => $model]);
+	}
+
 	public function actionIndex() {
 		$searchModel = new BadgesSearch();
 

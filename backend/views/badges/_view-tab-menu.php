@@ -25,4 +25,5 @@ else if ($model->status=='suspended')
     <li class="<?php if($urlStatus['actionId']=='view-work-credits')echo'active';?>"><a href="<?=Url::to(['/badges/view-work-credits','badge_number'=>$model->badge_number])?>"><span class="glyphicon glyphicon-wrench"></span> Work Credits</a></li>
     <li class="<?php if($urlStatus['actionId']=='view-remarks-history')echo'active';?>"><a href="<?=Url::to(['/badges/view-remarks-history','badge_number'=>$model->badge_number])?>"> <span class="glyphicon glyphicon-comment"></span> Remarks History</a></li>
 	<li class="<?php if($urlStatus['actionId']=='view-violations-history')echo'active';?>"><a href="<?=Url::to(['/badges/view-violations-history','badge_number'=>$model->badge_number])?>"> <span class="glyphicon glyphicon-screenshot"></span> Violations</a></li>
+	<li class="<?php if($urlStatus['actionId']=='help') echo 'active'; ?>"><a href="<?=Url::to(['/badges/help','badge_number'=>$model->badge_number])?>"> <span class="glyphicon glyphicon-info-sign"></span> Help </a></li>
 </ul>

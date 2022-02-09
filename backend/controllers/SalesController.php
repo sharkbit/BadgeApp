@@ -65,6 +65,10 @@ class SalesController extends AdminController {
 		return $this->redirect('stock');
 	}
 
+	public function actionHelp() {
+		return $this->render('help');
+	}
+
     public function actionIndex() {
 		$model = new Sales;
 
