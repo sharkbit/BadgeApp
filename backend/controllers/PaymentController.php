@@ -55,14 +55,14 @@ class PaymentController extends AdminController {
 			$tax = 0;
 			if($UseSub=='update') {	// Update
 				$myPost=$_POST['Badges'];
-				if($model->amount_due=='') { $err = true; } else { $cc_amount = $model->amount_due; }
-				if($myPost['state']=='') { $err = true; }   else { $cc_state = $myPost['state']; }
-				if($myPost['zip']=='') { $err = true; }     else { $cc_zip = $myPost['zip']; }
-				if($myPost['address']=='') { $err = true; } else { $cc_address = $myPost['address']; }
-				if($myPost['city']=='') { $err = true; }    else { $cc_city = $myPost['city']; }
-				if($myPost['first_name']=='') {$err=true;}  else { $first_name=trim($myPost['first_name']); }
-				if($myPost['last_name']=='') { $err=true;}  else { $last_name=trim($myPost['last_name']); }
-				if($myPost['mem_type']=='') { $err=true;}  else  { $memType=trim($myPost['mem_type']); }
+				if(!(float)$model->amount_due>0) { $err='Amount Due'; } else { $cc_amount = $model->amount_due; }
+				if($myPost['state']=='') { $err ='State'; }   else { $cc_state = $myPost['state']; }
+				if($myPost['zip']=='') { $err='Zip Code'; }     else { $cc_zip = $myPost['zip']; }
+				if($myPost['address']=='') { $err='Address'; } else { $cc_address = $myPost['address']; }
+				if($myPost['city']=='') { $err = 'City'; }    else { $cc_city = $myPost['city']; }
+				if($myPost['first_name']=='') {$err='First Name';}  else { $first_name=trim($myPost['first_name']); }
+				if($myPost['last_name']=='') { $err='Last Name';}  else { $last_name=trim($myPost['last_name']); }
+				if($myPost['mem_type']=='') { $err='Member Type';}  else  { $memType=trim($myPost['mem_type']); }
 				$tax = $model->tax;
 				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
 				// not storing multiple discounts yet.					
@@ -80,50 +80,49 @@ class PaymentController extends AdminController {
 				}
 			} elseif($UseSub=='cert') {	// Certificate
 				$myPost=$_POST['Badges'];
-				if($model->cert_amount_due=='') { $err = true; } else { $cc_amount = $model->cert_amount_due; }
-				if($myPost['state']=='') { $err = true; }   else { $cc_state = $myPost['state']; }
-				if($myPost['zip']=='') { $err = true; }     else { $cc_zip = $myPost['zip']; }
-				if($myPost['address']=='') { $err = true; } else { $cc_address = $myPost['address']; }
-				if($myPost['city']=='') { $err = true; }    else { $cc_city = $myPost['city']; }
-				if($myPost['first_name']=='') {$err=true;}  else { $first_name=trim($myPost['first_name']); }
-				if($myPost['last_name']=='') { $err=true;}  else { $last_name=trim($myPost['last_name']); }
+				if(!(float)$model->cert_amount_due>0) { $err='Amount Due'; } else { $cc_amount = $model->cert_amount_due; }
+				if($myPost['state']=='') { $err ='State'; }   else { $cc_state = $myPost['state']; }
+				if($myPost['zip']=='') { $err ='Zip Code'; }  else { $cc_zip = $myPost['zip']; }
+				if($myPost['address']=='') { $err ='Address'; } else { $cc_address = $myPost['address']; }
+				if($myPost['city']=='') { $err ='City'; }    else { $cc_city = $myPost['city']; }
+				if($myPost['first_name']=='') {$err='First Name';}  else { $first_name=trim($myPost['first_name']); }
+				if($myPost['last_name']=='') { $err='LastName';}  else { $last_name=trim($myPost['last_name']); }
 				$model->badge_number = $_REQUEST['BadgeSubscriptions']['badge_number'];
 				$sku = explode("|",$model->certification_type)[0];
 				$myCert = StoreItems::find()->where(['sku'=>$sku])->one();
 				$MyCart = "[".json_encode(["item"=>$myCert->item,"sku"=>$sku,"ea"=>$myCert->price ,"qty"=>"1","price"=>$myCert->price ])."]";
 
 			} elseif($UseSub=='sales') {
-				if($model->total=='') { $err = true; } 		else { $cc_amount = $model->total; }
-				if($model->state=='') { $err = true; }		else { $cc_state = $model->state; }
-				if($model->zip=='') { $err = true; }		else { $cc_zip = $model->zip; }
-				if($model->address=='') { $err = true; }	else { $cc_address = $model->address; }
-				if($model->city=='') { $err = true; }		else { $cc_city = $model->city; }
-				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
-				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
-				if($model->cart=='') { $err = true; } 		else { $MyCart=$model->cart; }
+				if(!(float)$model->total>0) { $err = 'Total'; } 	else { $cc_amount = $model->total; }
+				if($model->state=='') { $err='State'; }		else { $cc_state = $model->state; }
+				if($model->zip=='') { $err = 'Zip Code'; }	else { $cc_zip = $model->zip; }
+				if(trim($model->address)=='') { $err='Address';} else { $cc_address = $model->address; }
+				if($model->city=='') { $err = 'City'; }		else { $cc_city = $model->city; }
+				if($model->first_name=='') { $err='First Name'; } else { $first_name=trim($model->first_name); }
+				if($model->last_name=='') { $err='Last Name'; } else { $last_name=trim($model->last_name); }
+				if($model->cart=='') { $err = 'No Cart'; } 		else { $MyCart=$model->cart; }
 				$tax = $model->tax;
 
 			} elseif($UseSub=='guest') {  // Guest Bands
-				if($model->amount_due=='') { $err = true; }	else { $cc_amount = $model->amount_due; }
-				if($model->cc_state=='') { $err = true; }	else { $cc_state = $model->cc_state; }
-				if($model->cc_zip=='') { $err = true; }		else { $cc_zip = $model->cc_zip; }
-				if($model->cc_address=='') { $err = true; }	else { $cc_address = $model->cc_address; }
-				if($model->cc_city=='') { $err = true; }	else { $cc_city = $model->cc_city; }
-				if($model->cc_name=='') { $err = true;}     else { $arr=preg_split("/\s+(?=\S*+$)/",$model->cc_name); $first_name=$arr[0];$last_name=$arr[1];}
-				//if($model->g_last_name=='') { $err = true;} else { $last_name=trim($model->g_last_name); }
+				if(!(float)$model->amount_due>0) { $err='Amount Due'; }	else { $cc_amount = $model->amount_due; }
+				if($model->cc_state=='') { $err ='State'; }	else { $cc_state = $model->cc_state; }
+				if($model->cc_zip=='') { $err ='Zip Code'; }else { $cc_zip = $model->cc_zip; }
+				if($model->cc_address=='') { $err='Address'; }	else { $cc_address = $model->cc_address; }
+				if($model->cc_city=='') { $err ='City'; }	else { $cc_city = $model->cc_city; }
+				if($model->cc_name=='') { $err ='Name';}     else { $arr=preg_split("/\s+(?=\S*+$)/",$model->cc_name); $first_name=$arr[0];$last_name=$arr[1];}
 				$tax = $model->tax;
 				$price_ea=($cc_amount / $model->guest_count);
 				$MyCart = "[".json_encode(["item"=>"Guest Bracelet Fee","sku"=>$confParams->guest_sku,"ea"=>number_format($price_ea, 2, '.', ''),"qty"=>$model->guest_count,"price"=>number_format($cc_amount, 2, '.', '') ])."]";
 
 			} else {   		// Create
-				if($model->amt_due=='') { $err = true; } 	else { $cc_amount = $model->amt_due; }
-				if($model->state=='') { $err = true; }		else { $cc_state = $model->state; }
-				if($model->zip=='') { $err = true; }		else { $cc_zip = $model->zip; }
-				if($model->address=='') { $err = true; }	else { $cc_address = $model->address; }
-				if($model->city=='') { $err = true; }		else { $cc_city = $model->city; }
-				if($model->first_name=='') { $err = true; } else { $first_name=trim($model->first_name); }
-				if($model->last_name=='') { $err = true; } 	else { $last_name=trim($model->last_name); }
-				if($model->mem_type=='') { $err = true; } 	else { $memType=trim($model->mem_type); }
+				if(!(float)$model->amt_due>0) { $err='Amount Due'; } 	else { $cc_amount = $model->amt_due; }
+				if($model->state=='') { $err='State'; }		else { $cc_state = $model->state; }
+				if($model->zip=='') { $err ='Zip Code'; }		else { $cc_zip = $model->zip; }
+				if($model->address=='') { $err='Address'; }	else { $cc_address = $model->address; }
+				if($model->city=='') { $err ='City'; }		else { $cc_city = $model->city; }
+				if($model->first_name=='') { $err='First Name'; } else { $first_name=trim($model->first_name); }
+				if($model->last_name=='') { $err ='Last Name'; } 	else { $last_name=trim($model->last_name); }
+				if($model->mem_type=='') { $err ='Member Type'; } 	else { $memType=trim($model->mem_type); }
 				$tax = $model->tax;
 				$MyCart = "[".json_encode(["item"=>$_REQUEST['item_name'],"sku"=>$_REQUEST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ])."]";
 					// not storing multiple discounts yet.					
@@ -202,7 +201,7 @@ class PaymentController extends AdminController {
 							yii::$app->controller->createLog(true, $_SESSION['user'], 'Processed_CC for '.$savercpt->name.' $'.
 								$savercpt->amount.', AuthCode: '.$savercpt->authCode.', Card: '.$savercpt->cardNum);
 						} else {
-							yii::$app->controller->createLog(true, 'trex_C_PayCtl:169 savercpt', var_export($savercpt->errors,true));
+							yii::$app->controller->createLog(true, 'trex_C_PayCtl:204 savercpt', var_export($savercpt->errors,true));
 						}
 						return json_encode(["status"=>"success","message"=>$myrcpt]);
 
@@ -212,27 +211,23 @@ class PaymentController extends AdminController {
 						return json_encode(["status"=>"error","message"=>$response['ssl_result_message']]);
 
 					} else {
-						yii::$app->controller->createLog(true, 'trex_C_PayCtl:179 Response', var_export($response,true));
+						yii::$app->controller->createLog(true, 'trex_C_PayCtl:214 Response', var_export($response,true));
 						return json_encode(["status"=>"error","message"=>$response]);
 					}
 				} elseif (isset($response['errorCode'])) {
-					yii::$app->controller->createLog(true, $_SESSION['user'], "CC_ERROR:318 ".$response['errorCode']." ".$response['errorName']);
+					yii::$app->controller->createLog(true, $_SESSION['user'], "CC_ERROR:218 ".$response['errorCode']." ".$response['errorName']);
 					return json_encode(["status"=>"error","message"=>"Error# ".$response['errorCode'].": ".$response['errorMessage']]);
 				} else { //No Response
-					yii::$app->controller->createLog(true, 'trex_C_PayCtl:186 No Response', var_export($response,true));
+					yii::$app->controller->createLog(true, 'trex_C_PayCtl:221 No Response', var_export($response,true));
 					return json_encode(["status"=>"error","message"=>"No Response or Network Timed Out.  Please use a difrent payment method or try again later."]);
 				}
 			} else  {
 				if (isset($_SERVER['HTTP_REFERER'])) {$missing = $_SERVER['HTTP_REFERER'];} else {$missing='null'; }
-				yii::$app->controller->createLog(true, 'trex_C_PayCtl:190 Form Data missing:',$missing);
-				yii::$app->controller->createLog(true, 'trex_C_PayCtl:191 Form Data missing:'," Amount: $cc_amount, Addr: $cc_address, City: $cc_city, State: $cc_state, Zip: $cc_zip, F_Name: $first_name, L_Name: $last_name");
-
-				return json_encode(["status"=>"error","message"=>"Please Verify Form Information."]);
+				return json_encode(["status"=>"error","message"=>"Please Verify $err."]);
 			}
 
 		} else {
-			yii::$app->controller->createLog(true, 'trex_C_PayCtl:196 ','not post');
-			//echo Yii::$app->response->data = "Fail";
+			yii::$app->controller->createLog(true, 'trex_C_PayCtl:230 ','not post');
 	//		$this->redirect('/');
 		}
 	}
