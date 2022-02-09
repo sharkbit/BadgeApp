@@ -141,7 +141,7 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 		<div class="btn-group pull-right">
 		<br />Save Report Often & <b>Prior to Finalizing</b><br />
 			<?= Html::submitButton('<i class="fa fa-check" aria-hidden="true"></i> Save ', ['class' => 'btn btn-success','id'=>'save_btn']).PHP_EOL;  ?>
-			<?= Html::a('<i class="fa fa-check-double" aria-hidden="true"></i> Finalize ', ['current?id='.$model->id.'&close=1'], ['class' => 'btn btn-warning ']) ?>
+			<?= Html::a('<i class="fa fa-check-double" aria-hidden="true"></i> Finalize ', ['current?id='.$model->id.'&close=1'], ['class' => 'btn btn-warning ','onclick'=>'clkfin();']) ?>
 		</div>
 	</div>
 </div>
@@ -186,7 +186,10 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
       this.style.height = "auto";
       this.style.height = (this.scrollHeight) + "px";
     });
-
   });
+  
+  function clkfin() {
+    $("#btn-group").html('Please Wait while report is being sent. . .');
+  };
 </script>
 
