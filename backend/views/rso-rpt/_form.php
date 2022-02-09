@@ -129,7 +129,7 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 	</div>
 </div>
 
-<?php if(yii::$app->controller->hasPermission('rso-rpt/close_mod')) { ?>
+<?php if((yii::$app->controller->hasPermission('rso-rpt/close_mod')) && ($model->closed==true)){ ?>
 <div class="col-xs-6 col-sm-6">
 	<?= $form->field($model, 'closed')->checkbox() ?>
 </div>
