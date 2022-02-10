@@ -34,7 +34,7 @@ $rpt_nxt = RsoReports::find()->where(['>','date_open',$model->date_open])->order
 	} ?>
 	</div>
 </div><br />
-<div class="col-xs-12 col-sm-8">
+<div class="col-xs-12 col-md-8">
 	<div class="block-badge-view">
 
 	   <?= DetailView::widget([
