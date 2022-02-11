@@ -258,6 +258,9 @@ class RsoRptController extends AdminController {
 		$model->cash_drop = number_format((float)$model->cash_drop,2,'.','');
 		$model->cash = trim($model->cash);
 		$model->checks = trim($model->checks);
+		$model->notes = trim($model->notes);
+		$model->shift_anom = trim($model->shift_anom);
+		$model->closing = trim($model->closing);
 	}
 
 	protected function AddRemarks($model, $comment) {
