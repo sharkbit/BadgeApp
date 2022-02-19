@@ -70,6 +70,7 @@ class SalesController extends AdminController {
 	}
 
     public function actionIndex() {
+		\backend\controllers\RsoRptController::OpenReport();
 		$model = new Sales;
 
 		if ($model->load(Yii::$app->request->post())) {

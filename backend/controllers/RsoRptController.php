@@ -88,6 +88,20 @@ class RsoRptController extends AdminController {
 		}
 	}
 
+	public function OpenReport($from=false) {
+		if(array_intersect([3,6],$_SESSION['privilege'])) {
+			$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date_open'=>SORT_DESC])->one();
+			if(!$model) {
+				$model = new RsoReports;
+				$model->date_open = yii::$app->controller->getNowTime();
+				$model->remarks = RsoRptController::AddRemarks($model,'Opened By '.$_SESSION['user']);
+				$model->save(false);
+				yii::$app->controller->createLog(yii::$app->controller->getNowTime(), yii::$app->controller->getActiveUser()->username, 'Opened RSO Report: '.$model->id);
+				yii::$app->getSession()->setFlash('info', "RSO Report Opened");
+			}
+		}
+	}
+
 	public function actionDelete($id=1) {
 		$model = $this->findModel($id);
 		if($model->delete()) {
@@ -264,7 +278,7 @@ class RsoRptController extends AdminController {
 	}
 
 	protected function AddRemarks($model, $comment) {
-		$this->CleanModel($model);
+		RsoRptController::CleanModel($model);
 
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
@@ -294,7 +308,7 @@ class RsoRptController extends AdminController {
 		if($dirty) {
 			$cmnt = "Updated: ".$dirty;
 			$nowRemakrs = [
-				'created_at' => $this->getNowTime(),
+				'created_at' => yii::$app->controller->getNowTime(),
 				'data' => $cmnt,
 				'changed' => $comment,
 			];
