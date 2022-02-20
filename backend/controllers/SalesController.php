@@ -75,24 +75,23 @@ class SalesController extends AdminController {
 
 		if ($model->load(Yii::$app->request->post())) {
 
-			$badge = Badges::find()->where(['badge_number'=>$model->badge_number])->one();
-			if($badge) {
-				if($model->address<>'') { $badge->address = trim($model->address);}
-				if($model->city <>'')   { $badge->city = $model->city;}
-				if($model->state<>'')  { $badge->state = $model->state;}
-				if($model->zip<>'')    { $badge->zip = $model->zip;}
-				if($model->email<>'')  { $badge->email = trim($model->email);}
+			if ($model->badge_number !='99999') {
+				$badge = Badges::find()->where(['badge_number'=>$model->badge_number])->one();
+				if($badge) {
+					if($model->address<>'') { $badge->address = trim($model->address);}
+					if($model->city <>'')   { $badge->city = $model->city;}
+					if($model->state<>'')  { $badge->state = $model->state;}
+					if($model->zip<>'')    { $badge->zip = $model->zip;}
+					if($model->email<>'')  { $badge->email = trim($model->email);}
 
-				$badge->remarks_temp='';
-				$badge = Badges::cleanBadgeData($badge,true);
-				if($badge->save(false)) {
-					Yii::$app->response->data .= "Saved";
-				} else { Yii::$app->response->data .= "no save"; }
-			} else { Yii::$app->response->data .= "failed"; }
-
-			if ($model->badge_number=='99999') {
-				yii::$app->controller->createLog(false, 'trex_C_SC Guest Checkout', var_export($_REQUEST,true));
+					$badge->remarks_temp='';
+					$badge = Badges::cleanBadgeData($badge,true);
+					if($badge->save(false)) {
+						Yii::$app->response->data .= "Saved";
+					} else { Yii::$app->response->data .= "no save"; }
+				} else { Yii::$app->response->data .= "failed"; }		
 			}
+
 			$this->processCart($model->cart);
 			if($model->payment_method <> 'creditnow') {
 				$savercpt = new CardReceipt();
