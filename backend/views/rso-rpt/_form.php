@@ -101,7 +101,16 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 	</div>
 </div>
 
-<h3>Cash:</h3>
+<?php $Shift_Cash=$model->getCash('cash',$model);
+$c_sales=explode('$',explode(',',$Shift_Cash)[0])[1];
+  ?>
+<h3>Cash:
+	<div id='c_bos' style='display: inline;font-size: small' >(BOS)<?=$model->cash_bos?><b> + </b></div>
+	<div id='c_sales' style='display: inline;font-size: small' > (Sales)<?=$c_sales?> <b>-</b> </div>
+	<div id='c_dropped' style='display: inline;font-size: small' > (Dropped)<?=$model->cash_drop?> <b>=</b> </div>
+	<div id='c_eos' style='display: inline;font-size: small' > (EOS)<?=$model->cash_eos?> </div>
+	<div style="display: inline;" ><?php if((float)$model->cash_bos + (float)$c_sales - (float) $model->cash_drop == (float)$model->cash_eos) { echo ' <i class="fa fa-thumbs-up"> </i>';} else {echo ' <i class="fa fa-thumbs-down" > </i>'; } ?>
+</div></h3>
 <div class="row" style="background-color:#ecf9f2;">
 	<div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
 	<?= $form->field($model, 'cash_bos')->textInput(['maxlength'=>true]) ?>
@@ -113,7 +122,7 @@ $rpt_pre = backend\models\RsoReports::find()->where(['<','date_open',$model->dat
 	<?= $form->field($model, 'cash_eos')->textInput(['maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-	<?= $form->field($model, 'cash')->textarea(['value'=>$model->getCash('cash',$model),'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
+	<?= $form->field($model, 'cash')->textarea(['value'=>$Shift_Cash,'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
 	</div>
 	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
 	<?= $form->field($model, 'checks')->textarea(['value'=>$model->getCash('check',$model),'rows' => '3','readonly' => true,'maxlength'=>true]) ?>
