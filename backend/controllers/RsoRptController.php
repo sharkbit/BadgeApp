@@ -348,18 +348,59 @@ class RsoRptController extends AdminController {
 				return false;
 			}
 
+			$rsos=json_decode($model->rso);
+			$names='';
+			if($rsos) {
+				foreach ($rsos as $badge) {
+					$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
+				}
+			}
+			if($model->shift=='m') { $shift='Morning'; } else { $shift='Evening'; }
+			$remarks=json_decode($model->remarks);
+			$remark='';
+			if($remarks) {
+				foreach ($remarks as $item) {
+					$remark .= $item->created_at.' - '.$item->changed.' - '.$item->data."<br /> \n";
+				}
+			}
+
 			foreach($emailz as $sendTo) {
 				try {
-						$email->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
+					$email->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
 					$email->addAddress($sendTo);
 					$email->Subject = $subj = 'RSO Report: '.$model->date_open;
 					$url = yii::$app->params['badge_site']."/rso-rpt/view?id=".$model->id;
-					$email->Body = "<p>Hello,</p>\n".
+					$email->body = "<p>Hello,</p>\n".
 						"<p> RSO Report has been Finalized, link below:</p>\n".
 						"<p>&emsp; <a href=\"".$url."\">".$url."</a></p>\n".
-						"<p>By ". $_SESSION['user']."</p>";
+						"<p>By ". $_SESSION['user']."</p><hr>".
+						"<table border=1>\n<thead><tr><th>item</th><th>details</th></tr></thead>\n<tbody>\n".
+						"<tr><td>RSO's </td><td>$names</td></tr>".
+						"<tr><td>Date Open </td><td>$model->date_open </td></tr>".
+						"<tr><td>Shift </td><td>".$shift."</td></tr>".
+						"<tr><td>Date Closed </td><td>".$model->date_close."</td></tr>".
+						"<tr><td>Cash BOS </td><td>".$model->cash_bos."</td></tr>".
+						"<tr><td>Cash Dropped </td><td>".$model->cash_drop."</td></tr>".
+						"<tr><td>Cash EOS </td><td>".$model->cash_eos."</td></tr>".
+						"<tr><td>Wobble Trap Cases </td><td>".$model->wb_trap_cases."</td></tr>".
+						"<tr><td>Wristband Color </td><td>".$model->wb_color."</td></tr>".
+						"<tr><td>MICs Status </td><td>".$model->mics."</td></tr>".
+						"<tr><td>Notes </td><td>".nl2br($model->notes)."</td></tr>".
+						"<tr><td>Shift Anomalies </td><td>".nl2br($model->shift_anom)."</td></tr>".
+						"<tr><td>Pass Down </td><td>".nl2br($model->closing)."</td></tr>".
+						"<tr><td>Stickers </td><td>".$model->stickers."</td></tr>".
+						"<tr><td>Cash Sales </td><td>".nl2br($model->cash)."</td></tr>".
+						"<tr><td>Check Sales </td><td>".nl2br($model->checks)."</td></tr>".
+						"<tr><td>Violations </td><td>".$model->violations."</td></tr>".
+						"<tr><td>Participation </td><td>".
+						"<table border=1 width=100%><tr><td> 50 yrd </td><td>$model->par_50</td><td> 100 yrd </td><td>$model->par_100</td><td> 200 yrd </td><td>$model->par_200</td><td> Steel </td><td>$model->par_steel</td></tr>".
+						"<td> N/M Hunter Qual </td><td>$model->par_nm_hq</td><td> M Hunter Qual </td><td>$model->par_m_hq</td><td> Trap </td><td>$model->par_trap</td><td> Archery </td><td>$model->par_arch</td></tr>".
+						"<td> Pellet </td><td>$model->par_pel</td><td> SG Ptrn Rnr </td><td>$model->par_spr</td><td> CIO Students </td><td>$model->par_cio_stu</td><td> Action Rng </td><td>$model->par_act</td></tr></table>".
+						"</td></tr>".
+						"<tr><td>Changes </td><td>".nl2br($remark)."</td></tr>".
+						"</tbody>\n</table>";
 					$email->send();
-					$email->ClearAddresses(); 
+					$email->ClearAddresses();
 					yii::$app->controller->createEmailLog(true, 'RSOreport-Email', "Sent to ".$sendTo.', '.$subj);
 				} catch (Exception $e) {
 					//echo 'Message could not be sent.';
