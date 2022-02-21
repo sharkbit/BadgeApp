@@ -370,7 +370,7 @@ class RsoRptController extends AdminController {
 					$email->addAddress($sendTo);
 					$email->Subject = $subj = 'RSO Report: '.$model->date_open;
 					$url = yii::$app->params['badge_site']."/rso-rpt/view?id=".$model->id;
-					$email->body = "<p>Hello,</p>\n".
+					$email->Body = "<p>Hello,</p>\n".
 						"<p> RSO Report has been Finalized, link below:</p>\n".
 						"<p>&emsp; <a href=\"".$url."\">".$url."</a></p>\n".
 						"<p>By ". $_SESSION['user']."</p><hr>".
