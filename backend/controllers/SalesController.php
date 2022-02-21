@@ -74,7 +74,6 @@ class SalesController extends AdminController {
 		$model = new Sales;
 
 		if ($model->load(Yii::$app->request->post())) {
-
 			if ($model->badge_number !='99999') {
 				$badge = Badges::find()->where(['badge_number'=>$model->badge_number])->one();
 				if($badge) {
@@ -93,6 +92,7 @@ class SalesController extends AdminController {
 			}
 
 			$this->processCart($model->cart);
+			if(isset($_REQUEST['id'])) { $g_id=$_REQUEST['id']; } else { $g_id=false; }
 			if($model->payment_method <> 'creditnow') {
 				$savercpt = new CardReceipt();
 				$model->cc_x_id = 'x'.rand(100000000,1000000000);
@@ -108,14 +108,14 @@ class SalesController extends AdminController {
 				if(is_null($_SESSION['badge_number'])) {$savercpt->cashier_badge = 0;} else {$savercpt->cashier_badge = $_SESSION['badge_number'];}
 				if($savercpt->save()) {
 					yii::$app->controller->createLog(true, $_SESSION['user'], "Saved Rcpt','".$model->badge_number);
-					if($this->CheckGuest($model)) {return $this->redirect(['/guest']);}
+					if($this->CheckGuest($model,$g_id)) {return $this->redirect(['/guest']);}
 					else {return $this->redirect(['purchases']);}
 					exit;
 				} else {
 					yii::$app->controller->createLog(false, 'trex_C_SC savercpt', var_export($savercpt->errors,true));
 				}
 			} elseif($model->payment_method == 'creditnow') {
-				if($this->CheckGuest($model)) {return $this->redirect(['/guest']);}
+				if($this->CheckGuest($model,$g_id)) {return $this->redirect(['/guest']);}
 				else {return $this->redirect(['purchases']);}
 			}
 			Yii::$app->response->data .= "errerrrer!";
@@ -130,14 +130,18 @@ class SalesController extends AdminController {
 		}
 	}
 
-	function CheckGuest($model){
+	function CheckGuest($model,$g_id=false) {
 		$confParams = Params::findOne('1');
 		$tst = (string)$confParams->guest_sku;
 		if (strpos($model->cart,  $tst)) {
 			$cart = json_decode($model->cart);
 			foreach($cart as $item){
 				if($item->sku == $confParams->guest_sku) {
-					$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND g_paid ='0' or g_paid='a' or g_paid ='h'; LIMIT ".$item->qty;
+					if((int)$g_id>1) {
+						$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND g_paid ='0' or g_paid='a' or g_paid ='h' LIMIT ".(int)$item->qty;
+					} else {
+						$sql="UPDATE guest set g_paid=1 WHERE id=".$g_id;
+					}
 					Yii::$app->db->createCommand($sql)->execute();
 					return true;
 				}
