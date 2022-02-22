@@ -363,6 +363,20 @@ class RsoRptController extends AdminController {
 					$remark .= $item->created_at.' - '.$item->changed.' - '.$item->data."<br /> \n";
 				}
 			}
+			switch ($model->wb_color){
+				case 'g': $wb='Green';
+				case 'b': $wb='Blue';
+				case 'r': $wb='Red';
+				case 'l': $wb='Lavender';
+				case 'k': $wb='Black';
+				default $wb='';
+			}
+			switch ($model->mics){
+				case 'o': $mics='Mics Set Out';
+				case 's': $mics='Mics stored in closet';
+				case 't': $mics='Mics in Trap 3';
+				default $mics='';
+			}
 
 			foreach($emailz as $sendTo) {
 				try {
@@ -383,8 +397,8 @@ class RsoRptController extends AdminController {
 						"<tr><td>Cash Dropped </td><td>".$model->cash_drop."</td></tr>".
 						"<tr><td>Cash EOS </td><td>".$model->cash_eos."</td></tr>".
 						"<tr><td>Wobble Trap Cases </td><td>".$model->wb_trap_cases."</td></tr>".
-						"<tr><td>Wristband Color </td><td>".$model->wb_color."</td></tr>".
-						"<tr><td>MICs Status </td><td>".$model->mics."</td></tr>".
+						"<tr><td>Wristband Color </td><td>".$wb."</td></tr>".
+						"<tr><td>MICs Status </td><td>".$mics."</td></tr>".
 						"<tr><td>Notes </td><td>".nl2br($model->notes)."</td></tr>".
 						"<tr><td>Shift Anomalies </td><td>".nl2br($model->shift_anom)."</td></tr>".
 						"<tr><td>Pass Down </td><td>".nl2br($model->closing)."</td></tr>".
