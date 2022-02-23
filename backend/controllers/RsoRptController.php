@@ -364,18 +364,18 @@ class RsoRptController extends AdminController {
 				}
 			}
 			switch ($model->wb_color){
-				case 'g': $wb='Green';
-				case 'b': $wb='Blue';
-				case 'r': $wb='Red';
-				case 'l': $wb='Lavender';
-				case 'k': $wb='Black';
-				default $wb='';
+				case 'g': $wb='Green'; break;
+				case 'b': $wb='Blue'; break;
+				case 'r': $wb='Red'; break;
+				case 'l': $wb='Lavender'; break;
+				case 'k': $wb='Black'; break;
+				default: $wb='';
 			}
 			switch ($model->mics){
-				case 'o': $mics='Mics Set Out';
-				case 's': $mics='Mics stored in closet';
-				case 't': $mics='Mics in Trap 3';
-				default $mics='';
+				case 'o': $mics='Mics Set Out'; break;
+				case 's': $mics='Mics stored in closet'; break;
+				case 't': $mics='Mics in Trap 3'; break;
+				default: $mics='';
 			}
 
 			foreach($emailz as $sendTo) {
