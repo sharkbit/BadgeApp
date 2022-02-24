@@ -8,6 +8,7 @@ use backend\controllers\PaymentController;
 use backend\models\Badges;
 use backend\models\CardReceipt;
 use backend\models\search\CardReceiptSearch;
+use backend\models\search\CartSummarySearch;
 use backend\models\Sales;
 use backend\models\SalesReport;
 use backend\models\search\StoreItemsSearch;
@@ -172,7 +173,7 @@ class SalesController extends AdminController {
 
 	public function actionPurchases() {
 		$searchModel = new CardReceiptSearch();
-		if(isset($_REQUEST['reset'])) { UNSET($_REQUEST); }
+		if(isset($_REQUEST['reset'])) { UNSET($_REQUEST); return $this->redirect('purchases'); }
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('purchases', [
@@ -203,6 +204,17 @@ class SalesController extends AdminController {
 				'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider
             ]);
+	}
+
+	public function actionSummary() {
+		$searchModel = new CartSummarySearch();
+		if(isset($_REQUEST['reset'])) { UNSET($_REQUEST); return $this->redirect('summary'); }
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+		return $this->render('summary',[
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+		]);
 	}
 
 	public function actionUpdate($id=1) {

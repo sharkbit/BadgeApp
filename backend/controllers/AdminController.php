@@ -34,7 +34,7 @@ class AdminController extends \yii\web\Controller {
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
 		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/delete','rso-rpt/index','rso-rpt/remarks','rso-rpt/settings','rso-rpt/sticker','rso-rpt/update','rso-rpt/view','sticker/add','sticker/move','rso-rpt/sticker-update','rso-rpt/sticker-delete'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
-		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/create','sales/delete','sales/stock','sales/update','sales/inventory','sales/report'],
+		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/create','sales/delete','sales/stock','sales/summary','sales/update','sales/inventory','sales/report'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update','work-credits/delete'],
 	];
@@ -51,7 +51,7 @@ class AdminController extends \yii\web\Controller {
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/delete','guest/stats'],
 		'Rso Report'=>['rso-rpt/close_mod','rso-rpt/index','rso-rpt/remarks','rso-rpt/settings','rso-rpt/sticker','rso-rpt/view','sticker/add','sticker/move','rso-rpt/sticker-update'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
-		'sales' => ['sales/all','sales/create','sales/stock','sales/report','sales/update'],
+		'sales' => ['sales/all','sales/create','sales/stock','sales/summary','sales/report','sales/update'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update'],
 	];
@@ -65,7 +65,7 @@ class AdminController extends \yii\web\Controller {
 		'Guest' => ['guest/all'],
 		'Rso Report'=>['rso-rpt/index','rso-rpt/view'],
 		'Rules'=> ['rules/index','rules/view'],
-		'sales' => ['sales/all','sales/stock'],
+		'sales' => ['sales/all','sales/stock','sales/summary'],
 		'violations' => ['violations/all'],
 		'Work Credits'=>['work-credits/all'],
 	];
@@ -74,7 +74,7 @@ class AdminController extends \yii\web\Controller {
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
-		'sales' => ['sales/all','sales/report','sales/stock'],
+		'sales' => ['sales/all','sales/report','sales/stock','sales/summary'],
 		'Guest' => ['guest/all','guest/modify','guest/update'],
 	];
 
@@ -104,7 +104,7 @@ class AdminController extends \yii\web\Controller {
 		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all'],
-		'sales' => ['sales/all','sales/stock','sales/report'],
+		'sales' => ['sales/all','sales/stock','sales/report','sales/summary'],
 		'Rso Report'=>['rso-rpt/index'],
 		'violations' => ['violations/all'],
 		'Work Credits'=>['work-credits/all'],
