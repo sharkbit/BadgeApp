@@ -14,10 +14,12 @@ class CartSummarySearch extends CartSummary {
     /**
      * @inheritdoc
      */
+	public $sort;
+	public $groupby;
 
     public function rules() {
         return [
-		//	[['tx_type'], 'string'],
+			[['tx_type'], 'safe'],
 		];
     }
 
@@ -36,33 +38,44 @@ class CartSummarySearch extends CartSummary {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+		$this->load($params);
 
-        $this->load($params,false);
-		if(isset($params['CartSummarySearch']['date_start'])) {
-			$this->date_start=$params[ 'CartSummarySearch']['date_start'];
+		if(isset($this->tx_type)) {
+			$this->tx_type=$this->tx_type;
+		}
+
+		if(isset($this->CartSummarySearch->date_start)) {
+			$this->date_start=$this->CartSummarySearch->date_start;
 		} else {
 			$this->date_start = date('Y-m-d H:i', strtotime("-1 months",strtotime(yii::$app->controller->getNowTime())));
 		}
 		$query->andFilterWhere(['>','tx_date',$this->date_start]);
 
-		
-		if (isset($params['CartSummarySearch']['date_stop'])) {
-			$date_stop = $params['CartSummarySearch']['date_stop'];
+
+		if (isset($this->CartSummarySearch->date_stop)) {
+			$date_stop = $this->CartSummarySearch->date_stop;
 			if($date_stop != '' ) {
 				$this->date_stop = $date_stop;
 				$query->andFilterWhere(['<','tx_date',$date_stop]);
 			}
 		}
 
+		$query->groupBy('cat,tx_type,csku');
+	
+		if(!isset($this->sort)) { 
+			$query->orderBy('cat,csku');
+		}
+
+        // grid filtering conditions
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
-            return $dataProvider;
+		   return $dataProvider;
         }
 
-		$query->groupBy('cat,tx_type,csku');
-		$query->orderBy('cat,csku');
-        // grid filtering conditions
+		if($this->tx_type != null) { $query->andFilterWhere([ 'in','tx_type', $this->tx_type ]); }
+
 
 		//yii::$app->controller->createLog(true, 'trex-b-m-s-bs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
