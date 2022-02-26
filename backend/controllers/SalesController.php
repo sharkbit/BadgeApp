@@ -138,7 +138,7 @@ class SalesController extends AdminController {
 			$cart = json_decode($model->cart);
 			foreach($cart as $item){
 				if($item->sku == $confParams->guest_sku) {
-					if((int)$g_id>1) {
+					if((int)$item->qty>1) {
 						$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND g_paid ='0' or g_paid='a' or g_paid ='h' LIMIT ".(int)$item->qty;
 					} else {
 						$sql="UPDATE guest set g_paid=1 WHERE id=".$g_id;
