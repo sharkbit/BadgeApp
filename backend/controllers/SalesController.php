@@ -208,7 +208,6 @@ class SalesController extends AdminController {
 
 	public function actionSummary() {
 		$searchModel = new CartSummarySearch();
-		if(isset($_REQUEST['reset'])) { UNSET($_REQUEST); return $this->redirect('summary'); }
 
 		if(isset($_REQUEST['reset'])) {
 			UNSET($_REQUEST);
