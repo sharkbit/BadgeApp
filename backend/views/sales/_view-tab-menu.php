@@ -15,7 +15,7 @@ $confParams  = Params::findOne('1');
 	<li class="<?php if($urlStatus['actionId']=='stock')echo'active';?>"><a href="<?=Url::to(['/sales/stock'])?>">  <span class="glyphicon glyphicon-book"></span> Stock</a></li>
 <?php } ?>
 <?php if(yii::$app->controller->hasPermission('sales/report')) { ?>
-	<li class="<?php if($urlStatus['actionId']=='report')echo'active';?>"><a href="<?=Url::to(['/sales/report'])?>">  <span class="glyphicon glyphicon-stats"></span> Report</a></li>
+	<li class="<?php if($urlStatus['actionId']=='report')echo'active';?>"><a href="<?=Url::to(['/sales/report'])?>">  <span class="glyphicon glyphicon-stats"></span> Club Sales</a></li>
 <?php } if(yii::$app->controller->hasPermission('sales/summary')) { ?>
 	<li class="<?php if($urlStatus['actionId']=='summary')echo'active';?>"><a href="<?=Url::to(['/sales/summary'])?>">  <span class="glyphicon glyphicon-stats"></span> Sales Summary</a></li>
 <?php } ?>
