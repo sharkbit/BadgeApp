@@ -75,11 +75,11 @@ class BadgesController extends AdminController {
 			$model->fee = $item->price;
 			$model->discount= 0.00;
 			$model->amount_due = $model->fee - $model->discount;
- 
+
 			if($model->save()) {
 				if($model->cert_payment_type <> 'creditnow') {
 					$MyCart = ["item"=>$item->item,"sku"=> $item->sku,"ea"=>$item->price ,"qty"=>"1","price"=> $item->price ];
-					
+
 					$savercpt = new CardReceipt();
 					$model->cc_x_id = 'x'.rand(100000000,1000000000);
 					$savercpt->id = $model->cc_x_id;
@@ -98,7 +98,7 @@ class BadgesController extends AdminController {
 						yii::$app->controller->createLog(false, 'trex_C_BC savercpt', var_export($savercpt->errors,true));
 					}
 				}
-				
+
 				$this->createLog($this->getNowTime(), $_SESSION['user'], "Certificate generated','".$membership_id);
 				Yii::$app->getSession()->setFlash('success', 'Certificate has been generated');
 				return $this->redirect(['/badges/view-certificate', 'membership_id' => $membership_id, 'view_id'=>$model->id]);
@@ -242,7 +242,7 @@ class BadgesController extends AdminController {
 				$mail->Body  = "<!DOCTYPE html><html><body>".$EmailBody."</body></html>";
 				//$mail->addAddress('some@email.com', 'Marc');
 				$mail->addAddress(yii::$app->params['adminEmail'], 'Prez');
-				
+
 				//$mail->Timeout=1000;
 				$mail->SMTPDebug = 4; 			// debugging: 1 = errors and messages, 2 = messages only
 				if($mail->Send()) {
@@ -251,7 +251,7 @@ class BadgesController extends AdminController {
 					Yii::$app->response->data .= "Test Email failed<br />";
 					Yii::$app->response->data .= 'Mailer Error: ' . $mail->ErrorInfo;
 				}
-				
+
 			} else {
 				Yii::$app->response->data .= "Email system Off";
 			}
@@ -265,7 +265,7 @@ class BadgesController extends AdminController {
 			//	if ($member->badge_number < 525 ) { continue; }
 				$thatGuy = Badges::find()->where(['email'=>$member->email])->one();
 				yii::$app->controller->createEmailLog(true, 'next: ',$member->badge_number );
-				
+
 				if (filter_var($member->email, FILTER_VALIDATE_EMAIL)) {
 					Yii::$app->response->data .= "$thatGuy->badge_number <br>";
 					yii::$app->controller->sendVerifyEmail($member->email,'update',$thatGuy);
@@ -275,7 +275,7 @@ class BadgesController extends AdminController {
 					$thatguy->save(false);
 					yii::$app->controller->createEmailLog(true, 'Email Verify', "Removed:  ".$email."','".$thatguy->badge_number);
 				}
-				
+
 				sleep(6);
 			}
 			Yii::$app->response->data .= 'fin';
@@ -393,7 +393,7 @@ class BadgesController extends AdminController {
 			} else {
 				return json_encode(['city'=>'','state'=>'']);
 			}
-				
+
 		}
 		elseif(isset($_GET['unpub'])) {    //	./badges/api-check?unpub
 			if($unpub) {$where='club_id='.$unpub.' AND';} else {$where='';}
@@ -420,17 +420,17 @@ class BadgesController extends AdminController {
 						'active'=>$fixCal->active,
 						'poc_badge'=>$fixCal->poc_badge,
 					],'recurrent_calendar_id='.$bad_recu['calendar_id']);
-				
+
 				$check_cal = AgcCal::find()->where(['recurrent_calendar_id'=>$bad_recu['calendar_id'],'deleted'=>0])->orderBy(['calendar_id'=>SORT_ASC])->one(); // ->andWhere(['>=','event_date', date('Y-01-01',strtotime("+1 minute")) ])->all();
 				if(strtotime($check_cal->event_date) <  strtotime(date('Y-12-31 23:25:00'))) {
 					AgcCal::DeleteAll('recurrent_calendar_id='.$bad_recu['calendar_id']." AND event_date>='".date('Y-01-01',strtotime("+1 year"))."'");
 					AgcCal::UpdateAll(['recurrent_calendar_id'=>$check_cal->calendar_id],'recurrent_calendar_id='.$bad_recu['calendar_id']);
 					yii::$app->controller->createLog(true, 'trex_C_BC unPub', "bad: ".$bad_recu['calendar_id']." -> good: ".$check_cal->calendar_id);
 					echo "bad: ".$bad_recu['calendar_id']." -> good: ".$check_cal->calendar_id."<br>";
-					
-				} else { 
+
+				} else {
 					yii::$app->controller->createLog(true, 'trex_C_BC unPub', "No events in previous year - ".$bad_recu['calendar_id']);
-					echo "No events in previous year - ".$bad_recu['calendar_id']."<br/>"; 
+					echo "No events in previous year - ".$bad_recu['calendar_id']."<br/>";
 				}
 			}
 			exit;
@@ -474,7 +474,7 @@ class BadgesController extends AdminController {
 				return json_encode($myzip['ZipCode']);
 			} else {
 				return json_encode('Error: '.$verify->getErrorMessage());
-			} 
+			}
 		} else {
 			return json_encode(['city'=>'','state'=>'']);
 		}
@@ -502,7 +502,7 @@ class BadgesController extends AdminController {
 				$model->qrcode=$qr[0]." ".$qr[1]." ".str_pad($model->badge_number, 5, '0', STR_PAD_LEFT)." ".$qr[3];
 			}
 
-			$saved=$model->save(); 
+			$saved=$model->save();
 			if($saved) {
 				if($model->payment_method <> 'creditnow') {
 					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ];
@@ -511,12 +511,12 @@ class BadgesController extends AdminController {
 						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
 					}
 
-					// not storing multiple discounts yet.					
+					// not storing multiple discounts yet.
 					if(is_array($_POST['Badges']['discounts'])) {
 						$discount=0;
 						foreach ($_POST['Badges']['discounts'] as $d_item ) {
 							$d_discount = explode(":",$d_item);
-							if($d_discount[0]=='s'){	
+							if($d_discount[0]=='s'){
 								$stu =  (new StoreItems)->find()->where(['sku'=>$confParams->sku_student])->one();
 								if($stu){
 									$discount += $stu->price;
@@ -1048,9 +1048,9 @@ class BadgesController extends AdminController {
 			$model->status = 'active';
 			$model->created_at = $this->getNowTime();
 			$model->paid_amount = $model->amount_due;
-			
-// not storing multiple discounts yet.					
-			if(is_array($_POST['BadgeSubscriptions']['discount'])) {
+
+// not storing multiple discounts yet.
+			if((is_array($_POST['BadgeSubscriptions']['discount'])) && ($_POST['BadgeSubscriptions']['badge_fee']>0 )) {
 				foreach ($_POST['BadgeSubscriptions']['discount'] as $d_item ) {
 					$d_discount = explode(":",$d_item);
 					$model->discount += number_format($d_discount[1],2);
@@ -1059,7 +1059,7 @@ class BadgesController extends AdminController {
 					}
 				}
 			} else { $model->discount=0; }
-			
+
 			$model->transaction_type = 'RENEW';
 			$model->club_id = $badgeRecords->club_id;
 			if($model->cc_x_id =='') {$model->cc_x_id = 'x'.rand(100000000,1000000000); }
@@ -1282,7 +1282,7 @@ class BadgesController extends AdminController {
 			if ($mail) {
 				$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$model->email.'>');
 				$mail->addAddress($model->email, $model->first_name.' '.$model->last_name);
-				
+
 				if($type=='new') {
 					$extra = '<p>Your new Badge Number is: <b>'.$model->badge_number.'</b><br />And your Login code is: <b>'.$model->qrcode.'</b><br />This information wil also be on the back of your badge.</p>';
 				} else { $extra=''; }

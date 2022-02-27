@@ -35,7 +35,7 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'badge_number')->textInput(['readonly'=>true, 'value' =>str_pad($model->badge_number, 5, '0', STR_PAD_LEFT) ]) ?>
             </div>
 			<div class="help-block"></div>
-  
+
             <div class="col-xs-6 col-sm-2">
 				<?= $form->field($model, 'prefix')->dropDownList(['Mr'=>'Mr','Ms'=>'Ms','Miss'=>'Miss','Mrs'=>'Mrs','Master'=>'Master','Fr'=>'Father (Fr)','Rev'=>'Reverend (Rev)','Dr'=>'Doctor (Dr)','Atty'=>'Attorney (Atty)','Hon'=>'Honorable (Hon)','Prof'=>'Professor (Prof)','Pres'=>'President (Pres)','VP'=>'Vice President (VP)','Gov'=>'Governor (Gov)','Ofc'=>'Officer (Ofc)'],['readonly'=> $model->isNewRecord ? false : true,]) ?>
             </div>
@@ -222,7 +222,7 @@ $confParams  = Params::findOne('1');
 					</table>
 					<input type="hidden" name="cart" id="cart" >
 					</div>
-				
+
                 <div class="col-xs-12 col-sm-12">
                     <?= $form->field($model, 'amt_due')->widget(MaskMoney::classname(), [
                         'pluginOptions' => ['allowNegative' => false,]]); ?>
@@ -231,12 +231,13 @@ $confParams  = Params::findOne('1');
                 <div class="col-xs-12 col-sm-12">
       <?php if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
 				if($confParams->qb_env == 'prod') {
-					$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online','other'=>'Other'];
-				} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)','online'=>'Online','other'=>'Other']; }
+					$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online'];
+				} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)','online'=>'Online']; }
 
 			} else {
-				$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online','other'=>'Other'];
+				$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online'];
 			}
+			if($model->amt_due <=0) $model->payment_method='cash';
 			echo $form->field($model, 'payment_method')->dropDownList($myList,['prompt'=>'select']).PHP_EOL; ?>
                 </div>
 
@@ -326,7 +327,7 @@ $confParams  = Params::findOne('1');
 		$("#cart").val(JSON.stringify(cart));
 
 		var badgeFee = parseInt($("#badges-badge_fee").val());
-		var discount = 0;   
+		var discount = 0;
         for (var option of document.getElementById('badges-discounts').options)	{
 			if (option.selected) {
 				if(option.value.length > 2){
@@ -338,6 +339,7 @@ $confParams  = Params::findOne('1');
 		var amountDue = badgeFee - discount;
 		if(amountDue<0) {
 			amountDue = 0.00;
+			$("#badges-payment_method").val('cash');
 		}
 		amountDue = amountDue + TotalTotal;
 		$("#badges-tax").val(TaxTotal.toFixed(2));
