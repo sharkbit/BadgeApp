@@ -4,7 +4,7 @@ use backend\models\AgcCal;
 use backend\models\agcEventStatus;
 use backend\models\agcFacility;
 use backend\models\agcRangeStatus;
-use kartik\grid\GridView; 
+use kartik\grid\GridView;
 use kartik\daterange\DateRangePicker;
 use kartik\widgets\ActiveForm;
 use kartik\export\ExportMenu;
@@ -45,7 +45,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	<h2><?= Html::encode($this->title) ?></h2>
 
 <div class="row">
-	<div class="col-xs-12"> 
+	<div class="col-xs-12">
 	<?php Pjax::begin(); ?>
 	<?php
 	$gridColumns = [
@@ -213,7 +213,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 						]);}
 					},
 					'update' => function($url,$model) use ($shoot) {
-						if ( ( (yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs)))) ) || 
+						if ( ( (yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs)))) ) ||
 							( (yii::$app->controller->hasPermission('calendar/shoot')) && ( array_intersect($shoot, json_decode($model->facility_id)) ) ) ) {
 						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/calendar/update','id'=>$model->calendar_id], [
 							'data-toggle'=>'tooltip',
@@ -222,7 +222,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 						]);}
 					},
 					'delete' => function($url,$model) use ($shoot) {
-						if( ( (yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) || 
+						if( ( (yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) ||
 						( (yii::$app->controller->hasPermission('calendar/shoot')) && ( array_intersect($shoot, json_decode($model->facility_id)) ) ) ) {
 							return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ',  ['/calendar/delete','id'=>$model->calendar_id,'type'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'm' : 's'),'redir'=>yii::$app->controller->getCurrentUrl()['actionId']], [
 							'data-toggle'=>'tooltip',
@@ -268,7 +268,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	</div>
 
 	<div class="col-xs-4 col-sm-2" > <p> <br /></p>
-		Export Data - 
+		Export Data -
 		<?=ExportMenu::widget([
 			'dataProvider' => $dataProvider,
 			'filterModel' => $searchModel,
@@ -303,7 +303,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 		'filterModel' => $searchModel,
 		'columns' => $gridColumns,
 	]); ?>
-	
+
 </div>
 </div>
 <p>* is a Recurring Event</p>

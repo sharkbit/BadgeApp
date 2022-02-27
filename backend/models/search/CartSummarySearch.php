@@ -31,7 +31,12 @@ class CartSummarySearch extends CartSummary {
 
 	public function search($params) {
         $query = CartSummary::find();
-		$query->select(['sum(qty) as sqty','sum(cprice) as sprice','Cart_Summary.*']);
+		if($this->groupby) {
+			$query->select(['sum(qty) as sqty','sum(cprice) as sprice','Cart_Summary.*']);
+			$query->groupBy('cat,tx_type,csku');
+		} else {
+			$query->select(['qty as sqty','cprice as sprice','Cart_Summary.*']);
+		}
 
         // add conditions that should always apply here
 
@@ -60,9 +65,7 @@ class CartSummarySearch extends CartSummary {
 			}
 		}
 
-		$query->groupBy('cat,tx_type,csku');
-	
-		if(!isset($this->sort)) { 
+		if(!isset($this->sort)) {
 			$query->orderBy('cat,csku');
 		}
 

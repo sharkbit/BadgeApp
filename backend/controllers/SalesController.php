@@ -216,7 +216,7 @@ class SalesController extends AdminController {
 			unset($_SESSION['CartSummarySearch_date_start']);
 			unset($_SESSION['CartSummarySearch_date_stop']);
 			unset($_SESSION['CartSummarySearch_sort']);
-			return $this->redirect('summary'); 
+			return $this->redirect('summary');
 		} else {
 			if(isset($_REQUEST['CartSummarySearch']['groupby'])) {
 				$searchModel->groupby = $_REQUEST['CartSummarySearch']['groupby'];
@@ -249,7 +249,7 @@ class SalesController extends AdminController {
 				$searchModel->sort = $_SESSION['CartSummarySearch_sort'];
 			}
 		}
-		
+
 		$dataProvider = $searchModel->search(Yii::$app->request->post());
 
 		return $this->render('summary',[

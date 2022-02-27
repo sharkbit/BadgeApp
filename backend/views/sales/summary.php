@@ -35,7 +35,7 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 	  <!--	  <?=html::a('<i class="fa fa-download" aria-hidden="true"></i> Export as CSV',['#'],['id'=>'customExportCsv','class'=>'btn btn-primary'])?> -->
 		</div>
 		<div class="col-xs-1"><br />
-		<?=$form->field($searchModel, 'groupby')->checkbox(['checked'=>true]);?>
+		<?=$form->field($searchModel, 'groupby')->checkbox(['checked'=>($searchModel->groupby)?true:false]);?>
 		</div>
 		<div class="col-xs-3">
 		<?=$form->field($searchModel, 'date_start', [ 'options'=>['class'=>'drp-container form-group'] ])
@@ -59,6 +59,9 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		'filterModel' => $searchModel,
 		'showFooter' => true,
 		'columns' => [
+			[	'attribute' => 'tx_date',
+				'visible' => ($searchModel->groupby) ? false : true,
+			],
 			'cat',
 			[	'attribute' => 'tx_type',
 				'filter' => Html::dropDownList('tx_type', $searchModel->tx_type, ['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit','online'=>'Online','other'=>'Other'],['id'=>'txsle2','class'=>'select2', 'multiple'=>true]),
@@ -68,7 +71,7 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 			'sqty',
 			[	'attribute' => 'sprice',
 				'format' => ['decimal', 2],
-				'footer' => "$".number_format($dataProvider->query->sum('sprice'), 2, '.', ','),
+				'footer' => ($searchModel->groupby)?"$".number_format($dataProvider->query->sum('sprice'), 2, '.', ','):"$".number_format($dataProvider->query->sum('cprice'), 2, '.', ','),
 			],
 		],
 	]);
