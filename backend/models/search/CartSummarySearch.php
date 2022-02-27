@@ -20,6 +20,7 @@ class CartSummarySearch extends CartSummary {
     public function rules() {
         return [
 			[['tx_type'], 'safe'],
+			[['csku'],'integer'],
 		];
     }
 
@@ -45,29 +46,31 @@ class CartSummarySearch extends CartSummary {
         ]);
 		$this->load($params);
 
+		if(!isset($this->sort)) {
+			$query->orderBy('cat,csku');
+		}
+
 		if(isset($this->tx_type)) {
 			$this->tx_type=$this->tx_type;
 		}
 
-		if(isset($this->CartSummarySearch->date_start)) {
-			$this->date_start=$this->CartSummarySearch->date_start;
+		if(isset($this->date_start)) {
+			$this->date_start=$this->date_start;
 		} else {
 			$this->date_start = date('Y-m-d H:i', strtotime("-1 months",strtotime(yii::$app->controller->getNowTime())));
 		}
-		$query->andFilterWhere(['>','tx_date',$this->date_start]);
+		$query->andFilterWhere(['>=','tx_date',$this->date_start]);
 
 
-		if (isset($this->CartSummarySearch->date_stop)) {
-			$date_stop = $this->CartSummarySearch->date_stop;
+		if (isset($this->date_stop)) {
+			$date_stop = $this->date_stop;
 			if($date_stop != '' ) {
 				$this->date_stop = $date_stop;
-				$query->andFilterWhere(['<','tx_date',$date_stop]);
+				$query->andFilterWhere(['<=','tx_date',$date_stop]);
 			}
 		}
 
-		if(!isset($this->sort)) {
-			$query->orderBy('cat,csku');
-		}
+
 
         // grid filtering conditions
 
@@ -78,7 +81,7 @@ class CartSummarySearch extends CartSummary {
         }
 
 		if($this->tx_type != null) { $query->andFilterWhere([ 'in','tx_type', $this->tx_type ]); }
-
+		if($this->csku >0) { $query->andFilterWhere([ 'csku'=>$this->csku ]); }
 
 		//yii::$app->controller->createLog(true, 'trex-b-m-s-bs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;

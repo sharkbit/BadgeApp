@@ -223,7 +223,7 @@ class SalesController extends AdminController {
 				$_SESSION['CartSummarySearch_groupby'] = $_REQUEST['CartSummarySearch']['groupby'];
 			} elseif (isset($_SESSION['CartSummarySearch_groupby'])) {
 				$searchModel->groupby = $_SESSION['CartSummarySearch_groupby'];
-			}
+			} else {$searchModel->groupby=1;}
 			if(isset($_REQUEST['tx_type'])) {
 				$searchModel->tx_type = $_REQUEST['tx_type'];
 				$_SESSION['CartSummarySearch_tx_type'] = $_REQUEST['tx_type'];
