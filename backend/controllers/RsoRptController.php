@@ -88,7 +88,7 @@ class RsoRptController extends AdminController {
 		}
 	}
 
-	public function OpenReport($from=false) {
+	public static function OpenReport($from=false) {
 		if(array_intersect([3,6],$_SESSION['privilege'])) {
 			$model =  (new RsoReports)->find()->where(['closed'=>0])->orderBy(['date_open'=>SORT_DESC])->one();
 			if(!$model) {
