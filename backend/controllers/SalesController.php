@@ -207,6 +207,7 @@ class SalesController extends AdminController {
 	}
 
 	public function actionSummary() {
+		if(Yii::$app->db->schema->getTableSchema('Cart_Summary')) {
 		$searchModel = new CartSummarySearch();
 
 		if(isset($_REQUEST['reset'])) {
@@ -256,6 +257,10 @@ class SalesController extends AdminController {
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 		]);
+		} else {
+			Yii::$app->getSession()->setFlash('error', 'View does not exist.'); 
+			return $this->redirect('index');
+		}
 	}
 
 	public function actionUpdate($id=1) {
