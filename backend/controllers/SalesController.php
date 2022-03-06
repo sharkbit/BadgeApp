@@ -141,7 +141,7 @@ class SalesController extends AdminController {
 					if((int)$item->qty>1) {
 						$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND g_paid ='0' or g_paid='a' or g_paid ='h' LIMIT ".(int)$item->qty;
 					} else {
-						if ((number)$g_id>1) {
+						if ((int)$g_id>1) {
 							$sql="UPDATE guest set g_paid=1 WHERE id=".$g_id;
 						} else {
 							$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND g_paid ='0' or g_paid='a' or g_paid ='h' LIMIT 1";
