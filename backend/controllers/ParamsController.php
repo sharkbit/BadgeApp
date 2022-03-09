@@ -89,27 +89,12 @@ class ParamsController extends AdminController {
 	// yii::$app->controller->createLog(false, 'trex-r_usr', var_export($txt,true));
 	//		return $txt;
 		} else {
-			$cmd = "htpasswd -b5 $pwd_file $username '".$pwd."'";
-			//$cmd = "htpasswd -bB $pwd_file $username '".$pwd."'";
+			$cmd = "htpasswd -bB $pwd_file $username '".$pwd."'";
 			shell_exec($cmd);
 			return;
 		}
-
-
-		//'{SHA}' . base64_encode(sha1($password, TRUE))
-
-
-		//file_put_contents($param->remote_users, $txt);
-
 	}
 
-    /**
-     * Finds the Params model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Params the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findModel($id) {
         if (($model = Params::findOne($id)) !== null) {
             return $model;
