@@ -66,6 +66,14 @@ class SalesController extends AdminController {
 		return $this->redirect('stock');
 	}
 
+	public function actionDeleteSale($id,$badge_number) {
+		$del_item = CardReceipt::find()->where(['id'=>$id,'badge_number'=>$badge_number])->one();
+		$this->createLog($this->getNowTime(), $_SESSION['user'], "Reciept Item Deleted: $id ".$del_item->badge_number." ".$del_item->tx_type." ".$del_item->amount);
+		Yii::$app->getSession()->setFlash('success', "Reciept Item Deleted: ($id) ");
+		$del_item->delete();
+		return $this->redirect('purchases');
+	}
+
 	public function actionHelp() {
 		return $this->render('help');
 	}

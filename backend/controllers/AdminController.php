@@ -34,7 +34,7 @@ class AdminController extends \yii\web\Controller {
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
 		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/delete','rso-rpt/index','rso-rpt/remarks','rso-rpt/settings','rso-rpt/sticker','rso-rpt/update','rso-rpt/view','sticker/add','sticker/move','rso-rpt/sticker-update','rso-rpt/sticker-delete'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
-		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/create','sales/delete','sales/stock','sales/summary','sales/update','sales/inventory','sales/report'],
+		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/create','sales/delete-sale','sales/delete','sales/stock','sales/summary','sales/update','sales/inventory','sales/report'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update','work-credits/delete'],
 	];
@@ -51,7 +51,7 @@ class AdminController extends \yii\web\Controller {
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/delete','guest/stats'],
 		'Rso Report'=>['rso-rpt/close_mod','rso-rpt/index','rso-rpt/remarks','rso-rpt/settings','rso-rpt/sticker','rso-rpt/view','sticker/add','sticker/move','rso-rpt/sticker-update'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
-		'sales' => ['sales/all','sales/create','sales/stock','sales/summary','sales/report','sales/update'],
+		'sales' => ['sales/all','sales/create','sales/delete-sale','sales/stock','sales/summary','sales/report','sales/update'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update'],
 	];

@@ -90,7 +90,19 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 						'data-placement'=>'top',
 						'title'=>'Print',
 					]);
-				}
+				},
+				'delete' => function($url,$model) {
+					if(yii::$app->controller->hasPermission('sales/delete-sale')) {
+					return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', ['delete-sale','id'=>$model->id,'badge_number'=>$model->badge_number], [
+						'data-toggle'=>'tooltip',
+						'data-placement'=>'top',
+						'title'=>'Delete',
+						'data' => [
+							'confirm' => 'Are you sure you want to delete '.$model->id.'?',
+							'method' => 'post',
+						],
+					]); }
+				},
 			]
 		]
 	];
