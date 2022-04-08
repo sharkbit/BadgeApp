@@ -81,7 +81,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		'tx_type',
 		[	'header' => 'Actions',
 			'class' => 'yii\grid\ActionColumn',
-			'template'=>' {print} ',
+			'template'=>' {print} {delete}',
 			'buttons'=>[
 				'print' => function($url,$model) {
 					return  Html::a(' <span class="glyphicon glyphicon-print"></span> ', ['print-rcpt','x_id'=>$model->id,'badge_number'=>$model->badge_number], [
