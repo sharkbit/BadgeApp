@@ -52,7 +52,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 			if (yii::$app->controller->hasPermission('badges/renew-membership')) {
 				$hide_Renew=false; } else { $hide_Renew=true; }
 		} else {
-			$hide_Renew=true; 
+			$hide_Renew=true;
 		}
 	}
 
@@ -120,7 +120,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 					</div>
 				</div>
 			</div>
-        
+
             <div class="col-xs-12 col-sm-6">
                 <?= $form->field($model, 'address')->textarea(['rows' => '1']).PHP_EOL; ?>
             </div>
@@ -314,7 +314,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		</table>
 		<input type="hidden" name="cart" id="cart" />
 		</div>
-		
+
 		<?= $form->field($badgeSubscriptions, 'tax')->hiddenInput()->label(false).PHP_EOL;?>
 
 		<?= $form1->field($badgeSubscriptions, 'amount_due')->textInput(['readOnly'=>true]).PHP_EOL; ?>
@@ -339,8 +339,9 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 					$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online','other'=>'Other'];
 				} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)','online'=>'Online','other'=>'Other']; }
 			} else {
-				$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online','other'=>'Other'];
+				$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online'];
 			}
+			if($badgeSubscriptions->amount_due <=0) $badgeSubscriptions->payment_type='cash';
 		?>
 		<?= $form1->field($badgeSubscriptions, 'payment_type')->dropdownList($myList,['prompt'=>'Payment Type']).PHP_EOL;?>
 
@@ -380,7 +381,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 			</div>
 			<div class="col-xs-12 text-center" id="online_search_results" > </div>
 		</div>
-				
+
 		<div class="clearfix"> </div>
 		<?php ActiveForm::end(); ?>
 
@@ -402,7 +403,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<?= $form2->field($badgeCertification, 'proc_date')->textInput(['value'=>date('M d, Y',strtotime(yii::$app->controller->getNowTime()))])->label('Date').PHP_EOL; ?>
 		<?= $form2->field($badgeCertification, 'certification_type')->dropdownList($badgeCertification->getcertificationList(),['prompt'=>'certification type']).PHP_EOL; ?>
 		<?= $form1->field($badgeCertification, 'cert_amount_due')->textInput(['readOnly'=>true]).PHP_EOL; ?>
-		
+
 		<?= $form1->field($badgeCertification, 'cert_payment_type')->dropdownList($myList,['prompt'=>'Payment Type']).PHP_EOL;?>
 
 		<div id="cert_cc_form_div" style="margin-left: 25px">
@@ -433,7 +434,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			</div>
 		</div>
 		<p> </P>
-		
+
 		<?= $form2->field($badgeCertification, 'sticker')->textInput(['maxlength'=>true]).PHP_EOL; ?>
 		<?= $form2->field($badgeCertification, 'status')->hiddenInput(['value'=>'0'])->label(false).PHP_EOL; ?>
 
@@ -485,7 +486,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 	$("#cert_cc_form_div").hide();
 
     $("#badges-club_id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
-	
+
 	$(".badge_store_div").click(function(e) {
         e.preventDefault();
 		if($('#extras_store_div').is(':visible')) {
@@ -534,7 +535,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		$("#cart").val(JSON.stringify(cart));
 
 		var badgeFee = $("#badgesubscriptions-badge_fee").val();
-		var discount = 0;   
+		var discount = 0;
         for (var option of document.getElementById('badgesubscriptions-discount').options)	{
 			if (option.selected) {
 				if(option.value.length > 2){
@@ -543,10 +544,11 @@ $ccYear = range($curYr,$curYr+25);  ?>
 				}
 			}
 		}
-		
+
 		var amountDue = badgeFee - discount;
 		if(amountDue<0) {
 			amountDue = 0.00;
+			$("#badgesubscriptions-payment_type").val('cash');
 		}
 		amountDue = amountDue + TotalTotal;
 		$("#badgesubscriptions-tax").val(TaxTotal.toFixed(2));
@@ -561,7 +563,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		var myCert = document.getElementById("badgecertification-certification_type");
 		var selectedIndex = myCert.options[myCert.selectedIndex];
 		document.getElementById("badgecertification-cert_amount_due").value = selectedIndex.value.split("|")[1];
-		
+
 		var testId=false;
 		if(selectedIndex.text.toLowerCase().includes('steel')) { //like...
 			testId=1;
@@ -681,7 +683,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		});
 		document.getElementById("badgecertification-Process_CC").disabled=false;
 	});
-		
+
 	function CheckOnline() {
 		document.getElementById("renew_btn").disabled = true;
 		var myBadge = $("#badgesubscriptions-badge_number").val();

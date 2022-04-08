@@ -11,20 +11,20 @@ else if($urlStatus['requestUrl']=='work-credits/credit-transfer?type=success') $
 ?>
 
 <ul class="nav nav-tabs">
-	<li class="<?php if($urlStatus['requestUrl']=='/work-credits/index')echo'active';?>">
+	<li class="<?php if($urlStatus['actionId']=='index')echo'active';?>">
 		<a href="<?=Url::to(['/work-credits/index'])?>">Work Credits</a></li>
-	<li class="<?php if($urlStatus['requestUrl']=='/work-credits/create')echo'active';?>">
+	<li class="<?php if($urlStatus['actionId']=='create')echo'active';?>">
 		<a href="<?=Url::to(['/work-credits/create'])?>">Log Work</a></li>
-    <li class="<?php if($urlStatus['requestUrl']=='/work-credits/transfer-form')echo'active';?>">
+    <li class="<?php if($urlStatus['actionId']=='transfer-form')echo'active';?>">
 		<a href="<?=Url::to(['/work-credits/transfer-form'])?>">Transfer Credits</a></li>
 
 <?php if(yii::$app->controller->hasPermission('work-credits/approve')) { ?>
-	<li class="<?php if(strpos($urlStatus['requestUrl'],'type=pen'))echo'active';?>">
+	<li class="<?php if(strpos($urlStatus['actionId'],'type=pen'))echo'active';?>">
 		<a href="<?=Url::to(['/work-credits/index','type'=>'pen'])?>">Pending Requests</a></li>
 <?php } ?>
 
 <?php if(yii::$app->controller->hasPermission('work-credits/import')) { ?>
-	<li class="<?php if($urlStatus['requestUrl']=='work-credits/import')echo'active';?>">
+	<li class="<?php if($urlStatus['actionId']=='import')echo'active';?>">
 		<a href="<?=Url::to(['work-credits/import'])?>">Import Credits</a></li>
 <?php } ?>
 </ul>

@@ -87,7 +87,6 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 					],
 					[	'attribute'=>'students',
 						'value' => function($dataProvider) {
-							yii::$app->controller->createLog(true, 'trexstudents', var_export($dataProvider['students'],true));
 							if(isset($dataProvider['students']) && (int)$dataProvider['students'] >0 ) {return $dataProvider['students'];} else {return '';}
 						}
 					],

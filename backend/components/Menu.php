@@ -111,10 +111,6 @@ class Menu extends Widget{
 			'color' => 'btn-success',
 		],
 		[
-			'label'=>'Post / Print Transactions',
-			'url' => '/badges/post-print-transactions',
-		],
-		[
 			'label'=>'Payment Setup',
 			'url' => '/payment/index',
 			'color' => 'btn-success',

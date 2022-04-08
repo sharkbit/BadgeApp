@@ -14,8 +14,8 @@ $this->title = 'Purchases';
 $this->params['breadcrumbs'][] = ['label' => 'Store', 'url' => ['index']];
 
 if (isset($_REQUEST['sales-showsku'])) {$showsku= true;} else {$showsku= false;}
-if (isset($_REQUEST['CardReceiptSearch']['pagesize'])) { 
-	$pagesize = $_REQUEST['CardReceiptSearch']['pagesize']; 
+if (isset($_REQUEST['CardReceiptSearch']['pagesize'])) {
+	$pagesize = $_REQUEST['CardReceiptSearch']['pagesize'];
 	$_SESSION['pagesize'] = $_REQUEST['CardReceiptSearch']['pagesize'];
 } elseif (isset($_SESSION['pagesize'])) {
 	$pagesize = $_SESSION['pagesize'];
@@ -37,14 +37,14 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 <p> </p>
 
 <div class="row">
-    <div class="col-xs-12"> 
+    <div class="col-xs-12">
 	<?php
 	$gridColumns = [
 		[	'attribute'=>'badge_number',
 			'contentOptions' =>['style' => 'width:100px'],
 			'format' => 'raw',
 			'value'=>function ($data) {
-				return str_pad($data->badge_number, 5, '0', STR_PAD_LEFT); 
+				return str_pad($data->badge_number, 5, '0', STR_PAD_LEFT);
 			}
 		],
 		'name',
@@ -81,7 +81,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		'tx_type',
 		[	'header' => 'Actions',
 			'class' => 'yii\grid\ActionColumn',
-			'template'=>' {print} ',
+			'template'=>' {print} {delete}',
 			'buttons'=>[
 				'print' => function($url,$model) {
 					return  Html::a(' <span class="glyphicon glyphicon-print"></span> ', ['print-rcpt','x_id'=>$model->id,'badge_number'=>$model->badge_number], [
@@ -90,7 +90,19 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 						'data-placement'=>'top',
 						'title'=>'Print',
 					]);
-				}
+				},
+				'delete' => function($url,$model) {
+					if(yii::$app->controller->hasPermission('sales/delete-sale')) {
+					return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', ['delete-sale','id'=>$model->id,'badge_number'=>$model->badge_number], [
+						'data-toggle'=>'tooltip',
+						'data-placement'=>'top',
+						'title'=>'Delete',
+						'data' => [
+							'confirm' => 'Are you sure you want to delete '.$model->id.'?',
+							'method' => 'post',
+						],
+					]); }
+				},
 			]
 		]
 	];
@@ -109,7 +121,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 	]); ?>
 <div class="row">
 	<div class="col-xs-6 col-sm-3 col-md-2 col-lg-3 col-xl-3" > <p> <br /></p>
-		Export Data - 
+		Export Data -
 		<?=ExportMenu::widget([
 			'dataProvider' => $dataProvider,
 			'filterModel' => $searchModel,
@@ -127,10 +139,10 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			]
 		]) . "<br /> <br />\n";?>
 	</div>
-	<div class="col-xs-6 col-sm-2 col-md-2 col-lg-2 col-xl-3">	
+	<div class="col-xs-6 col-sm-2 col-md-2 col-lg-2 col-xl-3">
 <br>	<?php echo Html::checkbox('sales-showsku',$showsku,['value'=>1,'id'=>'sales-showsku']), PHP_EOL; ?><b> - Show SKU</b></p>
 	</div>
-	<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 col-xl-3">	
+	<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 col-xl-3">
 	<?=$form->field($searchModel, 'tx_date', [
 		'options'=>['class'=>'drp-container form-group']
 		])->widget(DateRangePicker::classname(), [
@@ -152,12 +164,10 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		</div>
 	</div>
 </div>
-
 	<?php ActiveForm::end(); ?>
 </div>
-		
-		<?php
-	
+
+<?php
 	echo GridView::widget([
 	'dataProvider' => $dataProvider,
 	'filterModel' => $searchModel,
@@ -167,14 +177,13 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			'lastPageLabel'  => 'Last'
 		],
 	'columns' => $gridColumns,
-        
     ]); ?>
-	
+
     </div>
 </div>
 <div class="badges-index">
 
 </div>
 <script>
-$("#w0-cols").hide();
+  $("#w0-cols").hide();
 </script>

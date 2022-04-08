@@ -14,7 +14,7 @@ $confParams  = Params::findOne('1');
 
 $is_dev=false;
 if(yii::$app->controller->hasPermission('sales/all')) {
-	$myList=['cash'=>'Cash','check'=>'Check','online'=>'On Line'];
+	$myList=['cash'=>'Cash','check'=>'Check','online'=>'On Line','other'=>'Other'];
 	$pgLimited=false;
 } else {
 	$myList=[];
@@ -180,7 +180,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			<div class="row">
 				<div class="help-block" ></div>
 				<div class="col-sm-12" id="HideMySubmit">
-				<?= Html::submitButton('Purchase <i class="fa fa-dollar"> </i>',['id'=>'sales-pur','class' => 'btn btn-primary pull-right']) ?>
+				<?= Html::submitButton('Purchase <i class="fa fa-dollar"> </i>',['disabled'=> true,'id'=>'sales-pur','class' => 'btn btn-primary pull-right']) ?>
 				</div>
 			</div>
 		</div>
@@ -260,6 +260,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				cart.push(item);
 			} else { arrPrice[j].value=null; }
 		}
+		if(TotalTotal > 0) { document.getElementById("sales-pur").disabled = false; } else { document.getElementById("sales-pur").disabled = true; }
 		$("#sales-cart").val(JSON.stringify(cart));
 		$("#sales-tax").val(TaxTotal.toFixed(2));
 		$("#sales-total").val(parseFloat(Math.round(TotalTotal * 100) / 100).toFixed(2));

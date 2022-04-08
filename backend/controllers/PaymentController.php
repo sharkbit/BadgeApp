@@ -147,8 +147,8 @@ class PaymentController extends AdminController {
 				}
 			}
 
-			if($model->cc_cvc=='') { $err = true; }
-			if($model->cc_num=='') { $err = true; }
+			if($model->cc_cvc=='') { $err = 'CVC'; }
+			if($model->cc_num=='') { $err = 'Credit Card Number'; }
 
 			if($err==false) {
 

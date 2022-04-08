@@ -86,6 +86,7 @@ class GuestController extends SiteController {
     }
 
 	public function actionIndex() {
+		\backend\controllers\RsoRptController::OpenReport();
 		$searchModel = new GuestSearch();
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
