@@ -44,6 +44,27 @@ class CalendarController extends AdminController {
 		return $this->redirect([$redir]);
 	}
 
+	public function actionBulkdelete($id='conflict-selectall',$redir='conflict') {
+		//yii::$app->controller->createLog(true, 'trexSelect', var_export($_POST,true));
+		if (is_array($_POST["selection"])) {
+			//yii::$app->controller->createLog(true, 'trex-e_id', var_export($_POST["selection"],true));
+			$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'changed'=>'Deleted by '.$_SESSION['user'],'data'=>"Record marked as Deleted."];
+			//update all remarks individually
+			foreach($_POST["selection"] as $e_id){
+				$model = $this->findModel($e_id);
+				$model->deleted=1;
+				$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
+				$model->save();
+			}
+		} 
+		if ($id==1) { //update all to delete 
+			AgcCal::UpdateAll(['deleted'=>1], ['in',"calendar_id",$_POST["selection"]]);// this deletes EVERYTHING
+		}
+			
+ 		Yii::$app->getSession()->setFlash('success', 'Event(s) Deleted.');
+		return $this->redirect(['/calendar/'.$redir]);
+	}
+ 
 	public function actionCreate() {
 		$model = new AgcCal();
 		if ($model->load(Yii::$app->request->post())) {
@@ -128,7 +149,7 @@ class CalendarController extends AdminController {
 		$model = $this->findModel($id);
 		if ($model) {
 			$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'changed'=>'Deleted by '.$_SESSION['user'],'data'=>"Record marked as Deleted."];
-			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
+			
 
 			if ($type=='s') {
 					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "calendar_id = ".$model->calendar_id);

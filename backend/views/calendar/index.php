@@ -44,7 +44,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 
 	<h2><?= Html::encode($this->title) ?></h2>
 
-<div class="row">
+<div class="row"> 
 	<div class="col-xs-12"> 
 	<?php Pjax::begin(); ?>
 	<?php
@@ -236,18 +236,29 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 					},
 				]
 			],
+			[	'header'=>'Bulk Delete',
+				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? (($urlStatus['actionId']=='conflict') ? true : false ): false,
+				//'filter' => array('On'=>'All','Off'=>'Pick'),
+				'class' => 'yii\grid\CheckboxColumn',
+				'checkboxOptions' => function(){
+					return [
+					'onchange'=> 'var keys = $("#grid").yiiGridView("getSelectedRows");
+					$(this).parent().parent().toggleClass("danger")'
+					];
+				},
+			],
 		];
 		?>
 	<?php Pjax::end(); ?>
 <div class="calendar-index">
-
+<!--<div class="row"> -->
 <?php $form = ActiveForm::begin([
 	//'action' => ['index'],
 	'method' => 'post',
 	'id'=>'calendarFilter',
 ]); ?>
 <div class="row">
-	<div class="col-xs-12 col-sm-3" <?php if(($urlStatus['actionId']=='recur')||($urlStatus['actionId']=='conflict')) {echo ' style="display: none"'; } ?>>
+	<div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2" <?php if(($urlStatus['actionId']=='recur')||($urlStatus['actionId']=='conflict')) {echo ' style="display: none"'; } ?>>
 		<?=  $form->field($searchModel, 'SearchTime', [
 		'options'=>['class'=>'drp-container form-group']
 		])->widget(DateRangePicker::classname(), [
@@ -259,15 +270,15 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 			'locale'=>['format'=>'Y-m-d','separator'=>' - ',],
 		]])->label('Date range:'); ?>
 	</div>
-	<div class="col-xs-4 col-sm-2">
+	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
 		<?= $form->field($model, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
 	</div>
-	<div class="col-xs-4 col-sm-2"><br />
+	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-3 col-xl-3"><br />
 		<?= Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Search', ['class' => 'btn btn-primary']) ?>
 		<?= Html::a('<i class="fa fa-eraser" aria-hidden="true"></i> Reset',['index?reset=true'], ['class' => 'btn btn-danger']) ?>
 	</div>
 
-	<div class="col-xs-4 col-sm-2" > <p> <br /></p>
+	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2" > <!-- <p> <br /></p> -->
 		Export Data - 
 		<?=ExportMenu::widget([
 			'dataProvider' => $dataProvider,
@@ -284,10 +295,11 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				ExportMenu::FORMAT_EXCEL_X => false,
 				//ExportMenu::FORMAT_PDF => false
 			]
-		]) . "<br /> <br />\n";?>
+		])// . "<br /> <br />\n"
+		;?>
 	</div>
 
-	<div class="col-xs-4  col-sm-2 pull-right">
+	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2 pull-right">
 		<?php if (yii::$app->controller->hasPermission('calendar/create')) { ?>
 		<div class="btn btn-group pull-right">
 		<?php if($urlStatus['actionId']=='recur') {$extra='?recur=1';} else {$extra='';} ?>
@@ -297,13 +309,36 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 </div>
 	<?php ActiveForm::end(); ?>
 </div>
-	<?php
-		echo GridView::widget([
-		'dataProvider' => $dataProvider,
-		'filterModel' => $searchModel,
-		'columns' => $gridColumns,
-	]); ?>
 	
-</div>
+	<?php
+	if ($urlStatus['actionId']=='conflict') {
+		$form2 = ActiveForm::begin([
+		'action' => ['calendar/bulkdelete'],
+		'method' => 'post',
+		'id'=>'calendarbulk',
+		]);
+		echo '<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2 pull-right">';
+			echo '<div class="btn-group pull-right">';
+			echo Html::checkbox('conflict-selectall',true,['value'=>1,'id'=>'conflict-selectall']);
+			echo '<b> - Select All';
+			echo Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Bulk Delete', ['class' => 'btn btn-warning']);
+			echo '</div>';
+		echo '</div>';
+		}
+		echo '<p><div class="row">';
+		echo '<div class="col-xs-12">';
+		echo GridView::widget([
+			'dataProvider' => $dataProvider,
+			'filterModel' => $searchModel,
+			'columns' => $gridColumns,
+		]); 
+		echo '</div></div>';
+	if ($urlStatus['actionId']=='conflict') {ActiveForm::end();}
+	?>
+		
+</div>	
 </div>
 <p>* is a Recurring Event</p>
+<!--<script>
+$("#w0-cols").hide();
+</script> -->
