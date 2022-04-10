@@ -14,6 +14,7 @@ $this->title = 'Purchases';
 $this->params['breadcrumbs'][] = ['label' => 'Store', 'url' => ['index']];
 
 if (isset($_REQUEST['sales-showsku'])) {$showsku= true;} else {$showsku= false;}
+if (isset($_REQUEST['sales-show_club'])) {$show_club= true; $searchModel->show_club=true;} else {$show_club= false;}
 if (isset($_REQUEST['CardReceiptSearch']['pagesize'])) {
 	$pagesize = $_REQUEST['CardReceiptSearch']['pagesize'];
 	$_SESSION['pagesize'] = $_REQUEST['CardReceiptSearch']['pagesize'];
@@ -48,6 +49,9 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			}
 		],
 		'name',
+		[	'attribute'=>'ClubNames',
+			'visible' => ($searchModel->show_club) ? true : false,
+		],
 		'tx_date',
 		[	'attribute'=>'cart',
 			'format' => 'raw',
@@ -140,7 +144,8 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		]) . "<br /> <br />\n";?>
 	</div>
 	<div class="col-xs-6 col-sm-2 col-md-2 col-lg-2 col-xl-3">
-<br>	<?php echo Html::checkbox('sales-showsku',$showsku,['value'=>1,'id'=>'sales-showsku']), PHP_EOL; ?><b> - Show SKU</b></p>
+<?php echo Html::checkbox('sales-showsku',$showsku,['value'=>1,'id'=>'sales-showsku']), PHP_EOL; ?><b> - Show SKU</b> <br />
+<br /> <?php echo Html::checkbox('sales-show_club',$show_club,['value'=>1,'id'=>'sales-show_club']), PHP_EOL; ?><b> - Show Clubs</b>
 	</div>
 	<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 col-xl-3">
 	<?=$form->field($searchModel, 'tx_date', [
