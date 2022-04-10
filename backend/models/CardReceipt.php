@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use backend\models\clubs;
 
 /**
  * This is the model class for table "cc_receipts".
@@ -16,7 +17,8 @@ class CardReceipt extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
- 	public $pagesize;
+	public $pagesize;
+	public $show_club;
 
     public static function tableName() {
         return 'cc_receipts';
@@ -57,6 +59,10 @@ class CardReceipt extends \yii\db\ActiveRecord {
 
 	public function getBadges(){
 		 return $this->hasOne(\backend\models\Badges::className(), ['badge_number' => 'cashier_badge']);
+	}
+
+	public function getClubNames() {
+		return (new clubs)->getMyClubsNames($this->badge_number);
 	}
 }
 
