@@ -198,6 +198,14 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'value'=>function($model) { if($model->conflict==1) { return 'Yes'; } else { return 'No'; } },
 				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? (($urlStatus['actionId']=='index') ? false : true ): false,
 			],
+			[	'header'=>'Bulk Delete',
+				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? (($urlStatus['actionId']=='conflict') ? true : false ): false,
+				'format' => 'raw',
+				'contentOptions' => ['style' => 'text-align: center;'],
+				'filter' => ' <input type="checkbox" id="del_sel_all" name="del_sel_all">',
+				'value'=>function($model) {return 
+					'<input type="checkbox" name="selection[]" value="'.$model->calendar_id.'"onchange="$(this).parent().parent().toggleClass(&quot;danger&quot;);" />'; },
+			],
 			[	'header'=>'Action',
 				'visible' => (yii::$app->controller->hasPermission('calendar/view')) ? true : ((yii::$app->controller->hasPermission('calendar/update')) ? true : ((yii::$app->controller->hasPermission('calendar/delete')) ? true : false ) ),
 				'class' => 'yii\grid\ActionColumn',
@@ -235,17 +243,6 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 						]); }
 					},
 				]
-			],
-			[	'header'=>'Bulk Delete',
-				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? (($urlStatus['actionId']=='conflict') ? true : false ): false,
-				//'filter' => array('On'=>'All','Off'=>'Pick'),
-				'class' => 'yii\grid\CheckboxColumn',
-				'checkboxOptions' => function(){
-					return [
-					'onchange'=> 'var keys = $("#grid").yiiGridView("getSelectedRows");
-					$(this).parent().parent().toggleClass("danger")'
-					];
-				},
 			],
 		];
 		?>
@@ -309,7 +306,6 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 </div>
 	<?php ActiveForm::end(); ?>
 </div>
-	
 	<?php
 	if ($urlStatus['actionId']=='conflict') {
 		$form2 = ActiveForm::begin([
@@ -319,8 +315,6 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 		]);
 		echo '<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2 pull-right">';
 			echo '<div class="btn-group pull-right">';
-			echo Html::checkbox('conflict-selectall',true,['value'=>1,'id'=>'conflict-selectall']);
-			echo '<b> - Select All';
 			echo Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Bulk Delete', ['class' => 'btn btn-warning']);
 			echo '</div>';
 		echo '</div>';
@@ -340,6 +334,17 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 
 </div>
 <p>* is a Recurring Event</p>
-<!--<script>
-$("#w0-cols").hide();
-</script> -->
+<script>
+//$("#w0-cols").hide();
+
+document.getElementById("del_sel_all").addEventListener("click", function(event){
+  event.preventDefault();
+  
+  var checkboxes = document.getElementsByName('selection[]');
+    for (var checkbox of checkboxes) {
+      checkbox.checked = this.checked;
+	  checkbox.parentNode.parentNode.className="danger";
+    }
+});
+
+</script>
