@@ -43,11 +43,15 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	<?= $this->render('_index-tab-menu',['model'=>$model]) ?>
 
 	<h2><?= Html::encode($this->title) ?></h2>
-
 <div class="row">
+<?php $form = ActiveForm::begin([
+	'action' => [$urlStatus['actionId']],
+	'method' => 'post',
+	'id'=>'calendarFilter',
+]); ?>
 	<div class="col-xs-12">
-	<?php Pjax::begin(); ?>
-	<?php
+	<?php Pjax::begin(); 
+
 	$gridColumns = [
 			[	'attribute'=>'club_id',
 				'format'=>'raw',
@@ -249,11 +253,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	<?php Pjax::end(); ?>
 <div class="calendar-index">
 <!--<div class="row"> -->
-<?php $form = ActiveForm::begin([
-	//'action' => ['index'],
-	'method' => 'post',
-	'id'=>'calendarFilter',
-]); ?>
+
 <div class="row">
 	<div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2" <?php if(($urlStatus['actionId']=='recur')||($urlStatus['actionId']=='conflict')) {echo ' style="display: none"'; } ?>>
 		<?=  $form->field($searchModel, 'SearchTime', [
@@ -272,7 +272,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	</div>
 	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-3 col-xl-3"><br />
 		<?= Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Search', ['class' => 'btn btn-primary']) ?>
-		<?= Html::a('<i class="fa fa-eraser" aria-hidden="true"></i> Reset',['index?reset=true'], ['class' => 'btn btn-danger']) ?>
+		<?= Html::a('<i class="fa fa-eraser" aria-hidden="true"></i> Reset',[$urlStatus['actionId'].'?reset=true'], ['class' => 'btn btn-danger']) ?>
 	</div>
 
 	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2" > <!-- <p> <br /></p> -->
@@ -304,18 +304,14 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 		</div > <?php } ?>
 	</div>
 </div>
-	<?php ActiveForm::end(); ?>
+	
 </div>
 	<?php
 	if ($urlStatus['actionId']=='conflict') {
-		$form2 = ActiveForm::begin([
-		'action' => ['calendar/bulkdelete'],
-		'method' => 'post',
-		'id'=>'calendarbulk',
-		]);
+	
 		echo '<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2 pull-right">';
 			echo '<div class="btn-group pull-right">';
-			echo Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Bulk Delete', ['class' => 'btn btn-warning']);
+			echo Html::submitButton('<i class="fa fa-trash" aria-hidden="true"></i> Bulk Delete', ['class' => 'btn btn-warning','name'=>'bulkdelete','value'=>'1']);
 			echo '</div>';
 		echo '</div>';
 		}
@@ -327,10 +323,10 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 			'columns' => $gridColumns,
 		]); 
 		echo '</div></div>';
-	if ($urlStatus['actionId']=='conflict') {ActiveForm::end();}
 	?>
 
 </div>	
+<?php ActiveForm::end(); ?>
 
 </div>
 <p>* is a Recurring Event</p>
