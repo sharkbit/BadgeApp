@@ -65,7 +65,7 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 			echo $form->field($model, 'badge_number')->textInput(['value'=>$model->badge_number,'readonly'=> $isguest]);
 			echo '</div><div class="col-sm-2">';
 			echo $form->field($model, 'time_in')->textInput(['readonly' => true,'value'=>(yii::$app->controller->getNowTime())]).PHP_EOL;
-			echo $form->field($model, 'g_paid')->hiddenInput(['value'=>'a'])->label(false).PHP_EOL;
+			echo $form->field($model, 'g_paid')->hiddenInput(['value'=>(isset($_SESSION['stickyForm'])) ? $_SESSION['stickyForm']['g_paid'] : 'a'])->label(false).PHP_EOL;
 		} else {
 			echo $form->field($model, 'badge_number')->textInput(['readOnly'=>'true']);
 			echo '</div><div class="col-sm-2">';
