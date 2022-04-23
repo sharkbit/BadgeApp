@@ -25,9 +25,9 @@ class RsoReports extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-			[['cash_bos','date_open','mics','rso','wb_color','wb_trap_cases'], 'required'],
+			[['cash_bos','date_open','rso','wb_color'], 'required'],
 			[['closed','id','par_50','par_100','par_200','par_steel','par_nm_hq','par_m_hq','par_trap','par_arch','par_pel','par_spr','par_cio_stu','par_act','wb_trap_cases'], 'integer'],
-			[['cash_bos','cash_eos'],'number'],
+			[['cash_bos','cash_drop','cash_eos'],'number','max'=>99999.99],
 			[['cash','checks','wb_color','closing','mics','notes','remarks','rso','shift','shift_anom','stickers','violations'], 'safe'],
 			[['date_open','date_close'],'safe'],
 		];
@@ -55,10 +55,11 @@ class RsoReports extends \yii\db\ActiveRecord {
 			'par_cio_stu'=>'CIO Students',
 			'par_act'=>'Action Rng',
 			'cash_bos'=>'Cash BOS',
+			'cash_drop'=>'Cash Dropped',
 			'cash_eos'=>'Cash EOS',
-			'closing'=>'Closing Notes',
+			'closing'=>'Pass Down',
 			'mics'=>'MICs Status',
-			'wb_trap_cases'=>' Wobbel Trap Cases',
+			'wb_trap_cases'=>'Wobble Trap Cases',
 			'wb_color'=> 'Wristband Color',
         ];
     }
@@ -104,7 +105,7 @@ class RsoReports extends \yii\db\ActiveRecord {
 		foreach ($cartSum as $pi) {
 			$prdy .= '- SKU:'.$pi->sku.', '.$pi->item.', QTY: '.$pi->qty.', Total: $'.number_format($pi->price,2,'.',',')."\n";
 		}
-		return "$cnt transactions: \$".number_format($cash_total, 2, '.', ',').", Item Sumary:". htmlspecialchars($prdy); //json_encode($cartSum);
+		return "$cnt transactions: \$".number_format($cash_total, 2, '.', ',').", Item Summary:". htmlspecialchars($prdy); //json_encode($cartSum);
 	}
 
 	public function getViolations($model) {

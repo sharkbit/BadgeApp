@@ -97,6 +97,7 @@ class ViolationsController extends SiteController {
     }
 
 	public function actionIndex() {
+		\backend\controllers\RsoRptController::OpenReport();
 		$searchModel = new ViolationsSearch();
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

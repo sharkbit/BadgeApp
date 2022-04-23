@@ -1,20 +1,40 @@
 <?php
 
+use yii\helpers\Html;
 use yii\widgets\DetailView;
+use backend\models\RsoReports;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\Params */
 /* @var $form yii\widgets\ActiveForm */
 
-$this->title = 'View RSO Report #'.$model->id;
+$this->title = 'View RSO Report for '.$model->date_open.' Shift: '.$model->shift;
 $this->params['breadcrumbs'][] = ['label' => 'RSO Reports', 'url' => ['rso-rpt/index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/view?id='.$model->id]];
 
+$rpt_pre = RsoReports::find()->where(['<','date_open',$model->date_open])->orderBy(['date_open'=>SORT_DESC])->one();
+$rpt_nxt = RsoReports::find()->where(['>','date_open',$model->date_open])->orderBy(['date_open'=>SORT_ASC])->one();
 ?>
 
 <?=$this->render('_view-tab-menu').PHP_EOL ?>
 
-<div class="col-xs-12 col-sm-8">
+<div class="row ">
+	<div class="col-xs-6 ">
+	<?php if($rpt_pre) {
+		echo Html::a('<i class="fa fa-refresh"> </i> Prev: '.$rpt_pre->date_open,['/rso-rpt/view?id='.$rpt_pre->id],['class' => 'btn btn-info']); 
+	}  else {
+		echo Html::a(' First ','',['class' => 'btn btn-warning']); 
+	} ?>
+	</div>
+	<div class="col-xs-6 ">
+	<?php if($rpt_nxt) {
+		echo Html::a('<i class="fa fa-refresh"> </i> Next: '.$rpt_nxt->date_open,['/rso-rpt/view?id='.$rpt_nxt->id],['class' => 'btn btn-info']); 
+	} else {
+		echo Html::a(' Last ','',['class' => 'btn btn-warning']); 
+	} ?>
+	</div>
+</div><br />
+<div class="col-xs-12 col-md-8">
 	<div class="block-badge-view">
 
 	   <?= DetailView::widget([
@@ -24,10 +44,12 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/vi
 				'value' => function($model) {
 					$rsos=json_decode($model->rso);
 					$names='';
-					foreach ($rsos as $badge) {
-						$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
-					}
-					return $names;
+					if($rsos) {
+						foreach ($rsos as $badge) {
+							$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
+						}
+						return $names;
+					} else { return ""; } 
 				},
 			],
 			'date_open',
@@ -37,6 +59,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/vi
 				'visible' => ($model->closed==1) ? true : false,
 			],
 			'cash_bos',
+			'cash_drop',
 			'cash_eos',
 			'wb_trap_cases',
 			[	'attribute'=>'wb_color',
@@ -54,14 +77,23 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/vi
 				'value' => function($model) {
 				  switch ($model->mics){
 					case 'o': return 'Mics Set Out';
-					case 's': return 'Mics Stores in closet';
+					case 's': return 'Mics stored in closet';
 					case 't': return 'Mics in Trap 3';
 				  }
 				}
 			],
-			'notes',
-			'shift_anom',
-			'closing',
+			[	'attribute'=>'notes',
+				'format' => 'raw',
+				'value' =>nl2br($model->notes),
+			],
+			[	'attribute'=>'shift_anom',
+				'format' => 'raw',
+				'value' =>nl2br($model->shift_anom),
+			],
+			[	'attribute'=>'closing',
+				'format' => 'raw',
+				'value' =>nl2br($model->closing),
+			],
 			'stickers',
 			'cash',
 			'checks',
@@ -72,10 +104,12 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['rso-rpt/vi
 				'value' => function($model) {
 					$remarks=json_decode($model->remarks);
 					$remark='';
-					foreach ($remarks as $item) {
-						$remark .= $item->created_at.' - '.$item->changed.' - '.$item->data."<br /> \n";
-					}
-					return $remark;
+					if($remarks) {
+						foreach ($remarks as $item) {
+							$remark .= $item->created_at.' - '.$item->changed.' - '.$item->data."<br /> \n";
+						}
+						return $remark;
+					} else { return ""; } 
 				},
 				'visible' => (yii::$app->controller->hasPermission('rso-rpt/remarks')) ? true : false,
 			],

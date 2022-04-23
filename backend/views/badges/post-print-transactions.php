@@ -82,8 +82,13 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/badges/po
                     [
                         'header'=> 'Name',
                         'value' => function($searchModel) {
-                            $badgeArry = Badges::find()->where(['badge_number'=>$searchModel->badge_number])->one();
-                            return $badgeArry->prefix.' '.$badgeArry->first_name.' '.$badgeArry->last_name.' '.$badgeArry->suffix;
+							if ($searchModel->badge_number==99999) { return 'Cash Paymeny'; }
+							else {
+								$badgeArry = Badges::find()->where(['badge_number'=>$searchModel->badge_number])->one();
+								if($badgeArry) {
+									return $badgeArry->prefix.' '.$badgeArry->first_name.' '.$badgeArry->last_name.' '.$badgeArry->suffix;
+								} else { return 'Admin'; }
+							} 
                         },
                     ],
 					'ClubNames',

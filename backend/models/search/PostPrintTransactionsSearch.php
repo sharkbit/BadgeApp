@@ -47,9 +47,9 @@ class PostPrintTransactionsSearch extends PostPrintTransactions {
 				if(strtotime(substr($this->created_at,0,10)) == strtotime(substr($this->created_at,13,23))) {
 					$query->andFilterWhere(['like','created_at',date('Y-m-d',strtotime(substr($this->created_at,0,10)))]);
 				} else {
-					$query->andFilterWhere(['>=','created_at',date('Y-m-d',strtotime(substr($this->created_at,0,10)))]);
+					$query->andFilterWhere(['>=','created_at',date('Y-m-d 00:00:00',strtotime(substr($this->created_at,0,10)))]);
 					//  +1 Days is needed because of times not being checked +1 = 23:59:00
-					$query->andFilterWhere(['<=','created_at',date('Y-m-d',strtotime(substr($this->created_at,13,23)." +1 days"))]);
+					$query->andFilterWhere(['<=','created_at',date('Y-m-d 23:59:59',strtotime(substr($this->created_at,13,23)))]);
 				}
 			} else {
 				$query->andFilterWhere(['like','created_at',date('Y-m-d',strtotime($this->created_at))]);

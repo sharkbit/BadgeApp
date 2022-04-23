@@ -24,7 +24,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
     <?= $this->render('_view-tab-menu',['model'=>$model]) ?>
 
             <h3>Badge Holder Details </h3>
-            <div class="col-xs-12 col-sm-4 pull-right">
+            <div class="col-xs-12 col-md-4 pull-right">
             <?php if($model->qrcode!=null || $model->qrcode !='')  {
 				if(yii::$app->controller->hasPermission('badges/barcode')) {?>
 			<div class="row"><center>
@@ -83,7 +83,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 			</div>
 				<?php } ?>
 
-            <div class="col-xs-12 col-sm-8">
+            <div class="col-xs-12 col-md-8">
                 <div class="block-badge-view">
 
                    <?= DetailView::widget([

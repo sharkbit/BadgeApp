@@ -58,10 +58,6 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
 		'columns' => [
-			[	'attribute'=>'id',
-				'visible' => (yii::$app->controller->hasPermission('params/update')) ? true : false,
-				'headerOptions' => ['style' => 'width:5%'],
-			],
 			[	'attribute'=>'date_open',
 				'headerOptions' => ['style' => 'width:10%'],
 			],
@@ -69,10 +65,12 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'value' => function($model) {
 					$rsos=json_decode($model->rso);
 					$names='';
-					foreach ($rsos as $badge) {
-						$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
-					}
-					return $names;
+					if($rsos) {
+						foreach ($rsos as $badge) {
+							$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
+						}
+						return $names;
+					} else { return ""; } 
 				},
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'rso',(new RsoReports)->listRSOs(),['class'=>'form-control','prompt' => 'All']),
 			],

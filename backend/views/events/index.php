@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use backend\models\clubs;
+
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EventsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -47,24 +49,34 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 					}
 				}
 			],
+			[ 
+				'attribute' => 'sponsor',
+				'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'sponsor',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
+				'format' => 'raw',
+				'value'=>function($model) {
+					if(isset($model->sponsor)) { return $model->clubs->club_name; } else { return ''; }
+				},
+				'headerOptions' => ['style' => 'width:25%']
+            ],
 			[	'attribute'=>'e_name',
 				'format'=>'raw',
 				'value'=>function($model) {
 					if(strtotime($model->e_date) <= strtotime(yii::$app->controller->getNowTime())) { $send_to="view"; } else {
 						if (yii::$app->controller->hasPermission('events/update')) { $send_to="update"; } else { $send_to="view"; } }
-					return Html::a($model->e_name,"/events/$send_to?id=".$model->e_id);}
-
+					return Html::a($model->e_name,"/events/$send_to?id=".$model->e_id);},
+				'headerOptions' => ['style' => 'width:25%']
 			],
 			[	'attribute'=>'e_status',
 				'value'=>function($model) {
 					if($model->e_status=='0') {return 'Open';}
 					elseif($model->e_status=='2') {return 'Canceled';} else { return 'Closed';}
 				},
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'e_status',[0=>'Open',1=>'Closed',2=>'Cancled'],['class'=>'form-control','prompt' => 'All']),
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'e_status',[0=>'Open',1=>'Closed',2=>'Canceled'],['class'=>'form-control','prompt' => 'All']),
 				'headerOptions' => ['style' => 'width:10%'] ],
 			[
 				'attribute'=>'e_poc',
-				'value'=>function($model) { return $model->e_poc; },
+				'value'=>function($model) { return $model->badges->first_name.' '.$model->badges->last_name; },
 				'headerOptions' => ['style' => 'width:10%']
 			],
 			[
@@ -75,16 +87,8 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 			],
 			[	'attribute'=>'wbOut',
 				'label'=>'WB Out',
-				'value'=>function($model) {
-					/*$cnt=0;
-					foreach($model->event_Att as $att) {
-						if($att->ea_wb_out == 1) { $cnt++;}
-					}
-					//yii::$app->controller->createLog(true, 'trex', var_export($model->event_Att,true));
-					return $cnt; 
-					*/
-					return $model->event_Att;
-				},
+				'value'=>function($model) { return $model->event_Att; },
+				'headerOptions' => ['style' => 'width:5%']
 			],
 			[
 				'header'=>'Action',

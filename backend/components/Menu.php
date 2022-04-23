@@ -51,7 +51,7 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'RSO Reports',
-			'url' => '/rso-rpt/current',
+			'url' => '/rso-rpt/index',
 		],
 		[
 			'label'=>'Store',
@@ -109,10 +109,6 @@ class Menu extends Widget{
 			'label'=>'Membership Types',
 			'url' => '/membership-type/index',
 			'color' => 'btn-success',
-		],
-		[
-			'label'=>'Post / Print Transactions',
-			'url' => '/badges/post-print-transactions',
 		],
 		[
 			'label'=>'Payment Setup',

@@ -51,14 +51,14 @@ class ParamsController extends AdminController {
 
 	public function actionPassword() {
 		$model = New Passwd;
-		
+
 		if ($model->load(Yii::$app->request->post())) {
 			$status = " Updated password ";
 			$status = $this->RemoteUser('update',$_SESSION['r_user'],$model->pwd);
 		} else {
 			$status = $this->RemoteUser('check',$_SESSION['r_user']);
 			$status ="Exists?";
-			
+
 		}
 		return $this->render('passwd',[
 			'model' => $model,
@@ -71,7 +71,8 @@ class ParamsController extends AdminController {
 
         if ($model->load(Yii::$app->request->post())) {
 			$model->whitelist = json_encode($model->whitelist);
-        	$model->save();
+			$model->rso_email = json_encode($model->rso_email);
+			$model->save();
             return $this->redirect(['update']);
         } else {
             return $this->render('update', [
@@ -85,30 +86,15 @@ class ParamsController extends AdminController {
 		$pwd_file = Yii::getAlias('@webroot').'/'.$param->remote_users;
 		if ($action=='check'){
 		//	$txt = file_get_contents($param->remote_users);
-	// yii::$app->controller->createLog(false, 'trex-r_usr', var_export($txt,true));		
+	// yii::$app->controller->createLog(false, 'trex-r_usr', var_export($txt,true));
 	//		return $txt;
 		} else {
-			$cmd = "htpasswd -b5 $pwd_file $username '".$pwd."'";
-			//$cmd = "htpasswd -bB $pwd_file $username '".$pwd."'";
-			shell_exec($cmd); 
+			$cmd = "htpasswd -bB $pwd_file $username '".$pwd."'";
+			shell_exec($cmd);
 			return;
 		}
-		
-		
-		//'{SHA}' . base64_encode(sha1($password, TRUE))
-		
-		
-		//file_put_contents($param->remote_users, $txt);
-	
 	}
 
-    /**
-     * Finds the Params model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Params the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findModel($id) {
         if (($model = Params::findOne($id)) !== null) {
             return $model;

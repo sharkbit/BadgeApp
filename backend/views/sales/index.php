@@ -14,7 +14,7 @@ $confParams  = Params::findOne('1');
 
 $is_dev=false;
 if(yii::$app->controller->hasPermission('sales/all')) {
-	$myList=['cash'=>'Cash','check'=>'Check','credit'=>'Credit Card','online'=>'On Line'];
+	$myList=['cash'=>'Cash','check'=>'Check','online'=>'On Line','other'=>'Other'];
 	$pgLimited=false;
 } else {
 	$myList=[];
@@ -103,8 +103,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				<div class="col-sm-3">
 					<?= $form->field($model, 'state')->textInput(['id'=>'sales-state']).PHP_EOL; ?>
 				</div>
-				<div class="col-sm-8">
+				<div class="col-sm-7">
 					<?= $form->field($model, 'email')->textInput(['id'=>'sales-email']).PHP_EOL; ?>
+				</div>
+				<div class="col-xs-2 col-sm-1" id="email_check">
+					<br /><i class="fa fa-thumbs-down" title="Email Not Verified"></i>
 				</div>
 			</div>
 			<div class="help-block" ></div>
@@ -177,7 +180,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			<div class="row">
 				<div class="help-block" ></div>
 				<div class="col-sm-12" id="HideMySubmit">
-				<?= Html::submitButton('Purchase <i class="fa fa-dollar"> </i>',['id'=>'sales-pur','class' => 'btn btn-primary pull-right']) ?>
+				<?= Html::submitButton('Purchase <i class="fa fa-dollar"> </i>',['disabled'=> true,'id'=>'sales-pur','class' => 'btn btn-primary pull-right']) ?>
 				</div>
 			</div>
 		</div>
@@ -257,6 +260,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				cart.push(item);
 			} else { arrPrice[j].value=null; }
 		}
+		if(TotalTotal > 0) { document.getElementById("sales-pur").disabled = false; } else { document.getElementById("sales-pur").disabled = true; }
 		$("#sales-cart").val(JSON.stringify(cart));
 		$("#sales-tax").val(TaxTotal.toFixed(2));
 		$("#sales-total").val(parseFloat(Math.round(TotalTotal * 100) / 100).toFixed(2));
@@ -281,6 +285,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
                     $("#sales-zip").val(responseData.zip);
 					$("#sales-address").val(responseData.address);
 					$("#sales-email").val(responseData.email);
+					if(responseData.email_vrfy==1) {
+						$("#email_check").html('<br /><i class="fa fa-thumbs-up" title="Email Verified"></i>');
+					} else {
+						$("#email_check").html('<br /><i class="fa fa-thumbs-down" title="Email Not Verified"></i>');
+					}
 				} else { $("#sales-f_name").val('Not Found'); }
             },
             error: function (responseData, textStatus, errorThrown) {

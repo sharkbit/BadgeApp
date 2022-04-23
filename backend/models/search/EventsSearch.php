@@ -15,8 +15,8 @@ class EventsSearch extends Events {
 
     public function rules() {
         return [
-			[['e_poc'], 'integer'],
-            [['e_name','e_inst','e_status','e_type'], 'safe']
+			[['sponsor'], 'integer'],
+            [['e_name','e_inst','e_poc','e_status','e_type'], 'safe']
         ];
     }
 
@@ -26,7 +26,9 @@ class EventsSearch extends Events {
     }
 
     public function search($params) {
-        $query = Events::find();
+        $query = Events::find()
+		->joinWith(['clubs'])
+		->joinWith(['badges']);
 		//->joinWith(['event_Att']);
 		//->rightJoin('event_attendee',"`events`.e_id=event_attendee.ea_event_id");
 
@@ -48,9 +50,12 @@ class EventsSearch extends Events {
 
         // grid filtering conditions
         if(isset($this->e_name)) { $query->andFilterWhere(['like','e_name',$this->e_name]); }
-		if(isset($this->e_poc)) { $query->andFilterWhere(['e_poc'=>$this->e_poc]); }
+		if(isset($this->e_poc)) {  $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->e_poc."%'"); }
 		if(isset($this->e_status)) { $query->andFilterWhere(['e_status'=>$this->e_status]); }
 		if(isset($this->e_type)) { $query->andFilterWhere(['e_type'=>$this->e_type]); }
+		if(isset($this->sponsor)) { $query->andFilterWhere(['sponsor'=>$this->sponsor]); }
+
+//yii::$app->controller->createLog(true, 'trex-b-m-s-es', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }
 }

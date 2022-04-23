@@ -155,8 +155,7 @@ class EventsController extends AdminController {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		if(!yii::$app->controller->hasPermission('events/approve')) {
-			$sqlwhere="e_poc=".$_SESSION["badge_number"];
-			$dataProvider->query->andWhere($sqlwhere);
+			$dataProvider->query->andWhere("e_poc=".$_SESSION["badge_number"]);
 		}
 
         return $this->render('index', [
@@ -216,7 +215,7 @@ class EventsController extends AdminController {
         if ($model->load(Yii::$app->request->post())) {
 			$model->e_date = date('Y-m-d',strtotime($model->e_date));
 			$model->e_name = trim($model->e_name);
-			
+
 			if($Status_old <> $model->e_status) {
 				if(($model->e_status==0) && (strpos($model->e_rso,'+'))) { //is now open
 					$model->e_rso = substr($model->e_rso,0,strpos($model->e_rso,'+')-1);
@@ -224,7 +223,7 @@ class EventsController extends AdminController {
 					$gotoClosed=true;
 				}
 			}
-			
+
         	$model->save();
 			if($gotoClosed) {
 				$this->actionClose($model->e_id);

@@ -32,7 +32,6 @@ if ($DateChk <= $nowDate) {
 $model->expires = date('M d, Y',strtotime(date('Y-01-09',$nextExpire)));
  
 $this->title = 'Register New Member (Self-service)';
-//$this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="Self-Member-create">
@@ -223,7 +222,7 @@ document.getElementById("new-agree").disabled=true;
 $('#NewMembers').on('beforeSubmit', function (e) {
 	document.getElementById("self_save").disabled=true;
 	$("run_animation").show();
-	clnsole.log('submitting...');});
+	console.log('submitting...');});
 
 	function checkForm() {
 		console.log("Check Form");
@@ -478,5 +477,3 @@ $( document ).ready(function() {
   fillQR();
 });
 </script>
-
-

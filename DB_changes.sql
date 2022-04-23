@@ -613,3 +613,19 @@ ADD COLUMN `cashier_badge` INT NULL DEFAULT NULL AFTER `cashier`;
 ALTER TABLE `BadgeDB`.`store_items` 
 ADD COLUMN `kit_items` TEXT NULL DEFAULT NULL AFTER `stock`;
 
+-- Rso Report #150
+ALTER TABLE `BadgeDB`.`rso_reports` 
+CHANGE COLUMN `rso` `rso` VARCHAR(255) NULL DEFAULT NULL,
+CHANGE COLUMN `shift` `shift` VARCHAR(2) NULL DEFAULT NULL ;
+
+-- #151 Events Get Sponsors
+ALTER TABLE `BadgeDB`.`events` 
+ADD COLUMN `sponsor` INT NULL AFTER `e_poc`;
+
+-- Added Field Cash Drop to RSO Report
+ALTER TABLE `BadgeDB`.`rso_reports` 
+ADD COLUMN `cash_drop` DECIMAL(7,2) NULL DEFAULT 0.00 AFTER `cash_bos`;
+
+-- Email list for RSO report #195
+ALTER TABLE `BadgeDB`.`params` 
+ADD COLUMN `rso_email` TEXT NULL DEFAULT NULL AFTER `status`;

@@ -17,6 +17,7 @@ class Params extends \yii\db\ActiveRecord {
      * @inheritdoc
      */
 	 public $AddWhitelist;
+	 public $Addrso_email;
 
     public static function tableName() {
         return 'params';
@@ -28,16 +29,19 @@ class Params extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['sell_date','guest_sku','guest_total'], 'required'],
-			[['pp_id','pp_sec','remote_users','usps_api'],'string'],
+			[['pp_id','pp_sec','remote_users','usps_api',],'string'],
+			[['rso_email'],'safe'],
 			[['conv_p_merc_id','conv_p_user_id','conv_p_pin','conv_d_merc_id','conv_d_user_id','conv_d_pin'],'string'],
 			[['qb_env','qb_oauth_cust_key','qb_oauth_cust_sec','qb_realmId','qb_token_date','qb_token'], 'string'],
 			[['qb_oa2_id','qb_oa2_sec','qb_oa2_realmId','qb_oa2_access_token','qb_oa2_access_date','qb_oa2_refresh_token','qb_oa2_refresh_date'], 'string'],
 			[['sell_date'], 'string', 'max' => 5],
 			[['log_rotate'],'integer'],
 			[['whitelist'],'safe'],
+			['Addrso_email', 'filter', 'filter' => 'trim'],
+			['Addrso_email', 'email'],
         ];
     }
-	
+
     /**
      * @inheritdoc
      */
@@ -45,6 +49,7 @@ class Params extends \yii\db\ActiveRecord {
         return [
             'id' => 'ID',
 			'remote_users' => 'Remote Users File',
+			'rso_email'=> 'Email RSO Report To',
 			'sell_date' => 'Badge Sales Start Date (MM-DD)',
 			'pp_id'=>'PayPal Client ID',
 			'pp_sec'=>'PayPal Clinet Secret',

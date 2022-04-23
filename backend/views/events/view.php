@@ -28,9 +28,7 @@ $div_closed=false;
 
 <?php	switch ($model->e_type) {
 			case 'cio':
-				$user = User::find()->where(['badge_number'=>$model->e_poc])->one();
-				if(isset($user->company)) {$company = $user->company; } else { $company = 'Non CIO'; }
-				echo "<b>Sponsored by:</b> ".$company; break;
+				echo "<b>Sponsored by:</b> ".$model->clubs->club_name; break;
 				case 'club': echo "<b>Event:</b> Club Sponsored"; break;
 				case 'vol':  echo "<b>Event:</b> Volunteer  ($model->e_hours hours)"; break;
 } ?>

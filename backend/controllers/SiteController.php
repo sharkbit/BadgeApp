@@ -84,6 +84,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 				// Is Badge Suspended - Revoked - Retired
 				if ($badgeArray->status=='suspended' || $badgeArray->status =='revoked' || $badgeArray->status == 'retired') {
 					Yii::$app->getSession()->setFlash('error', 'Badge '.$badgeArray->status.', Please See Staff.',false);
+					yii::$app->controller->createLog(true, 'Site_Login '.$badgeArray->status.':',$badgeArray->badge_number.' - '.$badgeArray->expires);
 					return false;
 				}
 				// does member have privileges?
@@ -107,6 +108,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 						if(array_intersect([3,6],$_SESSION['privilege'])) { // do nothing
 						} else {
 							unset($_SESSION);
+							yii::$app->controller->createLog(true, 'Site_Login Expired 1:',$badgeArray->badge_number.' - '.$badgeArray->expires);
 							Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
 							return false;
 						}
@@ -116,13 +118,21 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 					// Is badge current?
 					if (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) {
 						unset($_SESSION);
+						yii::$app->controller->createLog(true, 'Site_Login Expired 2:',$badgeArray->badge_number.' - '.$badgeArray->expires);
 						Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
 						return false;
 					}
 					$_SESSION['privilege']=array(5);
 					$priv = Privileges::find()->where(['id'=>5])->one();
 					$_SESSION['timeout'] = $priv->timeout;
-					return Yii::$app->user->login(User::findIdentity(0), 0);
+					$rtn = User::findIdentity(0);
+					if($rtn) {
+						return Yii::$app->user->login($rtn, 0);
+					} else {
+						unset($_SESSION);
+						Yii::$app->getSession()->setFlash('error', ' Default user missing from DB: id 0 => Member.',false);
+						return false;
+					}
 				}
 			} else {
 				Yii::$app->getSession()->setFlash('error', 'Please Verify your Barcode and Badge Number!  SPACES ARE IMPORTANT');
@@ -245,7 +255,8 @@ class SiteController extends AdminController {
 					return $this->goBack();
 				}
 			} else {
-				$this->log_access("member",$_SERVER['REMOTE_ADDR'],$_REQUEST['LoginMemberForm']['badge'],'FAIL');
+				$r=$_REQUEST['LoginMemberForm'];
+				$this->log_access("member",$_SERVER['REMOTE_ADDR'],$r['barcode_c'].'-'.$r['barcode_t'].'-'.$r['barcode_b'].'-'.$r['barcode_pw'].' '.$r['badge'],'FAIL');
 			}
 		}
 		return $this->render('login-member', [
