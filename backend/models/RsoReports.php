@@ -153,8 +153,10 @@ class RsoReports extends \yii\db\ActiveRecord {
 			// Update the range
 			end($reduced);
 			$key = key($reduced);
-			$start = strtok($reduced[$key], "-");
-			$reduced[$key] = $start."-".$value;
+			if (!is_null($key)) {
+				$start = strtok($reduced[$key], "-");
+				$reduced[$key] = $start."-".$value;
+			}
 		// Not in a range
 		} else {
 			$reduced[] = $value;
