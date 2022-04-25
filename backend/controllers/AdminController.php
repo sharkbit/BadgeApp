@@ -284,7 +284,11 @@ class AdminController extends \yii\web\Controller {
 			$expNmaes=explode(',',$id);
 			$myNames_a[$expNmaes[0]] = $expNmaes[1];
 		}
-		return $myNames_a[$badge_nu];
+		if (empty($myNames_a[$badge_nu])) {
+			return "Unknown";
+		} else {
+			return $myNames_a[$badge_nu];
+		}
 	}
 
 	public function getNowDigit() {
