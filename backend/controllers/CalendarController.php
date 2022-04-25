@@ -634,43 +634,23 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 	}
 
 	public function RestoreSession($searchModel) {
+		$myFilters=['SearchTime','club_id','event_name','approved','active','event_status_id','range_status_id','facility_id'];
 		if(isset($_REQUEST['reset'])) {
+			foreach($myFilters as $filtr){
+				$clr='CalSearch'.$filtr;
+				unset($_SESSION[$clr]);
+			}
 			$urlStatus = yii::$app->controller->getCurrentUrl();
-			unset($_SESSION['CalSearchTime']);
-			unset($_SESSION['CalSearchclub_id']);
-			unset($_SESSION['CalSearchevent_name']);
-			unset($_SESSION['CalSearchapproved']);
 			return $this->redirect([$urlStatus['actionId']]);
 		} else {
-			if(isset($_REQUEST['AgcCalSearch']['SearchTime'])) {
-				$searchModel->SearchTime = $_REQUEST['AgcCalSearch']['SearchTime'];
-				$_SESSION['CalSearchTime'] = $_REQUEST['AgcCalSearch']['SearchTime'];
-			} elseif (isset($_SESSION['CalSearchTime'])) {
-				$searchModel->SearchTime = $_SESSION['CalSearchTime'];
-			}
-			if(isset($_REQUEST['AgcCalSearch']['club_id'])) {
-				$searchModel->club_id = $_REQUEST['AgcCalSearch']['club_id'];
-				$_SESSION['CalSearchclub_id'] = $_REQUEST['AgcCalSearch']['club_id'];
-			} elseif (isset($_SESSION['CalSearchclub_id'])) {
-				$searchModel->club_id = $_SESSION['CalSearchclub_id'];
-			}
-			if(isset($_REQUEST['AgcCalSearch']['event_name'])) {
-				$searchModel->event_name = $_REQUEST['AgcCalSearch']['event_name'];
-				$_SESSION['CalSearchevent_name'] = $_REQUEST['AgcCalSearch']['event_name'];
-			} elseif (isset($_SESSION['CalSearchevent_name'])) {
-				$searchModel->event_name = $_SESSION['CalSearchevent_name'];
-			}
-			if(isset($_REQUEST['AgcCalSearch']['approved'])) {
-				$searchModel->approved = $_REQUEST['AgcCalSearch']['approved'];
-				$_SESSION['CalSearchapproved'] = $_REQUEST['AgcCalSearch']['approved'];
-			} elseif (isset($_SESSION['CalSearchapproved'])) {
-				$searchModel->approved = $_SESSION['CalSearchapproved'];
-			}
-			if(isset($_REQUEST['AgcCalSearch']['facility_id'])) {
-				$searchModel->facility_id = $_REQUEST['AgcCalSearch']['facility_id'];
-				$_SESSION['CalSearchfacility_id'] = $_REQUEST['AgcCalSearch']['facility_id'];
-			} elseif (isset($_SESSION['CalSearchfacility_id'])) {
-				$searchModel->facility_id = $_SESSION['CalSearchfacility_id'];
+			foreach($myFilters as $filtr){
+				$clr='CalSearch'.$filtr;
+				if(isset($_REQUEST['AgcCalSearch'][$filtr])) {
+					$searchModel->$filtr = $_REQUEST['AgcCalSearch'][$filtr];
+					$_SESSION[$clr] = $_REQUEST['AgcCalSearch'][$filtr];
+				} elseif (isset($_SESSION[$clr])) {
+					$searchModel->$filtr = $_SESSION[$clr];
+				}
 			}
 		}
 		return $searchModel;
