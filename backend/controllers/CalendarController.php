@@ -119,17 +119,13 @@ class CalendarController extends AdminController {
 			if (is_array($_POST["selection"])) {
 				$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'changed'=>'Deleted by '.$_SESSION['user'],'data'=>"Record marked as Deleted."];
 				//update all remarks individually
-				foreach($_POST["selection"] as $e_id){
+				foreach($_POST["selection"] as $e_id) {
 					$model = $this->findModel($e_id);
 					$model->deleted=1;
 					$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 					$model->save();
 				}
 			}
-		//	if ($id==1) { //update all to delete   // why delete all?
-		//		AgcCal::UpdateAll(['deleted'=>1], ['in',"calendar_id",$_POST["selection"]]);// this deletes EVERYTHING
-		//	}
-
 			Yii::$app->getSession()->setFlash('success', 'Event(s) Deleted.');
 			return $this->redirect(['/calendar/'.$redir]);
 		}
