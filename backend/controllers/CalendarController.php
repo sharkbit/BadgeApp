@@ -113,7 +113,23 @@ class CalendarController extends AdminController {
 			]);
 	}
 
-	public function actionConflict() {
+	public function actionConflict($redir='conflict') {
+
+		if ((Yii::$app->request->post()) && (isset($_POST['selection'])) ) {
+			if (is_array($_POST["selection"])) {
+				$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'changed'=>'Deleted by '.$_SESSION['user'],'data'=>"Record marked as Deleted."];
+				//update all remarks individually
+				foreach($_POST["selection"] as $e_id) {
+					$model = $this->findModel($e_id);
+					$model->deleted=1;
+					$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
+					$model->save();
+				}
+			}
+			Yii::$app->getSession()->setFlash('success', 'Event(s) Deleted.');
+			return $this->redirect(['/calendar/'.$redir]);
+		}
+
 		$searchModel = new AgcCalSearch();
 		$searchModel->conflict = 1;
 		$this->RestoreSession($searchModel);
@@ -128,7 +144,7 @@ class CalendarController extends AdminController {
 		$model = $this->findModel($id);
 		if ($model) {
 			$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'changed'=>'Deleted by '.$_SESSION['user'],'data'=>"Record marked as Deleted."];
-			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
+
 
 			if ($type=='s') {
 					AgcCal::UpdateAll(['deleted'=>1,'remarks'=>$model->remarks], "calendar_id = ".$model->calendar_id);
@@ -299,9 +315,9 @@ if($tst) { if(isset($found)) { yii::$app->controller->createCalLog(true, 'trex_B
 
 			$full_msg='';
 			foreach($range as $fas) {
-if($tst) { if(isset($found)) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:293 fas_id', var_export($fas->facility_id,true)); } }				
+if($tst) { if(isset($found)) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:293 fas_id', var_export($fas->facility_id,true)); } }
 				$msg=''; $Range_available_lanes = $fas->available_lanes;
-			
+
 				if ($Range_available_lanes==0) {
 if($tst) { yii::$app->controller->createCalLog(false, 'trex_no_lanes:302', 'No Lanes'); }
 					if (isset($found)) {
@@ -309,7 +325,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_no_lanes:302', 'No L
 						foreach($found_ranges as $tst_rng) {
 							if(in_array($fas->facility_id,json_decode($tst_rng))) {$in_use=true;}
 						}
-		
+
 						if($in_use) {
 if($tst) { yii::$app->controller->createCalLog(false, 'trex_facility:307', 'No Lanes & In Use - found facility '.$fas->facility_id.' in '.$tst_rng); }
 							if ($force_order) {
@@ -320,7 +336,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_overwrite:310', var_
 										yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:313', "*** Conflict found $eDate, overwriting: ".$overwrite->cal_id." - $rng_pri < $type_i");
 										$msg .='<b style="color:green;">'."You Have Priority on $overwrite->fac_name</b>";
 									} else {
-										$isAval=false; 
+										$isAval=false;
 										$msg .='<b style="color:red;">'."You Don't have Priorityon $overwrite->fac_name.</b>";
 									}
 								}
@@ -388,11 +404,11 @@ if($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:382', 'Nothn
 
 		$returnMsg = array_merge($returnMsg,$inPattern);
 if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval', var_export($returnMsg,true));}
-			
+
 		if (Yii::$app->request->isAjax) {
-			return json_encode($returnMsg); } 
+			return json_encode($returnMsg); }
 		elseif ($internal){
-			return $isAval; } 
+			return $isAval; }
 		else {
 			return $this->render('test',['pattern'=>$pattern,'returnMsg'=>$returnMsg,'rng_pri'=>$rng_pri]);
 		}
@@ -403,11 +419,11 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 		$max_used=$rng_requ;
 		while($chk_time <= substr($stop,0,2)) {
 //yii::$app->controller->createLog(false, 'trex-Heavy', $chk_time);
-			
+
 			foreach([':01',':16',':31',':46'] as $min) {
 				$chk_lns_used = $rng_requ;
 				$checking = $chk_time.$min;
-				
+
 				if (strtotime($checking) < strtotime($start) ) {continue;}
 				foreach ($found as $recheck) {
 					$tst_start = strtotime($recheck->start);
@@ -420,7 +436,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 
 				if ($max_used < $chk_lns_used) { $max_used = $chk_lns_used;}
 				if($chk_lns_used > $rng_limit) {
-					return ['status'=>'Full','msg'=>$chk_lns_used-$rng_limit.' lanes over at '.date('h:i A',strtotime($checking.' - 1 minute'))]; 
+					return ['status'=>'Full','msg'=>$chk_lns_used-$rng_limit.' lanes over at '.date('h:i A',strtotime($checking.' - 1 minute'))];
 				}
 			}
 			$chk_time++;
@@ -428,7 +444,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 //yii::$app->controller->createLog(false, 'trex-Heavy_st', 'Space! '.$max_used );
 		return ['status'=>'Open','msg'=> ($rng_limit-$max_used).' Lanes'];
 	}
-	
+
 	public function actionRecur() {
 		$searchModel = new AgcCalSearch();
 		$searchModel->recur_every = true;
@@ -614,42 +630,23 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 	}
 
 	public function RestoreSession($searchModel) {
+		$myFilters=['SearchTime','club_id','event_name','approved','active','event_status_id','range_status_id','facility_id'];
 		if(isset($_REQUEST['reset'])) {
-			unset($_SESSION['CalSearchTime']);
-			unset($_SESSION['CalSearchclub_id']);
-			unset($_SESSION['CalSearchevent_name']);
-			unset($_SESSION['CalSearchapproved']);
-			return $this->redirect(['index']);
+			foreach($myFilters as $filtr){
+				$clr='CalSearch'.$filtr;
+				unset($_SESSION[$clr]);
+			}
+			$urlStatus = yii::$app->controller->getCurrentUrl();
+			return $this->redirect([$urlStatus['actionId']]);
 		} else {
-			if(isset($_REQUEST['AgcCalSearch']['SearchTime'])) {
-				$searchModel->SearchTime = $_REQUEST['AgcCalSearch']['SearchTime'];
-				$_SESSION['CalSearchTime'] = $_REQUEST['AgcCalSearch']['SearchTime'];
-			} elseif (isset($_SESSION['CalSearchTime'])) {
-				$searchModel->SearchTime = $_SESSION['CalSearchTime'];
-			}
-			if(isset($_REQUEST['AgcCalSearch']['club_id'])) {
-				$searchModel->club_id = $_REQUEST['AgcCalSearch']['club_id'];
-				$_SESSION['CalSearchclub_id'] = $_REQUEST['AgcCalSearch']['club_id'];
-			} elseif (isset($_SESSION['CalSearchclub_id'])) {
-				$searchModel->club_id = $_SESSION['CalSearchclub_id'];
-			}
-			if(isset($_REQUEST['AgcCalSearch']['event_name'])) {
-				$searchModel->event_name = $_REQUEST['AgcCalSearch']['event_name'];
-				$_SESSION['CalSearchevent_name'] = $_REQUEST['AgcCalSearch']['event_name'];
-			} elseif (isset($_SESSION['CalSearchevent_name'])) {
-				$searchModel->event_name = $_SESSION['CalSearchevent_name'];
-			}
-			if(isset($_REQUEST['AgcCalSearch']['approved'])) {
-				$searchModel->approved = $_REQUEST['AgcCalSearch']['approved'];
-				$_SESSION['CalSearchapproved'] = $_REQUEST['AgcCalSearch']['approved'];
-			} elseif (isset($_SESSION['CalSearchapproved'])) {
-				$searchModel->approved = $_SESSION['CalSearchapproved'];
-			}
-			if(isset($_REQUEST['AgcCalSearch']['facility_id'])) {
-				$searchModel->facility_id = $_REQUEST['AgcCalSearch']['facility_id'];
-				$_SESSION['CalSearchfacility_id'] = $_REQUEST['AgcCalSearch']['facility_id'];
-			} elseif (isset($_SESSION['CalSearchfacility_id'])) {
-				$searchModel->facility_id = $_SESSION['CalSearchfacility_id'];
+			foreach($myFilters as $filtr){
+				$clr='CalSearch'.$filtr;
+				if(isset($_REQUEST['AgcCalSearch'][$filtr])) {
+					$searchModel->$filtr = $_REQUEST['AgcCalSearch'][$filtr];
+					$_SESSION[$clr] = $_REQUEST['AgcCalSearch'][$filtr];
+				} elseif (isset($_SESSION[$clr])) {
+					$searchModel->$filtr = $_SESSION[$clr];
+				}
 			}
 		}
 		return $searchModel;
@@ -881,7 +878,7 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 				$NewID = $model_event->calendar_id;
 			}
 		}
-		
+
 		$CalidExist = (new AgcCal)->find()->where(['calendar_id'=>$model->calendar_id])->one();
 		if (($NewID) || (!$CalidExist)) {
 			if (!$NewID) {$NewID=$first_id;}

@@ -43,11 +43,15 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	<?= $this->render('_index-tab-menu',['model'=>$model]) ?>
 
 	<h2><?= Html::encode($this->title) ?></h2>
-
 <div class="row">
+<?php $form = ActiveForm::begin([
+	'action' => [$urlStatus['actionId']],
+	'method' => 'post',
+	'id'=>'calendarFilter',
+]); ?>
 	<div class="col-xs-12">
-	<?php Pjax::begin(); ?>
-	<?php
+	<?php Pjax::begin(); 
+
 	$gridColumns = [
 			[	'attribute'=>'club_id',
 				'format'=>'raw',
@@ -198,6 +202,14 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'value'=>function($model) { if($model->conflict==1) { return 'Yes'; } else { return 'No'; } },
 				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? (($urlStatus['actionId']=='index') ? false : true ): false,
 			],
+			[	'header'=>'Bulk Delete',
+				'visible' => (yii::$app->controller->hasPermission('calendar/conflict')) ? (($urlStatus['actionId']=='conflict') ? true : false ): false,
+				'format' => 'raw',
+				'contentOptions' => ['style' => 'text-align: center;'],
+				'filter' => ' <input type="checkbox" id="del_sel_all" name="del_sel_all">',
+				'value'=>function($model) {return 
+					'<input type="checkbox" name="selection[]" value="'.$model->calendar_id.'"onchange="$(this).parent().parent().toggleClass(&quot;danger&quot;);" />'; },
+			],
 			[	'header'=>'Action',
 				'visible' => (yii::$app->controller->hasPermission('calendar/view')) ? true : ((yii::$app->controller->hasPermission('calendar/update')) ? true : ((yii::$app->controller->hasPermission('calendar/delete')) ? true : false ) ),
 				'class' => 'yii\grid\ActionColumn',
@@ -240,14 +252,10 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 		?>
 	<?php Pjax::end(); ?>
 <div class="calendar-index">
+<!--<div class="row"> -->
 
-<?php $form = ActiveForm::begin([
-	//'action' => ['index'],
-	'method' => 'post',
-	'id'=>'calendarFilter',
-]); ?>
 <div class="row">
-	<div class="col-xs-12 col-sm-3" <?php if(($urlStatus['actionId']=='recur')||($urlStatus['actionId']=='conflict')) {echo ' style="display: none"'; } ?>>
+	<div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2" <?php if(($urlStatus['actionId']=='recur')||($urlStatus['actionId']=='conflict')) {echo ' style="display: none"'; } ?>>
 		<?=  $form->field($searchModel, 'SearchTime', [
 		'options'=>['class'=>'drp-container form-group']
 		])->widget(DateRangePicker::classname(), [
@@ -259,16 +267,16 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 			'locale'=>['format'=>'Y-m-d','separator'=>' - ',],
 		]])->label('Date range:'); ?>
 	</div>
-	<div class="col-xs-4 col-sm-2">
+	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
 		<?= $form->field($model, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
 	</div>
-	<div class="col-xs-4 col-sm-2"><br />
+	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-3 col-xl-3"><br />
 		<?= Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Search', ['class' => 'btn btn-primary']) ?>
-		<?= Html::a('<i class="fa fa-eraser" aria-hidden="true"></i> Reset',['index?reset=true'], ['class' => 'btn btn-danger']) ?>
+		<?= Html::a('<i class="fa fa-eraser" aria-hidden="true"></i> Reset',[$urlStatus['actionId'].'?reset=true'], ['class' => 'btn btn-danger']) ?>
 	</div>
 
-	<div class="col-xs-4 col-sm-2" > <p> <br /></p>
-		Export Data -
+	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2" > <!-- <p> <br /></p> -->
+		Export Data - 
 		<?=ExportMenu::widget([
 			'dataProvider' => $dataProvider,
 			'filterModel' => $searchModel,
@@ -284,10 +292,11 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				ExportMenu::FORMAT_EXCEL_X => false,
 				//ExportMenu::FORMAT_PDF => false
 			]
-		]) . "<br /> <br />\n";?>
+		])// . "<br /> <br />\n"
+		;?>
 	</div>
 
-	<div class="col-xs-4  col-sm-2 pull-right">
+	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2 pull-right">
 		<?php if (yii::$app->controller->hasPermission('calendar/create')) { ?>
 		<div class="btn btn-group pull-right">
 		<?php if($urlStatus['actionId']=='recur') {$extra='?recur=1';} else {$extra='';} ?>
@@ -295,15 +304,43 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 		</div > <?php } ?>
 	</div>
 </div>
-	<?php ActiveForm::end(); ?>
+	
 </div>
 	<?php
+	if ($urlStatus['actionId']=='conflict') {
+	
+		echo '<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2 pull-right">';
+			echo '<div class="btn-group pull-right">';
+			echo Html::submitButton('<i class="fa fa-trash" aria-hidden="true"></i> Bulk Delete', ['class' => 'btn btn-warning','name'=>'bulkdelete','value'=>'1']);
+			echo '</div>';
+		echo '</div>';
+		}
+		echo '<p><div class="row">';
+		echo '<div class="col-xs-12">';
 		echo GridView::widget([
-		'dataProvider' => $dataProvider,
-		'filterModel' => $searchModel,
-		'columns' => $gridColumns,
-	]); ?>
+			'dataProvider' => $dataProvider,
+			'filterModel' => $searchModel,
+			'columns' => $gridColumns,
+		]); 
+		echo '</div></div>';
+	?>
+
+</div>	
+<?php ActiveForm::end(); ?>
 
 </div>
-</div>
 <p>* is a Recurring Event</p>
+<script>
+//$("#w0-cols").hide();
+
+document.getElementById("del_sel_all").addEventListener("click", function(event){
+  event.preventDefault();
+  
+  var checkboxes = document.getElementsByName('selection[]');
+    for (var checkbox of checkboxes) {
+      checkbox.checked = this.checked;
+	  checkbox.parentNode.parentNode.className="danger";
+    }
+});
+
+</script>
