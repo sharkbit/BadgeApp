@@ -6,7 +6,7 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Sales Report';
+$this->title = 'Club Sales Report';
 $this->params['breadcrumbs'][] = ['label' => 'store', 'url' => ['/sales']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/payment/inventory']];
 
@@ -53,55 +53,65 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 			<?php ActiveForm::end(); ?>
 		</div>
 	</div>
+	<?php
+	$gridColumns = [
+		'club_name',
+		'short_name',
+		[	'attribute'=>'new',
+			'value' => function($dataProvider) {
+				if($dataProvider['new']==0) {return '';} else {return $dataProvider['new'];}
+			}
+		],
+		[	'header'=>'Renew',
+			'value' => function($dataProvider) {
+				if($dataProvider['renew']==0) {return '';} else {return $dataProvider['renew'];}
+			}
+		],
+		[	'attribute'=>'certs',
+			'value' => function($dataProvider) {
+				if($dataProvider['certs']==0) {return '';} else {return $dataProvider['certs'];}
+			}
+		],
+		[	'attribute'=>'guests',
+			'value' => function($dataProvider) {
+				if($dataProvider['guests']==0) {return '';} else {return $dataProvider['guests'];}
+			}
+		],
+		[	'attribute'=>'students',
+			'value' => function($dataProvider) {
+				if(isset($dataProvider['students']) && (int)$dataProvider['students'] >0 ) {return $dataProvider['students'];} else {return '';}
+			}
+		],
+	 ];?>
 	<div class="row">
 		<div class="col-sm-6">
 		<?= $SalesReport->getSRdata($SalesReport->created_at) ?>
 		</div>
-	</div>	
-	<hr>
+		<div class="col-sm-6 pull-right">
+		Export Data -
+		<?=ExportMenu::widget([
+			'dataProvider' => $dataProvider,
+			'columns' => $gridColumns,
+			'fontAwesome' => true,
+			'batchSize' => 0,
+			'filename'=>  $this->title,
+			'target' => '_blank',
+			'folder' => '@webroot/export', // this is default save folder on server
+			'exportConfig' => [
+				ExportMenu::FORMAT_HTML => false,
+				ExportMenu::FORMAT_EXCEL => false,
+				ExportMenu::FORMAT_EXCEL_X => false,
+				//ExportMenu::FORMAT_PDF => false
+			]
+		]) . "<hr>\n";?>
+		</div>
+	</div>
+	
 	<div class="row">
 		<div class="col-xs-12">
-			<?php
-				$gridColumns = [
-					'club_name',
-					'short_name',
-					[	'attribute'=>'new',
-						'value' => function($dataProvider) {
-							if($dataProvider['new']==0) {return '';} else {return $dataProvider['new'];}
-						}
-					],
-					[	'header'=>'Renew',
-						'value' => function($dataProvider) {
-							if($dataProvider['renew']==0) {return '';} else {return $dataProvider['renew'];}
-						}
-					],
-					[	'attribute'=>'certs',
-						'value' => function($dataProvider) {
-							if($dataProvider['certs']==0) {return '';} else {return $dataProvider['certs'];}
-						}
-					],
-					[	'attribute'=>'guests',
-						'value' => function($dataProvider) {
-							if($dataProvider['guests']==0) {return '';} else {return $dataProvider['guests'];}
-						}
-					],
-					[	'attribute'=>'students',
-						'value' => function($dataProvider) {
-							if(isset($dataProvider['students']) && (int)$dataProvider['students'] >0 ) {return $dataProvider['students'];} else {return '';}
-						}
-					],
-				 ];
 
-	/*		   echo ExportMenu::widget([
-					'dataProvider' => $dataProvider,
-					'columns' => $gridColumns,
-					'fontAwesome' => true,
-					'batchSize' => 10,
-					'filename'=>  $this->title,
-					'target' => '_blank',
-					'folder' => '@webroot/export', // this is default save folder on server
-				]) . "<hr>\n"; 
-	*/
+
+			<?php
 			   echo GridView::widget([
 					'dataProvider' => $dataProvider,
 					'columns' => $gridColumns,
