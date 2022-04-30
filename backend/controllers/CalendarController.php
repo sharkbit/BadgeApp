@@ -481,9 +481,9 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 						'data'=>($force_order)? 'Forcing Priority':'Normal Priority'];
 					$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','Deleted ". var_export($saveOut,true)." Future Events");
-					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,True);
+					if($tst) {echo "Repb: rec_start: ".$model->recurrent_start_date.", Rec_end: ".$model->recurrent_end_date.", :Rec_PATTERN: ".$model->recur_week_days."<br /> /n"; }
+					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$tst,$force_order);
 
- yii::$app->controller->createLog(true, 'trex-eDates', var_export($myEventDates,true));
 					$model = $this->createRecCalEvent($model,$myEventDates,$force_order,false,$tst);
 					if($force_order) { return $this->redirect(['recur']); } else {
 					return $this->redirect(['update', 'id' => $model->recurrent_calendar_id]);}
@@ -635,7 +635,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 	}
 
 	public function RestoreSession($searchModel) {
-		$myFilters=['SearchTime','club_id','event_name','approved','active','event_status_id','range_status_id','facility_id'];
+		$myFilters=['SearchTime','club_id','event_name','approved','active','event_status_id','range_status_id','facility_id','recur_week_days'];
 		if(isset($_REQUEST['reset'])) {
 			foreach($myFilters as $filtr){
 				$clr='CalSearch'.$filtr;
