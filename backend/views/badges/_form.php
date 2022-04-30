@@ -265,7 +265,7 @@ $confParams  = Params::findOne('1');
 					</div>
 				</div>
 				<div class="col-xs-12 col-sm-12">
-                    <?= $form->field($model, 'sticker')->dropDownList((new backend\models\Stickers)->getlist()) ?>
+                    <?= $form->field($model, 'sticker')->dropDownList((new backend\models\Stickers)->getlist(),['prompt'=>'Select Sticker']) ?>
                 </div>
                 <div class="clearfix"></div>
             </div>

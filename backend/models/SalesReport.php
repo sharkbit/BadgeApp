@@ -5,7 +5,7 @@ namespace backend\models;
 use backend\models\clubs;
 use Yii;
 
-clASs SalesReport extends \yii\db\ActiveRecord {
+class SalesReport extends \yii\db\ActiveRecord {
 	public $created_at;
 
 	public function rules() {
@@ -24,13 +24,15 @@ clASs SalesReport extends \yii\db\ActiveRecord {
 			$query = $this->getWhere($mydate,'created_at');
 			$sql="SELECT (SELECT count(*) FROM badge_subscriptions WHERE transaction_type='NEW' AND ".$query.") AS num_new, ".
 						"(SELECT count(*) FROM badge_subscriptions WHERE transaction_type='RENEW' AND ".$query.") AS num_renew, ".
-						"(SELECT count(*) FROM badge_certification WHERE ".$query.") AS num_cert";
+						"(SELECT count(*) FROM badge_certification WHERE certification_type='410105' AND ".$query.") AS num_Scert, ".
+						"(SELECT count(*) FROM badge_certification WHERE certification_type='410100' AND ".$query.") AS num_Hcert";
 			$mydata = Yii::$app->db->createCommand($sql)->queryall();
 
 			$myNums = "";
 			if(isset($mydata[0]['num_new']))  {  $myNums .= "[ New Badges: ".$mydata[0]['num_new']." ]"; }
 			if(isset($mydata[0]['num_renew'])) { $myNums .= "[ Renewed Badges: ".$mydata[0]['num_renew']." ]"; }
-			if(isset($mydata[0]['num_cert'])) {  $myNums .= "[ Certs: ".$mydata[0]['num_cert']." ]"; }
+			if(isset($mydata[0]['num_Scert'])) {  $myNums .= "[ Steel Certs: ".$mydata[0]['num_Scert']." ]"; }
+			if(isset($mydata[0]['num_Hcert'])) {  $myNums .= "[ Holster Certs: ".$mydata[0]['num_Hcert']." ]"; }
 			return $myNums;
 
 		} else {

@@ -42,7 +42,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 	<?php
 	$gridColumns = [
 		[	'attribute'=>'badge_number',
-			'contentOptions' =>['style' => 'width:100px'],
+			'contentOptions' =>['style' => 'width:80px'],
 			'format' => 'raw',
 			'value'=>function ($data) {
 				return str_pad($data->badge_number, 5, '0', STR_PAD_LEFT);
@@ -51,6 +51,8 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		'name',
 		[	'attribute'=>'ClubNames',
 			'visible' => ($searchModel->show_club) ? true : false,
+			'format' => 'raw',
+			'contentOptions' =>['style' => 'width:100px'],
 		],
 		'tx_date',
 		[	'attribute'=>'cart',

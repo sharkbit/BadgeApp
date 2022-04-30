@@ -369,7 +369,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 					</div>
 				</div>
 		<p> </P>
-		<?= $form1->field($badgeSubscriptions, 'sticker')->dropDownList((new backend\models\Stickers)->getlist()) ?>
+		<?= $form1->field($badgeSubscriptions, 'sticker')->dropDownList((new backend\models\Stickers)->getlist(),['prompt'=>'Select Sticker']) ?>
 			<div class="form-group">
 
 				<?= Html::submitButton( '<i class="fa fa-refresh" aria-hidden="true"></i> RENEW BADGE', ['class' => 'btn btn-primary pull-right', 'id' => 'renew_btn']).PHP_EOL; ?>

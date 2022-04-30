@@ -62,7 +62,7 @@ class CardReceipt extends \yii\db\ActiveRecord {
 	}
 
 	public function getClubNames() {
-		return (new clubs)->getMyClubsNames($this->badge_number);
+		return (new clubs)->getMyClubsNames($this->badge_number,true);
 	}
 }
 
