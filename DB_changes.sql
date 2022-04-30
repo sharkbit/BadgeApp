@@ -629,3 +629,6 @@ ADD COLUMN `cash_drop` DECIMAL(7,2) NULL DEFAULT 0.00 AFTER `cash_bos`;
 -- Email list for RSO report #195
 ALTER TABLE `BadgeDB`.`params` 
 ADD COLUMN `rso_email` TEXT NULL DEFAULT NULL AFTER `status`;
+
+-- Sales Summary  #151
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `Cart_Summary` AS select `t1`.`tx_date` AS `tx_date`,`s3`.`item` AS `cat`,`t1`.`tx_type` AS `tx_type`,`refunds`.`csku` AS `csku`,`refunds`.`citem` AS `citem`,`refunds`.`ea` AS `ea`,`refunds`.`qty` AS `qty`,`refunds`.`cprice` AS `cprice` from (`cc_receipts` `t1` join ((json_table(`t1`.`cart`, '$[*]' columns (`ea` decimal(7,2) path '$.ea', `qty` int path '$.qty', `csku` text character set utf8mb4 path '$.sku', `citem` text character set utf8mb4 path '$.item', `cprice` decimal(7,2) path '$.price')) `refunds` left join `store_items` `s2` on((`refunds`.`csku` = `s2`.`sku`))) left join `store_items` `s3` on((`s2`.`paren` = `s3`.`item_id`)))) order by `t1`.`tx_date` desc;
