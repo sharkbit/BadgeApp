@@ -73,7 +73,7 @@ class CalendarController extends AdminController {
 					Yii::$app->getSession()->setFlash('error', 'No Recurring range set');
 					return $this->redirect(['create','recur'=>1,'model'=>$model]);
 				}
-				$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days);
+				$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,false,false);
 
 				if (is_array($myEventDates) && sizeof($myEventDates) >0) {
 
@@ -265,7 +265,7 @@ if($tst) {
 		if ((!$internal) && (isset($_POST['AgcCal']['recur_every'])) && ($_POST['AgcCal']['recur_every']==1)){
 			$real_pattern = $this->GetPattern($_POST);
 			if($real_pattern) {
-				$myEventDates = $this->getEvents($_POST['AgcCal']['recurrent_start_date'],$_POST['AgcCal']['recurrent_end_date'],$real_pattern);
+				$myEventDates = $this->getEvents($_POST['AgcCal']['recurrent_start_date'],$_POST['AgcCal']['recurrent_end_date'],$real_pattern,$tst,$force_order);
 				if(!in_array($eDate,$myEventDates)) {
 					$inPattern=array('chkpat'=>'success','inPattern'=>$eDate.' is not in the pattern scope you specified.');
 				}
@@ -696,7 +696,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 		return $myPat;
 	}
 
-	public function getEvents($eStart, $eEnd, $ePat, $eco=true, $rePub=false) {
+	public function getEvents($eStart, $eEnd, $ePat, $eco=false, $rePub=false) {
 		$whatYear= intval(date('Y'))+1;
 
 		if (strtotime($eStart) > strtotime($eEnd)) {  //start date before the end date [Nov thru Feb]

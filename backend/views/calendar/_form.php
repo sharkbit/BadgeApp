@@ -676,7 +676,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
             $("#searchng_cal_animation").show(500);
 
 	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?eDate="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility=["+reqFacl+']'+reqLanes+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat;
-	console.log(myUrl+"&tst=1");
+	//console.log(myUrl+"&tst=1");
 			var calendarFormData = $("#calendar-form").serializeArray();
             jQuery.ajax({
                 method: 'POST',
