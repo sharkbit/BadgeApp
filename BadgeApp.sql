@@ -24,6 +24,25 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `BadgeDB` /*!40100 DEFAULT CHARACTER SE
 USE `BadgeDB`;
 
 --
+-- Temporary view structure for view `Cart_Summary`
+--
+
+DROP TABLE IF EXISTS `Cart_Summary`;
+/*!50001 DROP VIEW IF EXISTS `Cart_Summary`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `Cart_Summary` AS SELECT 
+ 1 AS `tx_date`,
+ 1 AS `cat`,
+ 1 AS `tx_type`,
+ 1 AS `csku`,
+ 1 AS `citem`,
+ 1 AS `ea`,
+ 1 AS `qty`,
+ 1 AS `cprice`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `badge_certification`
 --
 
@@ -44,7 +63,7 @@ CREATE TABLE `badge_certification` (
   `is_migrated` enum('0','1') NOT NULL DEFAULT '0',
   `cc_x_id` varchar(48) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=853 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -116,7 +135,6 @@ CREATE TABLE `badges` (
   `phone_op` varchar(25) DEFAULT NULL,
   `ice_contact` varchar(40) DEFAULT NULL,
   `ice_phone` varchar(25) DEFAULT NULL,
-  `club_id` int(4) NOT NULL,
   `mem_type` int(11) NOT NULL,
   `primary` varchar(11) DEFAULT NULL,
   `incep` datetime NOT NULL,
@@ -143,21 +161,23 @@ DROP TABLE IF EXISTS `cc_receipts`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cc_receipts` (
   `id` varchar(48) NOT NULL DEFAULT '',
-  `badge_number` int(6) NOT NULL,
+  `badge_number` int NOT NULL,
   `tx_date` datetime NOT NULL,
   `tx_type` varchar(10) NOT NULL,
   `status` varchar(15) DEFAULT NULL,
   `amount` decimal(8,2) NOT NULL,
+  `tax` decimal(5,2) NOT NULL DEFAULT '0.00',
   `authCode` varchar(6) DEFAULT NULL,
   `name` varchar(50) NOT NULL,
   `cardNum` varchar(22) DEFAULT NULL,
   `cardType` varchar(20) DEFAULT NULL,
-  `expYear` int(4) DEFAULT NULL,
-  `expMonth` int(2) DEFAULT NULL,
+  `expYear` int DEFAULT NULL,
+  `expMonth` int DEFAULT NULL,
   `cashier` varchar(50) NOT NULL,
-  `on_qb` int(1) NOT NULL DEFAULT '0',
+  `cashier_badge` int DEFAULT NULL,
+  `on_qb` int NOT NULL DEFAULT '0',
   `cart` text NOT NULL,
-  `guest_cred` int(3) DEFAULT '0',
+  `guest_cred` int DEFAULT '0',
   PRIMARY KEY (`id`,`badge_number`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -183,16 +203,6 @@ CREATE TABLE `clubs` (
   UNIQUE KEY `club_id` (`club_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `clubs`
---
-
-LOCK TABLES `clubs` WRITE;
-/*!40000 ALTER TABLE `clubs` DISABLE KEYS */;
-INSERT INTO `clubs` VALUES (1,'Applied Physics Laboratory Gun Club','APL','Doug.Grantham@jhuapl.edu',0,1),(2,'Arlington Rifle and Pistol Club','Arlington','robcow1@gmail.com',0,1),(3,'Baltimore County Game & Fish','BCG&F','',1,1),(4,'Baltimore Rifle Club','Balto Rifle','paul_crawford_atty@yahoo.com',0,1),(5,'Berwyn Rod and Gun Club','Berwyn','membership@berwyn.org',0,1),(6,'Catonsville Scouters Rifle and Pistol Club','Catonsville','CSRPC51@aol.com',0,1),(7,'Chesapeake Rifle and Pistol Club','Chesapeake','WAJE0526@aol.com',0,1),(8,'Garrison Rifle and Revolver Club','Garrison','vicepresident@garrisonrr.org',0,1),(9,'Glenmore Rifle and Pistol Club','Glenmore','moodystp@hotmail.com',0,1),(10,'Greenbelt Gun Club','Greenbelt','secretary@greenbeltgunclub.com',0,1),(11,'Homewood Rifle and Pistol Club','Homewood','secretary@homewoodrpc.org',0,1),(12,'Howard County Rifle and Pistol Club','Howard Co','VP-Membership@howardcountyriflepistol.org',0,1),(13,'Marriottsville Metallic Silhouette Shooters','MMSS','Skipwine@yahoo.com',0,1),(14,'Marriottsville Muzzle Loaders','MML','kayak3x@verizon.net',0,1),(15,'Maryland Rifle Club','Md Rifle','president@mdrifleclub.org',0,1),(16,'Maryland Tenth Cavalry Gun Club','10th Cav','trooperkh1@gmail.com',0,1),(17,'Maryland Thompson Collectors Association','MDTCA','phiteshe@vt.edu',0,1),(18,'Meade Rifle and Pistol Club','Meade R&P','siegc@verizon.net',0,1),(19,'Meade Rod and Gun Club','Meade R&G','president@MeadeRodandGun.org',0,1),(20,'Monumental Rifle and Pistol Club','Monumental','secretary@monumental.org',0,1),(21,'Mount Washington Rod and Gun Club','Mt Wash','secretary@mtwashingtonrg.org',0,1),(22,'NASA/Goddard Sportsman\'s Club','Goddard','AGCRep@GoddardGunClub.Org',0,1),(23,'Old Post Rifle and Pistol Club','Old Post','stvnander397@gmail.com',0,1),(24,'Pioneer Rod and Gun Glub','Pioneer','',0,1),(25,'Stemmers Run Rifle and Pistol Club','Stemmers','s_fickus@hotmail.com',0,1),(26,'Stoney Creek Fishing and Hunting Club','Stoney Crk','jorgemccauley@verizon.net',0,1),(27,'Tidewater Muzzle Loaders','TidewaterML','kelley805@aol.com',0,1),(28,'Twelfth Precinct Pistol and Archery Club','12th Pct','buc708@aol.com',0,1),(29,'Northrop Grumman Westinghouse Shooting Sports Club','Westinghouse','stephen.gottesman1@verizon.net',0,1),(30,'Anne Aundel County County Gun Club','AA County','parker.george95@yahoo.com',0,1),(31,'Maryland State Rifle and Pistol Association','MSRPA','secretary@msrpa.org',0,1),(32,'Givati Rifle and Pistol Club','Givati','Info@GivatiRPC.org',0,1),(33,'Associated Gun Clubs Staff','AGC Staff','',0,1),(34,'Gadsden Pew Club','Gadsden Pew Club','secretary@gadsdenpewclub.com',0,1),(35,'Z Old Data','ZOD','president@associatedgunclubs.org',0,1),(36,'Maryland Shall Issue','MSI','mpennak@marylandshallissue.org',0,1),(37,'IOTA Firearms and Security Training','IOTA','',0,0),(38,'MD Gun Training Center','MDGTC','',0,0),(39,'Baltimore Firearms Training','Baltimore Firearms','',0,0),(40,'AGC-RSSOP','RSSOP','',0,0),(41,'AGC High Power','High Power','',0,0),(42,'AGC Action Shooting','ACTION','',0,0),(43,'AGC Walk','Walk-about','',0,0),(44,'Parks Firearms','Parks','',0,0),(45,'B&S Personal Safety And Firearm Education','B&S','mcbruzdzinski@bspsafe.com',0,0),(46,'Protective Concepts','Protective','Protectiveconceptsllc_MD@yahoo.com',0,0),(47,'Antebellum Tutelage','Antebellum','antebellumt@icloud.com',0,0),(48,'Summit Training Group','Summit','dennisboyle9@gmail.com',0,0),(49,'NoVA-MD Self Defense','NoVA','jim@nova-mdselfdefense.com',0,0),(50,'JW Firearms Training & Certification','JW','johnnysfirearms@gmail.com',0,0),(51,'blasterKRAFT Firearms Training','blasterKRAFT','chris@blasterKRAFT.com',0,0),(52,'Defender One Security','Defender','Jared@defenderonesecurity.com',0,0);
-/*!40000 ALTER TABLE `clubs` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `event_attendee`
@@ -223,49 +233,20 @@ DROP TABLE IF EXISTS `events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `events` (
-  `e_id` int(11) NOT NULL AUTO_INCREMENT,
+  `e_id` int NOT NULL AUTO_INCREMENT,
   `e_name` varchar(60) NOT NULL,
   `e_date` date NOT NULL,
-  `e_poc` int(5) NOT NULL,
+  `e_poc` int NOT NULL,
+  `sponsor` int DEFAULT NULL,
   `e_status` varchar(45) NOT NULL,
   `e_type` varchar(45) NOT NULL,
-  `e_hours` int(5) DEFAULT NULL,
+  `e_hours` int DEFAULT NULL,
   `e_inst` varchar(255) DEFAULT NULL,
   `e_rso` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`e_id`),
   UNIQUE KEY `e_id_UNIQUE` (`e_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `fees_structure`
---
-
-DROP TABLE IF EXISTS `fees_structure`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `fees_structure` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `label` varchar(255) DEFAULT NULL,
-  `membership_id` int(11) DEFAULT NULL,
-  `fee` float(10,2) NOT NULL,
-  `status` enum('0','1') NOT NULL,
-  `type` enum('badge_fee','certification') NOT NULL,
-  `sku_full` varchar(15) DEFAULT NULL,
-  `sku_half` varchar(15) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `fees_structure`
---
-
-LOCK TABLES `fees_structure` WRITE;
-/*!40000 ALTER TABLE `fees_structure` DISABLE KEYS */;
-INSERT INTO `fees_structure` VALUES (1,'PRIMARY',50,200.00,'0','badge_fee','450100','450115'),(2,'FAMILY',51,67.00,'0','badge_fee','450110','450125'),(3,'Junior',52,100.00,'0','badge_fee','450105','450120'),(4,'LIFE',99,0.00,'0','badge_fee',NULL,NULL),(5,'Steel',NULL,10.00,'0','certification','410105',NULL),(6,'Holster',NULL,20.00,'0','certification','410100',NULL),(7,'Action',NULL,10.00,'0','certification',NULL,NULL),(8,'15yr Badge',70,2500.00,'1','badge_fee','450200','450200'),(9,'Staff',88,0.00,'0','badge_fee',NULL,NULL);
-/*!40000 ALTER TABLE `fees_structure` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `guest`
@@ -298,20 +279,21 @@ DROP TABLE IF EXISTS `mass_email`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `mass_email` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `mass_to` varchar(255) NOT NULL,
-  `mass_to_users` VARCHAR(100) NULL DEFAULT '',
+  `mass_to_users` varchar(100) DEFAULT '',
   `mass_reply_to` varchar(255) DEFAULT NULL,
+  `mass_reply_name` varchar(100) DEFAULT NULL,
   `mass_subject` varchar(255) NOT NULL,
   `mass_body` blob NOT NULL,
   `mass_created` datetime DEFAULT NULL,
-  `mass_created_by` int(11) DEFAULT NULL,
+  `mass_created_by` int DEFAULT NULL,
   `mass_updated` datetime DEFAULT NULL,
-  `mass_updated_by` int(11) DEFAULT NULL,
-  `mass_running` int(11) DEFAULT '0',
+  `mass_updated_by` int DEFAULT NULL,
+  `mass_running` int DEFAULT '0',
   `mass_start` datetime DEFAULT NULL,
   `mass_runtime` datetime DEFAULT NULL,
-  `mass_lastbadge` int(11) DEFAULT NULL,
+  `mass_lastbadge` int DEFAULT NULL,
   `mass_finished` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
@@ -342,7 +324,7 @@ CREATE TABLE `membership_type` (
 
 LOCK TABLES `membership_type` WRITE;
 /*!40000 ALTER TABLE `membership_type` DISABLE KEYS */;
-INSERT INTO `membership_type` VALUES (50,Primary,1,1,450115,450100),(51,Family,1,1,450125,450110),(52,Junior,1,1,450120,450105),(70,15yr,1,0,450200,450200),(88,Staff,0,1,null,null),(99,Life,0,1,null,null);
+INSERT INTO `membership_type` VALUES (50,'Primary',1,1,'450115','450100'),(51,'Family',1,1,'450125','450110'),(52,'Junior',1,1,'450120','450105'),(70,'15yr',1,1,'450200','450200'),(88,'N.C.M.',0,1,NULL,NULL),(99,'Life',0,1,NULL,NULL);
 /*!40000 ALTER TABLE `membership_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -353,21 +335,22 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `params`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `params` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `params_tmp` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `sell_date` varchar(5) NOT NULL,
-  `guest_sku` int(6) NOT NULL DEFAULT '0',
-  `guest_total` int(3) NOT NULL DEFAULT '50',
+  `guest_sku` int NOT NULL DEFAULT '0',
+  `guest_total` int NOT NULL DEFAULT '50',
   `status` enum('active','disabled') NOT NULL,
+  `rso_email` text,
   `pp_id` varchar(82) DEFAULT NULL,
   `pp_sec` varchar(82) DEFAULT NULL,
   `qb_env` varchar(4) DEFAULT 'dev',
-  `conv_p_merc_id` VARCHAR(7) NULL DEFAULT NULL,
-  `conv_p_user_id` VARCHAR(45) NULL DEFAULT NULL,
-  `conv_p_pin` VARCHAR(64) NULL DEFAULT NULL,
-  `conv_d_merc_id` VARCHAR(7) NULL DEFAULT NULL,
-  `conv_d_user_id` VARCHAR(45) NULL DEFAULT NULL,
-  `conv_d_pin` VARCHAR(65) NULL DEFAULT NULL,
+  `conv_p_merc_id` varchar(7) DEFAULT NULL,
+  `conv_p_user_id` varchar(45) DEFAULT NULL,
+  `conv_p_pin` varchar(64) DEFAULT NULL,
+  `conv_d_merc_id` varchar(7) DEFAULT NULL,
+  `conv_d_user_id` varchar(45) DEFAULT NULL,
+  `conv_d_pin` varchar(65) DEFAULT NULL,
   `qb_realmId` varchar(20) DEFAULT NULL,
   `qb_oauth_cust_key` varchar(50) DEFAULT NULL,
   `qb_oauth_cust_sec` varchar(40) DEFAULT NULL,
@@ -380,10 +363,14 @@ CREATE TABLE `params` (
   `qb_oa2_access_date` datetime DEFAULT NULL,
   `qb_oa2_refresh_token` varchar(50) DEFAULT NULL,
   `qb_oa2_refresh_date` datetime DEFAULT NULL,
-  `log_rotate` int(3) DEFAULT NULL,
-  `whitelist` TEXT NULL DEFAULT NULL,
-  `remote_users` VARCHAR(100) NULL DEFAULT NULL,
-  `usps_api` VARCHAR(45) NULL DEFAULT NULL,
+  `log_rotate` int DEFAULT NULL,
+  `whitelist` text,
+  `remote_users` varchar(100) DEFAULT NULL,
+  `usps_api` varchar(45) DEFAULT NULL,
+  `check_ip` varchar(45) DEFAULT NULL,
+  `check_ip_name` varchar(45) DEFAULT NULL,
+  `sku_student` varchar(15) DEFAULT NULL,
+  `sku_wc_discount` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -394,7 +381,7 @@ CREATE TABLE `params` (
 
 LOCK TABLES `params` WRITE;
 /*!40000 ALTER TABLE `params` DISABLE KEYS */;
-INSERT INTO `params` VALUES (1,'10-20',460130,50,'active','','','dev',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','',NULL,NULL,'','','',NULL,NULL,'','2020-08-25 14:28:50',6,NULL);
+INSERT INTO `params_tmp` VALUES (1,'10-20',460130,50,'active','','','','dev',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','',NULL,NULL,'','','',NULL,NULL,'','2020-08-25 14:28:50',6,'[\"&",\"AND\"]','','','','','','' );
 /*!40000 ALTER TABLE `params` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -409,13 +396,57 @@ CREATE TABLE `post_print_transactions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `badge_number` int(6) NOT NULL,
   `transaction_type` varchar(6) NOT NULL,
-  `club_id` int(11) NOT NULL,
   `created_at` datetime NOT NULL,
   `fee` float(8,2) NOT NULL,
   `discount` float(8,2) NOT NULL,
   `paid_amount` float(8,2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16310 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `rso_reports`
+--
+
+DROP TABLE IF EXISTS `rso_reports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rso_reports` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `rso` varchar(255) DEFAULT NULL,
+  `shift` varchar(2) DEFAULT NULL,
+  `date_open` datetime DEFAULT NULL,
+  `date_close` datetime DEFAULT NULL,
+  `shift_anom` text,
+  `notes` text,
+  `wb_color` varchar(3) DEFAULT NULL,
+  `mics` varchar(3) DEFAULT NULL,
+  `wb_trap_cases` int DEFAULT NULL,
+  `par_50` int DEFAULT NULL,
+  `par_100` int DEFAULT NULL,
+  `par_200` int DEFAULT NULL,
+  `par_steel` int DEFAULT NULL,
+  `par_nm_hq` int DEFAULT NULL,
+  `par_m_hq` int DEFAULT NULL,
+  `par_trap` int DEFAULT NULL,
+  `par_arch` int DEFAULT NULL,
+  `par_pel` int DEFAULT NULL,
+  `par_spr` int DEFAULT NULL,
+  `par_cio_stu` int DEFAULT NULL,
+  `par_act` int DEFAULT NULL,
+  `cash_bos` decimal(7,2) DEFAULT NULL,
+  `cash_drop` decimal(7,2) DEFAULT '0.00',
+  `cash_eos` decimal(7,2) DEFAULT '0.00',
+  `stickers` text,
+  `closing` text,
+  `cash` text,
+  `checks` text,
+  `violations` text,
+  `closed` int DEFAULT '0',
+  `remarks` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -442,9 +473,28 @@ CREATE TABLE `rule_list` (
 
 LOCK TABLES `rule_list` WRITE;
 /*!40000 ALTER TABLE `rule_list` DISABLE KEYS */;
-INSERT INTO `rule_list` VALUES (1,'IA02',3,'Never allow the gun to point at anything you do not intend to shoot.',1),(2,'IA02',4,'Never allow LOADED gun to point at anything you do not intend to shoot.',1),(3,'IB01',3,'Arguing with RSO, AGC Officer, or Match Director',1),(4,'IB01',4,'Refusing to follow the directions of RSO, AGC Officer, or Match Director',1),(5,'IB02',1,'Range badges shall be in the possession of the named badge holder and readily visible at all times while on AGC property.',1),(6,'IB02',4,'Range badges may not be loaned or transferred to, or in the possession of, any other person.',1),(7,'IB03',4,'Persons prohibited by any Federal, State or local law from owning or possessing firearms are specifically prohibited from entering upon AGC property and are subject to arrest for trespassing.',1),(8,'IB04',1,'Guest wrist bands shall be in the possession of the person it was issued to and readily visible at all times while on AGC property.',1),(9,'IB04',2,'Adult badge holders sign in their guests on the AGC App or log provided and be issued a wrist band.',1),(10,'IB04',4,'Guest badges may not be loaned or transferred to, or in the possession of, any other person.',0),(11,'IB06',1,'A badge holder with shooting guests may only occupy one firing point and ONLY ONE PERSON in your party may fire at a time.',1),(12,'IB08',1,'Guests shall park in the outer parking lot when using the 50 or 100-yard ranges.',1),(13,'IB10',4,'Consumption of alcohol is permitted in the Barnes Range House and Memorial Hall ONLY; no alcoholic beverages are permitted on or near any AGC range firing area.',1),(14,'IB11',2,'Pets shall be accompanied by their owner, leashed and under control at all times.',1),(15,'IB12',4,'AGC reserves the right to remove and permanently ban any member, non-member, guest or student without refund for violent, inappropriate, rude, disorderly, threatening, unsportsmanlike or intoxicated behavior.',1),(16,'IB13',2,'Parking is permitted in designated areas as posted.',1),(17,'IB14',2,'Driving onto or parking on any of the ranges is prohibited unless prior permission is granted by the RSO or Executive VP.',1),(18,'IB15',3,'Instruction or demonstration involving drawing from holster, or aiming, or aiming and dry firing is prohibited in all buildings.',1),(19,'IC03a',4,'Do not touch firearms during a Cease Fire! (firearm left loaded)',1),(20,'IC03b',3,'A Cease Fire is in effect from when it is called at the end of the day until the range is called HOT the following morning.',1),(21,'IC03d',2,'During a Cease Fire, all uncased firearms shall remain pointed downrange or racked in an upright position with actions open, magazines removed and Empty Chamber Indicator (ECI) in place.',1),(22,'IC03d',4,'During a Cease Fire, all uncased firearms shall not contain live rounds in the chamber/cylinder/fixed magazine or an inserted removable magazine.',1),(23,'IC03e',1,'During a Cease Fire, you shall remain behind the White Stripe when not pulling or posting targets.',1),(24,'IC04',2,'Badge-Holders shall, if they leave the firing line for any reason, safe their firearms per I.C.3.d., and instruct their guest, if any, to remain behind the White Stripe if not accompanying badge-holder down range..',1),(25,'IC05',4,'Firearms containing ammunition in any manner shall NOT be brought onto AGC property.',1),(26,'IC07',3,'All uncased firearms shall be carried muzzle up while being carried from place to place.',1),(27,'IC10a',2,'LOADED if an Empty Chamber Indicator (ECI) is not in place.',1),(28,'IC10b',2,'LOADED if actions, cylinders or loading gates are closed.',1),(29,'IC10c',2,'LOADED if empty cases are in the chamber/cylinder/fixed magazine, or if a removable empty magazine is inserted.',1),(30,'IC10c',4,'LOADED if cartridges are in the chamber/cylinder/fixed magazine, or if a removable magazine with cartridges is inserted.',1),(31,'IC10d',3,'LOADED if Black Powder Firearms containing: propellant, projectile or cap; powder in the pan of a flintlock.',1),(32,'IC11',2,'Uncased firearms shall NOT be brought onto or taken from the Concrete Pad when a Cease Fire is in effect.',1),(33,'IC12',3,'Cased firearms may be brought onto the Concrete Pad and placed on the ground or shooting bench at any time.  You shall NOT open the case or otherwise handle the firearm until the line is called HOT.',1),(34,'IC13',3,'Firearms shall be cased or uncased on the shooting bench/table and remain pointed downrange at all times while on the firing line.',1),(35,'IC14',2,'Containers of propellant shall be kept closed when not being used.',1),(36,'IC15',2,'Cleaning of firearms on the Concrete Pad is permitted with muzzles pointed downrange or upright.',1),(37,'IC16',2,'Cleaning of firearms off the Concrete Pad is permitted only if the firearm action is clearly disabled; firearm disassembled, bolt removed, etc.',1),(38,'IC16',4,'Cleaning of firearms with ammunition present.',1),(39,'IC17',1,'No one shall fire at any target not in their lane.',1),(40,'IC18',4,'No one shall fire at any wildlife.',1),(41,'IC19',4,'No one shall fire at any permanent structure or fixture or engage in willful destruction of property.',1),(42,'IC20',2,'Semi-automatic strings may be fired on any range at a rate that allows the aiming and control of each shot.  All shots fired must strike within the designated Impact Area for the shooter’s position.',1),(43,'IC21',2,'The Firing Line on the 50, 100 (lanes 1-90) and 200-yard ranges is the forward edge of the Concrete Pad. In the bench rest area (lanes 91-100) the firing line is the red zone.',1),(44,'IC22',2,'Shooters shall position themselves so the muzzle of their firearm is at or beyond the forward edge of the Concrete Pad.',1),(45,'IC22',3,'Under NO CIRCUMSTANCES will a firearm be discharged if the muzzle is behind any person.',1),(46,'IC23',3,'No one shall go forward of the Firing Line (See I.C.21) while the line is hot.',1),(47,'IC24',2,'If a firearm fails to fire, the muzzle shall remain pointed at the Impact Area for a minimum of 30 seconds before remedial action is taken.',1),(48,'IC25',3,'Firearms, ammunition and ammunition components shall not be stored on AGC property.',1),(49,'IC26',3,'Tracer, incendiary and explosive ammunition is prohibited.',1),(50,'IC27',2,'Targets and target frames must not be capable of deflecting a projectile in an unsafe direction.',1),(51,'IC28',3,'Fully automatic fire is only permitted as detailed in Chapter XII of the Policy & Procedures manual.',1),(52,'IC29',3,'Holstered firearms may be worn only under applicable Maryland law, within the constraints and conditions of your carry permit.',1),(53,'IC30',3,'Drawing from holsters is only permitted as detailed in Chapter  XXI of the Policy & Procedures Manual.',1),(54,'IC31',1,'Shooters shall clean up their area and police their brass and shotshell hulls when finished shooting and firearms are not being handled.',1),(55,'IIA01',2,'Rounds must hit impact berm',1),(56,'IIA02',1,'On the 50, 100 and 200-yard ranges, other than paper targets may be used provided that all fired rounds easily pass through them and strike the Impact Area. ',1),(57,'IIA03',1,'Pictures, caricatures or illustrations depicting real people are prohibited.',1),(58,'IIA04',3,'Exploding targets are prohibited.',1),(59,'IIA05',2,'Glass targets or those containing glass are prohibited.',1),(60,'IIA06',1,'Targets shall NOT be placed on the Impact Areas.',1),(61,'IIA07',3,'Targets shall NOT be placed on the Protective Berms.',1),(62,'IIA08',1,'Targets shall be placed in the location that matches the shooter’s lane number.',1),(63,'IIB02',2,'You must display your named yellow badge with certification sticker in addition to your range badge when shooting at steel targets.',1),(64,'IIB03',2,'Steel targets and their mounts shall be submitted for inspection and approval by the Executive VP or his/her designee before initial use and are subject to inspection at any time.',1),(65,'IIB3b',2,'Pitted, cratered, holed, bent, warped or otherwise damaged targets are prohibited.',1),(66,'IIB4a',2,'Prohibited ammunition: Rifle rounds exceeding 3150 fps muzzle velocity.',1),(67,'IIB4b',2,'Prohibited ammunition: Pistol rounds exceeding 1500 fps muzzle velocity.',1),(68,'IIB04c',2,'Prohibited ammunition: Any round with a muzzle velocity less than 750 fps.',1),(69,'IIB04d',2,'Prohibited ammunition: Any round labeled “Magnum”.',1),(70,'IIB04e',2,'Prohibited ammunition: Armor piercing, steel core or ‘penetrator’.',1),(71,'IIB04f',2,'Prohibited ammunition: 50 BMG and all long-range tactical rounds.',1),(72,'IIB04g',2,'Prohibited ammunition: Shotgun slugs.',1),(73,'IIB04h',2,'Prohibited ammunition: 5.7 X 28 ammunition',1),(74,'III01',2,'Smoking is prohibited within 15 feet of black powder or black powder substitutes.',1),(75,'III02',1,'Prior to loading, shooters using muzzle loading rifles or pistols shall fire caps on all nipples of percussion firearms, or a pan full of powder in a flintlock, while pointing the firearm downrange.',1),(76,'III03',3,'Muzzle loading firearms using granulated propellant shall have the propellant poured into the muzzle from a powder measure.',1),(77,'III04',2,'Containers of propellant shall be kept closed when not being used.',1),(78,'III05',2,'Shooters using muzzle loading rifles shall place their rifle muzzle up in a v-notch in the loading bench or some other device during a Cease Fire or during loading.',1),(79,'III06',2,'Percussion and flintlock firearms shall be positioned with the muzzle forward of the Firing Line and pointed downrange when a percussion cap is affixed or when the pan is charged.',1),(80,'III07',2,'Muzzle loading handguns shall be placed muzzle up in a loading stand or similar device during a Cease Fire.',1),(81,'IVA01',2,'This range is designated for the shooting of pistol-caliber handguns with barrels 10” or less in length.',1),(82,'IVA01a',2,'Handgun cartridges with ballistics between .22 rimfire and .500 S&W are permitted.',1),(83,'IVA02',2,'Rifle-caliber handguns are prohibited.',1),(84,'IVA03',2,'Shot shells shall NOT be fired on this range.',1),(85,'IVA04',1,'Firing from a position other than standing, or sitting on a stool, is prohibited.',1),(86,'IVA05',2,'When AGC-owned frames are used, only one target with a single, centered aiming point is permitted.',1),(87,'IVB02',1,'Positions to the left of the orange roof support pole (at lane 57) are normally closed to use. ',1),(88,'IVB03',1,'The 10 fixed benches on the far right of the Barnes range are for Benchrest Position shooting only, rifle and rifled shotgun shooting only.',1),(89,'IVB04',1,'In the Benchrest area, everyone must be behind the red zone while the line is hot and muzzles must meet or extend into the red zone which is considered the firing line.',1),(90,'IVB05',2,'Portable shooting benches shall be positioned so that the front legs are at the forward edge of the Concrete Pad.',1),(91,'IVC02',2,'Portable shooting benches shall be positioned so that the front legs are at the forward edge of the Concrete Pad.',1),(92,'IVC03',3,'An orange flag shall be displayed forward of the firing line when anyone is downrange.',1),(93,'IVC04',3,'The target carriages shall ONLY be used for firing properly sighted-in rifles at paper targets.',1),(94,'IVC05a',2,'A conventional bullseye target shall be centered in the target frame.',1),(95,'IVC05b',2,'Multiple aiming point targets, or any target other than a conventional bullseye target, shall be mounted with the aiming point no closer than 12” from the frame side members and all your shots must strike on the target paper.',1),(96,'IVC06',2,'Silhouettes, gongs, and spinners may be used for silhouette or hunting HANDGUN practice ONLY and shall be positioned directly in front of the 50, 100 or 150-meter berms or 200-meter Impact Area.',1),(97,'IVC07',2,'Firing a rifle at any target placed anywhere closer than 200 yards is prohibited.',1),(98,'IVC08',2,'Portable target frames may be placed behind the 200-yard pits immediately in front of the impact area.',1),(99,'IVC09',2,'Portable target frames with PAPER TARGETS may be placed atop the protective berm immediately forward of the pits.',1),(100,'IVC10',2,'An AGC-style portable wooden frame with PAPER TARGETS may be placed in the receptacles on the back side of the protective berm bulkhead above the pit roof.',1),(101,'IVC11',3,'Firing at objects placed on the protective berms is prohibited.',1),(102,'IVC12',3,'People may remain in the pits between ceasefires only during organized shoots/practices under the control of a designated Match Director.',1),(103,'IVC13',3,'No personnel are permitted in the 200-yard target pits when shooting steel targets.',1),(104,'IVC14',2,'Firearms shall NOT be left unattended.',1),(105,'IVC15',2,'Initial sighting in of firearms/scopes/sights is prohibited.',1),(106,'IVD02',2,'Shooting forward of the 16-yard line is prohibited.',1),(107,'IVD03',3,'Only shotguns firing a maximum powder load of 3 drams equivalent, shot size 7 1/2, 8 or 9, and a maximum muzzle velocity of 1200 fps are permitted.',1),(108,'IVD04',4,'Firing slugs is prohibited.',1),(109,'IVD05',2,'Shotguns shall remain unloaded with actions open at all times until on station and ready to shoot.',1),(110,'IVD05',4,'Shotgun actions shall remain open at all times until on station and ready to shoot.',1),(111,'IVD06',2,'When shooting handicaps, shooters may shoot from a staggered position not to exceed 2 yards.',1),(112,'IVD07',2,'Portable traps and other throwing devices may be used when positioned on or behind the 16-yard line.',1),(113,'IVD08',2,'No one shall proceed beyond a trap house when any other fields are in use.',1),(114,'IVD09',2,'Spent and/or unspent shot shells shall not be picked up until shooters have unloaded and racked their shotguns.',1),(115,'IVD10',2,'It is permitted to walk to the trap house if the field is ‘clear’.  Shooters shall unload and rack their shotguns prior to anyone going to the trap house.',1),(116,'IVD11',3,'When a person is in a trap house, an orange safety cone shall be placed on top of the trap house.',1),(117,'IVD12',2,'All firearms used on the Trap Range shall be fired from the shoulder.',1),(118,'IVD13',2,'Folding stocks shall be in the extended position.',1),(119,'IVE01',3,'This facility is intended for PATTERNING of shotguns ONLY.  ',1),(120,'IVE02',4,'Patterning targets shall have a single aiming point centered on the patterning board.',1),(121,'IVE03',4,'SLUGS are prohibited,',1),(122,'IVE04',4,'LEAD shot sizes larger than #2 are prohibited,',1),(123,'IVE05',4,'STEEL shot sizes larger than BBB are prohibited,',1),(124,'IVE06',4,'Placing of, or shooting at, objects on top of patterning frame is prohibited,',1),(125,'IVF01',2,'Sky drawing is prohibited.',1),(126,'IVF02',2,'Only field point or target arrows may be shot at the AGC targets.',1),(127,'IVF03',2,'Broad head arrows shall NOT be shot at AGC targets.',1),(128,'IVF05',2,'Archers shall designate a common Firing Line.',1),(129,'IVG03',2,'Only compressed air, carbon dioxide, and spring-powered guns firing .177 or .22 caliber blunt-nosed lead pellets weighing less than 25 grains may be fired on this range.',1),(130,'IVG04',2,'The maximum allowable velocity is 1000 fps for .177 pellets and 800 fps for .22 pellets.',1),(131,'IVG05',2,'Only paper targets or AGC-approved metal or metal-clad targets may be used.',1),(132,'IVG06',1,'Shooters shall be aligned properly with their pellet traps.',1),(133,'IB04',2,'Failure to return Guest Badge upon leaving the range.',0),(134,'IC03a',2,'Do not touch unloaded firearms during a ceasefire.',1),(135,'IB02',1,'Non-shooting club members shall wear their range badge or current AGC club membership card, readily visible, while on AGC Property.',1),(136,'IB11',2,'You are responsible for collecting and disposing of your pet’s waste.',1),(137,'IB17',4,'Items that have been designated as illegal by federal, state and/or local jurisdictions are prohibited on AGC property.',1),(138,'IC02a',1,'Eye and ear protection are required on or near active (hot) firing lines. EXCEPTIONS: Pellet Range, Archery Range.',1),(139,'IB05',1,'Badge-holders are responsible for and shall supervise their guest(s) at ALL TIMES.',1);
+INSERT INTO `rule_list` VALUES (1,'IA02',3,'Never allow the gun to point at anything you do not intend to shoot.',1),(2,'IA02',4,'Never allow LOADED gun to point at anything you do not intend to shoot.',1),(3,'IB01',3,'Arguing with RSO, AGC Officer, or Match Director',1),(4,'IB01',4,'Refusing to follow the directions of RSO, AGC Officer, or Match Director',1),(5,'IB02',1,'Range badges shall be in the possession of the named badge holder and readily visible at all times while on AGC property.',1),(6,'IB02',4,'Range badges may not be loaned or transferred to, or in the possession of, any other person.',1),(7,'IB03',4,'Persons prohibited by any Federal, State or local law from owning or possessing firearms are specifically prohibited from entering upon AGC property and are subject to arrest for trespassing.',1),(8,'IB04',1,'Guest wrist bands shall be in the possession of the person it was issued to and readily visible at all times while on AGC property.',1),(9,'IB04',2,'Adult badge holders sign in their guests on the AGC App or log provided and be issued a wrist band.',1),(10,'IB04',4,'Guest badges may not be loaned or transferred to, or in the possession of, any other person.',0),(11,'IB06',1,'A badge holder with shooting guests may only occupy one firing point and ONLY ONE PERSON in your party may fire at a time.',1),(12,'IB08',1,'Guests shall park in the outer parking lot when using the 50 or 100-yard ranges.',1),(13,'IB10',4,'Consumption of alcohol is permitted in the Barnes Range House and Memorial Hall ONLY; no alcoholic beverages are permitted on or near any AGC range firing area.',1),(14,'IB11',2,'Pets shall be accompanied by their owner, leashed and under control at all times.',1),(15,'IB12',4,'AGC reserves the right to remove and permanently ban any member, non-member, guest or student without refund for violent, inappropriate, rude, disorderly, threatening, unsportsmanlike or intoxicated behavior.',1),(16,'IB13',2,'Parking is permitted in designated areas as posted.',1),(17,'IB14',2,'Driving onto or parking on any of the ranges is prohibited unless prior permission is granted by the RSO or Executive VP.',1),(18,'IB15',3,'Instruction or demonstration involving drawing from holster, or aiming, or aiming and dry firing is prohibited in all buildings.',1),(19,'IC03a',4,'Do not touch firearms during a Cease Fire! (firearm left loaded)',1),(20,'IC03b',3,'A Cease Fire is in effect from when it is called at the end of the day until the range is called HOT the following morning.',1),(21,'IC03d',2,'During a Cease Fire, all uncased firearms shall remain pointed downrange or racked in an upright position with actions open, magazines removed and Empty Chamber Indicator (ECI) in place.',1),(22,'IC03d',4,'During a Cease Fire, all uncased firearms shall not contain live rounds in the chamber/cylinder/fixed magazine or an inserted removable magazine.',1),(23,'IC03e',1,'During a Cease Fire, you shall remain behind the White Stripe when not pulling or posting targets.',1),(24,'IC04',2,'Badge-Holders shall, if they leave the firing line for any reason, safe their firearms per I.C.3.d., and instruct their guest, if any, to remain behind the White Stripe if not accompanying badge-holder down range..',1),(25,'IC05',4,'Firearms containing ammunition in any manner shall NOT be brought onto AGC property.',1),(26,'IC07',3,'All uncased firearms shall be carried muzzle up while being carried from place to place.',1),(27,'IC10a',2,'LOADED if an Empty Chamber Indicator (ECI) is not in place.',1),(28,'IC10b',2,'LOADED if actions, cylinders or loading gates are closed.',1),(29,'IC10c',2,'LOADED if empty cases are in the chamber/cylinder/fixed magazine, or if a removable empty magazine is inserted.',1),(30,'IC10c',4,'LOADED if cartridges are in the chamber/cylinder/fixed magazine, or if a removable magazine with cartridges is inserted.',1),(31,'IC10d',3,'LOADED if Black Powder Firearms containing: propellant, projectile or cap; powder in the pan of a flintlock.',1),(32,'IC11',2,'Uncased firearms shall NOT be brought onto or taken from the Concrete Pad when a Cease Fire is in effect.',1),(33,'IC12',3,'Cased firearms may be brought onto the Concrete Pad and placed on the ground or shooting bench at any time.  You shall NOT open the case or otherwise handle the firearm until the line is called HOT.',1),(34,'IC13',3,'When on the Concrete Pad, firearms shall remain pointed downrange while being cased or uncased.',1),(35,'IC14',2,'Containers of propellant shall be kept closed when not being used.',1),(36,'IC15',2,'Cleaning of firearms on the Concrete Pad is permitted with muzzles pointed downrange or upright.',1),(37,'IC16',2,'Cleaning of firearms off the Concrete Pad is permitted only if the firearm action is clearly disabled; firearm disassembled, bolt removed, etc.',1),(38,'IC16',4,'Cleaning of firearms with ammunition present.',1),(39,'IC17',1,'No one shall fire at any target not in their lane.',1),(40,'IC18',4,'No one shall fire at any wildlife.',1),(41,'IC19',4,'No one shall fire at any permanent structure or fixture or engage in willful destruction of property.',1),(42,'IC20',2,'Semi-automatic strings may be fired on any range at a rate that allows the aiming and control of each shot.  All shots fired must strike within the designated Impact Area for the shooter’s position.',1),(43,'IC21',2,'The Firing Line on the 50, 100 (lanes 1-90) and 200-yard ranges is the forward edge of the Concrete Pad. In the bench rest area (lanes 91-100) the firing line is the red zone.',1),(44,'IC22',2,'Shooters shall position themselves so the muzzle of their firearm is at or beyond the forward edge of the Concrete Pad.',1),(45,'IC22',3,'Under NO CIRCUMSTANCES will a firearm be discharged if the muzzle is behind any person.',1),(46,'IC23',3,'No one shall go forward of the Firing Line (See I.C.21) while the line is hot.',1),(47,'IC24',2,'If a firearm fails to fire, the muzzle shall remain pointed at the Impact Area for a minimum of 30 seconds before remedial action is taken.',1),(48,'IC25',3,'Firearms, ammunition and ammunition components shall not be stored on AGC property.',1),(49,'IC26',3,'Tracer, incendiary and explosive ammunition is prohibited.',1),(50,'IC27',2,'Targets and target frames must not be capable of deflecting a projectile in an unsafe direction.',1),(51,'IC28',3,'Fully automatic fire is only permitted as detailed in Chapter XII of the Policy & Procedures manual.',1),(52,'IC29',3,'Holstered firearms may be worn only under applicable Maryland law, within the constraints and conditions of your carry permit.',1),(53,'IC30',3,'Drawing from holsters is only permitted as detailed in Chapter  XXI of the Policy & Procedures Manual.',1),(54,'IC31',1,'Shooters shall clean up their area and police their brass and shotshell hulls when finished shooting and firearms are not being handled.',1),(55,'IIA01',2,'Rounds must hit impact berm',1),(56,'IIA02',1,'On the 50, 100 and 200-yard ranges, other than paper targets may be used provided that all fired rounds easily pass through them and strike the Impact Area. ',1),(57,'IIA03',1,'Pictures, caricatures or illustrations depicting real people are prohibited.',1),(58,'IIA04',3,'Exploding targets are prohibited.',1),(59,'IIA05',2,'Glass targets or those containing glass are prohibited.',1),(60,'IIA06',1,'Targets shall NOT be placed on the Impact Areas.',1),(61,'IIA07',3,'Targets shall NOT be placed on the Protective Berms.',1),(62,'IIA08',1,'Targets shall be placed in the location that matches the shooter’s lane number.',1),(63,'IIB02',2,'You must display your named yellow badge with certification sticker in addition to your range badge when shooting at steel targets.',1),(64,'IIB03',2,'Steel targets and their mounts shall be submitted for inspection and approval by the Executive VP or his/her designee before initial use and are subject to inspection at any time.',1),(65,'IIB3b',2,'Pitted, cratered, holed, bent, warped or otherwise damaged targets are prohibited.',1),(66,'IIB4a',2,'Prohibited ammunition: Rifle rounds exceeding 3150 fps muzzle velocity.',1),(67,'IIB4b',2,'Prohibited ammunition: Pistol rounds exceeding 1500 fps muzzle velocity.',1),(68,'IIB04c',2,'Prohibited ammunition: Any round with a muzzle velocity less than 750 fps.',1),(69,'IIB04d',2,'Prohibited ammunition: Any round labeled “Magnum”.',1),(70,'IIB04e',2,'Prohibited ammunition: Armor piercing, steel core or ‘penetrator’.',1),(71,'IIB04f',2,'Prohibited ammunition: 50 BMG and all long-range tactical rounds.',1),(72,'IIB04g',2,'Prohibited ammunition: Shotgun slugs.',1),(73,'IIB04h',2,'Prohibited ammunition: 5.7 X 28 ammunition',1),(74,'III01',2,'Smoking is prohibited within 15 feet of black powder or black powder substitutes.',1),(75,'III02',1,'Prior to loading, shooters using muzzle loading rifles or pistols shall fire caps on all nipples of percussion firearms, or a pan full of powder in a flintlock, while pointing the firearm downrange.',1),(76,'III03',3,'Muzzle loading firearms using granulated propellant shall have the propellant poured into the muzzle from a powder measure.',1),(77,'III04',2,'Containers of propellant shall be kept closed when not being used.',1),(78,'III05',2,'Shooters using muzzle loading rifles shall place their rifle muzzle up in a v-notch in the loading bench or some other device during a Cease Fire or during loading.',1),(79,'III06',2,'Percussion and flintlock firearms shall be positioned with the muzzle forward of the Firing Line and pointed downrange when a percussion cap is affixed or when the pan is charged.',1),(80,'III07',2,'Muzzle loading handguns shall be placed muzzle up in a loading stand or similar device during a Cease Fire.',1),(81,'IVA01',2,'This range is designated for the shooting of pistol-caliber handguns with barrels 10” or less in length.',1),(82,'IVA01a',2,'Handgun cartridges with ballistics between .22 rimfire and .500 S&W are permitted.',1),(83,'IVA02',2,'Rifle-caliber handguns are prohibited.',1),(84,'IVA03',2,'Shot shells shall NOT be fired on this range.',1),(85,'IVA04',1,'Firing from a position other than standing, or sitting on a stool, is prohibited.',1),(86,'IVA05',2,'When AGC-owned frames are used, only one target with a single, centered aiming point is permitted.',1),(87,'IVB02',1,'Positions to the left of the orange roof support pole (at lane 57) are normally closed to use. ',1),(88,'IVB03',1,'The 10 fixed benches on the far right of the Barnes range are for Benchrest Position shooting only, rifle and rifled shotgun shooting only.',1),(89,'IVB04',1,'In the Benchrest area, everyone must be behind the red zone while the line is hot and muzzles must meet or extend into the red zone which is considered the firing line.',1),(90,'IVB05',2,'Portable shooting benches shall be positioned so that the front legs are at the forward edge of the Concrete Pad.',1),(91,'IVC02',2,'Portable shooting benches shall be positioned so that the front legs are at the forward edge of the Concrete Pad.',1),(92,'IVC03',3,'An orange flag shall be displayed forward of the firing line when anyone is downrange.',1),(93,'IVC04',3,'The target carriages shall ONLY be used for firing properly sighted-in rifles at paper targets.',1),(94,'IVC05a',2,'A conventional bullseye target shall be centered in the target frame.',1),(95,'IVC05b',2,'Multiple aiming point targets, or any target other than a conventional bullseye target, shall be mounted with the aiming point no closer than 12” from the frame side members and all your shots must strike on the target paper.',1),(96,'IVC06',2,'Silhouettes, gongs, and spinners may be used for silhouette or hunting HANDGUN practice ONLY and shall be positioned directly in front of the 50, 100 or 150-meter berms or 200-meter Impact Area.',1),(97,'IVC07',2,'Firing a rifle at any target placed anywhere closer than 200 yards is prohibited.',1),(98,'IVC08',2,'Portable target frames may be placed behind the 200-yard pits immediately in front of the impact area.',1),(99,'IVC09',2,'Portable target frames with PAPER TARGETS may be placed atop the protective berm immediately forward of the pits.',1),(100,'IVC10',2,'An AGC-style portable wooden frame with PAPER TARGETS may be placed in the receptacles on the back side of the protective berm bulkhead above the pit roof.',1),(101,'IVC11',3,'Firing at objects placed on the protective berms is prohibited.',1),(102,'IVC12',3,'People may remain in the pits between ceasefires only during organized shoots/practices under the control of a designated Match Director.',1),(103,'IVC13',3,'No personnel are permitted in the 200-yard target pits when shooting steel targets.',1),(104,'IVC14',2,'Firearms shall NOT be left unattended.',1),(105,'IVC15',2,'Initial sighting in of firearms/scopes/sights is prohibited.',1),(106,'IVD02',2,'Shooting forward of the 16-yard line is prohibited.',1),(107,'IVD03',3,'Only shotguns firing a maximum powder load of 3 drams equivalent, shot size 7 1/2, 8 or 9, and a maximum muzzle velocity of 1200 fps are permitted.',1),(108,'IVD04',4,'Firing slugs is prohibited.',1),(109,'IVD05',2,'Shotguns shall remain unloaded with actions open at all times until on station and ready to shoot.',1),(110,'IVD05',4,'Shotgun actions shall remain open at all times until on station and ready to shoot.',1),(111,'IVD06',2,'When shooting handicaps, shooters may shoot from a staggered position not to exceed 2 yards.',1),(112,'IVD07',2,'Portable traps and other throwing devices may be used when positioned on or behind the 16-yard line.',1),(113,'IVD08',2,'No one shall proceed beyond a trap house when any other fields are in use.',1),(114,'IVD09',2,'Spent and/or unspent shot shells shall not be picked up until shooters have unloaded and racked their shotguns.',1),(115,'IVD10',2,'It is permitted to walk to the trap house if the field is ‘clear’.  Shooters shall unload and rack their shotguns prior to anyone going to the trap house.',1),(116,'IVD11',3,'When a person is in a trap house, an orange safety cone shall be placed on top of the trap house.',1),(117,'IVD12',2,'All firearms used on the Trap Range shall be fired from the shoulder.',1),(118,'IVD13',2,'Folding stocks shall be in the extended position.',1),(119,'IVE01',3,'This facility is intended for PATTERNING of shotguns ONLY.  ',1),(120,'IVE02',4,'Patterning targets shall have a single aiming point centered on the patterning board.',1),(121,'IVE03',4,'SLUGS are prohibited,',1),(122,'IVE04',4,'LEAD shot sizes larger than #2 are prohibited,',1),(123,'IVE05',4,'STEEL shot sizes larger than BBB are prohibited,',1),(124,'IVE06',4,'Placing of, or shooting at, objects on top of patterning frame is prohibited,',1),(125,'IVF01',2,'Sky drawing is prohibited.',1),(126,'IVF02',2,'Only field point or target arrows may be shot at the AGC targets.',1),(127,'IVF03',2,'Broad head arrows shall NOT be shot at AGC targets.',1),(128,'IVF05',2,'Archers shall designate a common Firing Line.',1),(129,'IVG03',2,'Only compressed air, carbon dioxide, and spring-powered guns firing .177 or .22 caliber blunt-nosed lead pellets weighing less than 25 grains may be fired on this range.',1),(130,'IVG04',2,'The maximum allowable velocity is 1000 fps for .177 pellets and 800 fps for .22 pellets.',1),(131,'IVG05',2,'Only paper targets or AGC-approved metal or metal-clad targets may be used.',1),(132,'IVG06',1,'Shooters shall be aligned properly with their pellet traps.',1),(133,'IB04',2,'Failure to return Guest Badge upon leaving the range.',0),(134,'IC03a',2,'Do not touch unloaded firearms during a ceasefire.',1),(135,'IB02',1,'Non-shooting club members shall wear their range badge or current AGC club membership card, readily visible, while on AGC Property.',1),(136,'IB11',2,'You are responsible for collecting and disposing of your pet’s waste.',1),(137,'IB17',4,'Items that have been designated as illegal by federal, state and/or local jurisdictions are prohibited on AGC property.',1),(138,'IC02a',1,'Eye and ear protection are required on or near active (hot) firing lines. EXCEPTIONS: Pellet Range, Archery Range.',1),(139,'IB05',1,'Badge-holders are responsible for and shall supervise their guest(s) at ALL TIMES.',1);
 /*!40000 ALTER TABLE `rule_list` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `sticker`
+--
+
+DROP TABLE IF EXISTS `sticker`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sticker` (
+  `s_id` int NOT NULL AUTO_INCREMENT,
+  `sticker` varchar(10) DEFAULT NULL,
+  `status` varchar(4) DEFAULT NULL,
+  `holder` int DEFAULT NULL,
+  `updated` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`s_id`),
+  UNIQUE KEY `s_id_UNIQUE` (`s_id`),
+  UNIQUE KEY `sticker_UNIQUE` (`sticker`)
+) ENGINE=InnoDB AUTO_INCREMENT=2492 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `store_items`
@@ -454,16 +504,18 @@ DROP TABLE IF EXISTS `store_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `store_items` (
-  `item_id` int(11) NOT NULL AUTO_INCREMENT,
+  `item_id` int NOT NULL AUTO_INCREMENT,
   `item` varchar(100) NOT NULL,
   `sku` varchar(15) DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL,
   `type` varchar(45) NOT NULL,
-  `paren` int(11) DEFAULT NULL,
+  `paren` int DEFAULT NULL,
   `img` varchar(255) DEFAULT NULL,
-  `stock` int(11) DEFAULT '0',
-  `active` int(1) NOT NULL DEFAULT '0',
-  `new_badge` int(1) NOT NULL DEFAULT '0',
+  `stock` int DEFAULT '0',
+  `kit_items` text,
+  `active` int NOT NULL DEFAULT '0',
+  `new_badge` int NOT NULL DEFAULT '0',
+  `tax_rate` decimal(5,3) DEFAULT '0.000',
   PRIMARY KEY (`item_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=67 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -474,7 +526,7 @@ CREATE TABLE `store_items` (
 
 LOCK TABLES `store_items` WRITE;
 /*!40000 ALTER TABLE `store_items` DISABLE KEYS */;
-INSERT INTO `store_items` VALUES (6,'Action Shooting',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(25,'Holster Shooting - Certification Fee','410100',20.00,'Service',6,NULL,NULL,0,0),(7,'Steel 12\" Gong Kit','410200',100.00,'NonInventory',6,NULL,NULL,0,0),(12,'Steel 12\" Gong Only','410202',70.00,'NonInventory',6,NULL,NULL,0,0),(13,'Steel 2 X 4 Angle Mount','410204',40.00,'NonInventory',6,NULL,NULL,0,0),(20,'Steel 8\" Gong Kit','410206',80.00,'NonInventory',6,NULL,NULL,0,0),(21,'Steel 8\" Gong Only','410208',45.00,'NonInventory',6,NULL,NULL,0,0),(8,'Steel IPSC Kit','410210',120.00,'NonInventory',6,NULL,NULL,0,0),(19,'Steel IPSC Silhouette Plate','410212',90.00,'NonInventory',6,NULL,NULL,0,0),(24,'Steel Shooting - Certification Fee','410105',10.00,'Service',6,NULL,NULL,0,0),(22,'Steel Shooting Supplies - 2 X 4','410214',5.00,'NonInventory',6,NULL,NULL,0,0),(23,'Steel Shooting Supplies Nut & Bolt','410216',3.00,'NonInventory',6,NULL,NULL,0,0),(56,'AGC Club Dues',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(58,'AGC - Affiliate Club Dues','445105',50.00,'Service',56,NULL,NULL,0,0),(57,'AGC - Charter Club Dues','445100',50.00,'Service',56,NULL,NULL,0,0),(59,'AGC - Club Initiation Fees','445110',200.00,'Service',56,NULL,NULL,0,0),(45,'AGC Member Classroom Rentals',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(65,'Barnes Lower Classroom Rent  - Weekends','460118',40.00,'Service',45,NULL,NULL,0,0),(64,'Barnes Lower Classroom Rent - Weekdays','460116',20.00,'Service',45,NULL,NULL,0,0),(46,'Guest Bracelet Fee','460130',10.00,'Service',45,NULL,NULL,0,0),(61,'Memorial Hall Rent  - Weekends','460110',40.00,'Service',45,NULL,NULL,0,0),(60,'Memorial Hall Rent - Weekdays','460108',20.00,'Service',45,NULL,NULL,0,0),(62,'Memorial Hall Trap Room Rent - Weekdays','460112',20.00,'Service',45,NULL,NULL,0,0),(63,'Memorial Hall Trap Room Rent - Weekends','460114',40.00,'Service',45,NULL,NULL,0,0),(43,'CIO Organizations',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(50,'CIO Annual Assessment Fee','435105',50.00,'Service',43,NULL,NULL,0,0),(55,'CIO Barnes Lower Classroom Rent -  Weekdays','435116',20.00,'Service',43,NULL,NULL,0,0),(66,'CIO Barnes Lower Classroom Rent - Weekends','435118',40.00,'Service',43,NULL,NULL,0,0),(44,'CIO Guest Bracelet Fee','435130',10.00,'Service',43,NULL,NULL,0,0),(49,'CIO Initiation Fee','435100',200.00,'Service',43,NULL,NULL,0,0),(51,'CIO Memorial Hall Rent - Weekdays','435108',20.00,'Service',43,NULL,NULL,0,0),(52,'CIO Memorial Hall Rent - Weekends','435110',40.00,'Service',43,NULL,NULL,0,0),(53,'CIO Memorial Hall Trap Room Rent - Weekdays','435112',20.00,'Service',43,NULL,NULL,0,0),(54,'CIO Memorial Hall Trap Room Rent - Weekends','435114',40.00,'Service',43,NULL,NULL,0,0),(40,'DNR Qualification Fees',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(41,'Member DNR Qualification','420300',7.00,'Service',40,NULL,NULL,0,0),(42,'Non-Member DNR Qualification','420305',10.00,'Service',40,NULL,NULL,0,0),(37,'Hunter Sight-In',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(38,'Member Hunter Sight-In','420200',5.00,'Service',37,NULL,NULL,0,0),(39,'Non-Member Hunter Sight-In','420205',7.00,'Service',37,NULL,NULL,0,0),(47,'Member Dues',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(5,'Full Year Family Dues','450110',67.00,'Service',47,NULL,NULL,0,0),(3,'Full Year Individual Dues','450100',200.00,'Service',47,NULL,NULL,0,0),(4,'Full Year Junior Dues','450105',100.00,'Service',47,NULL,NULL,0,0),(11,'Half Year Family Dues','450125',32.00,'Service',47,NULL,NULL,0,0),(9,'Half Year Individual Dues','450115',95.00,'Service',47,NULL,NULL,0,0),(10,'Half Year Junior Dues','450120',48.00,'Service',47,NULL,NULL,0,0),(48,'NRA Paper Targets',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(27,'NRA Paper Target - A-2315','430400',1.00,'NonInventory',48,NULL,NULL,0,0),(28,'NRA Paper Target - B-16','430402',1.00,'NonInventory',48,NULL,NULL,0,0),(29,'NRA Paper Target - ST-4','430404',1.00,'NonInventory',48,NULL,NULL,0,0),(30,'NRA Paper Target - TQ-4D','430406',1.00,'NonInventory',48,NULL,NULL,0,0),(1,'Sales',NULL,0.00,'Service',NULL,NULL,NULL,0,0),(15,'Shooting Supplies',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(17,'Ear Plugs','430305',1.00,'NonInventory',15,NULL,NULL,0,0),(18,'ECI/OAI\'s','430300',1.00,'NonInventory',15,NULL,NULL,0,0),(16,'Target Frames','430200',25.00,'NonInventory',15,NULL,NULL,0,0),(31,'Trap Activities',NULL,NULL,'Category',NULL,NULL,NULL,0,0),(36,'Clay Birds - Case','405310',15.00,'NonInventory',31,NULL,NULL,0,0),(35,'Member Lincoln Trap Books','405115',5.00,'Service',31,NULL,NULL,0,0),(32,'Member Trap Books','405100',20.00,'Service',31,NULL,NULL,0,0),(34,'Member Youth Trap Books','405110',15.00,'Service',31,NULL,NULL,0,0),(33,'Non-Member Trap Books','405105',30.00,'Service',31,NULL,NULL,0,0);
+INSERT INTO `store_items` VALUES (6,'Action Shooting',NULL,NULL,'Category',NULL,NULL,0,NULL,1,0,0.000),(25,'Holster Shooting - Certification Fee','410100',30.00,'Service',6,NULL,0,NULL,1,0,0.000),(7,'Steel 12\" Gong Kit','410200',108.49,'Kits',6,NULL,0,'[410202,410204,410214,410216]',1,0,0.060),(12,'Steel 12\" Gong Only','410202',70.75,'Inventory',6,NULL,3,NULL,1,0,0.060),(13,'Steel 2 X 4 Angle Mount','410204',42.45,'Inventory',6,NULL,11,NULL,1,0,0.060),(20,'Steel 8\" Gong Kit','410206',84.91,'Kits',6,NULL,0,'[410204,410208,410214,410216]',1,0,0.060),(21,'Steel 8\" Gong Only','410208',47.17,'Inventory',6,NULL,4,NULL,1,0,0.060),(8,'Steel IPSC Kit','410210',127.36,'Kits',6,NULL,0,'[410204,410212,410214,410216]',1,0,0.060),(19,'Steel IPSC Silhouette Plate','410212',94.34,'Inventory',6,NULL,5,NULL,1,0,0.060),(24,'Steel Shooting - Certification Fee','410105',10.00,'Service',6,NULL,0,NULL,1,0,0.000),(22,'Steel Shooting Supplies - 2 X 4','410214',9.43,'Inventory',6,NULL,3,NULL,1,0,0.060),(23,'Steel Shooting Supplies Nut & Bolt','410216',3.77,'Inventory',6,NULL,27,NULL,1,0,0.060),(56,'AGC Club Dues',NULL,NULL,'Category',NULL,NULL,0,NULL,1,0,0.000),(58,'AGC - Affiliate Club Dues','445105',50.00,'Service',56,NULL,0,NULL,1,0,0.000),(57,'AGC - Charter Club Dues','445100',50.00,'Service',56,NULL,0,NULL,1,0,0.000),(59,'AGC - Club Initiation Fees','445110',200.00,'Service',56,NULL,0,NULL,1,0,0.000),(45,'AGC Member Classroom Rentals',NULL,NULL,'Category',NULL,NULL,0,NULL,1,0,0.000),(65,'Barnes Lower Classroom Rent  - Weekends','460118',40.00,'Service',45,NULL,0,NULL,1,0,0.000),(64,'Barnes Lower Classroom Rent - Weekdays','460116',20.00,'Service',45,NULL,0,NULL,1,0,0.000),(46,'Guest Bracelet Fee','440100',10.00,'Service',45,NULL,0,NULL,1,0,0.000),(61,'Memorial Hall Rent  - Weekends','460110',40.00,'Service',45,NULL,0,NULL,1,0,0.000),(60,'Memorial Hall Rent - Weekdays','460108',20.00,'Service',45,NULL,0,NULL,1,0,0.000),(62,'Memorial Hall Trap Room Rent - Weekdays','460112',20.00,'Service',45,NULL,0,NULL,1,0,0.000),(63,'Memorial Hall Trap Room Rent - Weekends','460114',40.00,'Service',45,NULL,0,NULL,1,0,0.000),(43,'CIO Organizations',NULL,NULL,'Category',NULL,NULL,0,NULL,1,0,0.000),(50,'CIO Annual Assessment Fee','435105',50.00,'Service',43,NULL,0,NULL,1,0,0.000),(55,'CIO Barnes Lower Classroom Rent -  Weekdays','435116',20.00,'Service',43,NULL,0,NULL,1,0,0.000),(66,'CIO Barnes Lower Classroom Rent - Weekends','435118',40.00,'Service',43,NULL,0,NULL,1,0,0.000),(44,'CIO Guest Bracelet Fee','435130',10.00,'Service',43,NULL,0,NULL,1,0,0.000),(49,'CIO Initiation Fee','435100',200.00,'Service',43,NULL,0,NULL,1,0,0.000),(51,'CIO Memorial Hall Rent - Weekdays','435108',20.00,'Service',43,NULL,0,NULL,1,0,0.000),(52,'CIO Memorial Hall Rent - Weekends','435110',40.00,'Service',43,NULL,0,NULL,1,0,0.000),(53,'CIO Memorial Hall Trap Room Rent - Weekdays','435112',20.00,'Service',43,NULL,0,NULL,1,0,0.000),(54,'CIO Memorial Hall Trap Room Rent - Weekends','435114',40.00,'Service',43,NULL,0,NULL,1,0,0.000),(40,'DNR Qualification Fees',NULL,NULL,'Category',NULL,NULL,0,NULL,1,0,0.000),(41,'Member DNR Qualification','420300',7.00,'Service',40,NULL,0,NULL,1,0,0.000),(42,'Non-Member DNR Qualification','420305',10.00,'Service',40,NULL,0,NULL,1,0,0.000),(37,'AGC Services',NULL,NULL,'Category',NULL,NULL,0,NULL,1,0,0.000),(38,'Member Hunter Sight-In','420200',5.00,'Service',37,NULL,0,NULL,1,0,0.000),(39,'Non-Member Hunter Sight-In','420205',7.00,'Service',37,NULL,0,NULL,1,0,0.000),(47,'Member Dues',NULL,NULL,'Category',NULL,NULL,0,NULL,1,0,0.000),(5,'Full Year Family Dues','450110',67.00,'Service',47,NULL,0,NULL,1,0,0.000),(3,'Full Year Individual Dues','450100',200.00,'Service',47,NULL,0,NULL,1,0,0.000),(4,'Full Year Junior Dues','450105',100.00,'Service',47,NULL,0,NULL,1,0,0.000),(11,'Half Year Family Dues','450125',33.00,'Service',47,NULL,0,NULL,0,0,0.000),(9,'Half Year Individual Dues','450115',100.00,'Service',47,NULL,0,NULL,0,0,0.000),(10,'Half Year Junior Dues','450120',48.00,'Service',47,NULL,0,NULL,0,0,0.000),(27,'Paper Target (2-pak)','430400',0.94,'Inventory',15,NULL,657,NULL,1,0,0.060),(1,'Sales',NULL,0.00,'Service',NULL,NULL,0,NULL,1,0,0.000),(15,'Shooting Supplies',NULL,NULL,'Category',NULL,NULL,0,NULL,1,0,0.000),(17,'Ear Plugs','430305',0.94,'Inventory',15,NULL,1695,NULL,1,0,0.060),(18,'ECI/OAI\'s','430300',0.94,'Inventory',15,NULL,28,NULL,1,0,0.060),(16,'Target Frames','430200',30.19,'Inventory',15,NULL,20,NULL,1,0,0.060),(31,'Trap Activities',NULL,NULL,'Category',NULL,NULL,0,NULL,1,0,0.000),(36,'Clay Birds - Case','405310',15.09,'Inventory',31,NULL,0,NULL,1,0,0.060),(35,'Member Lincoln Trap Rental','405115',6.00,'Service',31,NULL,0,NULL,1,0,0.000),(32,'Member Trap Books','405100',25.00,'Service',31,NULL,0,NULL,1,0,0.000),(34,'Member Youth Trap Books','405110',15.00,'Service',31,NULL,0,NULL,1,0,0.000),(33,'Non-Member Trap Books','405105',35.00,'Service',31,NULL,0,NULL,1,0,0.000),(67,'Steel Rental ','410201',10.00,'NonInventory',6,NULL,0,NULL,1,0,0.000),(69,'Shot Shells','405210',14.15,'Inventory',15,NULL,0,NULL,1,0,0.060),(70,'Safety Glasses','430310',2.83,'Inventory',15,NULL,75,NULL,1,0,0.060),(72,'Range Orientation Fee','530418',10.00,'Service',37,NULL,0,NULL,1,0,0.000),(73,'Coffee','430120 ',0.94,'NonInventory',15,NULL,NULL,NULL,1,1,0.060),(74,'Discount','465150',1.00,'Service',47,NULL,NULL,NULL,0,0,0.000),(75,'Free Badge','Free',0.00,'NonInventory',47,NULL,NULL,NULL,0,0,0.000);
 /*!40000 ALTER TABLE `store_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -514,7 +566,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (0,'member','member@agc.com','',NULL,5,10,0,'x','x',NULL,0,0,NULL),(11,'marc','sharkbit@hotmail.com','Marc Riley',NULL,1,10,NULL,'n6v55GSvazLiu2o6O2z1lzNS5rXXwwnr','$2y$13$JBMfUH3mdSAAOAptbbDS3ebCXbiC4hW5b9/uLcAPHXdHHrZJC/xUm',NULL,1517415913,1518133273,NULL);
+INSERT INTO `user` VALUES (0,'member','noreply@agcrange.org','',NULL,'[5]',10,0,'x','x',NULL,0,0,NULL,NULL),('1', 'root', 'no@thanks.com', 'Root Account', NULL, '[1]', '10', '0', 'Gma5L6jxaFXfvbVXqU8U-krH3cKJzv3x', '$2y$13$YWIY0EyZIzsamuccG2gphuuJxzhyUz1VHB5fvf6MbtMt5fVY3YRjO', NULL, '1651418046', '1651418046', '\"\"', '');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -541,7 +593,7 @@ CREATE TABLE `user_privileges` (
 
 LOCK TABLES `user_privileges` WRITE;
 /*!40000 ALTER TABLE `user_privileges` DISABLE KEYS */;
-INSERT INTO `user_privileges` VALUES (1,'Root','1','60','1'),(2,'Admin','20','30','1'),(3,'RSO','40','20','0'),(4,'View','65','15','0'),(5,'Member','80','30','0'),(6,'RSO Lead','30','20','0'),(7,'Work Credits','60','15','0'),(8,'CIO','64','5','0'),(9,'Calendar Coordinator','50','10','0'),(10,'Cashier','45','15','0'),(11,'Chairmen','81','10','0'),(12,'RSO Action','41','5','0'),(13,'Admin View Only','22','30','1'),(14,'Remote Access','99','5','1');
+INSERT INTO `user_privileges` VALUES (1,'Root',1,60,1),(2,'Admin',20,30,1),(3,'RSO',40,20,0),(4,'View',65,15,0),(5,'Member',80,3,0),(6,'RSO Lead',30,20,0),(7,'Work Credits',60,15,0),(8,'CIO',64,5,0),(9,'Calendar Coordinator',50,10,0),(10,'Cashier',45,15,0),(11,'Chairmen',81,10,0),(12,'RSO Action',41,5,0),(13,'Admin View Only',22,30,1),(14,'Remote Access',99,5,1),(15,'Shooting Bay',82,10,0);
 /*!40000 ALTER TABLE `user_privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -596,6 +648,25 @@ CREATE TABLE `work_credits` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=898 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Final view structure for view `Cart_Summary`
+--
+
+/*!50001 DROP VIEW IF EXISTS `Cart_Summary`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `Cart_Summary` AS select `t1`.`tx_date` AS `tx_date`,`s3`.`item` AS `cat`,`t1`.`tx_type` AS `tx_type`,`refunds`.`csku` AS `csku`,`refunds`.`citem` AS `citem`,`refunds`.`ea` AS `ea`,`refunds`.`qty` AS `qty`,`refunds`.`cprice` AS `cprice` from (`cc_receipts` `t1` join ((json_table(`t1`.`cart`, '$[*]' columns (`ea` decimal(7,2) path '$.ea', `qty` int path '$.qty', `csku` text character set utf8mb4 path '$.sku', `citem` text character set utf8mb4 path '$.item', `cprice` decimal(7,2) path '$.price')) `refunds` left join `store_items` `s2` on((`refunds`.`csku` = `s2`.`sku`))) left join `store_items` `s3` on((`s2`.`paren` = `s3`.`item_id`)))) order by `t1`.`tx_date` desc */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 
 
 -- #########################################################################################################
