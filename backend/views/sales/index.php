@@ -25,7 +25,7 @@ if(yii::$app->controller->hasPermission('sales/all')) {
 }
 
 if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
-	if($confParams->qb_env == 'prod') {
+	if(Yii::$app->params['env'] == 'prod') {
 		$myList= array_merge($myList,['creditnow'=>'Credit Card Now!']);
 	} else { $myList= array_merge($myList,['creditnow'=>'TEST CC (Do not use)']); $is_dev=true;}
 }

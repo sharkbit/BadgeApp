@@ -335,7 +335,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				<?= $form1->field($badgeSubscriptions, 'wt_instru')->textInput([])->label('WT Instru').PHP_EOL; ?>
 		<?php }
 			if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
-				if($confParams->qb_env == 'prod') {
+				if(Yii::$app->params['env'] == 'prod') {
 					$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online','other'=>'Other'];
 				} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)','online'=>'Online','other'=>'Other']; }
 			} else {

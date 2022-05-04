@@ -38,7 +38,7 @@ class PaymentController extends AdminController {
 		if ($model->load(Yii::$app->request->post())) {
 			$confParams = Params::findOne('1');
 
-			if($confParams->qb_env == 'prod') {
+			if(Yii::$app->params['env'] == 'prod') {
 				$payenv = true; //'production';
 				$URL="https://api.convergepay.com/VirtualMerchant/processxml.do";
 				$merchantID = $confParams->conv_p_merc_id; //Converge 6 or 7-Digit Account ID *Not the 10-Digit Elavon Merchant ID*

@@ -230,7 +230,7 @@ $confParams  = Params::findOne('1');
                 </div>
                 <div class="col-xs-12 col-sm-12">
       <?php if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
-				if($confParams->qb_env == 'prod') {
+				if(Yii::$app->params['env'] == 'prod') {
 					$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online','other'=>'Other'];
 				} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)','online'=>'Online','other'=>'Other']; }
 

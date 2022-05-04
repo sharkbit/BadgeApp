@@ -36,7 +36,7 @@ function MakeDropdown($dlist) {
 		<?= $form->field($model, 'guest_total').PHP_EOL; ?>
 	</div>
 	<div class="col-xs-6 col-sm-3">
-		<?= $form->field($model, 'qb_env')->dropDownList(['dev'=>'Development','prod'=>'Production']) ?>
+		<?= Html::label('Enviroment (moved to params file)')."<br />".Html::textInput('Env',Yii::$app->params['env'],['readOnly'=>true,'disabled'=>true,'class'=>'form-control']); ?>
 	</div>
 	<div class="col-xs-12 col-sm-9">
 		<?= $form->field($model, 'whitelist')->dropDownList(MakeDropdown($model->whitelist),['value'=>json_decode($model->whitelist),'prompt'=>'Select',  'multiple'=>true, 'size'=>false]).PHP_EOL; ?>

@@ -19,7 +19,7 @@ class ParamsSearch extends Params
         return [
             [['id'], 'integer'],
             [['sell_date'], 'safe'],
-			[['qb_env','qb_oauth_cust_key','qb_oauth_cust_sec','qb_realmId','qb_token','qb_token_date'], 'safe'],
+			[['qb_oauth_cust_key','qb_oauth_cust_sec','qb_realmId','qb_token','qb_token_date'], 'safe'],
 			[['qb_oa2_id','qb_oa2_sec','qb_oa2_realmId','qb_oa2_access_token','qb_oa2_access_date','qb_oa2_refresh_token','qb_oa2_refresh_date'], 'safe'],
         ];
     }

@@ -65,7 +65,7 @@ foreach($agc_event as $an_event){
             </div>
         </div>
         <div class="col-xs-12 col-md-4" >
-<?php if( ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge") ) || ($param->qb_env=='dev') ){ ?>
+<?php if( ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge") ) || (Yii::$app->params['env'] == 'dev') ){ ?>
 			<div style=" padding: 20px;"><p> <br /> </p>
 				<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<p> </p> <center><h3><a href="/site/new-member">New Member Signup</a></h3></center>

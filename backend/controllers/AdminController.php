@@ -366,7 +366,7 @@ class AdminController extends \yii\web\Controller {
 
 	public function createLog($isEnabled, $username, $activity, $name='activity') {
 		$param = Params::findOne('1');
-		if(($isEnabled) || ($param->qb_env=='dev')) {
+		if(($isEnabled) || (Yii::$app->params['env']=='dev')) {
 			$root = Yii::getAlias('@webroot/'.$name.'_logs.txt');
 			$fp = fopen($root, 'a');
 			fwrite($fp, "['".yii::$app->controller->getNowTime()."','".$username."','".$activity."']\r\n");
@@ -376,7 +376,7 @@ class AdminController extends \yii\web\Controller {
 
 	public function createCalLog($isEnabled, $username, $activity) {
 		$param = Params::findOne('1');
-		if(($isEnabled) || ($param->qb_env=='dev')) {
+		if(($isEnabled) || (Yii::$app->params['env']=='dev')) {
 			$root = Yii::getAlias('@webroot/calendar_logs.txt');
 			$fp = fopen($root, 'a');
 			fwrite($fp, "['".yii::$app->controller->getNowTime()."','".$username."','".$activity."']\r\n");
@@ -386,7 +386,7 @@ class AdminController extends \yii\web\Controller {
 
 	public function createEmailLog($isEnabled, $username, $activity) {
 		$param = Params::findOne('1');
-		if(($isEnabled) || ($param->qb_env=='dev')) {
+		if(($isEnabled) || (Yii::$app->params['env']=='dev')) {
 			$root = Yii::getAlias('@webroot/email_logs.txt');
 			$fp = fopen($root, 'a');
 			fwrite($fp, "['".yii::$app->controller->getNowTime()."','".$username."','".$activity."']\r\n");

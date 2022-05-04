@@ -19,7 +19,7 @@ echo $this->render('_view-tab-menu', ['confParams' => $confParams]).PHP_EOL;
 	//Add your request ID here
 	$requestId = "Som3Th1ngUique".rand(100000,999999);
 
-	if($confParams->qb_env == 'prod') {
+	if(Yii::$app->params['env'] == 'prod') {
 		$baseURL = "https://api.intuit.com/quickbooks/v4/payments/charges";          // Production
 		$payenv = 'production';
 	} else {

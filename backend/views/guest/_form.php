@@ -38,7 +38,7 @@ $guest_band = (new backend\models\StoreItems)->find()->where(['sku'=>$confParams
 if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2>'; return;}
 
 if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->qb_token)>2 || strlen($confParams->qb_oa2_refresh_token)>2))  {
-	if($confParams->qb_env == 'prod') {
+	if(Yii::$app->params['env'] == 'prod') {
 		$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!'];
 	} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)']; }
 } else {
@@ -231,7 +231,7 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 				<div class="col-xs-12" id="cert_online_search" style="display: none">
 				<center><img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 50px" />Searching..</center>
 				<p>  </p>
-				</div><?php if($confParams->qb_env=='dev') {echo "Test CC: 4111-1111-1111-1111";} ?>
+				</div><?php if(Yii::$app->params['env'] == 'dev') {echo "Test CC: 4111-1111-1111-1111";} ?>
 			</div>
 			<p> </p>
 
