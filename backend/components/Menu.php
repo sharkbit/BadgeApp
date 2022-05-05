@@ -22,121 +22,152 @@ class Menu extends Widget{
 	public $mainMenu = [
 		[
 			'label'=>'Add Guest',
+			'loc'=>['prod'],
 			'url' => '/guest/create',
 			'allow' => 'badges/restrict',
 			'color' => 'btn-success',
 		],
 		[
 			'label'=>'Issue New Range Badge',
+			'loc'=>['prod','dev'],
 			'url' => '/badges/create',
 		],
 		[
 			'label'=>'Range Badges',
+			'loc'=>['prod','dev'],
 			'url' => '/badges/index',
 			'self'=>true,
 		],
 		[
 			'label'=>'Guest Checkout',
+			'loc'=>['prod','dev'],
 			'url' => '/guest/index',
 			'color' => 'btn-success',
 		],
 		[
-			'label'=>'Events',
-			'url' => '/events/index',
-			'color' => 'btn-info',
+			'label'=>'Calender',
+			'loc'=>['prod'],
+			'url' => false,
+			'allow' => 'calendar/index',
+			'target'=>'cal',
+			'color' => 'btn-danger',
 		],
-		[
-			'label'=>'Range Violations',
-			'url' => '/violations/index',
-		],
-		[
-			'label'=>'RSO Reports',
-			'url' => '/rso-rpt/index',
-		],
-		[
-			'label'=>'Store',
-			'url' => '/sales/index',
-			'self'=>true,
-		],
-		[
-			'label'=>'Work Credits',
-			'url' => '/work-credits/index',
-		],
-		[
-			'label'=>'Admin Functions',
-			'url' => '/site/admin-menu',
-			'color' => 'btn-warning',
-		],
-	];
-	
-	public $mainCalendar = [
 		[
 			'label'=>'Calender',
+			'loc' => ['cal','dev'],
 			'url' => '/calendar/index',
 			'color' => 'btn-danger',
 		],
 		[
 			'label'=>'Calender Settings',
+			'loc' => ['cal','dev'],
 			'url' => '/cal-setup/facility',
 			'color' => 'btn-danger',
 		],
 		[
+			'label'=>'Events',
+			'loc'=>['prod','dev'],
+			'url' => '/events/index',
+			'color' => 'btn-info',
+		],
+		[
 			'label'=>'Legislative Emails',
+			'loc'=>['prod','dev'],
 			'url' => '/legelemail/index',
 			'color' => 'btn-success',
-		]
+		],
+		[
+			'label'=>'Range Violations',
+			'loc'=>['prod','dev'],
+			'url' => '/violations/index',
+		],
+		[
+			'label'=>'RSO Reports',
+			'loc'=>['prod','dev'],
+			'url' => '/rso-rpt/index',
+		],
+		[
+			'label'=>'Store',
+			'loc'=>['prod','dev'],
+			'url' => '/sales/index',
+			'self'=>true,
+		],
+		[
+			'label'=>'Work Credits',
+			'loc'=>['prod','dev'],
+			'url' => '/work-credits/index',
+		],
+		[
+			'label'=>'Admin Functions',
+			'loc'=>['prod','cal','dev'],
+			'url' => '/site/admin-menu',
+			'color' => 'btn-warning',
+		],
+
 	];
 
 	public $adminMenu = [
 		[
 			'label'=>'Authorized Users',
+			'loc'=>['prod','cal','dev'],
 			'url' => '/accounts/index',
 			'color' => 'btn-warning',
 		],
 		[
 			'label'=>'Create Badge Rosters for Clubs',
+			'loc'=>['prod','cal','dev'],
 			'url' => '/clubs/badge-rosters',
 		],
 		[
 			'label'=>'Mass Email',
+			'loc'=>['prod','cal','dev'],
 			'url' => '/mass-email/index',
-		],		
+		],
 		[
 			'label'=>'Member Club List',
+			'loc'=>['prod','cal','dev'],
 			'url' => '/clubs/index',
 		],
 		[
 			'label'=>'Membership Types',
+			'loc'=>['prod','dev'],
 			'url' => '/membership-type/index',
 			'color' => 'btn-success',
 		],
 		[
 			'label'=>'Payment Setup',
+			'loc'=>['prod','dev'],
 			'url' => '/payment/index',
 			'color' => 'btn-success',
 		],
 		[
 			'label'=>'Privileges',
+			'loc'=>['prod','dev'],
 			'url' => '/privileges/index',
 		],
 		[
 			'label'=>'Range Badge Database',
+			'loc'=>['prod','cal','dev'],
 			'url' => '/range-badge-database/index',
 		],
 		[
 			'label'=>'Rule List',
+			'loc'=>['prod','dev'],
 			'url' => '/rules/index',
 		],
 		[
 			'label'=>'Scan Badge',
+			'loc'=>['prod','cal','dev'],
 			'url' => '/badges/scan-badge',
 		],
 		[
 			'label'=>'Settings',
+			'loc'=>['prod','cal','dev'],
 			'url' => '/params/update',
 		],
 		[
 			'label'=>'Store Items',
+			'loc'=>['prod','dev'],
 			'url' => '/sales/stock',
 		],
 	];
@@ -144,6 +175,7 @@ class Menu extends Widget{
 	public $LastMenu = [
 		[
 			'label'=>'Logout',
+			'loc'=>['prod','cal','dev'],
 			'url' => '/site/logout',
 			'color' => 'btn-danger',
 			'self' => true,
@@ -161,43 +193,34 @@ class Menu extends Widget{
 		if($type=='admin') {
 			$print_menu =  $this->adminMenu;
 		} else {
-			if( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge" )) {
-				if ((yii::$app->controller->hasPermission('calendar/showed')) && (yii::$app->params['cal_site']<>'')) {
-					$print_menu =  array_merge($this->mainMenu,[['label'=>'Calender','url' => yii::$app->params['cal_site'].'/calendar/index','allow' => 'calendar/index','target'=>'cal','color' => 'btn-danger',],]);
-				} else {
-					$print_menu =  $this->mainMenu;
-				}
-			} elseif ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "calendar" )) {
-				if (yii::$app->controller->hasPermission('cal-setup/index')) {
-				$print_menu = array_merge($this->mainMenu, $this->mainCalendar);
-				} else {
-					$print_menu = $this->mainCalendar;
-				}
-			} else {
-				$print_menu = array_merge($this->mainMenu, $this->mainCalendar);
-			}
-		
+			$print_menu =  $this->mainMenu;
 			if ((file_exists($param->remote_users)) && (isset($_SESSION['r_user']) && ($_SESSION['r_user'] !=null))) {
 				$print_menu = array_merge($print_menu, [['label'=>'Remote User Password','url' => '/params/password','color' => 'btn-warning',],]);
 			}
 		}
-		
 		$print_menu = array_merge($print_menu, $this->LastMenu);
 
-		if (in_array(5,json_decode(yii::$app->user->identity->privilege))) { 
+		if (in_array(5,json_decode(yii::$app->user->identity->privilege))) {
 			$member = (New Badges)->find()->where(['badge_number'=>$_SESSION['badge_number'],'status'=>'self'])->one();
 			if ($member) { $mem_self=true; } else { $mem_self=false; }
 		} else { $mem_self=false; }
 
 		$html .="<div class='container'>\n";
 		foreach ($print_menu as $menu) {
-			if($mem_self) { if(!isset($menu['self'])) { continue(1); } }
-			if(!isset($menu['allow'])) { $menu['allow'] = $menu['url']; }
-			if(isset($menu['color'])) { $btn_color = $menu['color']; } else { $btn_color='btn-primary'; }
-			if(!isset($menu['target'])) { $menu['target'] = '_self'; }
-			if(yii::$app->controller->hasPermission(ltrim(str_replace("'","",$menu['allow']),'/'))) {
-				$html.='<div class="col-sm-6 col-md-4">';
-				$html.= "<a style='margin-bottom: 10px; margin-top: 20px; text-align: center' class='btn-lg btn-block $btn_color' href='".$menu['url']."' target=".$menu['target']."> <span> ".$menu['label']." </span> </a></div><div class='clearfix visible-xs'></div>".PHP_EOL;
+			if (in_array(Yii::$app->params['env'], $menu['loc'])) {
+				if($mem_self) { if(!isset($menu['self'])) { continue(1); } }
+				if(!isset($menu['allow'])) {
+					$menu['allow'] = $menu['url'];
+				}
+				if(isset($menu['color'])) { $btn_color = $menu['color']; } else { $btn_color='btn-primary'; }
+				if(!isset($menu['target'])) { $menu['target'] = '_self'; }
+				if(yii::$app->controller->hasPermission(ltrim(str_replace("'","",$menu['allow']),'/'))) {
+					if(!$menu['url']) {
+						$menu['url'] = Yii::$app->params['cal_site'].'/calendar/index';
+					}
+					$html.='<div class="col-sm-6 col-md-4">';
+					$html.= "<a style='margin-bottom: 10px; margin-top: 20px; text-align: center' class='btn-lg btn-block $btn_color' href='".$menu['url']."' target=".$menu['target']."> <span> ".$menu['label']." </span> </a></div><div class='clearfix visible-xs'></div>".PHP_EOL;
+				}
 			}
 		}
 		$html .="</div>\n";
