@@ -54,13 +54,9 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		</div>
 	</div>
 </div>
-
- <?php
- echo GridView::widget([
-		'dataProvider' => $dataProvider,
-		'filterModel' => $searchModel,
-		'showFooter' => true,
-		'columns' => [
+<?php ActiveForm::end(); ?>
+<?php
+		$gridColumns = [
 			[	'attribute' => 'tx_date',
 				'visible' => ($searchModel->groupby) ? false : true,
 			],
@@ -75,10 +71,39 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 				'format' => ['decimal', 2],
 				'footer' => ($searchModel->groupby)?"$".number_format($dataProvider->query->sum('sprice'), 2, '.', ','):"$".number_format($dataProvider->query->sum('cprice'), 2, '.', ','),
 			],
-		],
-	]);
-?>
-<?php ActiveForm::end(); ?>
+		];?>
+	<div class="row">
+		<div class="col-sm-6 pull-right">
+		Export Data -
+		<?=ExportMenu::widget([
+			'dataProvider' => $dataProvider,
+			'columns' => $gridColumns,
+			'fontAwesome' => true,
+			'batchSize' => 0,
+			'filename'=>  $this->title,
+			'target' => '_blank',
+			'folder' => '@webroot/export', // this is default save folder on server
+			'exportConfig' => [
+				ExportMenu::FORMAT_HTML => false,
+				ExportMenu::FORMAT_EXCEL => false,
+				ExportMenu::FORMAT_EXCEL_X => false,
+				//ExportMenu::FORMAT_PDF => false
+			]
+		]) . "<hr>\n";?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+		<?php
+		echo GridView::widget([
+			'dataProvider' => $dataProvider,
+			'columns' => $gridColumns,
+			'filterModel' => $searchModel,
+			'showFooter' => true,
+		]);
+			?>
+		</div>
+	</div>
 
 <script>
  $("#txsle2").select2({placeholder_text_multiple:'Select',width: "100%"});
