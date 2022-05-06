@@ -109,23 +109,23 @@ class Menu extends Widget{
 	public $adminMenu = [
 		[
 			'label'=>'Authorized Users',
-			'loc'=>['prod','cal','dev'],
+			'loc'=>['prod','dev'],
 			'url' => '/accounts/index',
 			'color' => 'btn-warning',
 		],
 		[
 			'label'=>'Create Badge Rosters for Clubs',
-			'loc'=>['prod','cal','dev'],
+			'loc'=>['prod','dev'],
 			'url' => '/clubs/badge-rosters',
 		],
 		[
 			'label'=>'Mass Email',
-			'loc'=>['prod','cal','dev'],
+			'loc'=>['prod','dev'],
 			'url' => '/mass-email/index',
 		],
 		[
 			'label'=>'Member Club List',
-			'loc'=>['prod','cal','dev'],
+			'loc'=>['prod','dev'],
 			'url' => '/clubs/index',
 		],
 		[
