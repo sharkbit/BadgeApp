@@ -195,7 +195,7 @@ class Menu extends Widget{
 		} else {
 			$print_menu =  $this->mainMenu;
 			if ((file_exists($param->remote_users)) && (isset($_SESSION['r_user']) && ($_SESSION['r_user'] !=null))) {
-				$print_menu = array_merge($print_menu, [['label'=>'Remote User Password','url' => '/params/password','color' => 'btn-warning',],]);
+				$print_menu = array_merge($print_menu, [['label'=>'Remote User Password','loc'=>['prod','dev'],'url' => '/params/password','color' => 'btn-warning',],]);
 			}
 		}
 		$print_menu = array_merge($print_menu, $this->LastMenu);
