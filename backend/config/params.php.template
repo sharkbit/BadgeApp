@@ -1,7 +1,7 @@
 <?php
 $svr=$_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'];
 return [
-	'env' = 'dev',							// Development = dev, Production = prod, Calendar = cal
+	'env' => 'dev',							// Development = dev, Production = prod, Calendar = cal
 	'adminEmail' => 'admin@example.com',
 	'adminName' => 'Site Admin',
 	'badge_site'=>'',						// External BadgeApp address
