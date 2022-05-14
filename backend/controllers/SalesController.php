@@ -228,6 +228,7 @@ class SalesController extends AdminController {
 			unset($_SESSION['CartSummarySearch_tx_type']);
 			unset($_SESSION['CartSummarySearch_date_start']);
 			unset($_SESSION['CartSummarySearch_date_stop']);
+			unset($_SESSION['CartSummarySearch_citem']);
 			unset($_SESSION['CartSummarySearch_sort']);
 			return $this->redirect('summary');
 		} else {
@@ -254,6 +255,12 @@ class SalesController extends AdminController {
 				$_SESSION['CartSummarySearch_date_stop'] = $_REQUEST['CartSummarySearch']['date_stop'];
 			} elseif (isset($_SESSION['CartSummarySearch_date_stop'])) {
 				$searchModel->date_stop = $_SESSION['CartSummarySearch_date_stop'];
+			}
+			if(isset($_REQUEST['CartSummarySearch']['citem'])) {
+				$searchModel->citem = $_REQUEST['CartSummarySearch']['citem'];
+				$_SESSION['CartSummarySearch_citem'] = $_REQUEST['CartSummarySearch']['citem'];
+			} elseif (isset($_SESSION['CartSummarySearch_citem'])) {
+				$searchModel->citem = $_SESSION['CartSummarySearch_citem'];
 			}
 			if(isset($_REQUEST['sort'])) {
 				$searchModel->sort = $_REQUEST['sort'];

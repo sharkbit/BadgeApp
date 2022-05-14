@@ -19,7 +19,7 @@ class CartSummarySearch extends CartSummary {
 
     public function rules() {
         return [
-			[['tx_type'], 'safe'],
+			[['tx_type','citem'], 'safe'],
 			[['csku'],'integer'],
 		];
     }
@@ -46,13 +46,9 @@ class CartSummarySearch extends CartSummary {
         ]);
 		$this->load($params);
 
-		if(!isset($this->sort)) {
-			$query->orderBy('cat,csku');
-		}
-
-		if(isset($this->tx_type)) {
-			$this->tx_type=$this->tx_type;
-		}
+		if(!isset($this->sort)) { $query->orderBy('cat,csku'); }
+		if(isset($this->citem)) { $query->andFilterWhere(['like', 'citem', $this->citem]); }
+		if(isset($this->tx_type)) { $this->tx_type=$this->tx_type; }
 
 		if(isset($this->date_start)) {
 			$this->date_start=$this->date_start;
@@ -61,7 +57,6 @@ class CartSummarySearch extends CartSummary {
 		}
 		$query->andFilterWhere(['>=','tx_date',$this->date_start]);
 
-
 		if (isset($this->date_stop)) {
 			$date_stop = $this->date_stop;
 			if($date_stop != '' ) {
@@ -69,8 +64,6 @@ class CartSummarySearch extends CartSummary {
 				$query->andFilterWhere(['<=','tx_date',$date_stop]);
 			}
 		}
-
-
 
         // grid filtering conditions
 

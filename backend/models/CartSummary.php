@@ -31,7 +31,7 @@ class CartSummary extends \yii\db\ActiveRecord{
 
     public function attributeLabels() {
         return [
-			'cat'=>'Catagory',
+			'cat'=>'Category',
 			'citem'=>'Item',
 			'cprice'=>'Price',
 			'csku'=>'SKU',
