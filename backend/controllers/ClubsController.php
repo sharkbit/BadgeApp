@@ -64,7 +64,7 @@ class ClubsController extends AdminController {
 				$forGenerateCsv  = [];
 				@unlink('files/rosters/'.$fileName);
 				$fileCsv = fopen('files/rosters/'.$fileName, 'w');
-				fputcsv($fileCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Expire Date','status'));
+				fputcsv($fileCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Expire Date','status','Last Renewed'));
 				foreach ($rosterForSingle as $key => $badgeData) {
 					$userDetails = [
 						'0' => $badgeData->badge_number,
@@ -77,6 +77,7 @@ class ClubsController extends AdminController {
 						'7' => date('M d, Y',strtotime($badgeData->incep)),
 						'8' => date('M d, Y',strtotime($badgeData->expires)),
 						'9' => $badgeData->status,
+						'10' => date('M d, Y',strtotime($badgeData->created_at)),
 
 					];
 					$forGenerateCsv[] = $userDetails;
@@ -118,7 +119,7 @@ class ClubsController extends AdminController {
 				$fileNameAll = $createdDate.'_Full_AGC_Roster.csv';
 				@unlink('files/rosters/'.$fileNameAll);
 				$fileAllCsv = fopen('files/rosters/'.$fileNameAll, 'a');
-				fputcsv($fileAllCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Expire Date','status'));
+				fputcsv($fileAllCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Expire Date','status','Last Renewed'));
 
 				foreach ($clubListArray as $clubData) {
 					$club_id = $clubData->club_id;
@@ -131,7 +132,7 @@ class ClubsController extends AdminController {
 					$forGenerateCsv  = [];
 					@unlink('files/rosters/'.$fileName);
 					$fileCsv = fopen('files/rosters/'.$fileName, 'w');
-					fputcsv($fileCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Expire Date','status'));
+					fputcsv($fileCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Expire Date','status','Last Renewed'));
 					foreach ($rosterForSingle as $key => $badgeData) {
 						$userDetails = [
 						'0' => $badgeData->badge_number,
@@ -144,6 +145,7 @@ class ClubsController extends AdminController {
 						'7' => date('M d, Y',strtotime($badgeData->incep)),
 						'8' => date('M d, Y',strtotime($badgeData->expires)),
 						'9' => $badgeData->status,
+						'10' => date('M d, Y',strtotime($badgeData->created_at)),
 						];
 						$forGenerateCsv[] = $userDetails;
 					}
