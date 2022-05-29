@@ -9,7 +9,7 @@ use kartik\date\DatePicker;
 /* @var $model backend\models\Guest */
 /* @var $form yii\widgets\ActiveForm */
 
-if($_SESSION["badge_number"]>0) {$model->badge_number=$_SESSION["badge_number"];}
+if ( ($model->isNewRecord) && ($_SESSION["badge_number"]>0) ) { $model->badge_number=$_SESSION["badge_number"]; }
 
 $model->time_in = yii::$app->controller->getNowTime();
 $Payment_block=''; $msg='Register';

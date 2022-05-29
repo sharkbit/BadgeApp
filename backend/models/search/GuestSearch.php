@@ -78,7 +78,7 @@ class GuestSearch extends Guest {
 		if(isset($this->g_state)) { $query->andFilterWhere(['g_state'=>$this->g_state]); }
 		if(isset($this->g_yob)) { $query->andFilterWhere(['g_yob'=>$this->g_yob]); }
 		if(isset($this->g_paid)) { $query->andFilterWhere(['g_paid'=>$this->g_paid]); }
-		if(isset($this->badge_number)) { $query->andFilterWhere(['like', 'badge_number', $this->badge_number]); }
+		if(isset($this->badge_number)) { $query->andFilterWhere(['badge_number'=>$this->badge_number]); }
 		if(isset($this->g_first_name)) { $query->andFilterWhere(['like', 'g_first_name', $this->g_first_name]); }
 		if(isset($this->g_last_name)) { $query->andFilterWhere(['like', 'g_last_name', $this->g_last_name]); }
 		if(isset($this->g_city)) { $query->andFilterWhere(['like', 'g_city', $this->g_city]); }
