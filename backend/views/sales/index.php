@@ -74,11 +74,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 		<div class="col-sm-6"><br />
 			<div class="row">
 				<div class="col-sm-3">
-				<?php echo Html::checkbox('sales-ForGuest' ,'',['id'=>'sales-ForGuest']), PHP_EOL; ?> For a Guest? 
+				<?php echo Html::checkbox('sales-ForGuest' ,'',['id'=>'sales-ForGuest']), PHP_EOL; ?> For a Guest?
 				<?= $form->field($model, 'pgLimited')->hiddenInput(['id'=>'pgLimited','value'=>$pgLimited])->label(false).PHP_EOL; ?>
 				</div>
 				<div class="col-sm-3" id="div_PayCash" style="display:none">
-				<?php echo Html::checkbox('sales-PayCash' ,'',['id'=>'sales-PayCash']), PHP_EOL; ?> Paying Cash? 
+				<?php echo Html::checkbox('sales-PayCash' ,'',['id'=>'sales-PayCash']), PHP_EOL; ?> Paying Cash?
 				</div>
 			</div>
 			<div class="row">
@@ -198,19 +198,29 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			$ItemsList = $command->queryAll();
 			$curCat='';
 			foreach($ItemsList as $item){
+				$guest_note='';
 				if($curCat <> $item['cat']) {
 					echo "<tr><td colspan=4><b>".$item['cat'].":</b></td></tr>"; $curCat = $item['cat'];
 				}
 				$colo ="bgcolor='#f3f3f3'";
-				if($item['sku']== $confParams->guest_sku && $guest_total>0) {$item_qty = $guest_total.' onKeyUp="doCalcSale()"';} else {$item_qty = '0 onKeyUp="doCalcSale()"';}
+				$item_qty =	'<input class="right" type="text" name="qty" size="3" value=0 onKeyUp="doCalcSale()" />';
+				if ($item['sku']== $confParams->guest_sku ) {
+					if ($guest_total>0) {
+						$item_qty =	'<input class="right" type="text" name="qty" size="3" value='.$guest_total.' onKeyUp="doCalcSale()" />';
+					} else {
+						$item_qty='';
+						$guest_note=' - <a href="/guest/index">  <B>Missing Guest Count</a>';
+					}
+				}
+
 				if((int)$item['stock'] > 0) { $item_stock='<center>'.(int)$item['stock'].'</center>'; } else { $item_stock=''; }
 
-				echo '<tr '.$colo.">\n\t<td>".'<input type="hidden" name="item" value="'.htmlspecialchars($item['item']).'" />'.$item['item'].
+				echo '<tr '.$colo.">\n\t<td>".'<input type="hidden" name="item" value="'.htmlspecialchars($item['item']).'" />'.$item['item'].$guest_note.
 					"\n\t".'<input type=hidden name="sku" value="'.$item['sku'].'" />'.
 					"\n\t".'<input type=hidden name="tax_rate" value="'.$item['tax_rate'].'" /></td>'.
 					"\n\t".'<td>'.$item_stock.' </td>'.
 					"\n\t".'<td><input class="right" type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
-					"\n\t".'<td><input class="right" type="text" name="qty" size="3" value='.$item_qty.' /></td>'.
+					"\n\t".'<td>'.$item_qty.'</td>'.
 					"\n\t".'<td><input class="right" type="text" name="price" size="3" readonly /></td></tr>'."\n";
 			} ?>
 			</table>
