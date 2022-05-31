@@ -77,7 +77,7 @@ class ClubsController extends AdminController {
 						'7' => date('M d, Y',strtotime($badgeData->incep)),
 						'8' => date('M d, Y',strtotime($badgeData->expires)),
 						'9' => $badgeData->status,
-						'10' => date('M d, Y',strtotime($badgeData->created_at)),
+						'10' => date('M d, Y',strtotime($badgeData->updated_at)),
 
 					];
 					$forGenerateCsv[] = $userDetails;
@@ -145,7 +145,7 @@ class ClubsController extends AdminController {
 						'7' => date('M d, Y',strtotime($badgeData->incep)),
 						'8' => date('M d, Y',strtotime($badgeData->expires)),
 						'9' => $badgeData->status,
-						'10' => date('M d, Y',strtotime($badgeData->created_at)),
+						'10' => date('M d, Y',strtotime($badgeData->updated_at)),
 						];
 						$forGenerateCsv[] = $userDetails;
 					}
