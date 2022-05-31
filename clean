@@ -1,0 +1,3 @@
+#!/bin/bash
+rm ./backend/web/files/rosters/*.csv
+rm -R ./backend/web/assets/*
