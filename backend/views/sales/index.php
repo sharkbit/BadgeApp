@@ -209,7 +209,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 						$item_qty =	'<input class="right" type="text" name="qty" size="3" value='.$guest_total.' onKeyUp="doCalcSale()" />';
 					} else {
 						$item_qty='<input class="right" type="text" name="qty" size="3" value=0 disabled />';
-						$guest_note=' - <a href="/guest/index">  <B>Missing Guest Count</a>';
+						$guest_note=' - <a href="/guest/index">  <B><u>Use Pay Now Option<u></a>';
 					}
 				}
 
