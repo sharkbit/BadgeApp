@@ -50,6 +50,7 @@ class Phone extends \yii\db\ActiveRecord {
 class BadgesController extends AdminController {
 
 	public $enableCsrfValidation = false;
+	public $myFilters = ['badge_number','club_id','expire_condition','first_name','last_name','mem_type','suffix','status'];
 
 	public function behaviors() {
 		return [
@@ -797,53 +798,7 @@ class BadgesController extends AdminController {
 		$searchModel = new BadgesSearch();
 
 	//yii::$app->controller->createLog(false, 'trex-B_C_BC Request', var_export($_REQUEST,true));
-		if(isset($_REQUEST['reset'])) {
-			unset($_SESSION['BadgesSearchClub']);
-			unset($_SESSION['BadgeSearchExpire']);
-			unset($_SESSION['BadgeSearchFname']);
-			unset($_SESSION['BadgeSearchLname']);
-			unset($_SESSION['BadgeSearchMemType']);
-			unset($_SESSION['BadgeSearchStatus']);
-		} else {
-			if(isset($_REQUEST['BadgesSearch']['club_id'])) {
-				$searchModel->club_id = $_REQUEST['BadgesSearch']['club_id'];
-				$_SESSION['BadgesSearchClub'] = $_REQUEST['BadgesSearch']['club_id'];
-			} elseif (isset($_SESSION['BadgesSearchClub'])) {
-				$searchModel->club_id = $_SESSION['BadgesSearchClub'];
-			}
-			if(isset($_REQUEST['BadgesSearch']['expire_condition'])) {
-				$searchModel->expire_condition = $_REQUEST['BadgesSearch']['expire_condition'];
-				$_SESSION['BadgeSearchExpire'] = $_REQUEST['BadgesSearch']['expire_condition'];
-			} elseif (isset($_SESSION['BadgeSearchExpire'])) {
-				$searchModel->expire_condition = $_SESSION['BadgeSearchExpire'];
-			}
-			if(isset($_REQUEST['BadgesSearch']['first_name'])) {
-				$searchModel->first_name = $_REQUEST['BadgesSearch']['first_name'];
-				$_SESSION['BadgeSearchFname'] = $_REQUEST['BadgesSearch']['first_name'];
-			} elseif (isset($_SESSION['BadgeSearchFname'])) {
-				$searchModel->first_name = $_SESSION['BadgeSearchFname'];
-			}
-			if(isset($_REQUEST['BadgesSearch']['last_name'])) {
-				$searchModel->last_name = $_REQUEST['BadgesSearch']['last_name'];
-				$_SESSION['BadgeSearchLname'] = $_REQUEST['BadgesSearch']['last_name'];
-			} elseif (isset($_SESSION['BadgeSearchLname'])) {
-				$searchModel->last_name = $_SESSION['BadgeSearchLname'];
-			}
-			if(isset($_REQUEST['BadgesSearch']['mem_type'])) {
-				$searchModel->mem_type = $_REQUEST['BadgesSearch']['mem_type'];
-				$_SESSION['BadgeSearchMemType'] = $_REQUEST['BadgesSearch']['mem_type'];
-			} elseif (isset($_SESSION['BadgeSearchMemType'])) {
-				$searchModel->mem_type = $_SESSION['BadgeSearchMemType'];
-			}
-			if(isset($_REQUEST['BadgesSearch']['status'])) {
-				$searchModel->status = $_REQUEST['BadgesSearch']['status'];
-				$_SESSION['BadgeSearchStatus'] = $_REQUEST['BadgesSearch']['status'];
-			} elseif (isset($_SESSION['BadgeSearchStatus'])) {
-				$searchModel->status = $_SESSION['BadgeSearchStatus'];
-			}
-		}
-
-
+		$this->RestoreSession($searchModel,'Badges',$this->myFilters);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('index', [

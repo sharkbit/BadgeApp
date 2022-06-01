@@ -23,6 +23,8 @@ class SalesController extends AdminController {
      * @inheritdoc
      */
 
+	public $myFilters = ['groupby','tx_type','date_start','date_stop','citem','csku','sort'];
+
     public function behaviors() {
         return [
             'verbs' => [
@@ -221,55 +223,7 @@ class SalesController extends AdminController {
 	public function actionSummary() {
 		if(Yii::$app->db->schema->getTableSchema('Cart_Summary')) {
 		$searchModel = new CartSummarySearch();
-
-		if(isset($_REQUEST['reset'])) {
-			UNSET($_REQUEST);
-			unset($_SESSION['CartSummarySearch_groupby']);
-			unset($_SESSION['CartSummarySearch_tx_type']);
-			unset($_SESSION['CartSummarySearch_date_start']);
-			unset($_SESSION['CartSummarySearch_date_stop']);
-			unset($_SESSION['CartSummarySearch_citem']);
-			unset($_SESSION['CartSummarySearch_sort']);
-			return $this->redirect('summary');
-		} else {
-			if(isset($_REQUEST['CartSummarySearch']['groupby'])) {
-				$searchModel->groupby = $_REQUEST['CartSummarySearch']['groupby'];
-				$_SESSION['CartSummarySearch_groupby'] = $_REQUEST['CartSummarySearch']['groupby'];
-			} elseif (isset($_SESSION['CartSummarySearch_groupby'])) {
-				$searchModel->groupby = $_SESSION['CartSummarySearch_groupby'];
-			} else {$searchModel->groupby=1;}
-			if(isset($_REQUEST['tx_type'])) {
-				$searchModel->tx_type = $_REQUEST['tx_type'];
-				$_SESSION['CartSummarySearch_tx_type'] = $_REQUEST['tx_type'];
-			} elseif (isset($_SESSION['CartSummarySearch_tx_type'])) {
-				$searchModel->tx_type = $_SESSION['CartSummarySearch_tx_type'];
-			}
-			if(isset($_REQUEST['CartSummarySearch']['date_start'])) {
-				$searchModel->date_start = $_REQUEST['CartSummarySearch']['date_start'];
-				$_SESSION['CartSummarySearch_date_start'] = $_REQUEST['CartSummarySearch']['date_start'];
-			} elseif (isset($_SESSION['CartSummarySearch_date_start'])) {
-				$searchModel->date_start = $_SESSION['CartSummarySearch_date_start'];
-			}
-			if(isset($_REQUEST['CartSummarySearch']['date_stop'])) {
-				$searchModel->date_stop = $_REQUEST['CartSummarySearch']['date_stop'];
-				$_SESSION['CartSummarySearch_date_stop'] = $_REQUEST['CartSummarySearch']['date_stop'];
-			} elseif (isset($_SESSION['CartSummarySearch_date_stop'])) {
-				$searchModel->date_stop = $_SESSION['CartSummarySearch_date_stop'];
-			}
-			if(isset($_REQUEST['CartSummarySearch']['citem'])) {
-				$searchModel->citem = $_REQUEST['CartSummarySearch']['citem'];
-				$_SESSION['CartSummarySearch_citem'] = $_REQUEST['CartSummarySearch']['citem'];
-			} elseif (isset($_SESSION['CartSummarySearch_citem'])) {
-				$searchModel->citem = $_SESSION['CartSummarySearch_citem'];
-			}
-			if(isset($_REQUEST['sort'])) {
-				$searchModel->sort = $_REQUEST['sort'];
-				$_SESSION['CartSummarySearch_sort'] = $_REQUEST['sort'];
-			} elseif (isset($_SESSION['CartSummarySearch_sort'])) {
-				$searchModel->sort = $_SESSION['CartSummarySearch_sort'];
-			}
-		}
-
+		$this->RestoreSession($searchModel,'CartSummary',$this->myFilters);
 		$dataProvider = $searchModel->search(Yii::$app->request->post());
 
 		return $this->render('summary',[

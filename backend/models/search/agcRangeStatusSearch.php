@@ -27,7 +27,7 @@ class agcRangeStatusSearch extends agcRangeStatus {
     public function scenarios() {
 
        // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
+		return Model::scenarios();
     }
 
     /**
@@ -38,27 +38,28 @@ class agcRangeStatusSearch extends agcRangeStatus {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = agcRangeStatus::find();
+		$query = agcRangeStatus::find();
 
-        // add conditions that should always apply here
+		// add conditions that should always apply here
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
+		$dataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
 
-        $this->load($params);
-		
+		$this->load($params);
+
 		if(!isset($params['sort'])) { $query->orderBy( ['name' => SORT_ASC] ); }
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+		if (!$this->validate()) {
+			// uncomment the following line if you do not want to return any records when validation fails
+			// $query->where('0=1');
+			return $dataProvider;
+		}
 
-        // grid filtering conditions
-        if(isset($this->active)) {$query->andFilterWhere(['active' => $this->active,]); }
-		
-        return $dataProvider;
+		// grid filtering conditions
+		if(isset($this->active)) {$query->andFilterWhere(['active' => $this->active,]); }
+		if(isset($this->name)) { $query->andFilterWhere(['like', 'name', $this->name]); }
+
+		return $dataProvider;
     }
 }

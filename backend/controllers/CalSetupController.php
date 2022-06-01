@@ -21,6 +21,9 @@ class CalSetupController extends AdminController {
 	/**
 	 * @inheritdoc
 	 */
+	 
+	public $myFilters = ['active','available_lanes','is_cio','display_in_administration','display_in_badges_administration','name'];
+
 	public function behaviors() {
 		return [
 			'verbs' => [
@@ -34,43 +37,7 @@ class CalSetupController extends AdminController {
 
 	public function actionClubs() {
 		$searchModel = new agcClubsSearch();
-		
-		if(isset($_REQUEST['reset'])) {
-			unset($_SESSION['CalSetupActive']);
-			unset($_SESSION['CalSetupCio']);
-			unset($_SESSION['CalSetupAdm']);
-			unset($_SESSION['CalSetupBadm']);
-			return $this->redirect(['index']);
-		} else {
-			if(isset($_REQUEST['agcClubsSearch']['active'])) { 
-				$searchModel->active = $_REQUEST['agcClubsSearch']['active'];	
-				$_SESSION['CalSetupActive'] = $_REQUEST['agcClubsSearch']['active'];
-			} elseif (isset($_SESSION['CalSetupActive'])) {
-				$searchModel->active = $_SESSION['CalSetupActive'];	
-			} else { $searchModel->active=1; }
-			
-			if(isset($_REQUEST['agcClubsSearch']['display_in_administration'])) { 
-				$searchModel->display_in_administration = $_REQUEST['agcClubsSearch']['display_in_administration'];	
-				$_SESSION['CalSetupAdm'] = $_REQUEST['agcClubsSearch']['display_in_administration'];
-			} elseif (isset($_SESSION['CalSetupAdm'])) {
-				$searchModel->display_in_administration = $_SESSION['CalSetupAdm'];	
-			} //else { $searchModel->display_in_administration=1; }
-			
-			if(isset($_REQUEST['agcClubsSearch']['display_in_badges_administration'])) { 
-				$searchModel->display_in_badges_administration = $_REQUEST['agcClubsSearch']['display_in_badges_administration'];	
-				$_SESSION['CalSetupBadm'] = $_REQUEST['agcClubsSearch']['display_in_badges_administration'];
-			} elseif (isset($_SESSION['CalSetupBadm'])) {
-				$searchModel->display_in_badges_administration = $_SESSION['CalSetupBadm'];	
-			} //else { $searchModel->display_in_badges_administration=0; }
-			
-			if(isset($_REQUEST['agcClubsSearch']['is_cio'])) { 
-				$searchModel->is_cio = $_REQUEST['agcClubsSearch']['is_cio'];	
-				$_SESSION['CalSetupCio'] = $_REQUEST['agcClubsSearch']['is_cio'];
-			} elseif (isset($_SESSION['CalSetupCio'])) {
-				$searchModel->is_cio = $_SESSION['CalSetupCio'];	
-			} //else { $searchModel->is_cio=0; }
-		}
-
+		$this->RestoreSession($searchModel,'agcClubs',$this->myFilters);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('Clubs', [
@@ -105,7 +72,7 @@ class CalSetupController extends AdminController {
 
 	public function actionFacility() {
 		$searchModel = new agcFacilitySearch();
-		$this->RestoreSession($searchModel,'agcClubsSearch');
+		$this->RestoreSession($searchModel,'agcFacility',$this->myFilters);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('facility', [
@@ -116,7 +83,7 @@ class CalSetupController extends AdminController {
 
 	public function actionRangestatus() {
 		$searchModel = new agcRangeStatusSearch();
-		$this->RestoreSession($searchModel,'agcClubsSearch');
+		$this->RestoreSession($searchModel,'agcRangeStatus',$this->myFilters);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('RangeStatus', [
@@ -127,7 +94,7 @@ class CalSetupController extends AdminController {
 
 	public function actionEventstatus() {
 		$searchModel = new agcEventStatusSearch();
-		$this->RestoreSession($searchModel,'agcClubsSearch');
+		$this->RestoreSession($searchModel,'agcEventStatus',$this->myFilters);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('EventStatus', [
@@ -196,24 +163,5 @@ class CalSetupController extends AdminController {
 				'model' => $model,
 			]);
 		}
-	}
-
-	public function RestoreSession($searchModel,$search) {
-
-		if(isset($_REQUEST['reset'])) {
-			unset($_SESSION['CalSetupActive']);
-			unset($_SESSION['CalSetupCio']);
-			unset($_SESSION['CalSearchevent_name']);
-			unset($_SESSION['CalSearchapproved']);
-			return $this->redirect(['index']);
-		} else {
-			if(isset($_REQUEST[$search]['active'])) { 
-				$searchModel->active = $_REQUEST[$search]['active'];	
-				$_SESSION['CalSetupActive'] = $_REQUEST[$search]['active'];
-			} elseif (isset($_SESSION['CalSetupActive'])) {
-				$searchModel->active = $_SESSION['CalSetupActive'];	
-			} else { $searchModel->active=1; }
-		}
-
 	}
 }

@@ -18,19 +18,22 @@ use yii\web\NotFoundHttpException;
  * CalendarController implements the CRUD actions for Calendar model.
  */
 class CalendarController extends AdminController {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                //	'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+	/**
+	  * @inheritdoc
+	 */
+
+	public $myFilters = ['SearchTime','club_id','event_name','approved','active','event_status_id','range_status_id','facility_id','recur_week_days'];
+
+	public function behaviors() {
+		return [
+			'verbs' => [
+				'class' => VerbFilter::className(),
+				'actions' => [
+				//	'delete' => ['POST'],
+				],
+			],
+		];
+	}
 
 	public function actionApprove($id,$redir='index') {
 		$model = $this->findModel($id);
@@ -132,12 +135,12 @@ class CalendarController extends AdminController {
 
 		$searchModel = new AgcCalSearch();
 		$searchModel->conflict = 1;
-		$this->RestoreSession($searchModel);
+		$this->RestoreSession($searchModel,'AgcCal',$this->myFilters);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider ]);
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider ]);
 	}
 
 	public function actionDelete($id,$type='s',$redir='index') {
@@ -209,24 +212,24 @@ class CalendarController extends AdminController {
 	public function actionInactive() {
 		$searchModel = new AgcCalSearch();
 		$searchModel->deleted = 1;
-		$this->RestoreSession($searchModel);
+		$this->RestoreSession($searchModel,'AgcCal',$this->myFilters);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider ]);
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider ]);
 	}
 
-    public function actionIndex() {
+	public function actionIndex() {
 		$searchModel = new AgcCalSearch();
 		$searchModel->deleted = 0;
-		$this->RestoreSession($searchModel);
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		$this->RestoreSession($searchModel,'AgcCal',$this->myFilters);
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider ]);
-    }
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider ]);
+	}
 
 	public function actionOpenRange($eDate,$start,$stop,$facility,$lanes=0,$id=0,$pattern,$e_status,$internal=false,$force_order=false,$tst=false) {
 if($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:293 found',
@@ -449,12 +452,12 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 		$searchModel = new AgcCalSearch();
 		$searchModel->recur_every = true;
 		$searchModel->deleted = 0;
-		$this->RestoreSession($searchModel);
+		$this->RestoreSession($searchModel,'AgcCal',$this->myFilters);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider ]);
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider ]);
 	}
 
 	public function actionRepublish($id,$force_order=false,$tst=false) {
@@ -508,7 +511,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 		return $this->redirect(['index']);
 	}
 
-    public function actionUpdate($id=1,$hideRepub=null) {
+	public function actionUpdate($id=1,$hideRepub=null) {
 		$model = $this->findModel($id);
 		if (!$model) { return $this->redirect(['index']); }
 
@@ -516,7 +519,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 			Yii::$app->getSession()->setFlash('error', 'Not Your Event.');return $this->redirect(['/calendar/index']);
 		}
 
-        if ($model->load(Yii::$app->request->post())) {
+		if ($model->load(Yii::$app->request->post())) {
 
 			$model->start_time 	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->start_time")) ;
 			$model->end_time	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->end_time")) ;
@@ -554,7 +557,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 				$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 			}
 
-        	if($model->save()) {
+			if($model->save()) {
 				yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
 				Yii::$app->getSession()->setFlash('success', 'Calendar Item has been updated');
 				if(($model->recur_every) && ($model->recurrent_calendar_id == $model->calendar_id)) {
@@ -583,15 +586,15 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 			return $this->redirect(['update','id' => $id,'hideRepub'=>"no"]);
 
 
-        } else {
+		} else {
 			if(($_SESSION['badge_number']>0) && ($model->poc_badge==0)) { $model->poc_badge=$_SESSION['badge_number']; }
 
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
+			return $this->render('update', [
+				'model' => $model,
+			]);
+		}
 	//} else { Yii::$app->getSession()->setFlash('error', 'Record Moved.');return $this->redirect(['/calendar/index']); }
-    }
+	}
 
 	public function loadDirtyFilds($model) {
 		$model->active	= (int)$model->active;
@@ -634,29 +637,6 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 		}
 		sort($responce);
 		return $responce;
-	}
-
-	public function RestoreSession($searchModel) {
-		$myFilters=['SearchTime','club_id','event_name','approved','active','event_status_id','range_status_id','facility_id','recur_week_days'];
-		if(isset($_REQUEST['reset'])) {
-			foreach($myFilters as $filtr){
-				$clr='CalSearch'.$filtr;
-				unset($_SESSION[$clr]);
-			}
-			$urlStatus = yii::$app->controller->getCurrentUrl();
-			return $this->redirect([$urlStatus['actionId']]);
-		} else {
-			foreach($myFilters as $filtr){
-				$clr='CalSearch'.$filtr;
-				if(isset($_REQUEST['AgcCalSearch'][$filtr])) {
-					$searchModel->$filtr = $_REQUEST['AgcCalSearch'][$filtr];
-					$_SESSION[$clr] = $_REQUEST['AgcCalSearch'][$filtr];
-				} elseif (isset($_SESSION[$clr])) {
-					$searchModel->$filtr = $_SESSION[$clr];
-				}
-			}
-		}
-		return $searchModel;
 	}
 
 	private function GetPattern($post_data) {
@@ -906,12 +886,12 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 		return $model;
 	}
 
-    protected function findModel($id) {
-        if (($model = AgcCal::findOne($id)) !== null) {
-            return $model;
-        } else {
-            Yii::$app->getSession()->setFlash('error', 'Record Moved.');
+	protected function findModel($id) {
+		if (($model = AgcCal::findOne($id)) !== null) {
+			return $model;
+		} else {
+			Yii::$app->getSession()->setFlash('error', 'Record Moved.');
 			return false;
-        }
-    }
+		}
+	}
 }

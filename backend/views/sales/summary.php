@@ -54,7 +54,7 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		</div>
 	</div>
 </div>
-<?php ActiveForm::end(); ?>
+
 <?php
 		$gridColumns = [
 			[	'attribute' => 'tx_date',
@@ -105,6 +105,7 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		</div>
 	</div>
 
+<?php ActiveForm::end(); ?>
 <script>
  $("#txsle2").select2({placeholder_text_multiple:'Select',width: "100%"});
 </script>

@@ -343,6 +343,35 @@ class AdminController extends \yii\web\Controller {
 		return $string;
 	}
 
+	public function RestoreSession(&$searchModel,$form,$filters,$tst=true) {
+		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_'.$form, 'Hit from '.$form);
+		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_', var_export($_REQUEST,true));
+		if(isset($_REQUEST['reset'])) {
+			foreach($filters as $filtr) {
+				$clr=$form.'Search'.$filtr;
+				unset($_SESSION[$clr]);
+			}
+			$urlStatus = yii::$app->controller->getCurrentUrl();
+			return $this->redirect([$urlStatus['actionId']]);
+		} else {
+			foreach($filters as $filtr) {
+				$clr=$form.'Search'.$filtr;
+				if(isset($_REQUEST[$form.'Search'][$filtr])) {
+					if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_'.$form, 'Found '.$filtr);
+					$searchModel->$filtr = $_REQUEST[$form.'Search'][$filtr];
+					$_SESSION[$clr] = $_REQUEST[$form.'Search'][$filtr];
+				} elseif (isset($_REQUEST[$filtr])) {
+					if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_'.$form, 'Found '.$filtr);
+					$searchModel->$filtr = $_REQUEST[$filtr];
+					$_SESSION[$clr] = $_REQUEST[$filtr];
+				} elseif (isset($_SESSION[$clr])) {
+					$searchModel->$filtr = $_SESSION[$clr];
+				}
+			}
+		}
+		return $searchModel;
+	}
+
 	public function RotateLog() {
 		$param = Params::find()->one();
 		$mon = date('m',strtotime(yii::$app->controller->getNowTime()));

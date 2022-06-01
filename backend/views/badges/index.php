@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\widgets\ActiveForm;
 use backend\models\Badges;
 use backend\models\clubs;
 
@@ -25,12 +26,18 @@ if (isset($_REQUEST['BadgesSearch']['pagesize'])) {
 $dataProvider->pagination = ['pageSize' => $pagesize];
 ?>
 
+<?php $form = ActiveForm::begin([
+	'action' => ['index'],
+	'method' => 'post',
+	'id'=>'viewPrintbadgeFilter',
+]); ?>
+
 <div class="row">
      <div class="col-xs-4 col-sm-4">
         <h1><?= Html::encode($this->title) ?></h1>
     </div>
 	<?php if(yii::$app->controller->hasPermission('badges/all')) {
-	echo $this->render('_search',['model'=>$searchModel,'badgesModel'=>$badgesModel]).PHP_EOL; } ?>
+	echo $this->render('_search',['model'=>$searchModel,'badgesModel'=>$badgesModel,'form'=>$form]).PHP_EOL; } ?>
 </div>
 <div class="row">
 
@@ -145,6 +152,8 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
     ]); ?>
     </div>
 </div>
+
+<?php ActiveForm::end(); ?>
 <div class="badges-index">
 
 </div>

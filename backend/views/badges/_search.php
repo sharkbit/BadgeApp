@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\Html;
-use kartik\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\BadgesSearch */
@@ -17,11 +16,7 @@ if (isset($_REQUEST['pagesize'])) {
 }
 ?>
 <div class="badges-search">
-<?php $form = ActiveForm::begin([
-	'action' => ['index'],
-	'method' => 'post',
-	'id'=>'viewPrintbadgeFilter',
-]); ?>
+
 <!-- <div class="pull-right"> -->
 <div class="col-xs-0 col-sm-2"> <p> </p></div>
 <div class="col-xs-3 col-sm-2" style="min-width:100px">
@@ -44,8 +39,5 @@ if (isset($_REQUEST['pagesize'])) {
 	</div>
 </div>
 <!-- </div> -->
-<?php ActiveForm::end(); ?>
 
 </div>
-
-
