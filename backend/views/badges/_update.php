@@ -341,7 +341,6 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 			} else {
 				$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online'];
 			}
-			if($badgeSubscriptions->amount_due <=0) $badgeSubscriptions->payment_type='cash';
 		?>
 		<?= $form1->field($badgeSubscriptions, 'payment_type')->dropdownList($myList,['prompt'=>'Payment Type']).PHP_EOL;?>
 
@@ -546,11 +545,11 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		}
 
 		var amountDue = badgeFee - discount;
-		if(amountDue<0) {
+		amountDue = amountDue + TotalTotal;
+		if(amountDue<=0) {
 			amountDue = 0.00;
 			$("#badgesubscriptions-payment_type").val('cash');
 		}
-		amountDue = amountDue + TotalTotal;
 		$("#badgesubscriptions-tax").val(TaxTotal.toFixed(2));
 		$("#badgesubscriptions-amount_due-disp").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
 		$("#badgesubscriptions-amount_due").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
