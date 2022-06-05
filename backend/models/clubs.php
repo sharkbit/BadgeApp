@@ -29,7 +29,7 @@ class Clubs extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['club_name', 'short_name'], 'required'],
-            [['club_id', 'status','is_club','allow_self'],'number'],
+            [['club_id', 'status','is_club','allow_members'],'number'],
             [['avoid','club_name', 'poc_email'], 'string', 'max' => 255],
             [['short_name'], 'string', 'max' => 20],
             [['poc_email'],'safe'],
@@ -42,11 +42,11 @@ class Clubs extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-			'allow_self' => 'Self-Register',
+			'allow_members' => 'Allow Members',
             'club_id' => 'Club ID',
             'club_name' => 'Club Name',
             'short_name' => 'Short Name',
-			'is_club'=>'Is a Club',
+			'is_club'=>'Club Type',
             'status' => 'Status',
             'poc_email' => 'POC Email',
         ];
@@ -55,10 +55,10 @@ class Clubs extends \yii\db\ActiveRecord {
     public function getClubList($use_short=false,$restrict=false,$allow_members=false,$add_CIO=false) {
 		if($use_short) {$field='short_name';} else {$field='club_name';}
 
-		if($allow_members==2) { $where = ['status'=>'0','allow_self'=>'1']; }
+		if($allow_members==2) { $where = ['status'=>'0','allow_members'=>'1']; }
 		elseif($allow_members) { $where = ['status'=>'0','is_club'=>'1']; } else { $where = ['status'=>'0']; }
 		$clubArray = Clubs::find()
-			->where($where )
+			->where( $where )
 			->orderBy(['is_club'=> SORT_DESC,$field => SORT_ASC ])
 			->all();
 

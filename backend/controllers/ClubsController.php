@@ -4,8 +4,10 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\clubs;
+use backend\models\Roles;
 use backend\models\Badges;
 use backend\models\search\ClubsSearch;
+use backend\models\search\RolesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -238,6 +240,44 @@ class ClubsController extends AdminController {
 				'model' => $model,
 			]);
 		}
+    }
+
+
+ function actionCreaterole() {
+		$model = new Roles();
+        if ($model->load(Yii::$app->request->post())){
+			$sql='SELECT t.club_id + 1 AS FirstAvailableId FROM clubs t LEFT JOIN clubs t1 ON t1.club_id = t.club_id + 1 WHERE t1.club_id IS NULL ORDER BY t.club_id LIMIT 0, 1';
+			$connection = Yii::$app->getDb();
+			$command = $connection->createCommand($sql);
+			$NewId = $command->queryAll();
+			$model->club_id = $NewId[0]['FirstAvailableId'];
+			$model->status = 0;
+
+			if ($model->save()) {
+				$this->createLog($this->getNowTime(), $_SESSION['user'], 'New Club Created : '.$model->club_id);
+				Yii::$app->getSession()->setFlash('success', 'Club '.$model->short_name.' has been created');
+				return $this->redirect(['view', 'id' => $model->club_id]);
+			} else {
+				return $this->render('createrole', [
+					'model' => $model,
+				]);
+			}
+		} else {
+			return $this->render('createrole', [
+				'model' => $model,
+			]);
+		}
+    }
+
+    public function actionRoles() {
+        $searchModel = new RolesSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+       // $dataProvider->pagination->pageSize = 100;
+
+        return $this->render('roles', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function actionUpdate($id) {

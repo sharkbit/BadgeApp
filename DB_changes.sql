@@ -636,3 +636,23 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DE
 -- Env Update
 ALTER TABLE `BadgeDB`.`params` 
 DROP COLUMN `qb_env`;
+
+-- VIP Roles #165
+--  v2.1.16
+ALTER TABLE `BadgeDB`.`clubs` 
+CHANGE COLUMN `allow_self` `allow_members` INT NOT NULL DEFAULT '1';
+UPDATE BadgeDB.clubs set allow_members=1 where is_club>0;
+
+CREATE TABLE `BadgeDB`.`roles` (
+  `role_id` INT NOT NULL AUTO_INCREMENT,
+  `role_name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`role_id`));
+
+ALTER TABLE `BadgeDB`.`roles` 
+ADD UNIQUE INDEX `role_name_UNIQUE` (`role_name` ASC) VISIBLE;
+
+CREATE TABLE `BadgeDB`.`badge_to_role` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `badge_number` INT NOT NULL,
+  `roles`  JSON NOT NULL,
+  PRIMARY KEY (`id`));

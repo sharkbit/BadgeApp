@@ -8,7 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Update Club : ' . $model->club_name;
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Member Club List', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->club_id, 'url' => ['view', 'id' => $model->club_id]];
+$this->params['breadcrumbs'][] = ['label' => $model->club_name.' ('.$model->club_id.')', 'url' => ['view', 'id' => $model->club_id]];
 $this->params['breadcrumbs'][] = 'Update';
 
 ?>

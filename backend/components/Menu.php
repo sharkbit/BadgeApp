@@ -65,6 +65,11 @@ class Menu extends Widget{
 			'color' => 'btn-danger',
 		],
 		[
+			'label'=>'Club Info',
+			'loc'=>['prod','dev'],
+			'url' => '/clubs/index',
+		],
+		[
 			'label'=>'Events',
 			'loc'=>['prod','dev'],
 			'url' => '/events/index',

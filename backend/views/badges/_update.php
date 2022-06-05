@@ -97,7 +97,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				<?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(),['disabled' =>($restrict)? true : false]).PHP_EOL; ?>
             </div>
             <div class="col-xs-12 col-sm-6">
-				<?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false),['value'=>(new clubs)->getMyClubs($model->badge_number),'multiple'=>true,'disabled'=>($restrict)? true : false]).PHP_EOL; ?>
+				<?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false,true),['value'=>(new clubs)->getMyClubs($model->badge_number),'multiple'=>true,'disabled'=>($restrict)? true : false]).PHP_EOL; ?>
             </div>
 			<div  class="col-xs-12" id="primary-badge-summary">
 				<div class="row">

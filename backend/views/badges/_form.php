@@ -52,7 +52,7 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(),['prompt'=>'select']).PHP_EOL; ?>
             </div>
             <div class="col-xs-6 col-sm-6 col-md-4">
-                <?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false), ['prompt'=>'select']).PHP_EOL; ?>
+                <?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'select']).PHP_EOL; ?>
             </div>
 			<div  class="col-xs-12" id="primary-badge-summary">
 			<div class="row">
