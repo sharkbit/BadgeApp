@@ -149,12 +149,15 @@ class SalesController extends AdminController {
 			foreach($cart as $item){
 				if($item->sku == $confParams->guest_sku) {
 					if((int)$item->qty>1) {
-						$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND g_paid ='0' or g_paid='a' or g_paid ='h' LIMIT ".(int)$item->qty;
+						$this->createLog($this->getNowTime(), $_SESSION['user'], 'Paid Guest: '.(int)$item->qty. ' for Badge: '.$model->badge_number);
+						$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND (g_paid ='0' or g_paid='a' or g_paid ='h') LIMIT ".(int)$item->qty;
 					} else {
 						if ((int)$g_id>1) {
+							$this->createLog($this->getNowTime(), $_SESSION['user'], 'Paid Guest: '.(int)$g_id. ' for Badge: '.$model->badge_number);
 							$sql="UPDATE guest set g_paid=1 WHERE id=".$g_id;
 						} else {
-							$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND g_paid ='0' or g_paid='a' or g_paid ='h' LIMIT 1";
+							$this->createLog($this->getNowTime(), $_SESSION['user'], 'Paid Guest:  1 for Badge: '.$model->badge_number);
+							$sql="UPDATE guest set g_paid=1 WHERE badge_number=".$model->badge_number." AND (g_paid ='0' or g_paid='a' or g_paid ='h') LIMIT 1";
 						}
 					}
 					Yii::$app->db->createCommand($sql)->execute();
