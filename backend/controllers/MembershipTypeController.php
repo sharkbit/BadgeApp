@@ -34,6 +34,7 @@ class MembershipTypeController extends AdminController {
 			$nowNumbers = strtotime(yii::$app->controller->getNowTime());
 			if (isset($feeArray->sku_half) && (date('Y-m-d', $nowNumbers) >= date('Y-07-01', $nowNumbers)) && (date('Y-m-d', $nowNumbers) <= date('Y-'.$confParams->sell_date, $nowNumbers)) && ($from=='n') && ((int)$feeArray->fullprice->price < 301 )) {
 				//discount
+				$Full_Price = $feeArray->halfprice->price;
 				$Half_Price = $feeArray->halfprice->price;
 				$item_sku=$feeArray->halfprice->sku;
 				$item_name=$feeArray->halfprice->item;
