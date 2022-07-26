@@ -245,6 +245,11 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 		</div>
 			<div class="clearfix"> </div>
 	</div>
+	<?php } ?> 
+	<?php if ($Payment_block) { ?>
+		<div class="col-xs-12 col-sm-4">		
+		<?= $form->field($model, 'guest_count')->hiddenInput().PHP_EOL ?>
+		</div>
 	<?php } ?>
 		<div class="btn-group pull-right" id="guest_save_div" <?php if($model->isNewRecord) {echo 'style="display:none"';}?>> <br /><br /><div id="CC_Save">
 			<?= Html::submitButton($model->isNewRecord ? $msg : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success done-Guest' : 'btn btn-primary done-Guest','id'=>'save_btn']).PHP_EOL;  ?>
