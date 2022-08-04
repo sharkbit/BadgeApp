@@ -46,7 +46,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 						return "True"; 
 					} else { return "False"; }
 				},
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'active',['1'=>'True','0'=>'False'],['class'=>'form-control']),
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'active',['1'=>'True','0'=>'False'],['class'=>'form-control','prompt' => 'All']),
 			],
 			'display_order',
 			[

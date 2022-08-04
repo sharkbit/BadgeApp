@@ -17,7 +17,7 @@ class agcRangeStatusSearch extends agcRangeStatus {
      */
     public function rules() {
         return [
-            [['name','active'], 'safe'],
+            [['name','active','restricted'], 'safe'],
         ];
     }
 
@@ -48,7 +48,7 @@ class agcRangeStatusSearch extends agcRangeStatus {
 
 		$this->load($params);
 
-		if(!isset($params['sort'])) { $query->orderBy( ['name' => SORT_ASC] ); }
+		if(!isset($params['sort'])) { $query->orderBy( ['display_order' => SORT_ASC] ); }
 
 		if (!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
@@ -58,6 +58,7 @@ class agcRangeStatusSearch extends agcRangeStatus {
 
 		// grid filtering conditions
 		if(isset($this->active)) {$query->andFilterWhere(['active' => $this->active,]); }
+		if(isset($this->restricted)) {$query->andFilterWhere(['restricted' => $this->restricted,]); }
 		if(isset($this->name)) { $query->andFilterWhere(['like', 'name', $this->name]); }
 
 		return $dataProvider;

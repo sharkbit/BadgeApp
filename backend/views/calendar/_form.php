@@ -27,7 +27,7 @@ if($model->isNewRecord) {
 }
 $Req_Lanes = ArrayHelper::index(agcFacility::find('facility_id')->where(['active'=>1])
                 ->andwhere('available_lanes>0')->orderBy(['name'=>SORT_ASC])->asArray()->all(),'facility_id');
-if (array_intersect(json_decode($model->facility_id),array_column($Req_Lanes,'facility_id'))) { 
+if (array_intersect(json_decode($model->facility_id),array_column($Req_Lanes,'facility_id'))) {
     $allowLanes = true;
 } else {
     $allowLanes = false;
@@ -163,13 +163,24 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
     </div>
     <?php
 	if (yii::$app->controller->hasPermission('calendar/close')) {
-		$ary_range = ArrayHelper::map(agcRangeStatus::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'range_status_id', 'name');
-		echo '    <div class="col-xs-4 col-sm-2">'.$form->field($model, 'range_status_id')->DropDownList($ary_range)."\n</div>\n";
+		$ary_range = ArrayHelper::map(agcRangeStatus::find()->where(['active'=>1])->orderBy(['display_order'=>SORT_ASC])->asArray()->all(), 'range_status_id', 'name');
 	} else {
-		echo $form->field($model, 'range_status_id')->hiddenInput(['value'=>1])->label(false).PHP_EOL;
+		$ary_rng = agcRangeStatus::find()->where(['active'=>1])->orderBy(['display_order'=>SORT_ASC])->asArray()->all();
+		$ary_range=[];
+		foreach ($ary_rng as $rng_stat) {
+			if($rng_stat['restricted']==0){
+				$ary_range[$rng_stat['range_status_id']]=$rng_stat['name'];
+			} else {
+				if ($model->range_status_id==$rng_stat['range_status_id']) {
+					$ary_range[$rng_stat['range_status_id']]=$rng_stat['name'];
+				}
+			}
+		}
 	} ?>
-
-    <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+	<div class="col-xs-4 col-sm-2">
+		<?= $form->field($model, 'range_status_id')->DropDownList($ary_range,['value'=> $model->range_status_id]).PHP_EOL; ?>
+	</div>
+	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'active')->DropDownList(['1'=>'Yes','0'=>'No'],['value'=> $model->isNewRecord ? 1 : $model->active ]) ?>
     </div>
     <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2" <?php if(!yii::$app->controller->hasPermission('calendar/approve')) {echo 'style="display:none"';} ?> >
@@ -297,7 +308,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" style="background-color: silver">
 			<?php   echo $form->field($model, 'recurrent_end_date')->widget(DatePicker::classname(), [
 					'options' => ['value' =>  (isset($model->recurrent_end_date) && $model->recurrent_end_date >0) ? $model->recurrent_end_date : '31 Dec'],
-					'size' => 'xs', 
+					'size' => 'xs',
 					'pluginOptions' => [
 						'autoclose'=>true,
 						'format' => 'd M',
@@ -311,7 +322,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		</div>
 		<?= $form->field($model, 'recur_week_days')->hiddenInput()->label(false).PHP_EOL; ?>
 		</div>
-		<div class="row">	
+		<div class="row">
 			<div class="col-xs-12 col-sm-12">
 			<p>* <u>Year is always current for Recurrent Start/End Dates</u><br>
 			   ** <u>Dates can wrap arround: 1 Sep - 31 Mar</u></p>
@@ -385,7 +396,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 <style>
   th { padding: 10px; text-align: center;}
   td { padding: 10px; white-space: nowrap }
-  td { word-wrap: break-word word-break: break-all;  } 
+  td { word-wrap: break-word word-break: break-all;  }
 </style>
 <script>
     const convertTime12to24 = (time12h) => {
@@ -403,7 +414,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 	runClub();
 
     document.getElementById("cal_update_item").disabled=true;
-	$("#agccal-facility_id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){ OpenRange(); });	
+	$("#agccal-facility_id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){ OpenRange(); });
 
   $("#re_pub").click(function (e) {
 	  e.preventDefault();
@@ -611,7 +622,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			$("#error_msg").html('<center><p style="color:red;">Please Choose a Facility.</p></center>');
 			return;
 		}
-		
+
         facil_ids.forEach(function(facil_id) {
 			if ((Req_Lanes[facil_id]) && (Req_Lanes[facil_id].available_lanes > 0)) {
 				OnlyOneLane ++;
@@ -620,7 +631,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 				fa_name += JSON.parse($("#Req_Lanes").val())[facil_id]['name']+', ';
 				$("#Div_Lanes_Req").show();
 			} else {
-				
+
 			}
 		});
 		fa_name=fa_name.slice(0, -2);
@@ -636,7 +647,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 				$("#error_msg").html('<center><p style="color:red;"><b>Please Choose # of lanes requested. No more than ' + available_lanes + '</b></p></center>');
 				return;
 			}
-			
+
 			reqLanes = $("#agccal-lanes_requested").val();
 			if (reqLanes) {reqLnN = parseInt(reqLanes); reqLanes = '&lanes='+reqLanes;}
 			else {$("#error_msg").html('<center><p style="color:red;"><b>Please Provide how many Lanes requested.</b></p></center>');return;}
@@ -645,7 +656,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			$("#agccal-lanes_requested").val(0);
 		}
 	console.log('found: '+OnlyOneLane+' - '+fa_name+', Lanes: '+available_lanes+', Requested: '+reqLanes);
-		
+
         var reqStart = convertTime12to24($("#agccal-start_time").val());
         var reqStop  = convertTime12to24($("#agccal-end_time").val());
         //console.log('checking start Time:' + reqStart +' - ' + reqStop);

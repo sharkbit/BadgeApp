@@ -636,3 +636,8 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DE
 -- Env Update
 ALTER TABLE `BadgeDB`.`params` 
 DROP COLUMN `qb_env`;
+
+-- Cal Enent status fix for #225
+ALTER TABLE `associat_agcnew`.`range_status` 
+ADD COLUMN `restricted` TINYINT NULL DEFAULT 0 AFTER `active`;
+update associat_agcnew.range_status set restricted=1 where name='Caliber Restriction';
