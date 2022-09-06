@@ -518,7 +518,7 @@ app.controller("CreateBadgeController", function($scope) {
                         }
                     } else {
                         console.log("Data error " + JSON.stringify(responseData));
-                        SwipeError(JSON.stringify(responseData),'b-v-l-m:531');
+                        SwipeError(JSON.stringify(responseData),'b_v_l_m:521');
                         $("p#cc_info").html(responseData.message);
 						$("#badges-Process_CC").show();
                     }
@@ -526,7 +526,7 @@ app.controller("CreateBadgeController", function($scope) {
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     $("p#cc_info").html("PHP error:<br>"+responseData.responseText);
-                    SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:532');
+                    SwipeError(JSON.stringify(responseData.responseText),'b_v_l_m:529');
                     console.log("error "+ responseData.responseText);
 					$("#badges-Process_CC").show();
                 },
@@ -779,7 +779,7 @@ app.controller('UpdateBadgeController', function($scope) {
                         }
                     } else {
                         console.log("Data error " + JSON.stringify(responseData));
-                        SwipeError(JSON.stringify(responseData),'b-v-l-m:788');
+                        SwipeError(JSON.stringify(responseData),'b_v_l_m:782');
                         $("p#cc_info").html(responseData.message);
 						$("#badgesubscriptions-Process_CC").show();
                     }
@@ -787,7 +787,7 @@ app.controller('UpdateBadgeController', function($scope) {
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     $("p#cc_info").html("PHP error:<br>"+responseData.responseText);
-                    SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:802');
+                    SwipeError(JSON.stringify(responseData.responseText),'b_v_l_m:790');
                     console.log("error "+ responseData.responseText);
 					$("#badgesubscriptions-Process_CC").show();
                 },

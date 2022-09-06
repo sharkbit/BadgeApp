@@ -667,7 +667,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 					}
 				} else {
 					console.log("Data error " + JSON.stringify(responseData));
-					SwipeError(JSON.stringify(responseData),'b-v-l-m:788');
+					SwipeError(JSON.stringify(responseData),'b_v_b_u:670');
 					$("p#cc_info").html(responseData.message);
 					$("#badgecertification-Process_CC").show();
 				}
@@ -675,7 +675,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			},
 			error: function (responseData, textStatus, errorThrown) {
 				$("p#cc_info").html("PHP error:<br>"+responseData.responseText);
-				SwipeError(JSON.stringify(responseData),'b-v-l-m:795');
+				SwipeError(JSON.stringify(responseData),'b_v_b_u:678');
 				console.log("error "+ JSON.stringify(responseData));
 				$("#badgecertification-Process_CC").show();
 			},
@@ -835,7 +835,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			document.getElementById("badgesubscriptions-cc_num").value = ccNum;
 			document.getElementById("badgesubscriptions-cc_exp_mo").value = ExpMo;
 			document.getElementById("badgesubscriptions-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b-v-g-u:686'); }
+		} else { SwipeError(cleanUPC,'b_v_b_u:838'); }
 		cleanUPC = '';
 	};
 

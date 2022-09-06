@@ -453,7 +453,7 @@ $confParams  = Params::findOne('1');
 			document.getElementById("badges-cc_num").value = ccNum;
 			document.getElementById("badges-cc_exp_mo").value = ExpMo;
 			document.getElementById("badges-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b-v-b-f:443'); }
+		} else { SwipeError(cleanUPC,'b_v_b_f:456'); }
 		cleanUPC = '';
 	};
 </script>

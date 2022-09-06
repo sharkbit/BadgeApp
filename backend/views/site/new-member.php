@@ -343,134 +343,18 @@ $('#NewMembers').on('beforeSubmit', function (e) {
         var charCode = (evt.which) ? evt.which : evt.keyCode;
         phoneNumber.value = phoneFormat(phoneNumber.value);
     });
-	
 
   function subform() {
     //e.preventDefault();
-	console.log(checkForm());
+    console.log(checkForm());
   };
   
-	function doCalcNew() {
-/*
-		var badgeFee = parseInt($("#badges-badge_fee").val());
-		var discount = parseInt($("#badges-discounts").val());
-		var amountDue = badgeFee - discount;
-		if(amountDue<0) {
-			amountDue = 0.00;
-		}
-		$("#badges-amt_due-disp").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
-		$("#badges-amt_due").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
-		console.log('Badge Total: '+badgeFee+ '; Grand total: '+ amountDue);
-*/	}
-
-	function ProcessSwipe(cleanUPC) {
-/*
-		if  ((cleanUPC.indexOf('ANSI 6360') > 0) || (cleanUPC.indexOf('AAMVA6360') > 0)) { // Matched Drivers Licence
-			console.log('Drivers Licence Scanned: ', cleanUPC);
-			var FName=false;
-
-			if (cleanUPC.indexOf('DAC') > 0) {  //Parse Name
-			  var fsName = cleanUPC.indexOf('DAC')+3;
-			  var feName = cleanUPC.indexOf("ArrowDown",fsName);
-			  var FName = cleanUPC.slice(fsName,feName);
-			  FName = titleCase(FName);
-			  var msName = cleanUPC.indexOf('DAD')+3;
-			  var meName = cleanUPC.indexOf("ArrowDown",msName);
-			  var MName = cleanUPC.slice(msName,meName);
-			  MName = MName.charAt(0).toUpperCase();
-			  var lsName = cleanUPC.indexOf('DCS')+3;
-			  var leName = cleanUPC.indexOf("ArrowDown",lsName);
-			  var LName = cleanUPC.slice(lsName,leName);
-			  LName = titleCase(LName);
-			} //Parse Name Second Try
-			else if  (cleanUPC.indexOf('DAA') > 0) {
-			  var nsName = cleanUPC.indexOf('DAA')+3;
-			  var neName = cleanUPC.indexOf("ArrowDown",nsName);
-			  var FullName = cleanUPC.slice(nsName,neName);
-			  FullName = FullName.split(",");
-			  var LName = titleCase(FullName[0]);
-			  var FName = titleCase(FullName[1]);
-			  var MName = FullName[2].charAt(0).toUpperCase();
-			}
-            console.log("Full Name: "+FName+' - '+MName+' - '+LName);
-			document.getElementById("badges-first_name").value = FName+' '+MName;
-			document.getElementById("badges-last_name").value = LName;
-
-			if (cleanUPC.indexOf('DBB') > 0) {  //Parse Date of Birth
-			  var fDOB = cleanUPC.indexOf('DBB')+3;
-			  var lDOB = cleanUPC.indexOf("ArrowDown",fDOB);
-			  var DOB = cleanUPC.slice(fDOB,lDOB);
-
-			  var DOBtest=true;
-			  var DOBy=DOB.substring(0,4);
-			  var DOBm=DOB.substring(4,6);
-			  var DOBd=DOB.substring(6);
-
-			  if (DOBm > 12) {DOBtest=false;}
-			  if (DOBd > 31) {DOBtest=false;}
-			  if (DOBy < 1900) {DOBtest=false;}
-			  if (!DOBtest) {
-			    var DOBy=DOB.substring(4);
-			    var DOBm=DOB.substring(0,2);
-			    var DOBd=DOB.substring(2,4);
-			  }
-              console.log("DOB: m "+DOBm+" d "+DOBd+" y "+DOBy);
-			  document.getElementById("badges-yob").value = DOBy;
-			}
-
-			if (cleanUPC.indexOf('DAG') > 0) {  //Parse Address
-			  var fAddr = cleanUPC.indexOf('DAG')+3;
-			  var lAddr = cleanUPC.indexOf("ArrowDown",fAddr);
-			  var Addr = cleanUPC.slice(fAddr,lAddr);
-			  Addr = titleCase(Addr);
-              console.log("Addr: "+Addr);
-			  document.getElementById("badges-address").value = Addr;
-			}
-
-			if (cleanUPC.indexOf('DAI') > 0) {  //Parse City
-			  var fCty = cleanUPC.indexOf('DAI')+3;
-			  var lCty = cleanUPC.indexOf("ArrowDown",fCty);
-			  var Cty = cleanUPC.slice(fCty,lCty);
-			  Cty = titleCase(Cty);
-              console.log("City: "+Cty);
-			  document.getElementById("badges-city").value = Cty;
-			}
-
-			if (cleanUPC.indexOf('DAJ') > 0) {  //Parse State
-			  var fST = cleanUPC.indexOf('DAJ')+3;
-			  var lST = cleanUPC.indexOf("ArrowDown",fST);
-			  var Stat = cleanUPC.slice(fST,lST);
-              console.log("State: "+Stat);
-			  document.getElementById("badges-state").value = Stat;
-            }
-
-			if (cleanUPC.indexOf('DAK') > 0) {  //Parse ZIP
-			  var fZIP = cleanUPC.indexOf('DAK')+3;
-			  var lZIP = cleanUPC.indexOf("ArrowDown",fZIP);
-			  var ZIP = cleanUPC.slice(fZIP,lZIP);
-			  ZIP = ZIP.substring(0,5);
-              console.log("ZIP: "+ZIP);
-			  document.getElementById("badges-zip").value = ZIP;
-			}
-
-		}
-		else if (cleanUPC.match(/B\d{16}/g)) {  // Matched Credit Card!
-			console.log('Credit Card Scanned: ', cleanUPC);
-			var ccNum = cleanUPC.substring(1,17);
-			var fExp = cleanUPC.indexOf('^')+1;
-			var fExp = cleanUPC.indexOf('^',fExp)+1;
-			var ExpYr = cleanUPC.substring(fExp,fExp+2);
-			var ExpMo = cleanUPC.substring(fExp+2,fExp+4);
-			ccNum = ccFormat(ccNum);
-			console.log("Num: "+ccNum+" Exp Yr: "+ExpYr+" Exp Mo: "+ExpMo);
-			ExpYr = ExpYr - (new Date().getFullYear().toString().substr(-2));
-
-			document.getElementById("badges-cc_num").value = ccNum;
-			document.getElementById("badges-cc_exp_mo").value = ExpMo;
-			document.getElementById("badges-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b-v-b-f:443'); }
-		cleanUPC = '';
-*/	};
+function doCalcNew() {
+//nope
+}:
+function ProcessSwipe(cleanUPC) {
+//nope
+};
 
 $( document ).ready(function() {
   family_badge_view('hide');

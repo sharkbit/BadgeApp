@@ -515,14 +515,14 @@ $('#GuestForm').on('submit', function() {
 					}
 				} else {
 					console.log("Data error " + JSON.stringify(responseData));
-					SwipeError(JSON.stringify(responseData),'b-v-g-f:253');
+					SwipeError(JSON.stringify(responseData),'b_v_g_f:518');
 					$("p#cc_info").html(responseData.message);
 				}
 
 			},
 			error: function (responseData, textStatus, errorThrown) {
 				$("p#cc_info").html("PHP error:<br>"+responseData.responseText);
-				SwipeError(JSON.stringify(responseData),'b-v-g-f:430');
+				SwipeError(JSON.stringify(responseData),'b_v_g_f:525');
 				console.log("error "+ JSON.stringify(responseData.responseText));
 			},
 		});
@@ -675,7 +675,7 @@ $('#GuestForm').on('submit', function() {
 			  document.getElementById("guest-g_zip").value = ZIP;
               console.log("ZIP: "+ZIP);
 			}
-		} else { SwipeError(cleanUPC,'b_v_g_f:205'); }
+		} else { SwipeError(cleanUPC,'b_v_g_f:678'); }
 		cleanUPC = '';
 	}
 </script>

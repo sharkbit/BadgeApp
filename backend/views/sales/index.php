@@ -364,7 +364,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 						}
 					} else {
 						console.log("Data error " + JSON.stringify(responseData));
-						SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:532');
+						SwipeError(JSON.stringify(responseData.responseText),'b_v_s_i:367');
 						$("p#cc_info").html(responseData.message);
 						$("#sales-Process_CC").show();
 					}
@@ -372,7 +372,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				},
 				error: function (responseData, textStatus, errorThrown) {
 					$("p#cc_info").html("PHP error:<br>"+responseData.message);
-                    SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:532');
+                    SwipeError(JSON.stringify(responseData.responseText),'b_v_s_i:375');
                     console.log("error "+ responseData.responseText);
 					$("#sales-Process_CC").show();
 				},
@@ -571,7 +571,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			document.getElementById("sales-cc_num").value = ccNum;
 			document.getElementById("sales-cc_exp_mo").value = ExpMo;
 			document.getElementById("sales-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b-v-s-i:403'); }
+		} else { SwipeError(cleanUPC,'b_v_s_i:574'); }
 		cleanUPC = '';
 	};
 
