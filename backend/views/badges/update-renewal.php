@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			<li> <?php if($model->is_migrated) { 
 				echo Html::label($model->getLabel('payment_type'))?> <span class="pull-right"> <?=$model->payment_type?>  </span>
 			<?php } else { echo $form->field($model, 'payment_type')->dropdownList(['cash'=>'Cash','check'=>'Check',
-						'credit'=>'Credit Card','online'=>'Online','other'=>'Other'],['prompt'=>'Payment Type']); } ?> </li>
+						'credit'=>'Credit Card','online'=>'On Line','other'=>'Other'],['prompt'=>'Payment Type']); } ?> </li>
 			<li> <?=Html::label($model->getLabel('badge_fee'))?> <span class="pull-right"> <?=$model->badge_fee?>  </span> </li>
 			<li> <?=Html::label($model->getLabel('paid_amount'))?> <span class="pull-right"> <?=$model->paid_amount?>  </span> </li>
 			<li> <?=Html::label($model->getLabel('discount'))?> <span class="pull-right"> <?=$model->discount?>  </span> </li>
