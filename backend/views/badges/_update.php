@@ -336,10 +336,10 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<?php }
 			if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
 				if(Yii::$app->params['env'] == 'prod') {
-					$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'On Line','other'=>'Other'];
-				} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)','online'=>'On Line','other'=>'Other']; }
+					$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online','other'=>'Other'];
+				} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)','online'=>'Online','other'=>'Other']; }
 			} else {
-				$myList=['cash'=>'Cash','check'=>'Check','online'=>'On Line'];
+				$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online'];
 			}
 		?>
 		<?= $form1->field($badgeSubscriptions, 'payment_type')->dropdownList($myList,['prompt'=>'Payment Type']).PHP_EOL;?>

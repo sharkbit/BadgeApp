@@ -34,7 +34,7 @@ li {
 <li>Confirm name, address, club, phone number, email address, and emergency contact and make any changes needed
 <li>On the right side of the screen in the Badge Renewal fields confirm the amount due and select the payment type.
 <li>If paying by credit, select Credit Card Now!  Swipe card through black card reader or manually enter card number.  Enter the 3-digit CVV number from the back of the credit card and click Process.
-<li>If presenting a receipt showing on line payment, select On Line for the payment type.  The receipt can be a copy on their phone.  Record the on line order number in the remarks box with a note stating they paid for their renewal with an on line order.
+<li>If presenting a receipt showing online payment, select Online for the payment type.  The receipt can be a copy on their phone.  Record the online order number in the remarks box with a note stating they paid for their renewal with an online order.
 <hr />
 <li>SELECT the <u>STICKER number</u> being issued and place sticker on range badge.
 <li>Click <u><mark>Renew Badge</mark></u> at bottom right of Badge Renewal Box on right side of screen.  This will save all the changes and additions you made in the badge screen and return you to the details page.

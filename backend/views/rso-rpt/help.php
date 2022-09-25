@@ -86,10 +86,10 @@ NOTE: All <u>cash and check sales</u> completed in the STORE will automatically 
 <hr />
 </ul>
 
-<h2>AGCRANGE.ORG on Line Sales</h2>
+<h2>AGCRANGE.ORG ONLINE SALES</h2>
 <ul>
-<li>When a Badge Holder presents an <u>On Line</u> purchase receipt, enter the sale the same way as any other sale in the <u>STORE</u> (see above)</li>
-<li>Click <u>On Line</u> under Payment method.</li>
+<li>When a Badge Holder presents an <u>ONLINE</u> purchase receipt, enter the sale the same way as any other sale in the <u>STORE</u> (see above)</li>
+<li>Click <u>ONLINE</u> under Payment method.</li>
 <li>Verify the PURCHASE. (Receipt or transaction number)</li>
 <li>All Credit Card Sales will not be added to the RSO REPORT. </li>
 <hr />
