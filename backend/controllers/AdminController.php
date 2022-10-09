@@ -343,7 +343,7 @@ class AdminController extends \yii\web\Controller {
 		return $string;
 	}
 
-	public function RestoreSession(&$searchModel,$form,$filters,$tst=true) {
+	public function RestoreSession(&$searchModel,$form,$filters,$tst=false) {
 		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_'.$form, 'Hit from '.$form);
 		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_', var_export($_REQUEST,true));
 		if(isset($_REQUEST['reset'])) {
