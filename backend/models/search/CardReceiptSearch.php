@@ -68,6 +68,9 @@ class CardReceiptSearch extends CardReceipt {
 			$txDate = explode(" ", trim($this->tx_date));
 			$query->andFilterWhere(['>=','tx_date' , $txDate[0].' 00:00:00'	]);
 			$query->andFilterWhere(['<=','tx_date', $txDate[2].' 23:59:59' ]);
+		} else {
+			$this->tx_date = date('Y-m-d', strtotime('-30 days'));
+			$query->andFilterWhere(['>=','tx_date' , date('Y-m-d ', strtotime('-30 days')).' 00:00:00'	]);
 		}
 
 		//if(isset($this->id)) { $query->andFilterWhere(['id' => $this->id ]); }
