@@ -268,7 +268,7 @@ class SalesController extends AdminController {
         }
     }
 
-	public function processCart($cart) {
+	public static function processCart($cart) {
 		if(is_string($cart)) { $cart=json_decode($cart); }
 		foreach($cart as $item) {
 			$model = (New StoreItems)->find()->where(['sku'=>$item->sku])->one();

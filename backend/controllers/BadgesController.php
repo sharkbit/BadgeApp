@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use backend\controllers\AdminController;
+use backend\controllers\SalesController;
 use backend\models\AgcCal;
 use backend\models\BadgeCertification;
 use backend\models\Badges;
@@ -509,6 +510,7 @@ class BadgesController extends AdminController {
 					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ];
 					$MyCart = "[".rtrim( json_encode($MyCart),",")."]";
 					if(isset($_POST['cart'])) {
+						SalesController::processCart($_POST['cart']);
 						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
 					}
 
@@ -1027,6 +1029,7 @@ class BadgesController extends AdminController {
 						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($d_cart)));
 					}
 					if(isset($_POST['cart'])) {
+						SalesController::processCart($_POST['cart']);
 						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
 					}
 					$savercpt = new CardReceipt();
