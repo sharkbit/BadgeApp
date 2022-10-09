@@ -203,10 +203,10 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 					echo "<tr><td colspan=4><b>".$item['cat'].":</b></td></tr>"; $curCat = $item['cat'];
 				}
 				$colo ="bgcolor='#f3f3f3'";
-				$item_qty =	'<input class="right" type="text" name="qty" size="3" value=0 onKeyUp="doCalcSale()" />';
+				$item_qty =	'<input class="right" type="text" name="qty" size="3" value=0 onfocus="doCheckField()" onKeyUp="doCalcSale()" />';
 				if ($item['sku']== $confParams->guest_sku ) {
 					if ($guest_total>0) {
-						$item_qty =	'<input class="right" type="text" name="qty" size="3" value='.$guest_total.' onKeyUp="doCalcSale()" />';
+						$item_qty =	'<input class="right" type="text" name="qty" size="3" value='.$guest_total.' onfocus="doCheckField()" onKeyUp="doCalcSale()" />';
 					} else {
 						$item_qty='<input class="right" type="text" name="qty" size="3" value=0 disabled />';
 						$guest_note=' - <a href="/guest/index">  <B><u>Use Pay Now Option<u></a>';
@@ -231,6 +231,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 <?php ActiveForm::end(); ?>
 
 <script>
+	function doCheckField(e) {
+		e = e || window.event;
+		if(e.target.value=='0') e.target.value='';
+	};
+
 	doCalcSale();
 
 	function doCalcSale() {

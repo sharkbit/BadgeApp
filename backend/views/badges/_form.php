@@ -216,7 +216,7 @@ $confParams  = Params::findOne('1');
 					'<input type=hidden name="sku" value="'.$item['sku'].'" />'.
 					'<input type=hidden name="tax_rate" value="'.$item['tax_rate'].'" /></td>'.
 					'<td><input type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
-					'<td><input class="right" type="text" name="qty" size="3" value=0 onKeyUp="doCalcNew()" /></td>'.
+					'<td><input class="right" type="text" name="qty" size="3" value=0 onfocus="doCheckField()" onKeyUp="doCalcNew()" /></td>'.
 					'<td><input class="right" type="text" name="price" size="3" readonly /></td></tr>'."\n";
 			} ?>
 					</table>
@@ -285,6 +285,11 @@ $confParams  = Params::findOne('1');
 	function CheckOnline() {
 		// Only For Renuals!
 	}
+
+	function doCheckField(e) {
+		e = e || window.event;
+		if(e.target.value=='0') e.target.value='';
+	};
 
 	function doCalcNew() {
 		var ContainerID = document.getElementById('store_items');

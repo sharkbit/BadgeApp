@@ -308,7 +308,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				'<input type=hidden name="sku" value="'.$item['sku'].'" />'.
 				'<input type=hidden name="tax_rate" value="'.$item['tax_rate'].'" /></td>'.
 				'<td><input type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
-				'<td><input class="right" type="text" name="qty" size="3" value=0 onKeyUp="doCalcUp()" /></td>'.
+				'<td><input class="right" type="text" name="qty" size="3" value=0 onfocus="doCheckField()" onKeyUp="doCalcUp()" /></td>'.
 				'<td><input class="right" type="text" name="price" size="3" readonly /></td></tr>'."\n";
 		} ?>
 		</table>
@@ -492,6 +492,11 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			$("#extras_store_div").hide();
         } else  {$("#extras_store_div").show();}
 	});
+
+	function doCheckField(e) {
+		e = e || window.event;
+		if(e.target.value=='0') e.target.value='';
+	};
 
 	function doCalcUp(){
 		var ContainerID = document.getElementById('store_items');
