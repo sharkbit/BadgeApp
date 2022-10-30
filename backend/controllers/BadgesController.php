@@ -1453,7 +1453,7 @@ class BadgesController extends AdminController {
 
 	public function UpdateQR($model) {
 		if(strlen($model->qrcode)<>14) {
-			$clubs = (new clubs)::getMyClubs($model->badge_number);
+			$clubs = (new clubs)->getMyClubs($model->badge_number);
 			$characters = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 			$randomString = '';
 			for ($i = 0; $i < 2; $i++) {
