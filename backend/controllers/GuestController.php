@@ -16,7 +16,7 @@ use backend\models\Badges;
  */
 class GuestController extends SiteController {
 
-	public $enableCsrfValidation = false;
+	public $enableCsrfValidation = true;
 
 	public function behaviors() {
 		return [

@@ -19,7 +19,7 @@ class ClubsController extends AdminController {
     /**
      * @inheritdoc
      */
-    public $enableCsrfValidation = false;
+    public $enableCsrfValidation = true;
 
     public function behaviors() {
         return [

@@ -560,8 +560,10 @@ $('#GuestForm').on('submit', function() {
     });
 
 	function get_member(badge_number) {
+		var csrf = $('meta[name="csrf-token"]').attr('content');
 		jQuery.ajax({
-			method: 'GET',
+			method: 'POST',
+			data: {'_csrf-backend':csrf},
 			dataType:'json',
 			url: '<?=yii::$app->params['rootUrl']?>/badges/api-request-family?badge_number='+badge_number,
 			crossDomain: false,

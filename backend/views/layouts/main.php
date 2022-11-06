@@ -289,9 +289,11 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
         if(req_badgeNumber) {
             $("#HideMySubmit").hide(500);
             $("#searchng-badge-animation").show(500);
-            jQuery.ajax({
-                method: 'GET',
+			var csrf = $('meta[name="csrf-token"]').attr('content');
+			jQuery.ajax({
+                method: 'POST',
                 dataType:'json',
+                data: {'_csrf-backend':csrf},
                 url: '<?=yii::$app->params['rootUrl']?>/badges/api-request-family?badge_number='+req_badgeNumber,
                 crossDomain: false,
                 success: function(responseData, textStatus, jqXHR) {
@@ -328,10 +330,12 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                             $("#no-primary-error").show(500);
                         }
                         $("#badges-primary").val('');
-                    }
+                    } else {
+						console.log('why:334');
+					}
                 },
                 error: function (responseData, textStatus, errorThrown) {
-                    $("#searchng-badge-animation").hide(500);
+                   $("#searchng-badge-animation").hide(500);
                    // $("#no-primary-error").hide(500);
                     console.log(responseData);
                 },
@@ -399,6 +403,7 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                     var badgeFee = parseInt($("#badgesubscriptions-badge_fee").val());
                     var credit = $("#badgesubscriptions-total_credit").val();
                     var isCurent = $("#badgesubscriptions-isCurent").val();
+					var csrf = $('meta[name="csrf-token"]').attr('content');
 					$("#badgesubscriptions-item_name").val(responseData.item_name);
 					$("#badgesubscriptions-item_sku").val(responseData.item_sku);
 
@@ -406,7 +411,7 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                         method: 'POST',
                         url: '<?=yii::$app->params['rootUrl']?>/badges/api-generate-renaval-fee',
                         crossDomain: false,
-                        data: {'badgeNumber':badgeNumber,'BadgeFee': badgeFee,'credit':credit,'isCurent':isCurent,'badgeYear':badgeYear},
+                        data: {'_csrf-backend':csrf,'badgeNumber':badgeNumber,'BadgeFee': badgeFee,'credit':credit,'isCurent':isCurent,'badgeYear':badgeYear},
                         success: function(responseData, textStatus, jqXHR) {
                             responseData =  JSON.parse(responseData);
                             if(responseData.redeemableCredit=='') {
