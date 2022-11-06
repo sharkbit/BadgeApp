@@ -39,17 +39,17 @@ class SalesReport extends \yii\db\ActiveRecord {
 			$query = $this->getWhere($mydate,'created_at');
 			$count=Yii::$app->db->createCommand('SELECT COUNT(*) FROM clubs c WHERE c.`status`=0')->queryScalar();
 			$sql="SELECT c.club_name,c.short_name,c.club_id,c.is_club, ".
-				"(SELECT count(*) FROM BadgeDB.badge_subscriptions WHERE transaction_type='NEW' AND ".$query."AND badge_number IN ".
+				"(SELECT count(*) FROM BadgeDB.badge_subscriptions WHERE transaction_type='NEW' AND ".$query." AND badge_number IN ".
 					"(SELECT badge_number FROM badge_to_club btc WHERE btc.club_id=c.club_id)) AS `new`, ".
 				"(SELECT count(*) FROM BadgeDB.badge_subscriptions WHERE transaction_type='RENEW' AND ".$query." AND badge_number IN ".
-					"(SELECT badge_number FROM badge_to_club btc WHERE btc.club_id=c.club_id)) AS renew, ".
+					"(SELECT badge_number FROM badge_to_club btc WHERE btc.club_id=c.club_id)) AS `renew`, ".
 				"(SELECT count(*) FROM BadgeDB.badge_certification WHERE ".$query." AND badge_number IN ".
-					"(SELECT badge_number FROM badge_to_club btc WHERE btc.club_id=c.club_id)) AS certs, ".
+					"(SELECT badge_number FROM badge_to_club btc WHERE btc.club_id=c.club_id)) AS `certs`, ".
 				"(SELECT count(*) FROM BadgeDB.guest where ".$this->getWhere($mydate,'time_in')." AND badge_number in ".
-					"(select badge_number from badge_to_club btc where btc.club_id=c.club_id)) as guests, ".
-				"(SELECT SUM( (select count(*) FROM BadgeDB.event_attendee WHERE ea_event_id=e_id)) as sum ".
+					"(select badge_number from badge_to_club btc where btc.club_id=c.club_id)) as `guests`, ".
+				"(SELECT SUM( (select count(*) FROM BadgeDB.event_attendee WHERE ea_event_id=e_id)) as `sum` ".
 					"FROM BadgeDB.events where ".$this->getWhere($mydate,'e_date')." and sponsor=c.club_id group by sponsor ) as students ".
-				"FROM clubs c WHERE c.`status`=0 ORDER BY c.is_club desc,c.club_name; ";
+				"FROM clubs c WHERE c.`status`=0 ORDER BY c.is_club desc,c.club_name ";
 
 			$dataProvider = new \yii\data\SqlDataProvider([
 				'sql' => $sql,
