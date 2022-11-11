@@ -263,7 +263,7 @@ class RsoRptController extends AdminController {
 		}
 	}
 
-	private function CleanModel(&$model) {
+	private static function CleanModel(&$model) {
 		$model->closed=(int)$model->closed;
 		$model->rso = str_replace('"',"", json_encode($model->rso));
 		$model->wb_trap_cases = (int)$model->wb_trap_cases;
@@ -277,7 +277,7 @@ class RsoRptController extends AdminController {
 		$model->closing = trim($model->closing);
 	}
 
-	protected function AddRemarks($model, $comment) {
+	protected static function AddRemarks($model, $comment) {
 		RsoRptController::CleanModel($model);
 
 		$items=$model->getDirtyAttributes();
