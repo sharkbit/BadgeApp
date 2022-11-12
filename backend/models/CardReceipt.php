@@ -4,6 +4,8 @@ namespace backend\models;
 
 use Yii;
 use backend\models\clubs;
+use backend\models\BadgeSubscriptions;
+
 
 /**
  * This is the model class for table "cc_receipts".
@@ -51,14 +53,19 @@ class CardReceipt extends \yii\db\ActiveRecord {
 			'id' => 'ID',
 			'status' => 'Card Status',
 			'tx_date' => 'Date',
+			'transaction_type' => 'New/Renew',
 			'tx_type' => 'TX Type',
 			'name' => 'Name',
 			'amount' => 'Amount'
        ];
     }
 
-	public function getBadges(){
+	public function getbadges(){
 		 return $this->hasOne(\backend\models\Badges::className(), ['badge_number' => 'cashier_badge']);
+	}
+
+	public function getbadge_subscriptions(){
+		return $this->hasOne(\backend\models\BadgeSubscriptions::className(), ['badge_number' => 'badge_number','created_at'=>'tx_date']);
 	}
 
 	public function getClubNames() {

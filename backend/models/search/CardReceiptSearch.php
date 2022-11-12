@@ -41,7 +41,11 @@ class CardReceiptSearch extends CardReceipt {
      */
     public function search($params) {
         $query = CardReceipt::find()
-		->joinWith(['badges']);
+		->select(['badge_subscriptions.created_at','badge_subscriptions.transaction_type','cc_receipts.*'])
+		->from('cc_receipts')
+		->joinWith('badges', true, 'LEFT JOIN')
+		->joinWith('badge_subscriptions', true, 'JOIN') 
+		;
 
         // add conditions that should always apply here
 
@@ -90,7 +94,7 @@ class CardReceiptSearch extends CardReceipt {
 			} else { $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->cashier_badge."%'"); }
 		}
 
-//yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
+yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
 	}
 

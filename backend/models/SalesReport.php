@@ -26,6 +26,7 @@ class SalesReport extends \yii\db\ActiveRecord {
 						"(SELECT count(*) FROM badge_subscriptions WHERE transaction_type='RENEW' AND ".$query.") AS num_renew, ".
 						"(SELECT count(*) FROM badge_certification WHERE certification_type='410105' AND ".$query.") AS num_Scert, ".
 						"(SELECT count(*) FROM badge_certification WHERE certification_type='410100' AND ".$query.") AS num_Hcert";
+yii::$app->controller->createLog(true, 'trex-SRdataSum', 'Raw Sql: '.var_export($sql,true));
 			$mydata = Yii::$app->db->createCommand($sql)->queryall();
 
 			$myNums = "";
@@ -40,17 +41,17 @@ class SalesReport extends \yii\db\ActiveRecord {
 			$count=Yii::$app->db->createCommand('SELECT COUNT(*) FROM clubs c WHERE c.`status`=0')->queryScalar();
 			$sql="SELECT c.club_name,c.short_name,c.club_id,c.is_club, ".
 				"(SELECT count(*) FROM BadgeDB.badge_subscriptions WHERE transaction_type='NEW' AND ".$query." AND badge_number IN ".
-					"(SELECT badge_number FROM badge_to_club btc WHERE btc.club_id=c.club_id)) AS `new`, ".
+					"(SELECT badge_number FROM badge_to_club btc WHERE btc.club_id=c.club_id)) AS `c_new`, ".
 				"(SELECT count(*) FROM BadgeDB.badge_subscriptions WHERE transaction_type='RENEW' AND ".$query." AND badge_number IN ".
 					"(SELECT badge_number FROM badge_to_club btc WHERE btc.club_id=c.club_id)) AS `renew`, ".
 				"(SELECT count(*) FROM BadgeDB.badge_certification WHERE ".$query." AND badge_number IN ".
 					"(SELECT badge_number FROM badge_to_club btc WHERE btc.club_id=c.club_id)) AS `certs`, ".
 				"(SELECT count(*) FROM BadgeDB.guest where ".$this->getWhere($mydate,'time_in')." AND badge_number in ".
 					"(select badge_number from badge_to_club btc where btc.club_id=c.club_id)) as `guests`, ".
-				"(SELECT SUM( (select count(*) FROM BadgeDB.event_attendee WHERE ea_event_id=e_id)) as `sum` ".
+				"(SELECT SUM( (select count(*) FROM BadgeDB.event_attendee WHERE ea_event_id=e_id)) as `ea_sum` ".
 					"FROM BadgeDB.events where ".$this->getWhere($mydate,'e_date')." and sponsor=c.club_id group by sponsor ) as students ".
 				"FROM clubs c WHERE c.`status`=0 ORDER BY c.is_club desc,c.club_name ";
-
+yii::$app->controller->createLog(true, 'trex-SRdata', 'Raw Sql: '.var_export($sql,false));
 			$dataProvider = new \yii\data\SqlDataProvider([
 				'sql' => $sql,
 				'totalCount' => $count,
