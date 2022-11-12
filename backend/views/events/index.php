@@ -9,6 +9,8 @@ use backend\models\clubs;
 /* @var $searchModel backend\models\search\EventsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+//$dataProvider = $StudentTotal->getEventdata($StudentTotal->e_id);
+
 if (isset($_REQUEST['EventsSearch']['pagesize'])) {
 	$pagesize = $_REQUEST['EventsSearch']['pagesize'];
 	$_SESSION['pagesize'] = $_REQUEST['EventsSearch']['pagesize'];
@@ -66,6 +68,10 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 						if (yii::$app->controller->hasPermission('events/update')) { $send_to="update"; } else { $send_to="view"; } }
 					return Html::a($model->e_name,"/events/$send_to?id=".$model->e_id);},
 				'headerOptions' => ['style' => 'width:25%']
+			],
+			[	'attribute'=>'Total Student',
+				//'value'=>function($dataProvider) {return $dataProvider['sum'];},
+				'headerOptions' => ['style' => 'width:5%'],
 			],
 			[	'attribute'=>'e_status',
 				'value'=>function($model) {

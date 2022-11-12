@@ -142,7 +142,17 @@ class EventsController extends AdminController {
 		return $this->redirect('index');
 	}
 
-    public function actionIndex() {
+	public function actionEvent() {
+		$StudentTotal = new StudentTotal;
+	
+		$StudentTotal->e_id = $_REQUEST['StudentTotal']['e_id'];
+		
+		return $this->render('report',[
+			'StudentTotal' => $StudentTotal,
+		]);
+	}    
+	
+	public function actionIndex() {
 		$Close_Events=Events::find('e_id','e_name')->where(['<','e_date',date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))])->andwhere(['e_status'=>0])->all();
 		if($Close_Events) {
 			yii::$app->controller->createLog(true, 'System', "Closing ".count($Close_Events)." Events");
