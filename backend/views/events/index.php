@@ -67,6 +67,10 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 					return Html::a($model->e_name,"/events/$send_to?id=".$model->e_id);},
 				'headerOptions' => ['style' => 'width:25%']
 			],
+			[	'attribute'=>"Student #'s",
+				'value'=>function($model) {return $model->getEventdata($model->e_id);},
+				'headerOptions' => ['style' => 'width:5%'],
+			],
 			[	'attribute'=>'e_status',
 				'value'=>function($model) {
 					if($model->e_status=='0') {return 'Open';}

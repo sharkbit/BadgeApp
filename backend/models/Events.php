@@ -51,4 +51,16 @@ class Events extends \yii\db\ActiveRecord{
 	public function getEvent_Att() {
 		return (New Event_Att)->find()->where(['ea_event_id'=>$this->e_id,'ea_wb_out'=>1])->andwhere(['>','ea_wb_serial',0])->count();
     }
+	
+	public function getEventdata ($event_id) {
+		$sql="select (select count(*) FROM BadgeDB.event_attendee where ea_badge > 0 and ea_event_id=$event_id) as badge, ".
+			"(select count(*) FROM BadgeDB.event_attendee where ea_badge is null and ea_event_id=$event_id) as student ";
+	   	$command = Yii::$app->db->createCommand($sql);
+		$event_attend = $command->queryAll();
+		if(isset($event_attend[0]['badge'])) {
+			return "b: ".$event_attend[0]['badge'].", s: ".$event_attend[0]['student'];
+		} else {
+			return 'no data';
+		}
+	}
 }
