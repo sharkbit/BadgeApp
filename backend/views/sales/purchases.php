@@ -71,7 +71,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			},
 			'footer'=>'Total:',
 		],
-		[	'attribute'=>'New Renew',
+		[	'attribute'=>'New / Renew',
 			'value' => function($model) {
 				return @$model->badge_subscriptions->transaction_type;
 			},

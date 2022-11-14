@@ -58,7 +58,7 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 	$gridColumns = [
 		'club_name',
 		'short_name',
-		[	'attribute'=>'Bew',
+		[	'attribute'=>'c_new',
 			'value' => function($dataProvider) {
 				if($dataProvider['new']==0) {return '';} else {return $dataProvider['c_new'];}
 			}

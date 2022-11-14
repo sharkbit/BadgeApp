@@ -53,7 +53,7 @@ class CardReceipt extends \yii\db\ActiveRecord {
 			'id' => 'ID',
 			'status' => 'Card Status',
 			'tx_date' => 'Date',
-			'transaction_type' => 'New/Renew',
+			'transaction_type' => 'New / Renew',
 			'tx_type' => 'TX Type',
 			'name' => 'Name',
 			'amount' => 'Amount'

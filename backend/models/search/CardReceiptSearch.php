@@ -41,14 +41,14 @@ class CardReceiptSearch extends CardReceipt {
      */
     public function search($params) {
         $query = CardReceipt::find()
-		->select(['badge_subscriptions.created_at','badge_subscriptions.transaction_type','cc_receipts.*'])
+		->select(['badge_subscriptions.created_at','badge_subscriptions.transaction_type','badge_subscriptions.badge_number','cc_receipts.*'])
 		->from('cc_receipts')
 		->joinWith('badges', true, 'LEFT JOIN')
-		->joinWith('badge_subscriptions', true, 'JOIN') 
+		->joinWith('badge_subscriptions', true, 'JOIN')
 		;
-
+		//yii::$app->controller->createLog(true, 'trex-credit-search', var_export($query,true)); 
+		
         // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
