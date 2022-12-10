@@ -60,7 +60,7 @@ $confParams  = Params::findOne('1');
 				<?= $form->field($model, 'primary')->textInput(['value'=>''])->label("Primary Family Member") ?>
 			</div>
 			<div class="col-xs-12 col-sm-9">
-				<h4 class="text-center" id="no-primary-error" ><br> <p>Please Enter Primary badge Holder</p> <br> </h4>
+				<h4 class="text-center" id="no-primary-error" ><br> <p>Please Enter Primary Badge Holder</p> <br> </h4>
 				<div id="searchng-badge-animation" style="display: none">
 					<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
 				</div>

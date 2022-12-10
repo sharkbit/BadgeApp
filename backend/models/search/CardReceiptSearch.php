@@ -41,7 +41,11 @@ class CardReceiptSearch extends CardReceipt {
      */
     public function search($params) {
         $query = CardReceipt::find()
-		->joinWith(['badges']);
+		->select(['badge_subscriptions.created_at','badge_subscriptions.transaction_type','badge_subscriptions.badge_number','cc_receipts.*'])
+		->from('cc_receipts')
+		->joinWith('badges', true, 'LEFT JOIN')
+		->joinWith('badge_subscriptions', true, 'JOIN')
+		;
 
         // add conditions that should always apply here
 
