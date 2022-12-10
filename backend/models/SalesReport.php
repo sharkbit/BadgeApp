@@ -26,7 +26,6 @@ class SalesReport extends \yii\db\ActiveRecord {
 						"(SELECT count(*) FROM badge_subscriptions WHERE transaction_type='RENEW' AND ".$query.") AS num_renew, ".
 						"(SELECT count(*) FROM badge_certification WHERE certification_type='410105' AND ".$query.") AS num_Scert, ".
 						"(SELECT count(*) FROM badge_certification WHERE certification_type='410100' AND ".$query.") AS num_Hcert";
-yii::$app->controller->createLog(true, 'trex-SRdataSum', 'Raw Sql: '.var_export($sql,true));
 			$mydata = Yii::$app->db->createCommand($sql)->queryall();
 
 			$myNums = "";
@@ -51,7 +50,7 @@ yii::$app->controller->createLog(true, 'trex-SRdataSum', 'Raw Sql: '.var_export(
 				"(SELECT SUM( (select count(*) FROM BadgeDB.event_attendee WHERE ea_event_id=e_id)) as `ea_sum` ".
 					"FROM BadgeDB.events where ".$this->getWhere($mydate,'e_date')." and sponsor=c.club_id group by sponsor ) as students ".
 				"FROM clubs c WHERE c.`status`=0 ORDER BY c.is_club desc,c.club_name ";
-yii::$app->controller->createLog(true, 'trex-SRdata', 'Raw Sql: '.var_export($sql,false));
+
 			$dataProvider = new \yii\data\SqlDataProvider([
 				'sql' => $sql,
 				'totalCount' => $count,

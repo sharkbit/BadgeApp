@@ -46,9 +46,9 @@ class CardReceiptSearch extends CardReceipt {
 		->joinWith('badges', true, 'LEFT JOIN')
 		->joinWith('badge_subscriptions', true, 'JOIN')
 		;
-		//yii::$app->controller->createLog(true, 'trex-credit-search', var_export($query,true)); 
-		
+
         // add conditions that should always apply here
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -94,7 +94,7 @@ class CardReceiptSearch extends CardReceipt {
 			} else { $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->cashier_badge."%'"); }
 		}
 
-yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
+//yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
 	}
 
