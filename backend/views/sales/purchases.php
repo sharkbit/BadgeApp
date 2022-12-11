@@ -73,7 +73,9 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		],
 		[	'attribute'=>'New / Renew',
 			'value' => function($model) {
-				return @$model->badge_subscriptions->transaction_type;
+				if(isset($model->badge_subscriptions_date->transaction_type)) {
+					return $model->badge_subscriptions_date->transaction_type;
+				} else { return ''; }
 			},
 		],
 		[	'attribute'=>'amount',

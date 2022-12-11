@@ -641,3 +641,59 @@ DROP COLUMN `qb_env`;
 ALTER TABLE `associat_agcnew`.`range_status` 
 ADD COLUMN `restricted` TINYINT NULL DEFAULT 0 AFTER `active`;
 update associat_agcnew.range_status set restricted=1 where name='Caliber Restriction';
+
+-- Sales Report Update
+
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `badge_subscriptions_date` AS
+    SELECT 
+        `badge_subscriptions`.`id` AS `id`,
+        `badge_subscriptions`.`badge_number` AS `badge_number`,
+        `badge_subscriptions`.`club_id` AS `club_id`,
+        `badge_subscriptions`.`valid_from` AS `valid_from`,
+        `badge_subscriptions`.`valid_true` AS `valid_true`,
+        `badge_subscriptions`.`payment_type` AS `payment_type`,
+        `badge_subscriptions`.`status` AS `status`,
+        `badge_subscriptions`.`sticker` AS `sticker`,
+        `badge_subscriptions`.`created_at` AS `created_at`,
+        `badge_subscriptions`.`badge_fee` AS `badge_fee`,
+        `badge_subscriptions`.`paid_amount` AS `paid_amount`,
+        `badge_subscriptions`.`discount` AS `discount`,
+        `badge_subscriptions`.`transaction_type` AS `transaction_type`,
+        `badge_subscriptions`.`is_migrated` AS `is_migrated`,
+        `badge_subscriptions`.`cc_x_id` AS `cc_x_id`,
+        CAST(`badge_subscriptions`.`created_at` AS DATE) AS `bs_c_date`
+    FROM
+        `badge_subscriptions`;
+		
+		
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `cc_receipts_date` AS
+    SELECT 
+        `cc_receipts`.`id` AS `id`,
+        `cc_receipts`.`badge_number` AS `badge_number`,
+        `cc_receipts`.`tx_date` AS `tx_date`,
+        `cc_receipts`.`tx_type` AS `tx_type`,
+        `cc_receipts`.`status` AS `status`,
+        `cc_receipts`.`amount` AS `amount`,
+        `cc_receipts`.`tax` AS `tax`,
+        `cc_receipts`.`authCode` AS `authCode`,
+        `cc_receipts`.`name` AS `name`,
+        `cc_receipts`.`cardNum` AS `cardNum`,
+        `cc_receipts`.`cardType` AS `cardType`,
+        `cc_receipts`.`expYear` AS `expYear`,
+        `cc_receipts`.`expMonth` AS `expMonth`,
+        `cc_receipts`.`cashier` AS `cashier`,
+        `cc_receipts`.`cashier_badge` AS `cashier_badge`,
+        `cc_receipts`.`on_qb` AS `on_qb`,
+        `cc_receipts`.`cart` AS `cart`,
+        `cc_receipts`.`guest_cred` AS `guest_cred`,
+        CAST(`cc_receipts`.`tx_date` AS DATE) AS `cc_c_date`
+    FROM
+        `cc_receipts`;

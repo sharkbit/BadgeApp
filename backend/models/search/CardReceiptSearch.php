@@ -41,10 +41,10 @@ class CardReceiptSearch extends CardReceipt {
      */
     public function search($params) {
         $query = CardReceipt::find()
-		->select(['badge_subscriptions.created_at','badge_subscriptions.transaction_type','badge_subscriptions.badge_number','cc_receipts.*'])
-		->from('cc_receipts')
+		->select(['badge_subscriptions_date.created_at','badge_subscriptions_date.transaction_type','badge_subscriptions_date.badge_number','cc_receipts_date.*'])
+		->from('cc_receipts_date')
 		->joinWith('badges', true, 'LEFT JOIN')
-		->joinWith('badge_subscriptions', true, 'JOIN')
+		->joinWith('badge_subscriptions_date', true, 'LEFT JOIN')
 		;
 
         // add conditions that should always apply here
@@ -58,7 +58,7 @@ class CardReceiptSearch extends CardReceipt {
 		if(!isset($params['sort'])) { $query->orderBy( ['tx_date' => SORT_DESC] ); }
 
 		if(!yii::$app->controller->hasPermission('sales/all')) {
-			$query->andFilterWhere(['cc_receipts.badge_number'=>$_SESSION["badge_number"]]);
+			$query->andFilterWhere(['cc_receipts_date.badge_number'=>$_SESSION["badge_number"]]);
 		}
 
         if (!$this->validate()) {

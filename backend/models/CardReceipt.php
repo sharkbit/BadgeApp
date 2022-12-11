@@ -23,16 +23,19 @@ class CardReceipt extends \yii\db\ActiveRecord {
 	public $show_club;
 
     public static function tableName() {
-        return 'cc_receipts';
+        return 'cc_receipts_date';
     }
 
+	public static function primaryKey() {
+		return ["id"];
+	}
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
           // [['type', 'status'], 'required'],
-           [['authCode','cardNum','cardType','cart','status','tx_type','tx_date','id','name','cashier'], 'string'],
+           [['authCode','cardNum','cc_c_date','cardType','cart','status','tx_type','tx_date','id','name','cashier'], 'string'],
 		   [['badge_number','expYear','expMonth','cashier_badge'], 'integer'],
            [['amount','tax'], 'number'],
        ];
@@ -64,8 +67,8 @@ class CardReceipt extends \yii\db\ActiveRecord {
 		 return $this->hasOne(\backend\models\Badges::className(), ['badge_number' => 'cashier_badge']);
 	}
 
-	public function getbadge_subscriptions(){
-		return $this->hasOne(\backend\models\BadgeSubscriptions::className(), ['badge_number' => 'badge_number','created_at'=>'tx_date']);
+	public function getbadge_subscriptions_date(){
+		return $this->hasOne(\backend\models\BadgeSubscriptions::className(), ['badge_number' => 'badge_number','bs_c_date'=>'cc_c_date']);
 	}
 
 	public function getClubNames() {
