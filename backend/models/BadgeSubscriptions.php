@@ -54,7 +54,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
                 }
               }, 
             ],
-            [['valid_from', 'valid_true', 'bs_c_date', 'created_at','badge_fee','mem_id','mem_type','expires','redeemable_credit','transaction_type','club_id','wt_date','wt_instru','is_migrated'], 'safe'],
+            [['valid_from', 'valid_true','created_at','badge_fee','mem_id','mem_type','expires','redeemable_credit','transaction_type','club_id','wt_date','wt_instru','is_migrated'], 'safe'],
 			[['amount_due','paid_amount','tax'],'number'],
 			[['cc_cvc','cc_exp_yr','cc_exp_mo'],'integer'],
 			[['sticker'],'string','min'=>8, 'max'=>10],

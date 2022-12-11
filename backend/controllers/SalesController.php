@@ -7,7 +7,7 @@ use backend\controllers\AdminController;
 use backend\controllers\PaymentController;
 use backend\models\Badges;
 use backend\models\CardReceipt;
-use backend\models\search\CardReceiptSearch;
+use backend\models\search\CardReceiptDateSearch;
 use backend\models\search\CartSummarySearch;
 use backend\models\Sales;
 use backend\models\SalesReport;
@@ -189,7 +189,7 @@ class SalesController extends AdminController {
 	}
 
 	public function actionPurchases() {
-		$searchModel = new CardReceiptSearch();
+		$searchModel = new CardReceiptDateSearch();
 		if(isset($_REQUEST['reset'])) { UNSET($_REQUEST); return $this->redirect('purchases'); }
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
