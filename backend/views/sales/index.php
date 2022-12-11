@@ -562,7 +562,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			}
 
 		}
-		else if (cleanUPC.match(/B\d{16}/g)) {  // Matched Credit Card!
+		else if (cleanUPC.match(/[Bb]\d{16}/g)) {  // Matched Credit Card!
 			console.log('Credit Card Scanned: ', cleanUPC);
 			var ccNum = cleanUPC.substring(1,17);
 			var fExp = cleanUPC.indexOf('^')+1;
@@ -576,7 +576,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			document.getElementById("sales-cc_num").value = ccNum;
 			document.getElementById("sales-cc_exp_mo").value = ExpMo;
 			document.getElementById("sales-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b_v_s_i:574'); }
+		} else { SwipeError(cleanUPC,'b_v_s_i:579'); }
 		cleanUPC = '';
 	};
 

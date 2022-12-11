@@ -677,7 +677,23 @@ $('#GuestForm').on('submit', function() {
 			  document.getElementById("guest-g_zip").value = ZIP;
               console.log("ZIP: "+ZIP);
 			}
-		} else { SwipeError(cleanUPC,'b_v_g_f:678'); }
+		}
+		else if (cleanUPC.match(/[Bb]\d{16}/g)) {  // Matched Credit Card!
+			console.log('Credit Card Scanned: ', cleanUPC);
+			var ccNum = cleanUPC.substring(1,17);
+			var fExp = cleanUPC.indexOf('^')+1;
+			var fExp = cleanUPC.indexOf('^',fExp)+1;
+			var ExpYr = cleanUPC.substring(fExp,fExp+2);
+			var ExpMo = cleanUPC.substring(fExp+2,fExp+4);
+			ccNum = ccFormat(ccNum);
+			console.log("Num: "+ccNum+" Exp Yr: "+ExpYr+" Exp Mo: "+ExpMo);
+			ExpYr = ExpYr - (new Date().getFullYear().toString().substr(-2));
+
+			document.getElementById("guset-cc_num").value = ccNum;
+			document.getElementById("guset-cc_exp_mo").value = ExpMo;
+			document.getElementById("guset-cc_exp_yr").value = ExpYr;
+		}
+		else { SwipeError(cleanUPC,'b_v_g_f:696'); }
 		cleanUPC = '';
 	}
 </script>

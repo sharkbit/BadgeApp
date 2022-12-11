@@ -444,7 +444,7 @@ $confParams  = Params::findOne('1');
 			}
 
 		}
-		else if (cleanUPC.match(/B\d{16}/g)) {  // Matched Credit Card!
+		else if (cleanUPC.match(/[Bb]\d{16}/g)) {  // Matched Credit Card!
 			console.log('Credit Card Scanned: ', cleanUPC);
 			var ccNum = cleanUPC.substring(1,17);
 			var fExp = cleanUPC.indexOf('^')+1;
@@ -458,7 +458,7 @@ $confParams  = Params::findOne('1');
 			document.getElementById("badges-cc_num").value = ccNum;
 			document.getElementById("badges-cc_exp_mo").value = ExpMo;
 			document.getElementById("badges-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b_v_b_f:456'); }
+		} else { SwipeError(cleanUPC,'b_v_b_f:461'); }
 		cleanUPC = '';
 	};
 </script>
