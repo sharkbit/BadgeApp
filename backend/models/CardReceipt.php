@@ -67,7 +67,7 @@ class CardReceipt extends \yii\db\ActiveRecord {
 		 return $this->hasOne(\backend\models\Badges::className(), ['badge_number' => 'cashier_badge']);
 	}
 
-	public function getbadge_subscriptions_date(){
+	public function getbadge_subscriptions(){
 		return $this->hasOne(\backend\models\BadgeSubscriptions::className(), ['badge_number' => 'badge_number','bs_c_date'=>'cc_c_date']);
 	}
 

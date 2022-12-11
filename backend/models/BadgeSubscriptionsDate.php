@@ -38,7 +38,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
     public $wt_instru;
 
     public static function tableName() {
-        return 'badge_subscriptions';
+        return 'badge_subscriptions_date';
     }
 
     /**

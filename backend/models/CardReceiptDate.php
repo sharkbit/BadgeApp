@@ -4,7 +4,7 @@ namespace backend\models;
 
 use Yii;
 use backend\models\clubs;
-use backend\models\BadgeSubscriptions;
+use backend\models\BadgeSubscriptionsDate;
 
 
 /**
@@ -68,7 +68,7 @@ class CardReceipt extends \yii\db\ActiveRecord {
 	}
 
 	public function getbadge_subscriptions_date(){
-		return $this->hasOne(\backend\models\BadgeSubscriptions::className(), ['badge_number' => 'badge_number','bs_c_date'=>'cc_c_date']);
+		return $this->hasOne(\backend\models\BadgeSubscriptionsDate::className(), ['badge_number' => 'badge_number','bs_c_date'=>'cc_c_date']);
 	}
 
 	public function getClubNames() {
