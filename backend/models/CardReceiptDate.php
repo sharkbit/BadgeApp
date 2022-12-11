@@ -15,7 +15,7 @@ use backend\models\BadgeSubscriptionsDate;
  * @property string $status
  */
 
-class CardReceipt extends \yii\db\ActiveRecord {
+class CardReceiptDate extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */

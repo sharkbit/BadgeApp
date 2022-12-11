@@ -5,12 +5,12 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\BadgeSubscriptions;
+use backend\models\BadgeSubscriptionsDate;
 
 /**
- * BadgeSubscriptionsSearch represents the model behind the search form about `backend\models\BadgeSubscriptions`.
+ * BadgeSubscriptionsSearch represents the model behind the search form about `backend\models\BadgeSubscriptionsDate`.
  */
-class BadgeSubscriptionsSearch extends BadgeSubscriptions {
+class BadgeSubscriptionsDateSearch extends BadgeSubscriptionsDate {
     /**
      * @inheritdoc
      */
@@ -38,7 +38,7 @@ class BadgeSubscriptionsSearch extends BadgeSubscriptions {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = BadgeSubscriptions::find();
+        $query = BadgeSubscriptionsDate::find();
 
         // add conditions that should always apply here
 

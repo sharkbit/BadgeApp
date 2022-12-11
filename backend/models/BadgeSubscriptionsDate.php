@@ -16,7 +16,7 @@ use backend\models\clubs;
  * @property string $status
  * @property string $created_at
  */
-class BadgeSubscriptions extends \yii\db\ActiveRecord {
+class BadgeSubscriptionsDate extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
