@@ -94,7 +94,7 @@ class CardReceiptDateSearch extends CardReceiptDate {
 			} else { $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->cashier_badge."%'"); }
 		}
 
-yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
+//yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
 	}
 
