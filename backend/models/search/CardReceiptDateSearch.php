@@ -78,7 +78,7 @@ class CardReceiptDateSearch extends CardReceiptDate {
 		}
 
 		//if(isset($this->id)) { $query->andFilterWhere(['id' => $this->id ]); }
-		if(isset($this->badge_number)) { $query->andFilterWhere(['like', 'cc_receipts.badge_number', $this->badge_number]); }
+		if(isset($this->badge_number)) { $query->andFilterWhere(['like', 'cc_receipts_date.badge_number', $this->badge_number]); }
         if(isset($this->cart)) { $query->andFilterWhere(['like', 'cart', $this->cart]); }
 		if(isset($this->name)) { $query->andFilterWhere(['like', 'name', $this->name]); }
 		if(isset($this->amount)) { $query->andFilterWhere(['like', 'amount', $this->amount]); }
@@ -94,7 +94,7 @@ class CardReceiptDateSearch extends CardReceiptDate {
 			} else { $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->cashier_badge."%'"); }
 		}
 
-//yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
+yii::$app->controller->createLog(true, 'trex-b-m-s-crs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
 	}
 
