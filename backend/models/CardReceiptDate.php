@@ -23,7 +23,7 @@ class CardReceipt extends \yii\db\ActiveRecord {
 	public $show_club;
 
     public static function tableName() {
-        return 'cc_receipts';
+        return 'cc_receipts_date';
     }
 
 	public static function primaryKey() {
