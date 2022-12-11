@@ -135,7 +135,7 @@ $this->beginBody() ?>
                 keyCnt ++;
                 if (keyCnt == UPCnt) {
                     newUPC = newUPC.slice(1, -1);
-                    ProcessSwipe(newUPC);
+                    ProcessSwipe(newUPC).toUpperCase;
                     newUPC = '';
                     keyCnt = 0;
                 }

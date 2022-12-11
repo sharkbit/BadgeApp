@@ -599,7 +599,7 @@ $('#GuestForm').on('submit', function() {
 
 	function ProcessSwipe(cleanUPC) {
 
-		if  ((cleanUPC.indexOf('ANSI 6360') > 0) || (cleanUPC.indexOf('AAMVA6360') > 0)) {
+		if ((cleanUPC.indexOf('ANSI 6360') > 0) || (cleanUPC.indexOf('AAMVA6360') > 0)) {
 			console.log('barcode scanned: ', cleanUPC);
 			var FName=false;
 
