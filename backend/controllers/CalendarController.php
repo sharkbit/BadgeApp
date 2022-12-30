@@ -1,5 +1,4 @@
 <?php
-
 namespace backend\controllers;
 
 use Yii;
@@ -231,7 +230,7 @@ class CalendarController extends AdminController {
 			'dataProvider' => $dataProvider ]);
 	}
 
-	public function actionOpenRange($eDate,$start,$stop,$facility,$lanes=0,$id=0,$pattern,$e_status,$internal=false,$force_order=false,$tst=false) {
+	public function actionOpenRange($eDate,$start,$stop,$facility,$lanes=0,$id=0,$pattern='',$e_status=0,$internal=false,$force_order=false,$tst=false) {
 if($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:293 found',
 "eDate: $eDate, start: $start, stop: $stop, facility: $facility, lanes: $lanes, id: $id, pattern: $pattern, e_status: $e_status, internal: $internal, force order: $force_order, tst: $tst"); }
 		$range = agcFacility::find()->where('facility_id in ('.ltrim(rtrim($facility,"]"),"[").')')->all();
