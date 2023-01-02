@@ -29,21 +29,8 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            [
-                'header'=>'Valid From',
-                'attribute'=>'valid_from',
-                'value'=>function($model) {
-                    return date('M d, Y',strtotime($model->valid_from));
-                },
-            ],
-            [
-                'header'=>'Valid To',
-                'attribute'=>'valid_true',
-                'value'=>function($model) {
-                    return date('M d, Y',strtotime($model->valid_true));
-                },
-            ],
-			'sticker',
+            'badge_year',
+            'sticker',
             [
                 'header'=>'Payment Type',
                 'attribute'=>'payment_type',

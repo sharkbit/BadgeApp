@@ -10,8 +10,7 @@ use backend\models\clubs;
  *
  * @property integer $id
  * @property integer $badge_number
- * @property string $valid_from
- * @property string $valid_true
+ * @property string $badge_year
  * @property string $payment_type
  * @property string $status
  * @property string $created_at
@@ -46,7 +45,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['badge_number', 'valid_from', 'valid_true', 'payment_type', 'status','sticker','created_at','badge_fee'], 'required'],
+            [['badge_number', 'badge_year', 'payment_type', 'status','sticker','created_at','badge_fee'], 'required'],
             ['amount_due', 'required', 'when' => function ($model) {
                 $currentUrl = yii::$app->controller->getCurrentUrl();
                 if($currentUrl['controllerId']=='badges'&&$currentUrl['actionId']=='update') {
@@ -54,7 +53,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
                 }
               }, 
             ],
-            [['valid_from', 'valid_true','created_at','badge_fee','mem_id','mem_type','expires','redeemable_credit','transaction_type','club_id','wt_date','wt_instru','is_migrated'], 'safe'],
+            [['badge_year','created_at','badge_fee','mem_id','mem_type','expires','redeemable_credit','transaction_type','club_id','wt_date','wt_instru','is_migrated'], 'safe'],
 			[['amount_due','paid_amount','tax'],'number'],
 			[['cc_cvc','cc_exp_yr','cc_exp_mo'],'integer'],
 			[['sticker'],'string','min'=>8, 'max'=>10],
@@ -71,8 +70,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
 			'badge_number' => 'Badge Number',
 			'badge_fee' => 'Badge Fee',
 			'discount' => 'Discount',
-			'valid_from' => 'Valid From',
-			'valid_true' => 'Valid True',
+			'badge_year' => 'Badge Year',
 			'payment_type' => 'Payment Type',
 			'paid_amount' => 'Paid Amount',
 			'status' => 'Status',

@@ -622,18 +622,18 @@ CHANGE COLUMN `shift` `shift` VARCHAR(2) NULL DEFAULT NULL ;
 ALTER TABLE `BadgeDB`.`events` 
 ADD COLUMN `sponsor` INT NULL AFTER `e_poc`;
 
--- Added Field Cash Drop to RSO Report
+-- Added Field Cash Drop to RSO Report  #169
 ALTER TABLE `BadgeDB`.`rso_reports` 
 ADD COLUMN `cash_drop` DECIMAL(7,2) NULL DEFAULT 0.00 AFTER `cash_bos`;
 
--- Email list for RSO report #195
+-- Email list for RSO report  #195
 ALTER TABLE `BadgeDB`.`params` 
 ADD COLUMN `rso_email` TEXT NULL DEFAULT NULL AFTER `status`;
 
 -- Sales Summary  #151
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `Cart_Summary` AS select `t1`.`tx_date` AS `tx_date`,`s3`.`item` AS `cat`,`t1`.`tx_type` AS `tx_type`,`refunds`.`csku` AS `csku`,`refunds`.`citem` AS `citem`,`refunds`.`ea` AS `ea`,`refunds`.`qty` AS `qty`,`refunds`.`cprice` AS `cprice` from (`cc_receipts` `t1` join ((json_table(`t1`.`cart`, '$[*]' columns (`ea` decimal(7,2) path '$.ea', `qty` int path '$.qty', `csku` text character set utf8mb4 path '$.sku', `citem` text character set utf8mb4 path '$.item', `cprice` decimal(7,2) path '$.price')) `refunds` left join `store_items` `s2` on((`refunds`.`csku` = `s2`.`sku`))) left join `store_items` `s3` on((`s2`.`paren` = `s3`.`item_id`)))) order by `t1`.`tx_date` desc;
 
--- Env Update
+-- Env Update  #214
 ALTER TABLE `BadgeDB`.`params` 
 DROP COLUMN `qb_env`;
 
@@ -642,7 +642,7 @@ ALTER TABLE `associat_agcnew`.`range_status`
 ADD COLUMN `restricted` TINYINT NULL DEFAULT 0 AFTER `active`;
 update associat_agcnew.range_status set restricted=1 where name='Caliber Restriction';
 
--- Sales Report Update
+-- Sales Report Update #151
 
 CREATE 
     ALGORITHM = UNDEFINED 
@@ -697,3 +697,13 @@ VIEW `cc_receipts_date` AS
         CAST(`cc_receipts`.`tx_date` AS DATE) AS `cc_c_date`
     FROM
         `cc_receipts`;
+
+-- Everyone Renews!  #184
+ALTER TABLE `BadgeDB`.`badge_subscriptions` 
+ADD COLUMN `badge_year` INT NULL AFTER `club_id`;
+
+UPDATE BadgeDB.badge_subscriptions set badge_year =  year(valid_true)-1;
+
+ALTER TABLE `BadgeDB`.`badge_subscriptions` 
+DROP COLUMN `valid_true`,
+DROP COLUMN `valid_from`;

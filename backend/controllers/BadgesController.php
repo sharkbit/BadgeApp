@@ -593,8 +593,7 @@ class BadgesController extends AdminController {
 
 				$badgeSubscriptionsModel = new BadgeSubscriptions();
 				$badgeSubscriptionsModel->badge_number = $model->badge_number;
-				$badgeSubscriptionsModel->valid_from = date('Y-m-d',strtotime($model->incep));
-				$badgeSubscriptionsModel->valid_true = date('Y-m-d',strtotime($model->expires));
+				$badgeSubscriptionsModel->badge_year = date('Y',strtotime($model->expires. " - 365 day"));
 				$badgeSubscriptionsModel->payment_type = $model->payment_method;
 				$badgeSubscriptionsModel->status = 'active';
 				$badgeSubscriptionsModel->created_at = $this->getNowTime();
@@ -999,19 +998,16 @@ class BadgesController extends AdminController {
 		if ($model->load(Yii::$app->request->post())) {
 			$this->expireBadgeSubcription($model->badge_number);
 
-			$myexpires = date('Y-m-d',strtotime($model->expires));
-
 			if ($model->payment_type=='creditnow') {
 				$model->payment_type = 'credit'; $needRecpt=false;
 			} else { $needRecpt=true; }
-			$model->expires = $myexpires;
+			$model->expires = date('Y-m-d',strtotime($model->expires));
 			$wt_date_reIssue = null;
 			if($model->wt_date!='') {
 				$wt_date_reIssue = date('Y-m-d',strtotime($model->wt_date));
 				$wt_instru_reIssue = $model->wt_instru;
 			}
-			$model->valid_from = date('Y-m-d',strtotime($this->getNowTime()));
-			$model->valid_true = $myexpires;
+			$model->badge_year = date('Y',strtotime($model->expires." - 365 days"));
 			$model->status = 'active';
 			$model->created_at = $this->getNowTime();
 			$model->paid_amount = $model->amount_due;
@@ -1060,7 +1056,7 @@ class BadgesController extends AdminController {
 					}
 				}
 
-				$badgeRecords->expires = $myexpires;
+				$badgeRecords->expires = $model->expires;
 				$badgeRecords->work_credits = (int)$badgeRecords->work_credits - (int)$model->redeemable_credit;
 				$badgeRecords->sticker = $model->sticker;
 				$badgeRecords->wt_date = $wt_date_reIssue !=null ? $wt_date_reIssue : $badgeRecords->wt_date;

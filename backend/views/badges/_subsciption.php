@@ -40,8 +40,8 @@ $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
 							 ?></td>
 						</tr>
 						<tr>
-							<th>Expire Date</th>
-							<td><?=date('M d, Y',strtotime($subciptionsArray->valid_true))?></td>
+							<th>Badge Year</th>
+							<td><?=$subciptionsArray->badge_year?></td>
 						</tr>
 						<tr>
 							<th>Membership renewed on</th>

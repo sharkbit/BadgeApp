@@ -17,7 +17,7 @@ class BadgePaymentsSearch extends BadgePayments {
     public function rules() {
         return [
             [['id', 'badge_number'], 'integer'],
-            [['valid_from', 'valid_true', 'payment_type', 'status', 'created_at'], 'safe'],
+            [['badge_year', 'payment_type', 'status', 'created_at'], 'safe'],
         ];
     }
 
@@ -56,8 +56,7 @@ class BadgePaymentsSearch extends BadgePayments {
         $query->andFilterWhere([
             'id' => $this->id,
             'badge_number' => $this->badge_number,
-            'valid_from' => $this->valid_from,
-            'valid_true' => $this->valid_true,
+            'badge_year' => $this->badge_year,
             'created_at' => $this->created_at,
         ]);
 
