@@ -28,8 +28,9 @@ class MembershipType extends \yii\db\ActiveRecord{
      */
     public function rules() {
         return [
-           [['type', 'status'], 'required'],
+           [['type', 'status','renew_yearly'], 'required'],
            [['status'], 'string'],
+		   [['renew_yearly'], 'integer'],
            [['type'], 'string', 'max' => 25],
        ];
     }

@@ -707,3 +707,6 @@ UPDATE BadgeDB.badge_subscriptions set badge_year =  year(valid_true)-1;
 ALTER TABLE `BadgeDB`.`badge_subscriptions` 
 DROP COLUMN `valid_true`,
 DROP COLUMN `valid_from`;
+
+ALTER TABLE `BadgeDB`.`membership_type` 
+ADD COLUMN `renew_yearly` INT(1) NOT NULL DEFAULT 1 AFTER `sku_full`;
