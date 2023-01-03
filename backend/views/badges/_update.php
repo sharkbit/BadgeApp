@@ -728,6 +728,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 					$("#online_search").hide();
 					document.getElementById("renew_btn").disabled = false;
 				},
+				timeout: 10000
 			});
 		} else {
 			$("#online_search_results").html("Requires a Valid Email to Check Tests!");
