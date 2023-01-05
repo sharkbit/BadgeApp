@@ -345,6 +345,7 @@ class AdminController extends \yii\web\Controller {
 
 	public function RestoreSession(&$searchModel,$form,$filters,$tst=false) {
 		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_'.$form, 'Hit from '.$form);
+		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_', var_export($filters,true));
 		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_', var_export($_REQUEST,true));
 		if(isset($_REQUEST['reset'])) {
 			foreach($filters as $filtr) {
@@ -389,7 +390,7 @@ class AdminController extends \yii\web\Controller {
 			@rename($dir."java_logs.txt",   $dir."java_log.$yr-$log_mon.txt");
 
 			$param->log_rotate = $mon;
-			$param->save();
+			$param->save(false);
 		}
 	}
 
@@ -455,8 +456,8 @@ class AdminController extends \yii\web\Controller {
 	}
 
 	public function mergeRemarks($old,$nowRemakrs) {
-		$remarksOld = json_decode($old,true);
-		if($remarksOld != '') {
+		if($old) {
+			$remarksOld = json_decode($old,true);
 			array_push($remarksOld,$nowRemakrs);
 		} else {
 			$remarksOld = [
