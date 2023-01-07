@@ -37,7 +37,7 @@ $confParams = Params::findOne('1');
 $guest_band = (new backend\models\StoreItems)->find()->where(['sku'=>$confParams->guest_sku])->one();
 if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2>'; return;}
 
-if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->qb_token)>2 || strlen($confParams->qb_oa2_refresh_token)>2))  {
+if(yii::$app->controller->hasPermission('payment/charge')) {
 	if(Yii::$app->params['env'] == 'prod') {
 		$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!'];
 	} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)']; }
