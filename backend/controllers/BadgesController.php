@@ -122,13 +122,13 @@ class BadgesController extends AdminController {
 				$badgeNumber = $_POST['badgeNumber'];
 				$badgeFee = $_POST['BadgeFee'];
 				$isCurent = $_POST['isCurent'];
-				$badgeYear = $_POST['badgeYear'];
+				$renBadgeYear = $_POST['renBadgeYear'];
 			} else {
 				//From Issue New Badge
 				$badgeNumber = $_GET['friend_badge'];
 				$badgeFee = $_GET['BadgeFee'];
 				$idCurrent = false;
-				$badgeYear = $_GET['badgeYear'];
+				$renBadgeYear = $_GET['renBadgeYear'];
 			}
 
 			if(!isset($_SESSION['BasePriFee'])) {
@@ -146,8 +146,8 @@ class BadgesController extends AdminController {
 			$workcreditper = $BaseFee / 40;
 
 			$DateChk = date('Y-01-31',strtotime("+1 years",strtotime($this->getNowTime())));
-			$badgeYear =  date('Y-m-d',strtotime($badgeYear));
-			if ($badgeYear == $DateChk) {
+			$renBadgeYear =  date('Y-m-d',strtotime($renBadgeYear));
+			if ($renBadgeYear == $DateChk) {
 				$myBefDate = date('Y-01-01', strtotime($this->getNowTime()));
 				$myAftDate = date('Y-12-31', strtotime("-2 years",strtotime($this->getNowTime())));
 			} else {
@@ -212,8 +212,7 @@ class BadgesController extends AdminController {
 					'state' => $badgeArray->state,
 					'zip' => $badgeArray->zip,
 					'ice_phone' => $ice_phone,
-					'mem_type' => $badgeArray->mem_type,
-					'expires' => $badgeArray->expires,
+					'mem_type' => $badgeArray->mem_type
 				];
 			} else {
 				$responce = [
@@ -1001,13 +1000,12 @@ class BadgesController extends AdminController {
 			if ($model->payment_type=='creditnow') {
 				$model->payment_type = 'credit'; $needRecpt=false;
 			} else { $needRecpt=true; }
-			$model->expires = date('Y-m-d',strtotime($model->expires));
 			$wt_date_reIssue = null;
 			if($model->wt_date!='') {
 				$wt_date_reIssue = date('Y-m-d',strtotime($model->wt_date));
 				$wt_instru_reIssue = $model->wt_instru;
 			}
-			$model->badge_year = date('Y',strtotime($model->expires." - 365 days"));
+			$model->badge_year = $_REQUEST['renBadgeYear'];
 			$model->status = 'active';
 			$model->created_at = $this->getNowTime();
 			$model->paid_amount = $model->amount_due;

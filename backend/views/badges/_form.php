@@ -104,23 +104,28 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'ice_phone')->textInput(['autocomplete' => 'off','maxlength'=>true,'readonly'=> $model->isNewRecord ? false : true,]) ?>
             </div>
 
-            <?php
-				$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
-				$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
-                if ($DateChk <= $nowDate) {
-				    $nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));
-                } else {
-                    $nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
-                }
-            ?>
             <div class="col-xs-6 col-sm-6">
                 <?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))]) ?>
             </div>
+
+		<?php 
+			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
+			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
+			if ($DateChk <= $nowDate) {
+				$nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));
+			} else {
+				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
+			}
+			echo $form->field($model, 'badge_year')->hiddenInput(['value'=>date('Y',  strtotime($nextExpire.' - 1 year'))])->label(false). PHP_EOL; 
+
+		if(1==2) { // Only enable for timd badges  ...  15yr .. ?>
             <div class="col-xs-6 col-sm-4">
                 <?php $model->expires = date('M d, Y',strtotime($nextExpire)); ?>
                 <?= $form->field($model, 'expires')->textInput(['readOnly'=>true]) ?>
                 <input type="hidden" value='<?php echo date('M d, Y',strtotime($nextExpire)); ?>' id='defDate' />
             </div>
+		<?php } ?>
+
              <div class="col-xs-6 col-sm-4">
                 <?php $model->wt_date = date('M d, Y',strtotime(yii::$app->controller->getNowTime())) ?>
                 <?= $form->field($model, 'wt_date')->widget(DatePicker::classname(), [

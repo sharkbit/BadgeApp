@@ -22,7 +22,7 @@ class BadgesSm extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name','last_name','address','city','club_id','email','email_verify','state','zip','gender','ice_phone','phone','ice_contact','incep','mem_type','expires','wt_date','wt_instru'], 'required'],
+			[['first_name','last_name','address','city','club_id','email','email_verify','state','zip','gender','ice_phone','phone','ice_contact','incep','mem_type','wt_date','wt_instru'], 'required'],
 			[['address', 'gender', 'qrcode','status'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip','club_id', 'mem_type','yob'], 'integer'],

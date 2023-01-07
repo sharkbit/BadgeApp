@@ -710,3 +710,6 @@ DROP COLUMN `valid_from`;
 
 ALTER TABLE `BadgeDB`.`membership_type` 
 ADD COLUMN `renew_yearly` INT NOT NULL DEFAULT 1 AFTER `sku_full`;
+
+ALTER TABLE `BadgeDB`.`badges` 
+CHANGE COLUMN `expires` `expires` DATE NULL DEFAULT NULL ;

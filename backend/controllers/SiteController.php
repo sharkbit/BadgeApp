@@ -9,6 +9,7 @@ use yii\widgets\ActiveForm;
 use common\models\LoginForm;
 use common\models\User;
 use backend\controllers\AdminController;
+use backend\models\BadgeSubscriptions;
 use backend\models\Badges;
 use backend\models\BadgesSm;
 use backend\models\clubs;
@@ -116,9 +117,11 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 					return Yii::$app->user->login(User::findIdentity($userArray->id), 0);
 				} else {  // Default Privilege for members
 					// Is badge current?
-					if (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) {
+					$badge_year = BadgeSubscriptions::find()->where(['badge_number'=>$badgeArray->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
+					if( ((isset($badgeArray->expires)) && (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) ) || 
+						(isset($badge_year) && ((int)$badge_year < date('Y'))) ) {
 						unset($_SESSION);
-						yii::$app->controller->createLog(true, 'Site_Login Expired 2:',$badgeArray->badge_number.' - '.$badgeArray->expires);
+						yii::$app->controller->createLog(true, 'Site_Login member Needs to renew badge:',$badgeArray->badge_number);
 						Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
 						return false;
 					}

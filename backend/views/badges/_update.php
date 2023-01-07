@@ -36,8 +36,8 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	} else {
 		$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
 	}
-    $DateExpires = date('Y-m-d',strtotime($model->expires));
-	$WtExpiresDate = date('Y-01-31', strtotime("-2 years",strtotime($nowDate)));
+	$DateExpires = $model->BadgeYear;
+	$WtExpiresDate = date('Y', strtotime("-2 years",strtotime($nowDate)));
 	$model->badge_year = $badge_year_chk = date('Y',  strtotime($nextExpire.' - 1 year'));
 
     if($DateExpires <= $WtExpiresDate) {
@@ -84,6 +84,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 
         <div class="row">
             <div class="col-xs-6 col-sm-3">
+				<?php echo Html::hiddenInput("renBadgeYear",$badge_year_chk,['id'=>'badges-renBadgeYear']), PHP_EOL; ?>
 				<?= $form->field($model, 'prefix')->dropDownList(['Ms'=>'Ms','Miss'=>'Miss','Mrs'=>'Mrs','Mr'=>'Mr','Master'=>'Master','Fr'=>'Father (Fr)','Rev'=>'Reverend (Rev)','Dr'=>'Doctor (Dr)','Atty'=>'Attorney (Atty)','Hon'=>'Honorable (Hon)','Prof'=>'Professor (Prof)','Pres'=>'President (Pres)','VP'=>'Vice President (VP)','Gov'=>'Governor (Gov)','Ofc'=>'Officer (Ofc)'],['value'=>$model->prefix,'readonly'=> yii::$app->controller->hasPermission('badges/rename') ? false : true,]).PHP_EOL; ?>
             </div>
             <div class="col-xs-6 col-sm-3">
@@ -170,12 +171,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 			<?php $model->incep = date('M d, Y h:i:s A',strtotime($model->incep)); ?>
             <?= $form->field($model, 'incep')->textInput(['disabled' => true,'value'=>date('M d, Y',strtotime($model->incep))]).PHP_EOL; ?>
             </div>
-            <div class="col-xs-6 col-sm-4">
-                <?php $model->expires = date('M d, Y',strtotime($model->expires)); ?>
-                <?= $form->field($model, 'expires')->textInput(['readOnly'=>true]).PHP_EOL; ?>
-                <input type="hidden" value='<?php echo date('M d, Y',strtotime($nextExpire)); ?>' id='defDate' />
-            </div>
-
+ 
              <div class="col-xs-6 col-sm-4">
         <?php   $WTDate = strtotime($model->wt_date);
                 $startDate = date('1999-01-01 12:00:00');
@@ -291,9 +287,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<?php echo Html::hiddenInput("item_sku",'',['id'=>'badgesubscriptions-item_sku']), PHP_EOL; ?>
 		<?php echo Html::hiddenInput("isCurent",$hide_Renew,['id'=>'badgesubscriptions-isCurent','class'=>'form-control']), PHP_EOL; ?>
 		<?php echo Html::hiddenInput("sell_date",$confParams['sell_date'],['id'=>'badges-sell_date']), PHP_EOL; ?>
-
-		<?php $badgeSubscriptions->expires = date('M d, Y',strtotime($nextExpire)); ?>
-		<?= $form1->field($badgeSubscriptions, 'expires')->textInput(['readOnly'=>true]).PHP_EOL; ?>
+		<?php echo Html::hiddenInput("renBadgeYear",$badge_year_chk,['id'=>'badgesubscriptions-renBadgeYear']), PHP_EOL; ?>
 
 		<?= $form1->field($badgeSubscriptions, 'badge_fee')->textInput(['readOnly'=>true]).PHP_EOL; ?>
 		<?= $form1->field($badgeSubscriptions, 'redeemable_credit')->textInput(['value'=>'']).PHP_EOL; ?>

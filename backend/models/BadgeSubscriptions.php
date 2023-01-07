@@ -25,7 +25,6 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
 	public $cc_cvc;
 	public $cc_exp_mo;
 	public $cc_exp_yr;
-	public $expires;
 	public $item_name;
 	public $item_sku;
     public $mem_id;
@@ -53,7 +52,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
                 }
               }, 
             ],
-            [['badge_year','created_at','badge_fee','mem_id','mem_type','expires','redeemable_credit','transaction_type','club_id','wt_date','wt_instru','is_migrated'], 'safe'],
+            [['badge_year','created_at','badge_fee','mem_id','mem_type','redeemable_credit','transaction_type','club_id','wt_date','wt_instru','is_migrated'], 'safe'],
 			[['amount_due','paid_amount','tax'],'number'],
 			[['cc_cvc','cc_exp_yr','cc_exp_mo'],'integer'],
 			[['sticker'],'string','min'=>8, 'max'=>10],

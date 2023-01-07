@@ -51,7 +51,7 @@ class Badges extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name', 'last_name', 'address', 'city','state', 'zip', 'gender', 'mem_type','club_id', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
+			[['first_name', 'last_name', 'address', 'city','state', 'zip', 'gender', 'mem_type','club_id', 'incep', 'wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
 			[['address', 'gender', 'qrcode','status','cc_num','cc_x_id'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip', 'mem_type','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
@@ -160,7 +160,6 @@ class Badges extends \yii\db\ActiveRecord {
 		$model->phone_op = preg_replace('/\D/','',$model->phone_op);
 		$model->ice_phone = preg_replace('/\D/','',$model->ice_phone);
 		$model->wt_date = date('Y-m-d',strtotime($model->wt_date));
-		$model->expires = date('Y-m-d',strtotime($model->expires));
 		$model->incep = date('Y-m-d H:i:s',strtotime($model->incep));
 
 		if(isset($model->payment_method)) {
@@ -245,7 +244,6 @@ class Badges extends \yii\db\ActiveRecord {
 			'ice_phone' => 'Emergency Contact Phone',
 			'mem_type' => 'Membership Type',
 			'primary' => 'Primary',
-			'expires' => 'Expires',
 			'qrcode' => 'qrcode',
 			'wt_date' => 'WT Date',
 			'wt_instru' => 'WT Instructor',
