@@ -45,13 +45,11 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	} else { $New_WT_Needed = false; }
 
 	// mem_type needs to renew? Test:
-	if (yii::$app->controller->hasPermission('badges/renew-membership')) {		// Can User Process & Renew Badges?
-		if ($model->canRenew($model->status)) {									// Is badge active / not restricted?
-			$mem_renew = backend\models\MembershipType::findOne(['id'=>$model->mem_type])->renew_yearly;
-			if ($mem_renew) {													// Does Membership type need to renew?	
-				
-				$badge_year = backend\models\BadgeSubscriptions::find()->where(['badge_number'=>$model->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
-				if ((int)$badge_year < (int)$badge_year_chk) {					// Is BadgeSubscription Current?
+	if ((int)$DateExpires < (int)$badge_year_chk) {									// Is BadgeSubscription Current?
+		if (yii::$app->controller->hasPermission('badges/renew-membership')) {		// Can User Process & Renew Badges?
+			if ($model->canRenew($model->status)) {									// Is badge active / not restricted?
+				$mem_renew = backend\models\MembershipType::findOne(['id'=>$model->mem_type])->renew_yearly;
+				if ($mem_renew) {													// Does Membership type need to renew?	
 					$hide_Renew=false; 
 				} else { $hide_Renew=true; }
 			} else { $hide_Renew=true; }
@@ -61,7 +59,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	// Show Certifications?
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }
 	if ($model->canRenew($model->status)) {} else { $hide_Cert=true; }
-	if ($nowDate > $DateExpires ) { $hide_Cert=true; }
+	if ((int)$DateExpires < (int)$badge_year_chk ) { $hide_Cert=true; }
 ?>
 <div class="badges-form">
 <div class="row">
