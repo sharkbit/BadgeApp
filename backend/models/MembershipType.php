@@ -50,6 +50,7 @@ class MembershipType extends \yii\db\ActiveRecord{
 			$sku_data = new \stdClass();
 			$sku_data->price='0.00';
 			$sku_data->item='Free';
+			$sku_data->sku='00000';
 		}
 		return $sku_data;
     }
@@ -60,6 +61,7 @@ class MembershipType extends \yii\db\ActiveRecord{
 			$sku_data = new \stdClass();
 			$sku_data->price='0.00';
 			$sku_data->item='Free';
+			$sku_data->sku='00000';
 		}
 		return $sku_data;
     }

@@ -96,14 +96,8 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'value'=>function($model,$attribute) {
 					return (new Badges)->getMemberStatus($model->status);}
 			],
-            [
-                'attribute'=>'expires',
-				// 'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'expire_condition',['all'=>'All','active'=>'Active','active+2'=>'Active +2','expired<2'=>'Expired <2','expired>2'=>'Expired >2','inactive'=>'Inactive'],['value'=>$searchModel->expire_condition !=null ? $searchModel->expire_condition : 'active+2','class'=>'form-control']),
-				'value' => function($model, $attribute) {
-                    return date('M d, Y',strtotime($model->expires));
-                },
-            ],
-            [
+			'badgeyear',
+			[
                 'header' => 'Actions',
                 'class' => 'yii\grid\ActionColumn',
 				'template'=>' {view} {update} {print} {delete} ',

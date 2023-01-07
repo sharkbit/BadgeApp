@@ -593,7 +593,7 @@ class BadgesController extends AdminController {
 
 				$badgeSubscriptionsModel = new BadgeSubscriptions();
 				$badgeSubscriptionsModel->badge_number = $model->badge_number;
-				$badgeSubscriptionsModel->badge_year = date('Y',strtotime($model->expires. " - 365 day"));
+				$badgeSubscriptionsModel->badge_year = $model->badge_year;
 				$badgeSubscriptionsModel->payment_type = $model->payment_method;
 				$badgeSubscriptionsModel->status = 'active';
 				$badgeSubscriptionsModel->created_at = $this->getNowTime();

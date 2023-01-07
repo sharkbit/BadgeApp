@@ -709,4 +709,4 @@ DROP COLUMN `valid_true`,
 DROP COLUMN `valid_from`;
 
 ALTER TABLE `BadgeDB`.`membership_type` 
-ADD COLUMN `renew_yearly` INT(1) NOT NULL DEFAULT 1 AFTER `sku_full`;
+ADD COLUMN `renew_yearly` INT NOT NULL DEFAULT 1 AFTER `sku_full`;

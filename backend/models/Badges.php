@@ -22,6 +22,7 @@ class Badges extends \yii\db\ActiveRecord {
 	public $amount_paid;
 	public $amt_due;
 	public $badge_fee;
+	public $badge_year;
 	public $cat;
 	public $cc_num;
 	public $cc_cvc;
@@ -54,7 +55,7 @@ class Badges extends \yii\db\ActiveRecord {
 			[['address', 'gender', 'qrcode','status','cc_num','cc_x_id'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip', 'mem_type','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
-			[['badge_fee', 'amt_due','tax'], 'number'],
+			[['badge_fee','badge_year', 'amt_due','tax'], 'number'],
 			[['prefix', 'suffix'], 'string', 'max' => 15],
 			['email', 'string', 'max' => 60],
 			['email', 'filter', 'filter' => 'trim'],
@@ -83,6 +84,7 @@ class Badges extends \yii\db\ActiveRecord {
 
 	public function attributeLabels() {
 		return [
+			'badgeyear'=>'Badge Year',
 			'yob' => 'YOB',
 			'email_vrfy' => 'Verified',
 			'phone_op' => 'Phone Optional',
@@ -101,9 +103,9 @@ class Badges extends \yii\db\ActiveRecord {
 		];
 	}
 
-	//public function getclubs() {
-    //    return $this->hasMany(Clubs::className(), ['club_id' => 'club_id']);
-    //}
+	public function getBadgeYear() {
+		return BadgeSubscriptions::find()->where(['badge_number'=>$this->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
+    }
 
 	public function getMembershipType($mem_type='') {
 		if($mem_type<>"") {

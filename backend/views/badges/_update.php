@@ -26,7 +26,6 @@ for ($x = 0; $x <= 90; $x++) {
 }
 $YearList = json_decode(str_replace('}{',',',$YearList));
 
-$confParams  = Params::findOne('1');
 if(yii::$app->controller->hasPermission('badges/all')) {$restrict=false;} else {$restrict=true;}
 
 $nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
@@ -37,24 +36,27 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	} else {
 		$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
 	}
-
     $DateExpires = date('Y-m-d',strtotime($model->expires));
 	$WtExpiresDate = date('Y-01-31', strtotime("-2 years",strtotime($nowDate)));
+	$model->badge_year = $badge_year_chk = date('Y',  strtotime($nextExpire.' - 1 year'));
 
     if($DateExpires <= $WtExpiresDate) {
         $New_WT_Needed = true;
 	} else { $New_WT_Needed = false; }
 
-	if ($DateExpires >= $nextExpire){ // Show Renew?
-		$hide_Renew=true;
-	} else {
-		if ($model->canRenew($model->status)) {
-			if (yii::$app->controller->hasPermission('badges/renew-membership')) {
-				$hide_Renew=false; } else { $hide_Renew=true; }
-		} else {
-			$hide_Renew=true;
-		}
-	}
+	// mem_type needs to renew? Test:
+	if (yii::$app->controller->hasPermission('badges/renew-membership')) {		// Can User Process & Renew Badges?
+		if ($model->canRenew($model->status)) {									// Is badge active / not restricted?
+			$mem_renew = backend\models\MembershipType::findOne(['id'=>$model->mem_type])->renew_yearly;
+			if ($mem_renew) {													// Does Membership type need to renew?	
+				
+				$badge_year = backend\models\BadgeSubscriptions::find()->where(['badge_number'=>$model->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
+				if ((int)$badge_year < (int)$badge_year_chk) {					// Is BadgeSubscription Current?
+					$hide_Renew=false; 
+				} else { $hide_Renew=true; }
+			} else { $hide_Renew=true; }
+		} else { $hide_Renew=true; }
+	} else { $hide_Renew=true; }
 
 	// Show Certifications?
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }

@@ -164,12 +164,6 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
                                 return date('M d, Y h:i A',strtotime($model->incep));
                             },
                         ],
-                        [
-                            'attribute'=>'expires',
-                            'value'=>function($model,$attribute) {
-                                return date('M d, Y',strtotime($model->expires));
-                            },
-                        ],
                     ],
                 ]) ?>
 
