@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\models\Legelemail;
 use backend\models\search\LegelemailSearch;
+use backend\models\search\LegalGroupsSearch;
 //use yii\web\Controller;
 //use yii\web\NotFoundHttpException;
 //use yii\filters\VerbFilter;
@@ -31,7 +32,7 @@ class LegelemailController extends AdminController {
 		return $this->render('create', [ 'model' => $model, ]);
     }
 
-	 public function actionDelete($id=1) {
+	public function actionDelete($id=1) {
 		$model = $this->findModel($id);
 		if($model->delete()) {
 			Yii::$app->getSession()->setFlash('success', 'Record Deleted');
@@ -39,6 +40,16 @@ class LegelemailController extends AdminController {
 			
 		}
 		return $this->redirect('index');
+	}
+
+	public function actionGroups() {
+		$searchModel = new LegalGroupsSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		
+		return $this->render('groups', [
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+		]);
 	}
 
     public function actionUpdate($id=1) {

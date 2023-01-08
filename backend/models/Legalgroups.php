@@ -18,7 +18,7 @@ class Legalgroups extends \yii\db\ActiveRecord{
     public function rules() {
         return [
            [['name','date_created','date_modified'], 'safe'],
-           [['group_id','isactive','display_order'], 'number'],
+           [['group_id','is_active','display_order'], 'number'],
        ];
     }
 

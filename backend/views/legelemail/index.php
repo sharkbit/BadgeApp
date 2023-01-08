@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['legelemail
 if (isset($_SESSION['pagesize'])) {
 	$pagesize = $_SESSION['pagesize'];
 } else {
-	$pagesize=20;
+	$pagesize=50;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
 
@@ -25,8 +25,8 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 //} elseif(yii::$app->controller->hasPermission('Legelemail/update')) {
 //	$myTemplate=' {view}  {update} ';
 //} else {$myTemplate='{view}';}
-
 ?>
+
 <?=$this->render('_view-tab-menu').PHP_EOL ?>
 <h1><?= Html::encode($this->title) ?></h1>
 <div class="Legelemail-index">
@@ -92,41 +92,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_active',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All', 'style' => 'padding-left: 5%; text-align: left;']),
 		//		'filterOptions' =>['style' => 'text-align: left; font-size: x-small;'],
 			],
-			[
-				'header' => 'Actions',
-				'headerOptions' => ['style' => 'width:5%;'],
-				'class' => 'yii\grid\ActionColumn',
-				'template'=>$myTemplate,
-			/*	'buttons'=>[
-					'view' => function ($url, $model) {
-						return  Html::a(' <span class="glyphicon glyphicon-eye-open"></span>', ['view','id'=>$model->id],
-						[	'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'View',
-							'class'=>'edit_item',
-						]);
-					},
-					'update' => function ($url, $model) {
-						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span>', ['update','id'=>$model->id],
-						[	'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'Edit',
-							'class'=>'edit_item',
-						]);
-					},
-					'delete' => function($url,$model) {
-						return  Html::a(' <span class="glyphicon glyphicon-trash"></span>', $url,
-						[	'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'Delete',
-							'data' => [
-								'confirm' => 'Are you sure you want to delete this item?',
-								'method' => 'post',
-							],
-						]);
-					},
-
-				] */
+			
 			]
 		]
 	]); ?>
