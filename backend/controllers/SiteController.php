@@ -118,7 +118,9 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 					return Yii::$app->user->login(User::findIdentity($userArray->id), 0);
 				} else {  // Default Privilege for members
 					// Is badge current?
+					$compnow = date("Y-m-d",strtotime($this->getNowTime()));
 					$badge_year = BadgeSubscriptions::find()->where(['badge_number'=>$badgeArray->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
+					if(strtotime($compnow) <= strtotime(date('Y').'-01-31')) { $badge_year++; }
 					if( ((isset($badgeArray->expires)) && (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) ) || 
 						(isset($badge_year) && ((int)$badge_year < date('Y'))) ) {
 						unset($_SESSION);
