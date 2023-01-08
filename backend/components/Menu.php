@@ -166,6 +166,11 @@ class Menu extends Widget{
 			'url' => '/params/update',
 		],
 		[
+			'label'=>'Stickers',
+			'loc'=>['prod','dev'],
+			'url' => '/rso-rpt/sticker',
+		],
+		[
 			'label'=>'Store Items',
 			'loc'=>['prod','dev'],
 			'url' => '/sales/stock',
