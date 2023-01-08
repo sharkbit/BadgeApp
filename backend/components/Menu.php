@@ -72,7 +72,7 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'Legislative Emails',
-			'loc'=>['prod','dev'],
+			'loc'=>['leg','cal','dev'],
 			'url' => '/legelemail/index',
 			'color' => 'btn-success',
 		],
