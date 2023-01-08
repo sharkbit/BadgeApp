@@ -23,7 +23,7 @@ $activeUser = yii::$app->controller->getActiveuser();
 					   <i class="icon fa fa-users"></i>
 					</p>
 					<h4 class="value">
-						<span><?=$badgeCount?></span><span></span></h4>
+						<span><?=$badgeCount?>  (2023: <?=$badgeyear?>) </span></h4>
 					<p class="description">
 						Current Range Badges</p>
 			   

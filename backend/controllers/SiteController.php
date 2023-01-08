@@ -15,6 +15,7 @@ use backend\models\BadgesSm;
 use backend\models\clubs;
 use backend\models\Guest;
 use backend\models\LoginAccess;
+use backend\models\Params;
 use backend\models\Privileges;
 
 /**
@@ -200,12 +201,15 @@ class SiteController extends AdminController {
 
 	public function actionIndex() {
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
-		$badges = Badges::find()
-				->where(['>', 'expires', $nowDate])
-				->all();
+		$badges = Badges::find()->where(['>', 'expires', $nowDate])->all();
+		$sell_date = Params::findOne('1')->sell_date;
+		$chkDate = date('Y-'.$sell_date,strtotime($this->getNowTime()));
+		if($chkDate <= $nowDate) { $add=1; } else { $add=0; }
+		$badge_year = BadgeSubscriptions::find()->where(['>=','badge_year',date('Y')+$add])->all();
 		$guests = Guest::find()->where(['is', 'time_out',null])->all();
 
 		return $this->render('index',[
+			'badgeyear'=> count($badge_year),
 			'badgeCount'=> count($badges),
 			'guestCount'=> count($guests)
 		]);
