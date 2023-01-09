@@ -96,7 +96,9 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'value'=>function($model,$attribute) {
 					return (new Badges)->getMemberStatus($model->status);}
 			],
-			'badgeyear',
+			[	'header' => 'Badge Year',
+				'value'=>function($model){ return $model->badgeyear; },
+			],
 			[
                 'header' => 'Actions',
                 'class' => 'yii\grid\ActionColumn',

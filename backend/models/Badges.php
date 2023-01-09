@@ -104,7 +104,8 @@ class Badges extends \yii\db\ActiveRecord {
 	}
 
 	public function getBadgeYear() {
-		return BadgeSubscriptions::find()->where(['badge_number'=>$this->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
+		$bgyr = BadgeSubscriptions::find()->where(['badge_number'=>$this->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one();
+		if ($bgyr) {return $bgyr->badge_year; } else { return null; }
     }
 
 	public function getMembershipType($mem_type='') {
