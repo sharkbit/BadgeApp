@@ -22,14 +22,16 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 <div class="row">
     <div class="col-xs-12 col-sm-4 pull-right" >
 
-<?php if(isset($model->was_guest) && ($model->was_guest=='1')) {
-	  echo "<img src='/files/badge_photos/guest.png' id='warm'>";
-  }
-  elseif(file_exists("files/badge_photos/".str_pad($model->badge_involved, 5, '0', STR_PAD_LEFT).".jpg")) {
-	echo "<img src='/files/badge_photos/".str_pad($model->badge_involved, 5, '0', STR_PAD_LEFT).".jpg?dummy=".rand(10000,99999).
+<?php 
+	if ($model->badge_involved) { $bg_involved = $model->badge_involved; } else { $bg_involved = ''; }
+	$file_name = "files/badge_photos/".str_pad($bg_involved, 5, '0', STR_PAD_LEFT).".jpg";
+	if(isset($model->was_guest) && ($model->was_guest=='1')) {
+		echo "<img src='/files/badge_photos/guest.png' id='warm'>";
+	}
+	elseif(file_exists($file_name)) {
+		echo "<img src='/".$file_name."?dummy=".rand(10000,99999).
 				"' alt='".$model->involved_name."' width='260' height='340' id='warm'><br><br>";
-  } else echo "<img src='/files/badge_photos/warm.gif' id='warm'>";
-	
+	} else echo "<img src='/files/badge_photos/warm.gif' id='warm'>";
 	?>
 	</div>
 	<div class="col-xs-12 col-sm-8" >
@@ -107,10 +109,9 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		</div>
 	</div>
 		<div class="col-xs-12">
-			<?= $form->field($model, 'vi_rules')->dropDownList((new RuleList)->getRules($optionDataAttributes),
-			[
+			<?= $form->field($model, 'vi_rules')->dropDownList((new RuleList)->getRules($optionDataAttributes),	[
 			'options' => $optionDataAttributes,
-			'value'=>explode(', ',$model->vi_rules),
+			'value'=>function($model) { if ($model->vi_rules) { return explode(', ',$model->vi_rules); } else { return ''; } },
 			'multiple'=>true]).PHP_EOL; ?>
 		</div>
 
