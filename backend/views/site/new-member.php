@@ -21,16 +21,6 @@ for ($x = 1; $x <= 90; $x++) {
 }
 $YearList = json_decode(str_replace('}{',',',$YearList));
 
-$confParams  = Params::findOne('1');
-$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
-$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
-if ($DateChk <= $nowDate) {
-	$nextExpire = strtotime(strtotime($nowDate));
-} else {
-	$nextExpire = strtotime("-1 years",strtotime($nowDate));
-}
-$model->expires = date('M d, Y',strtotime(date('Y-01-09',$nextExpire)));
- 
 $this->title = 'Register New Member (Self-service)';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -197,7 +187,7 @@ input[type='checkbox'] {
 	</div>
 	<div class="row">
 		<div class="col-xs-12" id="HideMySubmit">
-			<?= Html::submitButton('<i class="fa fa-save"> </i> SAVE', ['class' => 'btn btn-success','id'=>'self_save']).PHP_EOL; ?>
+			<?= Html::submitButton('<i class="fa fa-save"> </i> Register', ['class' => 'btn btn-success','id'=>'self_save']).PHP_EOL; ?>
 			<?= Html::a('<i class="fa fa-eraser"> </i> Clear',['/site/new-member'],['class' => 'btn btn-danger']).PHP_EOL; ?>
 			<div id="run_animation" style="display: none">
 				<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px"> Please Wait.. </h4>
@@ -207,7 +197,6 @@ input[type='checkbox'] {
 <hr />
 	<?= $form->field($model, 'badge_number')->hiddenInput(['readonly'=>true, 'value' =>str_pad($model->badge_number, 5, '0', STR_PAD_LEFT) ])->label(false) ?>
 	<?= $form->field($model, 'incep')->hiddenInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))])->label(false) ?>
-	<?= $form->field($model, 'expires')->hiddenInput(['readOnly'=>true])->label(false) ?>
 	<?= $form->field($model, 'qrcode')->hiddenInput(['readOnly'=>true])->label(false) ?>
 	<?= $form->field($model, 'status')->hiddenInput(['value'=>"self"])->label(false) ?>
 
@@ -217,12 +206,13 @@ input[type='checkbox'] {
 </div>
 
 <script>
-document.getElementById("new-agree").disabled=true;
+	document.getElementById("new-agree").disabled=true;
 
-$('#NewMembers').on('beforeSubmit', function (e) {
-	document.getElementById("self_save").disabled=true;
-	$("run_animation").show();
-	console.log('submitting...');});
+	$('#NewMembers').on('beforeSubmit', function (e) {
+		document.getElementById("self_save").disabled=true;
+		$("run_animation").show();
+		console.log('submitting...');
+	});
 
 	function checkForm() {
 		console.log("Check Form");
@@ -351,7 +341,8 @@ $('#NewMembers').on('beforeSubmit', function (e) {
   
 function doCalcNew() {
 //nope
-}:
+};
+
 function ProcessSwipe(cleanUPC) {
 //nope
 };
