@@ -95,6 +95,6 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			
 			]
 		]
-	]); ?>
+	); ?>
 </div>
 </div>
