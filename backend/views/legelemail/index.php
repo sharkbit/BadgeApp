@@ -84,7 +84,6 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					},
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'groups',(new Legelemail)->getGroupList(),['class'=>'form-control','prompt' => 'All']),
 			],
-		//	'date_modified',
 			[	'attribute'=>'is_active',
 				'contentOptions' =>['style' => 'width:6%; text-align: center; white-space: normal;'],
 				'value'=>function($model) { if($model->is_active) {return "Yes";} else  {return "No";} },
@@ -92,7 +91,12 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_active',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All', 'style' => 'padding-left: 5%; text-align: left;']),
 		//		'filterOptions' =>['style' => 'text-align: left; font-size: x-small;'],
 			],
-			
+			[
+				'header' => 'Actions',
+				'headerOptions' => ['style' => 'width:5%;'],
+				'class' => 'yii\grid\ActionColumn',
+				'template'=>$myTemplate,
+			]
 			]
 		]
 	); ?>
