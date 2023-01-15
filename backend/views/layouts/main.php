@@ -913,12 +913,12 @@ app.controller('UpdateBadgeController', function($scope) {
                 $("#badgesubscriptions-sticker").val('');
                 if($("#defDate").val() < $("#badges-expires").val()) {
                     $("#badges-expires").val($("#defDate").val()); }
-                var sub_expires = new Date($("#badgesubscriptions-expires").val());
-                var sub_exp = $("#badgesubscriptions-expires").val();
-                var sell_date = $("#badges-sell_date").val();
-                var check_date = new Date((parseInt(sub_exp.slice(-4))-1)+"-"+sell_date);
-                if (sub_expires > check_date) {
-                    $("#badge_renual_form").show(); }
+              //  var sub_expires = new Date($("#badgesubscriptions-expires").val());
+              //  var sub_exp = $("#badgesubscriptions-expires").val();
+              //  var sell_date = $("#badges-sell_date").val();
+              //  var check_date = new Date((parseInt(sub_exp.slice(-4))-1)+"-"+sell_date);
+              //  if (sub_expires > check_date) {
+              //      $("#badge_renual_form").show(); }
             }
 
             run_waitMe('show');
