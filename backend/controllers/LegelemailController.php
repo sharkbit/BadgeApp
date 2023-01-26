@@ -20,6 +20,7 @@ class LegelemailController extends AdminController {
         $model = new Legelemail();
 		if ($model->load(Yii::$app->request->post())) {
 			$model->date_created = $this->getNowTime();
+			$model->date_modified = $model->date_created;
 			$model->display_order=999;
         	if($model->save()) {
 				$this->UpdateGroups($model->contact_id,$model->groups);
