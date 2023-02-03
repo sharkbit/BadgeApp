@@ -106,12 +106,15 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 							$_SESSION['timeout'] = $chk_priv->timeout; }
 						} else { $_SESSION['timeout'] = $chk_priv->timeout; }
 					}
-					if (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) {
+					$compnow = date("Y-m-d",strtotime($this->getNowTime()));
+					$badge_year = BadgeSubscriptions::find()->where(['badge_number'=>$badgeArray->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
+					if(strtotime($compnow) <= strtotime(date('Y').'-01-31')) { $badge_year++; }
+					if (isset($badge_year) && ((int)$badge_year < date('Y'))) {
 						if(array_intersect([3,6],$_SESSION['privilege'])) { // do nothing
 						} else {
 							unset($_SESSION);
-							yii::$app->controller->createLog(true, 'Site_Login Expired 1:',$badgeArray->badge_number.' - '.$badgeArray->expires);
-							Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
+							yii::$app->controller->createLog(true, 'Site_Login Expired 1:',$badgeArray->badge_number.' - '.$badge_year);
+							Yii::$app->getSession()->setFlash('warning', 'Badge needs to be Renewed! Please See Staff.',false);
 							return false;
 						}
 					}
@@ -121,11 +124,10 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 					$compnow = date("Y-m-d",strtotime($this->getNowTime()));
 					$badge_year = BadgeSubscriptions::find()->where(['badge_number'=>$badgeArray->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
 					if(strtotime($compnow) <= strtotime(date('Y').'-01-31')) { $badge_year++; }
-					if( ((isset($badgeArray->expires)) && (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) ) || 
-						(isset($badge_year) && ((int)$badge_year < date('Y'))) ) {
+					if(isset($badge_year) && ((int)$badge_year < date('Y'))) {
 						unset($_SESSION);
 						yii::$app->controller->createLog(true, 'Site_Login member Needs to renew badge:',$badgeArray->badge_number);
-						Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
+						Yii::$app->getSession()->setFlash('warning', 'Badge needs to be Renewed! Please See Staff.',false);
 						return false;
 					}
 					$_SESSION['privilege']=array(5);
