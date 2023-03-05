@@ -171,7 +171,8 @@ class AdminController extends \yii\web\Controller {
 				$_SESSION['back'][]=$_SERVER['REQUEST_URI'];
 			}
 			if(!$this->hasPermission(Yii::$app->controller->id."/".Yii::$app->controller->action->id)){
-				throw new \yii\web\UnauthorizedHttpException();
+				//throw new \yii\web\UnauthorizedHttpException();
+				return $this->redirect(['/']); 
 			}
 		} else if (yii::$app->user->isGuest) {
 			// Pages that dont require login
