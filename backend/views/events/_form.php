@@ -136,9 +136,11 @@ if(!yii::$app->controller->hasPermission('events/approve')) {
 	});
 
 	function changeBadgeName(badgeNumber) {
+		var formData = $("#event_att").serializeArray();
 		jQuery.ajax({
-			method: 'GET',
+			method: 'POST',
 			url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+			data: formData,
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
 				responseData =  JSON.parse(responseData);

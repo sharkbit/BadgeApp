@@ -961,9 +961,11 @@ app.controller('WorkCreditFrom', function($scope) {
 
     function changeBadgeName(action,badgeNumber) {
         $("#workcredits-badge_holder_name").readOnly = false;
+		var formData = $("#creditEntryForm").serializeArray();
         if(action=='fill') {
             jQuery.ajax({
-                    method: 'GET',
+                    method: 'POST',
+					data: formData,
                     url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
                     crossDomain: false,
                     success: function(responseData, textStatus, jqXHR) {
@@ -1099,9 +1101,11 @@ app.controller('WorkTransferForm', function($scope) {
     });
 
     function changeBadgeName(badgeNumber) {
+		var formData = $("#w0").serializeArray();
         jQuery.ajax({
-            method: 'GET',
+            method: 'POST',
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+			data: formData,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {
                 if(responseData) {
@@ -1140,9 +1144,11 @@ app.controller('WorkTransferForm', function($scope) {
     }
 
     function changeBadgeNameTo(badgeNumber) {
+		var formData = $("#w0").serializeArray();
         jQuery.ajax({
-            method: 'GET',
+            method: 'POST',
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+			data: formData,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {
                 if(responseData) {
@@ -1344,9 +1350,11 @@ app.controller('ViolationsRecFrom', function($scope) {
     });
 
     function getReporterName(badgeNumber,field_name) {
+		var formData = $("#ViolationsForm").serializeArray();
 		jQuery.ajax({
-            method: 'GET',
+            method: 'POST',
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+			data: formData,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {
 			  responseData = JSON.parse(responseData);

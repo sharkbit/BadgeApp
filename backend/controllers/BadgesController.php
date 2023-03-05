@@ -773,8 +773,11 @@ class BadgesController extends AdminController {
 		if($rtn){
 			return Json::decode($responce);
 		} else {
-			//if(isset($_REQUEST['_csrf-backend']) && (strlen($_REQUEST['_csrf-backend'])>60 )) {
-			Yii::$app->response->data = $responce;
+			if(isset($_REQUEST['_csrf-backend']) && (strlen($_REQUEST['_csrf-backend'])>60 )) {
+				Yii::$app->response->data = $responce;
+			} else {
+				return  $this->redirect(['/']);
+			}
 		}
 	}
 

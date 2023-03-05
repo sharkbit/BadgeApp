@@ -235,10 +235,12 @@ if($att_count>0) {
 	});
 
 	function changeBadgeNam(badgeNumber) {
+		var formData = $("#w0").serializeArray();
 		$("#badge_name").html('Searching');
 		jQuery.ajax({
-			method: 'GET',
+			method: 'POST',
 			url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+			data: formData,
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
 				responseData =  JSON.parse(responseData);
