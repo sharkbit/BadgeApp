@@ -242,10 +242,9 @@ if($att_count>0) {
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
 				responseData =  JSON.parse(responseData);
-				var PrimeExpTimestamp = getTimestamp(responseData.expires);
 				var resExpTimestamp = Math.floor(Date.now() / 1000);
 
-				if(PrimeExpTimestamp < resExpTimestamp) {
+				if(responseData.isExpired) {
 					$("#badge_name").html('No Active Member Found');
 				} else {
 					$("#badge_name").html(responseData.first_name+' '+responseData.last_name);

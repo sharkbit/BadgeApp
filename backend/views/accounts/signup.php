@@ -161,10 +161,9 @@ $randStr = generateRandomString();
       success: function(responseData, textStatus, jqXHR) {
         responseData =  JSON.parse(responseData);
         //console.log(responseData);
-        var PrimeExpTimestamp = getTimestamp(responseData.expires);
         var resExpTimestamp = Math.floor(Date.now() / 1000);
 
-        if(PrimeExpTimestamp < resExpTimestamp) {
+        if(responseData.isExpired) {
           $("#signupform-f_name").val('No Active Member Found');
           $("#signupform-l_name").val('');
           $("#signupform-email").val('');

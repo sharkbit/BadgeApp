@@ -199,6 +199,10 @@ class BadgesController extends AdminController {
 		if(isset($_REQUEST['_csrf-backend']) && (strlen($_REQUEST['_csrf-backend'])>60 )) {
 			$badgeArray = Badges::find()->where(['badge_number' => $badge_number])->one();
 			if(!empty($badgeArray)) {
+				
+				$params = Params::findOne('1');
+				$isExpired = Badges::isExpired($badge_number,$params);
+			
 				if($badgeArray->phone) {$ice_phone=$badgeArray->phone;} else {$ice_phone=$badgeArray->phone_op;}
 				$responce = [
 					'status'=> 'success',
@@ -212,7 +216,8 @@ class BadgesController extends AdminController {
 					'state' => $badgeArray->state,
 					'zip' => $badgeArray->zip,
 					'ice_phone' => $ice_phone,
-					'mem_type' => $badgeArray->mem_type
+					'mem_type' => $badgeArray->mem_type,
+					'isExpired'=> $isExpired
 				];
 			} else {
 				$responce = [
@@ -741,7 +746,7 @@ class BadgesController extends AdminController {
 				"GROUP BY badge_number";
 			$command = Yii::$app->getDb()->createCommand($sqlb);
 			$LastCredits = $command->queryAll();
-
+			
 			if(($CurCredits) && ($LastCredits)) {
 				$mergtwo=array_merge($CurCredits[0],$LastCredits[0]);
 			} else if ($CurCredits) {
@@ -751,6 +756,11 @@ class BadgesController extends AdminController {
 			} else {
 				$mergtwo=['wcCurYr'=>$myCurYr,'wcCurHr'=>0,'wcLasYr'=>$myLasYr,'wcLasHr'=>0];
 			}
+
+			$params = Params::findOne('1');
+			$isExpired = Badges::isExpired($badge_number,$params);
+			$mergtwo=array_merge($mergtwo,['isExpired'=> $isExpired]);
+
 			$mergtwo=array_merge($mergtwo,['clubs'=> (New clubs)->getMyClubs($badge_number)]);
 
 			$responceA = Json::encode($badgeArray,JSON_PRETTY_PRINT);
@@ -762,7 +772,10 @@ class BadgesController extends AdminController {
 
 		if($rtn){
 			return Json::decode($responce);
-		} else {Yii::$app->response->data = $responce;}
+		} else {
+			//if(isset($_REQUEST['_csrf-backend']) && (strlen($_REQUEST['_csrf-backend'])>60 )) {
+			Yii::$app->response->data = $responce;
+		}
 	}
 
 	public function actionGetBadgeName($badge_number) {

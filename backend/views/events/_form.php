@@ -142,10 +142,9 @@ if(!yii::$app->controller->hasPermission('events/approve')) {
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
 				responseData =  JSON.parse(responseData);
-				var PrimeExpTimestamp = getTimestamp(responseData.expires);
 				var resExpTimestamp = Math.floor(Date.now() / 1000);
 
-				if(PrimeExpTimestamp < resExpTimestamp) {
+				if(responseData.isExpired) {
 					$("#events-poc_name").val('No Active Member Found');
 				} else {
 					$("#events-poc_name").val(responseData.first_name+' '+responseData.last_name);
