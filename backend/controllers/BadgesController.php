@@ -145,18 +145,18 @@ class BadgesController extends AdminController {
 
 			$workcreditper = $BaseFee / 40;
 
-			$DateChk = date('Y-01-31',strtotime("+1 years",strtotime($this->getNowTime())));
-			$renBadgeYear =  date('Y-m-d',strtotime($renBadgeYear));
-			if ($renBadgeYear == $DateChk) {
-				$myBefDate = date('Y-01-01', strtotime($this->getNowTime()));
-				$myAftDate = date('Y-12-31', strtotime("-2 years",strtotime($this->getNowTime())));
+			$params = Params::findOne('1');
+			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
+			$DateChk = date("Y-".$params['sell_date'], strtotime(yii::$app->controller->getNowTime()));
+
+			if ($DateChk <= $nowDate) {
+				$myDate = date('Y', strtotime($nowDate));
 			} else {
-				$myBefDate = date('Y-01-01', strtotime("+1 years",strtotime($this->getNowTime())));
-				$myAftDate = date('Y-12-31', strtotime("-1 years",strtotime($this->getNowTime())));
+				$myDate = date('Y', strtotime("-1 years",strtotime($nowDate)));
 			}
 
 			$sql="SELECT badge_number,sum(work_hours) as creditSum FROM work_credits ".
-				"WHERE badge_number=".$badgeNumber." and work_date<'".$myBefDate."' and  work_date>'".$myAftDate."' and status=1 ".
+				"WHERE badge_number=".$badgeNumber." and year(work_date)='".$myDate."' and status=1 ".
 				"GROUP BY badge_number";
 
 			$command = Yii::$app->getDb()->createCommand($sql);
@@ -199,10 +199,10 @@ class BadgesController extends AdminController {
 		if(isset($_REQUEST['_csrf-backend']) && (strlen($_REQUEST['_csrf-backend'])>60 )) {
 			$badgeArray = Badges::find()->where(['badge_number' => $badge_number])->one();
 			if(!empty($badgeArray)) {
-				
+
 				$params = Params::findOne('1');
 				$isExpired = Badges::isExpired($badge_number,$params);
-			
+
 				if($badgeArray->phone) {$ice_phone=$badgeArray->phone;} else {$ice_phone=$badgeArray->phone_op;}
 				$responce = [
 					'status'=> 'success',
@@ -228,7 +228,7 @@ class BadgesController extends AdminController {
 		} else {
 			return  $this->redirect(['/']);
 		}
-		
+
 	}
 
 	private function fwrite_stream($fp, $string) {
@@ -746,7 +746,7 @@ class BadgesController extends AdminController {
 				"GROUP BY badge_number";
 			$command = Yii::$app->getDb()->createCommand($sqlb);
 			$LastCredits = $command->queryAll();
-			
+
 			if(($CurCredits) && ($LastCredits)) {
 				$mergtwo=array_merge($CurCredits[0],$LastCredits[0]);
 			} else if ($CurCredits) {
@@ -771,6 +771,7 @@ class BadgesController extends AdminController {
 		}
 
 		if($rtn){
+
 			return Json::decode($responce);
 		} else {
 			if(isset($_REQUEST['_csrf-backend']) && (strlen($_REQUEST['_csrf-backend'])>60 )) {
