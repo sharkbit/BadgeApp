@@ -45,7 +45,8 @@
 			"bower-asset-library": "vendor/bower" 
 		},
         "allow-plugins": {
-            "yiisoft/yii2-composer": true
+            "yiisoft/yii2-composer": true,
+            "php-http/discovery": true
         } 
 	},
 	"repositories": [
