@@ -28,7 +28,7 @@ if(!yii::$app->controller->hasPermission('events/approve')) {
 } ?>
 
 <div class="events-form">
-<?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin(['id'=>'eventform']); ?>
 	<div class="row" style="display: none;" >
 		<?= $form->field($model, 'e_id')->hiddenInput([])->label(false).PHP_EOL; ?>
 	</div>
@@ -136,7 +136,7 @@ if(!yii::$app->controller->hasPermission('events/approve')) {
 	});
 
 	function changeBadgeName(badgeNumber) {
-		var formData = $("#event_att").serializeArray();
+		var formData = $("#eventform").serializeArray();
 		jQuery.ajax({
 			method: 'POST',
 			url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
