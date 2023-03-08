@@ -286,8 +286,10 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 	}
 
 	function getReporterName(badgeNumber) {
+		var formData = $("#SalesForm").serializeArray();
         jQuery.ajax({
-            method: 'GET',
+            method: 'POST',
+			data: formData,
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {

@@ -136,16 +136,17 @@ if(!yii::$app->controller->hasPermission('events/approve')) {
 	});
 
 	function changeBadgeName(badgeNumber) {
+		var formData = $("#event_att").serializeArray();
 		jQuery.ajax({
-			method: 'GET',
+			method: 'POST',
 			url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+			data: formData,
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
 				responseData =  JSON.parse(responseData);
-				var PrimeExpTimestamp = getTimestamp(responseData.expires);
 				var resExpTimestamp = Math.floor(Date.now() / 1000);
 
-				if(PrimeExpTimestamp < resExpTimestamp) {
+				if(responseData.isExpired) {
 					$("#events-poc_name").val('No Active Member Found');
 				} else {
 					$("#events-poc_name").val(responseData.first_name+' '+responseData.last_name);

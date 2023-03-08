@@ -300,9 +300,8 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
                     $("#searchng-badge-animation").hide(500);
                     if(responseData.status=='success') {
                         if(responseData.mem_type==50 || responseData.mem_type==70 || responseData.mem_type==99 ) {
-                            var PrimeExpTimestamp = getTimestamp(responseData.expires);
                             var resExpTimestamp = Math.floor(Date.now() / 1000);
-                            if(PrimeExpTimestamp < resExpTimestamp) {
+                            if(responseData.isExpired) {
                                 var bgren = '<?=yii::$app->params['rootUrl']?>/badges/update?badge_number='+responseData.badge_number;
                                 $("h4#no-primary-error").html("Please Renew <a href='"+bgren+"' target='_blank'>"+responseData.first_name+" "+responseData.last_name+"'s</a> Badge First");
                                 $("#no-primary-error").show(500);
@@ -560,19 +559,14 @@ app.controller("CreateBadgeController", function($scope) {
             }
             run_waitMe('hide');
 
-          //  document.getElementById('badges-renBadgeYear').readOnly = false;
             var myYear = (new Date($("#defDate").val())).getFullYear();
             if(memTypeId == '99') {
-             //   $("#badges-expires").val('Jan 31, '+(myYear+29));
                 $("#badges-sticker").val('9999');
             } else if(memTypeId == '70') {
-             //   $("#badges-expires").val('Jan 31, '+(myYear+14));
                 $("#badges-sticker").val('0');
             } else {
-             //   $("#badges-expires").val($("#defDate").val());
                 $("#badges-sticker").val('');
             }
-           // document.getElementById('badges-expires').readOnly = true;
             fillBarcode();
 			get_fees(memTypeId);
             if (memTypeId!='') {
@@ -897,29 +891,15 @@ app.controller('UpdateBadgeController', function($scope) {
 
         $("#badges-mem_type").change(function() {
             var memTypeId = $("#badges-mem_type").val();
-            var myYear = (new Date($("#defDate").val())).getFullYear();
             if(memTypeId == '99') {
                 $("#badge_renual_form").hide();
-                $("#badgesubscriptions-expires").val('Jan 31, '+(myYear+29));
-                $("#badges-expires").val('Jan 31, '+(myYear+29));
                 $("#badgesubscriptions-sticker").val('9999');
             } else if(memTypeId == '70') {
                 $("#badge_renual_form").show();
-                $("#badgesubscriptions-expires").val('Jan 31, '+(myYear+14));
-                $("#badgesubscriptions-sticker").val('0');
-                //$("#badges-expires").val('Jan 31, '+(myYear+15));
-            } else {
-                $("#badgesubscriptions-expires").val($("#defDate").val());
-                $("#badgesubscriptions-sticker").val('');
-                if($("#defDate").val() < $("#badges-expires").val()) {
-                    $("#badges-expires").val($("#defDate").val()); }
-              //  var sub_expires = new Date($("#badgesubscriptions-expires").val());
-              //  var sub_exp = $("#badgesubscriptions-expires").val();
-              //  var sell_date = $("#badges-sell_date").val();
-              //  var check_date = new Date((parseInt(sub_exp.slice(-4))-1)+"-"+sell_date);
-              //  if (sub_expires > check_date) {
-              //      $("#badge_renual_form").show(); }
-            }
+               $("#badgesubscriptions-sticker").val('0');
+             } else {
+                 $("#badgesubscriptions-sticker").val('');
+             }
 
             run_waitMe('show');
             if(memTypeId=='51') {
@@ -928,11 +908,7 @@ app.controller('UpdateBadgeController', function($scope) {
             run_waitMe('hide');
 
             if(memTypeId!='') {
-                if($("#badgesubscriptions-expires")) {
-                    var badgeYear = $("#badgesubscriptions-badge_year_chk").val();
-                } else {
-                    var badgeYear = $("#badges-badge_year_chk").val();
-                }
+                var badgeYear = $("#badges-badge_year_chk").val();
                 collectRenewFee('fill',memTypeId,badgeYear);
             } else { collectRenewFee('remove'); }
         });
@@ -985,23 +961,22 @@ app.controller('WorkCreditFrom', function($scope) {
 
     function changeBadgeName(action,badgeNumber) {
         $("#workcredits-badge_holder_name").readOnly = false;
+		var formData = $("#creditEntryForm").serializeArray();
         if(action=='fill') {
             jQuery.ajax({
-                    method: 'GET',
+                    method: 'POST',
+					data: formData,
                     url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
                     crossDomain: false,
                     success: function(responseData, textStatus, jqXHR) {
                         responseData =  JSON.parse(responseData);
                         console.log('trying ++'+responseData.first_name);
-                        var PrimeExpTimestamp = getTimestamp(responseData.expires);
-                        var resExpTimestamp = Math.floor(Date.now() / 1000);
 
-                        if(PrimeExpTimestamp < resExpTimestamp) {
+                        if(responseData.isExpired) {
                             $("#workcredits-badge_holder_name").val('No Active Member Found');
                         } else {
                             $("#workcredits-badge_holder_name").val(responseData.first_name+' '+responseData.last_name);
                         }
-                        //$("#workcredits-badge_holder_name").readOnly = true;
                     },
                     error: function (responseData, textStatus, errorThrown) {
                         $("#workcredits-badge_holder_name").val('Valid Badge Holder not found');
@@ -1126,9 +1101,11 @@ app.controller('WorkTransferForm', function($scope) {
     });
 
     function changeBadgeName(badgeNumber) {
+		var formData = $("#w0").serializeArray();
         jQuery.ajax({
-            method: 'GET',
+            method: 'POST',
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+			data: formData,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {
                 if(responseData) {
@@ -1167,9 +1144,11 @@ app.controller('WorkTransferForm', function($scope) {
     }
 
     function changeBadgeNameTo(badgeNumber) {
+		var formData = $("#w0").serializeArray();
         jQuery.ajax({
-            method: 'GET',
+            method: 'POST',
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+			data: formData,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {
                 if(responseData) {
@@ -1371,9 +1350,11 @@ app.controller('ViolationsRecFrom', function($scope) {
     });
 
     function getReporterName(badgeNumber,field_name) {
+		var formData = $("#ViolationsForm").serializeArray();
 		jQuery.ajax({
-            method: 'GET',
+            method: 'POST',
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+			data: formData,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {
 			  responseData = JSON.parse(responseData);
