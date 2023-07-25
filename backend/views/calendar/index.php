@@ -64,10 +64,11 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'headerOptions' => ['style' => 'width:20%'],
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'value'=>function ($model) {
-					if($model->recurrent_calendar_id>0) {$mas=" *";} else {$mas="";}
+					if($model->recurrent_calendar_id>0) {$recurr=" *";} else {$recurr="";}
+					if($model->calendar_id==$model->recurrent_calendar_id) {$master=" m";} else {$master="";}
 					if ((yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) {
-						return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id).$mas; }
-					else { return $model->event_name.$mas; }
+						return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id).$recurr.$master; }
+					else { return $model->event_name.$recurr.$master; }
 				},
 			],
 			[	'attribute'=>'facility_id',
