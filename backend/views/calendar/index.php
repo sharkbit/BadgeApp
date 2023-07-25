@@ -331,6 +331,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 
 </div>
 <p>* is a Recurring Event</p>
+<P>m is a Master Record - do not delete</p>
 <script>
 //$("#w0-cols").hide();
 
