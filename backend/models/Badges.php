@@ -4,6 +4,7 @@ namespace backend\models;
 use Yii;
 use DateTime;
 use backend\models\BadgeSubscriptions;
+use backend\models\BadgeToYear;
 use backend\models\clubs;
 use backend\models\MembershipType;
 use backend\models\Params;
@@ -101,6 +102,10 @@ class Badges extends \yii\db\ActiveRecord {
 			'cc_exp_yr'=>'Exp Year',
 			'cc_exp_mo'=>'Exp Month'
 		];
+	}
+
+	public function getBadgeToYear() {
+		return $this->hasOne(BadgeToYear::className(), ['badge_number' => 'badge_number']);
 	}
 
 	public function getBadgeYear() {

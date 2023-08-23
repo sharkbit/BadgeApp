@@ -64,9 +64,10 @@ class ClubsController extends AdminController {
 				$forGenerateCsv  = [];
 				@unlink('files/rosters/'.$fileName);
 				$fileCsv = fopen('files/rosters/'.$fileName, 'w');
-				fputcsv($fileCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Expire Date','status','Last Renewed'));
+				fputcsv($fileCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Badge Year','status','Last Renewed'));
 				foreach ($rosterForSingle as $key => $badgeData) {
-					$userDetails = [
+						if(is_null($badgeData->badgeToYear)) {$BadgeYear='2016';} else {$BadgeYear=$badgeData->badgeToYear->badge_year;}
+						$userDetails = [
 						'0' => $badgeData->badge_number,
 						'1' => $clubData->club_name,
 						'2' => $badgeData->first_name.' '.$badgeData->suffix,
@@ -75,7 +76,7 @@ class ClubsController extends AdminController {
 						'5' => substr($badgeData->phone,0,3).'-'.substr($badgeData->phone,3,3).'-'.substr($badgeData->phone,6,4),
 						'6' => $badgeData->membershipType->type,
 						'7' => date('M d, Y',strtotime($badgeData->incep)),
-						'8' => date('M d, Y',strtotime($badgeData->expires)),
+						'8' => $BadgeYear,
 						'9' => $badgeData->status,
 						'10' => date('M d, Y',strtotime($badgeData->updated_at)),
 
@@ -132,8 +133,9 @@ class ClubsController extends AdminController {
 					$forGenerateCsv  = [];
 					@unlink('files/rosters/'.$fileName);
 					$fileCsv = fopen('files/rosters/'.$fileName, 'w');
-					fputcsv($fileCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Expire Date','status','Last Renewed'));
+					fputcsv($fileCsv, array('Badge Number','Club Name','First Name','Last Name','Email','Phone','Membership Type','Date Joined','Badge Year','status','Last Renewed'));
 					foreach ($rosterForSingle as $key => $badgeData) {
+						if(is_null($badgeData->badgeToYear)) {$BadgeYear='2016';} else {$BadgeYear=$badgeData->badgeToYear->badge_year;}
 						$userDetails = [
 						'0' => $badgeData->badge_number,
 						'1' => $clubData->club_name,
@@ -143,7 +145,7 @@ class ClubsController extends AdminController {
 						'5' => substr($badgeData->phone,0,3).'-'.substr($badgeData->phone,3,3).'-'.substr($badgeData->phone,6,4),
 						'6' => $badgeData->membershipType->type,
 						'7' => date('M d, Y',strtotime($badgeData->incep)),
-						'8' => date('M d, Y',strtotime($badgeData->expires)),
+						'8' => $BadgeYear,
 						'9' => $badgeData->status,
 						'10' => date('M d, Y',strtotime($badgeData->updated_at)),
 						];

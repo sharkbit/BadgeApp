@@ -97,7 +97,11 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					return (new Badges)->getMemberStatus($model->status);}
 			],
 			[	'header' => 'Badge Year',
-				'value'=>function($model){ return $model->badgeyear; },
+				'attribute' => 'badgeyear',
+				'contentOptions' =>['style' => 'width:100px'],
+				'value'=>function($model,$attribute) { if(is_null($model->badgeToYear)) 
+					{ return '2016';} else {return $model->badgeToYear->badge_year;}
+				},
 			],
 			[
                 'header' => 'Actions',

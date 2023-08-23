@@ -23,7 +23,7 @@ class BadgesSearch extends Badges {
 
     public function rules() {
         return [
-            [['badge_number','club_id', 'mem_type', 'primary'], 'integer'],
+            [['badge_number','badgeyear','club_id', 'mem_type', 'primary'], 'integer'],
             [['prefix', 'first_name', 'last_name', 'suffix', 'address', 'city', 'state', 'zip', 'gender', 'yob', 'email','email_vrfy', 'phone', 'phone_op', 'ice_contact', 'ice_phone', 'incep', 'wt_date', 'wt_instru', 'payment_method','status','expire_date_range','expire_condition'], 'safe'],
             [['badge_fee', 'discounts', 'amt_due'], 'number'],
         ];
@@ -46,7 +46,8 @@ class BadgesSearch extends Badges {
      */
     public function search($params) {
         $query = Badges::find()
-			->joinWith(['membershipType']);
+			->joinWith(['membershipType'])
+			->joinWith(['badgeToYear']);
 
         // add conditions that should always apply here
 
@@ -73,24 +74,24 @@ class BadgesSearch extends Badges {
         }
 
         if($this->expire_condition=='active+2') {
-            $query->andFilterWhere(['>=','expires',$this->nowDate]);
-            $query->orFilterWhere(['between','expires',$this->nowDateMin2, $this->nowDate]);
+            $query->andFilterWhere(['>=','bn_to_by.badge_year',$this->nowDate]);
+            $query->orFilterWhere(['between','bn_to_by.badge_year',$this->nowDateMin2, $this->nowDate]);
         }
         else if($this->expire_condition=='active') {
-            $query->andFilterWhere(['>=','expires',$this->nowDate]);
+            $query->andFilterWhere(['>=','bn_to_by.badge_year',$this->nowDate]);
         }
         else if($this->expire_condition=='expired<2') {
-            $query->andFilterWhere(['between','expires',$this->nowDateMin2,$this->nowDate]);
+            $query->andFilterWhere(['between','bn_to_by.badge_year',$this->nowDateMin2,$this->nowDate]);
         }
         else if($this->expire_condition=='expired>2') {
-             $query->andFilterWhere(['<','expires',$this->nowDateMin2]);
+             $query->andFilterWhere(['<','bn_to_by.badge_year',$this->nowDateMin2]);
         }
         else if($this->expire_condition=='inactive') {
-             $query->andFilterWhere(['<','expires',$this->nowDateMin5]);
+             $query->andFilterWhere(['<','bn_to_by.badge_year',$this->nowDateMin5]);
         }
         else {// no filter needed for all
 			//if($this->expire_condition=='all') {
-            // $query->andFilterWhere(['between', 'expires', '1999-01-01', '2999-01-01']);
+            // $query->andFilterWhere(['between', 'bn_to_by.badge_year', '1999-01-01', '2999-01-01']);
         }
 
 		if(!yii::$app->controller->hasPermission('badges/all')) {
@@ -120,7 +121,7 @@ class BadgesSearch extends Badges {
             'yob' => $this->yob,
             'mem_type' => $this->mem_type,
             'incep' => $this->incep,
-			'expires'=>$this->expires,
+			'badgeyear'=>$this->badgeyear,
         ]);
 
         if(isset($this->club_id) && ($this->club_id <>'')) {

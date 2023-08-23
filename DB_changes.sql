@@ -713,3 +713,19 @@ ADD COLUMN `renew_yearly` INT NOT NULL DEFAULT 1 AFTER `sku_full`;
 
 ALTER TABLE `BadgeDB`.`badges` 
 CHANGE COLUMN `expires` `expires` DATE NULL DEFAULT NULL ;
+
+-- fix badge Year #254
+CREATE INDEX badge_to_year on badge_subscriptions(badge_number, badge_year);
+
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `bn_to_by` AS
+    SELECT 
+        `badge_subscriptions`.`badge_number` AS `badge_number`,
+        MAX(`badge_subscriptions`.`badge_year`) AS `MAX(badge_year)`
+    FROM
+        `badge_subscriptions`
+    GROUP BY `badge_subscriptions`.`badge_number`;
+

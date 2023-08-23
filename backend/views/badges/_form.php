@@ -118,7 +118,7 @@ $confParams  = Params::findOne('1');
 			}
 			echo $form->field($model, 'badge_year')->hiddenInput(['value'=>date('Y',  strtotime($nextExpire.' - 1 year'))])->label(false). PHP_EOL; 
 
-		if(1==2) { // Only enable for timd badges  ...  15yr .. ?>
+		if(1==2) { //** section curently disabled ** Only enable for timed badges  ...  15yr .. ?>
             <div class="col-xs-6 col-sm-4">
                 <?php $model->expires = date('M d, Y',strtotime($nextExpire)); ?>
                 <?= $form->field($model, 'expires')->textInput(['readOnly'=>true]) ?>
