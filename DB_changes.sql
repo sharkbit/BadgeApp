@@ -724,7 +724,7 @@ CREATE
 VIEW `bn_to_by` AS
     SELECT 
         `badge_subscriptions`.`badge_number` AS `badge_number`,
-        MAX(`badge_subscriptions`.`badge_year`) AS `MAX(badge_year)`
+        MAX(`badge_subscriptions`.`badge_year`) AS `badge_year`
     FROM
         `badge_subscriptions`
     GROUP BY `badge_subscriptions`.`badge_number`;
