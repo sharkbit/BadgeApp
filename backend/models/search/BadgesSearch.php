@@ -23,7 +23,7 @@ class BadgesSearch extends Badges {
 
     public function rules() {
         return [
-            [['badge_number','badgeyear','club_id', 'mem_type', 'primary'], 'integer'],
+            [['badge_number','club_id', 'mem_type', 'primary'], 'integer'],
             [['prefix', 'first_name', 'last_name', 'suffix', 'address', 'city', 'state', 'zip', 'gender', 'yob', 'email','email_vrfy', 'phone', 'phone_op', 'ice_contact', 'ice_phone', 'incep', 'wt_date', 'wt_instru', 'payment_method','status','expire_date_range','expire_condition'], 'safe'],
             [['badge_fee', 'discounts', 'amt_due'], 'number'],
         ];
@@ -58,10 +58,7 @@ class BadgesSearch extends Badges {
         $this->load($params);
 //yii::$app->controller->createLog(false, 'trex_M_S_BS params', var_export($params,true));
 		if(!isset($params['sort'])) { 
-	//		yii::$app->controller->createLog(false, 'trex_M_S_BS', 'No Sort'); 
 			$query->orderBy( ['updated_at' => SORT_DESC] ); 
-		}
-		else { //yii::$app->controller->createLog(false, 'trex_M_S_BS', var_export($params['sort'],true)); 
 		}
 		
         $this->nowDateplus2 = date('Y-m-d', strtotime("+2 years",strtotime(yii::$app->controller->getNowTime())));
@@ -89,10 +86,7 @@ class BadgesSearch extends Badges {
         else if($this->expire_condition=='inactive') {
              $query->andFilterWhere(['<','bn_to_by.badge_year',$this->nowDateMin5]);
         }
-        else {// no filter needed for all
-			//if($this->expire_condition=='all') {
-            // $query->andFilterWhere(['between', 'bn_to_by.badge_year', '1999-01-01', '2999-01-01']);
-        }
+        else { /* no filter needed for all */ }
 
 		if(!yii::$app->controller->hasPermission('badges/all')) {
 			$query->andFilterWhere(['badge_number'=>$_SESSION["badge_number"]]);
@@ -117,21 +111,16 @@ class BadgesSearch extends Badges {
 
         // grid filtering conditions
         $query->andFilterWhere([
-           // 'status'=>$this->status,
             'yob' => $this->yob,
-            'mem_type' => $this->mem_type,
-            'incep' => $this->incep,
-			'badgeyear'=>$this->badgeyear,
+            'mem_type' => $this->mem_type
         ]);
 
         if(isset($this->club_id) && ($this->club_id <>'')) {
-		//	yii::$app->controller->createLog(true, 'trex-m-s-bs', 'ClubID: '.var_export($this->club_id,true));
 			$query->andWhere("badge_number IN (SELECT badge_number FROM badge_to_club WHERE club_id=".$this->club_id.")"); }
 
 		if(isset($this->badge_number)) { 
 			$this->badge_number=ltrim($this->badge_number, '0');
-			//$query->andFilterWhere(['like', 'badge_number', $this->badge_number]);
-			$query->andFilterWhere(['badge_number'=>$this->badge_number]);  
+			$query->andFilterWhere(['badges.badge_number'=>$this->badge_number]);  
 		}
 		if(isset($this->first_name)) { $query->andFilterWhere(['like', 'first_name', $this->first_name]); }
 		if(isset($this->last_name)) { $query->andFilterWhere(['like', 'last_name', $this->last_name]); }
