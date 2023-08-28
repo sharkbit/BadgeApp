@@ -89,7 +89,7 @@ class BadgesSearch extends Badges {
         else { /* no filter needed for all */ }
 
 		if(!yii::$app->controller->hasPermission('badges/all')) {
-			$query->andFilterWhere(['badge_number'=>$_SESSION["badge_number"]]);
+			$query->andFilterWhere(['badges.badge_number'=>$_SESSION["badge_number"]]);
 		}
 
         if($this->expire_date_range==null) {
@@ -116,7 +116,7 @@ class BadgesSearch extends Badges {
         ]);
 
         if(isset($this->club_id) && ($this->club_id <>'')) {
-			$query->andWhere("badge_number IN (SELECT badge_number FROM badge_to_club WHERE club_id=".$this->club_id.")"); }
+			$query->andWhere("badges.badge_number IN (SELECT badge_number FROM badge_to_club WHERE club_id=".$this->club_id.")"); }
 
 		if(isset($this->badge_number)) { 
 			$this->badge_number=ltrim($this->badge_number, '0');
