@@ -60,7 +60,7 @@ $confParams  = Params::findOne('1');
 				<?= $form->field($model, 'primary')->textInput(['value'=>''])->label("Primary Family Member") ?>
 			</div>
 			<div class="col-xs-12 col-sm-9">
-				<h4 class="text-center" id="no-primary-error" ><br> <p>Please Enter Primary badge Holder</p> <br> </h4>
+				<h4 class="text-center" id="no-primary-error" ><br> <p>Please Enter Primary Badge Holder</p> <br> </h4>
 				<div id="searchng-badge-animation" style="display: none">
 					<img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 100px">Searching..</h4>
 				</div>
@@ -81,7 +81,7 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates(),['value'=>'MD']) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
-                <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female'],['value'=>0]) ?>
+                <?=  $form->field($model, 'gender')->radioList([ 'm'=>'Male', 'f'=> 'Female'],['value'=>'m']) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
                 <?= $form->field($model, 'yob')->dropDownList($YearList,['value'=>$MyYr-13 ]) ?>
@@ -104,23 +104,28 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'ice_phone')->textInput(['autocomplete' => 'off','maxlength'=>true,'readonly'=> $model->isNewRecord ? false : true,]) ?>
             </div>
 
-            <?php
-				$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
-				$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
-                if ($DateChk <= $nowDate) {
-				    $nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));
-                } else {
-                    $nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
-                }
-            ?>
             <div class="col-xs-6 col-sm-6">
                 <?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))]) ?>
             </div>
+
+		<?php 
+			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
+			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
+			if ($DateChk <= $nowDate) {
+				$nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));
+			} else {
+				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
+			}
+			echo $form->field($model, 'badge_year')->hiddenInput(['value'=>date('Y',  strtotime($nextExpire.' - 1 year'))])->label(false). PHP_EOL; 
+
+		if(1==2) { //** section curently disabled ** Only enable for timed badges  ...  15yr .. ?>
             <div class="col-xs-6 col-sm-4">
                 <?php $model->expires = date('M d, Y',strtotime($nextExpire)); ?>
                 <?= $form->field($model, 'expires')->textInput(['readOnly'=>true]) ?>
                 <input type="hidden" value='<?php echo date('M d, Y',strtotime($nextExpire)); ?>' id='defDate' />
             </div>
+		<?php } ?>
+
              <div class="col-xs-6 col-sm-4">
                 <?php $model->wt_date = date('M d, Y',strtotime(yii::$app->controller->getNowTime())) ?>
                 <?= $form->field($model, 'wt_date')->widget(DatePicker::classname(), [
@@ -216,7 +221,7 @@ $confParams  = Params::findOne('1');
 					'<input type=hidden name="sku" value="'.$item['sku'].'" />'.
 					'<input type=hidden name="tax_rate" value="'.$item['tax_rate'].'" /></td>'.
 					'<td><input type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
-					'<td><input class="right" type="text" name="qty" size="3" value=0 onKeyUp="doCalcNew()" /></td>'.
+					'<td><input class="right" type="text" name="qty" size="3" value=0 onfocus="doCheckField()" onKeyUp="doCalcNew()" /></td>'.
 					'<td><input class="right" type="text" name="price" size="3" readonly /></td></tr>'."\n";
 			} ?>
 					</table>
@@ -285,6 +290,11 @@ $confParams  = Params::findOne('1');
 	function CheckOnline() {
 		// Only For Renuals!
 	}
+
+	function doCheckField(e) {
+		e = e || window.event;
+		if(e.target.value=='0') e.target.value='';
+	};
 
 	function doCalcNew() {
 		var ContainerID = document.getElementById('store_items');
@@ -439,7 +449,7 @@ $confParams  = Params::findOne('1');
 			}
 
 		}
-		else if (cleanUPC.match(/B\d{16}/g)) {  // Matched Credit Card!
+		else if (cleanUPC.match(/[Bb]\d{16}/g)) {  // Matched Credit Card!
 			console.log('Credit Card Scanned: ', cleanUPC);
 			var ccNum = cleanUPC.substring(1,17);
 			var fExp = cleanUPC.indexOf('^')+1;
@@ -453,7 +463,7 @@ $confParams  = Params::findOne('1');
 			document.getElementById("badges-cc_num").value = ccNum;
 			document.getElementById("badges-cc_exp_mo").value = ExpMo;
 			document.getElementById("badges-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b-v-b-f:443'); }
+		} else { SwipeError(cleanUPC,'b_v_b_f:461'); }
 		cleanUPC = '';
 	};
 </script>

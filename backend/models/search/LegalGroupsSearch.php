@@ -5,27 +5,29 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\BadgePayments;
+use backend\models\Legalgroups;
 
 /**
- * BadgePaymentsSearch represents the model behind the search form about `backend\models\BadgePayments`.
+ * ClubsSearch represents the model behind the search form about `backend\models\Legalgroups`.
  */
-class BadgePaymentsSearch extends BadgePayments {
+
+class LegalGroupsSearch extends Legalgroups {
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['id', 'badge_number'], 'integer'],
-            [['badge_year', 'payment_type', 'status', 'created_at'], 'safe'],
-        ];
+			[['name'], 'safe'],
+			[['is_active'], 'number'],
+	   ];
     }
 
     /**
      * @inheritdoc
      */
     public function scenarios() {
-        // bypass scenarios() implementation in the parent class
+
+       // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -37,7 +39,8 @@ class BadgePaymentsSearch extends BadgePayments {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = BadgePayments::find();
+        $query = Legalgroups::find();
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -45,6 +48,8 @@ class BadgePaymentsSearch extends BadgePayments {
         ]);
 
         $this->load($params);
+		
+		if(!isset($params['sort'])) { $query->orderBy( ['name' => SORT_ASC] ); }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -53,15 +58,9 @@ class BadgePaymentsSearch extends BadgePayments {
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'badge_number' => $this->badge_number,
-            'badge_year' => $this->badge_year,
-            'created_at' => $this->created_at,
-        ]);
 
-        $query->andFilterWhere(['like', 'payment_type', $this->payment_type])
-            ->andFilterWhere(['like', 'status', $this->status]);
+		if(isset($this->name)) { $query->andFilterWhere(['like','name',$this->name]); }
+		if(isset($this->is_active)) { $query->andFilterWhere(['is_active'=>$this->is_active]); }
 
         return $dataProvider;
     }

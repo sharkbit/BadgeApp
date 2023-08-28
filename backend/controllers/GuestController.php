@@ -16,7 +16,7 @@ use backend\models\Badges;
  */
 class GuestController extends SiteController {
 
-	public $enableCsrfValidation = false;
+	public $enableCsrfValidation = true;
 
 	public function behaviors() {
 		return [
@@ -40,7 +40,7 @@ class GuestController extends SiteController {
 			$model->g_last_name = trim($model->g_last_name);
 			$model->g_city = trim($model->g_city);
 			$model->g_state = strtoupper(trim($model->g_state));
-			$model->tmp_badge = trim($model->tmp_badge);
+			if ($model->tmp_badge) { $model->tmp_badge = trim($model->tmp_badge); }
 
 			if($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Visitor has been added!');

@@ -103,6 +103,7 @@ class WorkCreditsSearch extends WorkCredits {
 			}
 		}
 
+//yii::$app->controller->createLog(true, 'trex-b-m-s-WCs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }
 }

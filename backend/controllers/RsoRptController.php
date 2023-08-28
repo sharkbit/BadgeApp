@@ -169,7 +169,7 @@ class RsoRptController extends AdminController {
 					$rng_a = explode('-',$rng);
 					$y=$rng_a[0];
 					do {
-						$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($y, 4, '0', STR_PAD_LEFT)])->andwhere(['in','status',['rso','adm']])->one();
+						$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($y, 4, '0', STR_PAD_LEFT)])->andwhere(['in','status',['rso','adm','cas']])->one();
 						if($stker){
 							$stker->status = $_REQUEST['StickersSearch']['to'];
 							$stker->updated =  $this->getNowTime();
@@ -178,7 +178,7 @@ class RsoRptController extends AdminController {
 						$y++;
 					} while ($y < $rng_a[1]+1);
 				} else {
-					$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($rng, 4, '0', STR_PAD_LEFT)])->andwhere(['in','status',['rso','adm']])->one();
+					$stker = Stickers::find()->where(['sticker'=>$yr.'-'.str_pad($rng, 4, '0', STR_PAD_LEFT)])->andwhere(['in','status',['rso','adm','cas']])->one();
 					if($stker) {
 						$stker->status = $_REQUEST['StickersSearch']['to'];
 						$stker->updated =  $this->getNowTime();
@@ -263,21 +263,21 @@ class RsoRptController extends AdminController {
 		}
 	}
 
-	private function CleanModel(&$model) {
+	private static function CleanModel(&$model) {
 		$model->closed=(int)$model->closed;
 		$model->rso = str_replace('"',"", json_encode($model->rso));
 		$model->wb_trap_cases = (int)$model->wb_trap_cases;
 		$model->cash_bos = number_format((float)$model->cash_bos,2,'.','');
 		$model->cash_eos = number_format((float)$model->cash_eos,2,'.','');
 		$model->cash_drop = number_format((float)$model->cash_drop,2,'.','');
-		$model->cash = trim($model->cash);
-		$model->checks = trim($model->checks);
-		$model->notes = trim($model->notes);
-		$model->shift_anom = trim($model->shift_anom);
-		$model->closing = trim($model->closing);
+		if(isset($model->cash)) $model->cash = trim($model->cash);
+		if(isset($model->checks)) $model->checks = trim($model->checks);
+		if(isset($model->notes)) $model->notes = trim($model->notes);
+		if(isset($model->shift_anom)) $model->shift_anom = trim($model->shift_anom);
+		if(isset($model->closing)) $model->closing = trim($model->closing);
 	}
 
-	protected function AddRemarks($model, $comment) {
+	protected static function AddRemarks($model, $comment) {
 		RsoRptController::CleanModel($model);
 
 		$items=$model->getDirtyAttributes();
@@ -304,7 +304,7 @@ class RsoRptController extends AdminController {
 		sort($responce);
 		$dirty=implode(", ",$responce);
 
-		$remarksOld = json_decode($model->remarks,true);
+		if(isset($model->remarks)) { $remarksOld = json_decode($model->remarks,true); } else { $remarksOld=''; }
 		if($dirty) {
 			$cmnt = "Updated: ".$dirty;
 			$nowRemakrs = [

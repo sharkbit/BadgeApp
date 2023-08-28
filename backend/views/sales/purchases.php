@@ -71,6 +71,13 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			},
 			'footer'=>'Total:',
 		],
+		[	'attribute'=>'New / Renew',
+			'value' => function($model) {
+				if(isset($model->badge_subscriptions_date->transaction_type)) {
+					return $model->badge_subscriptions_date->transaction_type;
+				} else { return ''; }
+			},
+		],
 		[	'attribute'=>'amount',
 			'headerOptions' => ['width' => '100'],
 			'footer' => "$".number_format($dataProvider->query->sum('amount'), 2, '.', ','),

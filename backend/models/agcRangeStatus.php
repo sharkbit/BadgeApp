@@ -23,7 +23,7 @@ class agcRangeStatus extends \yii\db\ActiveRecord {
         return [
 			[['name'], 'required'],
 			//[[''], 'safe'],
-			[['active','display_order','range_status_id'], 'integer'],
+			[['active','display_order','range_status_id','restricted'], 'integer'],
 			[['name'], 'string'],
 			];
     }

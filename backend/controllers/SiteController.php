@@ -9,11 +9,13 @@ use yii\widgets\ActiveForm;
 use common\models\LoginForm;
 use common\models\User;
 use backend\controllers\AdminController;
+use backend\models\BadgeSubscriptions;
 use backend\models\Badges;
 use backend\models\BadgesSm;
 use backend\models\clubs;
 use backend\models\Guest;
 use backend\models\LoginAccess;
+use backend\models\Params;
 use backend\models\Privileges;
 
 /**
@@ -104,22 +106,28 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 							$_SESSION['timeout'] = $chk_priv->timeout; }
 						} else { $_SESSION['timeout'] = $chk_priv->timeout; }
 					}
-					if (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) {
+					$compnow = date("Y-m-d",strtotime($this->getNowTime()));
+					$badge_year = BadgeSubscriptions::find()->where(['badge_number'=>$badgeArray->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
+					if(strtotime($compnow) <= strtotime(date('Y').'-01-31')) { $badge_year++; }
+					if (isset($badge_year) && ((int)$badge_year < date('Y'))) {
 						if(array_intersect([3,6],$_SESSION['privilege'])) { // do nothing
 						} else {
 							unset($_SESSION);
-							yii::$app->controller->createLog(true, 'Site_Login Expired 1:',$badgeArray->badge_number.' - '.$badgeArray->expires);
-							Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
+							yii::$app->controller->createLog(true, 'Site_Login Expired 1:',$badgeArray->badge_number.' - '.$badge_year);
+							Yii::$app->getSession()->setFlash('warning', 'Badge needs to be Renewed! Please See Staff.',false);
 							return false;
 						}
 					}
 					return Yii::$app->user->login(User::findIdentity($userArray->id), 0);
 				} else {  // Default Privilege for members
 					// Is badge current?
-					if (strtotime($badgeArray->expires) < strtotime($this->getNowTime())) {
+					$compnow = date("Y-m-d",strtotime($this->getNowTime()));
+					$badge_year = BadgeSubscriptions::find()->where(['badge_number'=>$badgeArray->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
+					if(strtotime($compnow) <= strtotime(date('Y').'-01-31')) { $badge_year++; }
+					if(isset($badge_year) && ((int)$badge_year < date('Y'))) {
 						unset($_SESSION);
-						yii::$app->controller->createLog(true, 'Site_Login Expired 2:',$badgeArray->badge_number.' - '.$badgeArray->expires);
-						Yii::$app->getSession()->setFlash('warning', ' Badge needs to be Renewed! Please See Staff.',false);
+						yii::$app->controller->createLog(true, 'Site_Login member Needs to renew badge:',$badgeArray->badge_number);
+						Yii::$app->getSession()->setFlash('warning', 'Badge needs to be Renewed! Please See Staff.',false);
 						return false;
 					}
 					$_SESSION['privilege']=array(5);
@@ -197,12 +205,15 @@ class SiteController extends AdminController {
 
 	public function actionIndex() {
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
-		$badges = Badges::find()
-				->where(['>', 'expires', $nowDate])
-				->all();
+		$badges = Badges::find()->where(['>', 'expires', $nowDate])->all();
+		$sell_date = Params::findOne('1')->sell_date;
+		$chkDate = date('Y-'.$sell_date,strtotime($this->getNowTime()));
+		if($chkDate <= $nowDate) { $add=1; } else { $add=0; }
+		$badge_year = BadgeSubscriptions::find()->where(['>=','badge_year',date('Y')+$add])->all();
 		$guests = Guest::find()->where(['is', 'time_out',null])->all();
 
 		return $this->render('index',[
+			'badgeyear'=> count($badge_year),
 			'badgeCount'=> count($badges),
 			'guestCount'=> count($guests)
 		]);

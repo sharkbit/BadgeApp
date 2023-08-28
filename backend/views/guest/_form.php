@@ -37,7 +37,7 @@ $confParams = Params::findOne('1');
 $guest_band = (new backend\models\StoreItems)->find()->where(['sku'=>$confParams->guest_sku])->one();
 if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2>'; return;}
 
-if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->qb_token)>2 || strlen($confParams->qb_oa2_refresh_token)>2))  {
+if(yii::$app->controller->hasPermission('payment/charge')) {
 	if(Yii::$app->params['env'] == 'prod') {
 		$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!'];
 	} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)']; }
@@ -245,6 +245,11 @@ if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams
 		</div>
 			<div class="clearfix"> </div>
 	</div>
+	<?php } ?> 
+	<?php if ($Payment_block) { ?>
+		<div class="col-xs-12 col-sm-4">		
+		<?= $form->field($model, 'guest_count')->hiddenInput().PHP_EOL ?>
+		</div>
 	<?php } ?>
 		<div class="btn-group pull-right" id="guest_save_div" <?php if($model->isNewRecord) {echo 'style="display:none"';}?>> <br /><br /><div id="CC_Save">
 			<?= Html::submitButton($model->isNewRecord ? $msg : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success done-Guest' : 'btn btn-primary done-Guest','id'=>'save_btn']).PHP_EOL;  ?>
@@ -510,14 +515,14 @@ $('#GuestForm').on('submit', function() {
 					}
 				} else {
 					console.log("Data error " + JSON.stringify(responseData));
-					SwipeError(JSON.stringify(responseData),'b-v-g-f:253');
+					SwipeError(JSON.stringify(responseData),'b_v_g_f:518');
 					$("p#cc_info").html(responseData.message);
 				}
 
 			},
 			error: function (responseData, textStatus, errorThrown) {
 				$("p#cc_info").html("PHP error:<br>"+responseData.responseText);
-				SwipeError(JSON.stringify(responseData),'b-v-g-f:430');
+				SwipeError(JSON.stringify(responseData),'b_v_g_f:525');
 				console.log("error "+ JSON.stringify(responseData.responseText));
 			},
 		});
@@ -555,8 +560,10 @@ $('#GuestForm').on('submit', function() {
     });
 
 	function get_member(badge_number) {
+		var csrf = $('meta[name="csrf-token"]').attr('content');
 		jQuery.ajax({
-			method: 'GET',
+			method: 'POST',
+			data: {'_csrf-backend':csrf},
 			dataType:'json',
 			url: '<?=yii::$app->params['rootUrl']?>/badges/api-request-family?badge_number='+badge_number,
 			crossDomain: false,
@@ -592,7 +599,7 @@ $('#GuestForm').on('submit', function() {
 
 	function ProcessSwipe(cleanUPC) {
 
-		if  ((cleanUPC.indexOf('ANSI 6360') > 0) || (cleanUPC.indexOf('AAMVA6360') > 0)) {
+		if ((cleanUPC.indexOf('ANSI 6360') > 0) || (cleanUPC.indexOf('AAMVA6360') > 0)) {
 			console.log('barcode scanned: ', cleanUPC);
 			var FName=false;
 
@@ -670,7 +677,23 @@ $('#GuestForm').on('submit', function() {
 			  document.getElementById("guest-g_zip").value = ZIP;
               console.log("ZIP: "+ZIP);
 			}
-		} else { SwipeError(cleanUPC,'b_v_g_f:205'); }
+		}
+		else if (cleanUPC.match(/[Bb]\d{16}/g)) {  // Matched Credit Card!
+			console.log('Credit Card Scanned: ', cleanUPC);
+			var ccNum = cleanUPC.substring(1,17);
+			var fExp = cleanUPC.indexOf('^')+1;
+			var fExp = cleanUPC.indexOf('^',fExp)+1;
+			var ExpYr = cleanUPC.substring(fExp,fExp+2);
+			var ExpMo = cleanUPC.substring(fExp+2,fExp+4);
+			ccNum = ccFormat(ccNum);
+			console.log("Num: "+ccNum+" Exp Yr: "+ExpYr+" Exp Mo: "+ExpMo);
+			ExpYr = ExpYr - (new Date().getFullYear().toString().substr(-2));
+
+			document.getElementById("guset-cc_num").value = ccNum;
+			document.getElementById("guset-cc_exp_mo").value = ExpMo;
+			document.getElementById("guset-cc_exp_yr").value = ExpYr;
+		}
+		else { SwipeError(cleanUPC,'b_v_g_f:696'); }
 		cleanUPC = '';
 	}
 </script>

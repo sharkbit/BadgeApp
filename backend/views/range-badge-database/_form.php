@@ -21,7 +21,7 @@ use backend\models\clubs;
     <?= $form->field($model, 'city')->textInput() ?>
     <?= $form->field($model, 'state')->textInput() ?>
     <?= $form->field($model, 'zip')->textInput() ?>
-    <?= $form->field($model, 'gender')->dropDownList([ '0'=>'Male', '1'=>'Female']) ?>
+    <?= $form->field($model, 'gender')->dropDownList([ 'm'=>'Male', 'f'=>'Female']) ?>
     <?= $form->field($model, 'yob')->textInput() ?>
     <?= $form->field($model, 'email')->textInput() ?>
     <?= $form->field($model, 'phone_op')->textInput() ?>

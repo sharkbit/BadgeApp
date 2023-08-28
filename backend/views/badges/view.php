@@ -111,7 +111,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
                         [
                             'attribute'=>'gender',
                             'value'=> function($model, $attribute) {
-                                if($model->gender==0) return 'Male'; else return 'Female';
+                                if($model->gender=='m') return 'Male'; else return 'Female';
                             },
                         ],
                         'yob',
@@ -162,12 +162,6 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
                             'attribute'=>'incep',
                             'value'=>function($model,$attribute) {
                                 return date('M d, Y h:i A',strtotime($model->incep));
-                            },
-                        ],
-                        [
-                            'attribute'=>'expires',
-                            'value'=>function($model,$attribute) {
-                                return date('M d, Y',strtotime($model->expires));
                             },
                         ],
                     ],

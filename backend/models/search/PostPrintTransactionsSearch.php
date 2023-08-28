@@ -16,8 +16,8 @@ class PostPrintTransactionsSearch extends PostPrintTransactions {
      */
     public function rules() {
         return [
-            [[ 'badge_number'], 'integer'],
-            [['valid_from', 'valid_true','created_at'], 'safe'],
+            [['badge_number'], 'integer'],
+            [['badge_year','created_at'], 'safe'],
             [['fee', 'paid_amount', 'discount'], 'number'],
         ];
     }

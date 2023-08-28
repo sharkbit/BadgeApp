@@ -77,7 +77,7 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'Legislative Emails',
-			'loc'=>['prod','dev'],
+			'loc'=>['leg','cal','dev'],
 			'url' => '/legelemail/index',
 			'color' => 'btn-success',
 		],
@@ -169,6 +169,11 @@ class Menu extends Widget{
 			'label'=>'Settings',
 			'loc'=>['prod','cal','dev'],
 			'url' => '/params/update',
+		],
+		[
+			'label'=>'Stickers',
+			'loc'=>['prod','dev'],
+			'url' => '/rso-rpt/sticker',
 		],
 		[
 			'label'=>'Store Items',

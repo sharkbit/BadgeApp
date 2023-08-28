@@ -121,7 +121,7 @@ $csrfToken=Yii::$app->request->getCsrfToken();
 			document.getElementById("ReaderInput").appendChild(node);
 
 		}
-		else if (cleanUPC.match(/B\d{16}/g)) {  // Matched Credit Card!
+		else if (cleanUPC.match(/[Bb]\d{16}/g)) {  // Matched Credit Card!
 			console.log('Credit Card Scanned: ', cleanUPC);
 			var ccNum = cleanUPC.substring(1,17);
 			var fExp = cleanUPC.indexOf('^')+1;

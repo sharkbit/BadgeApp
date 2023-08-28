@@ -67,8 +67,8 @@ if(isset($rcpt->on_qb) && $rcpt->on_qb==0) {
                              ?></td>
                         </tr>
                         <tr>
-                            <th>Expire Date</th>
-                            <td><?=date('M d, Y',strtotime($subciptionsArray->valid_true))?></td>
+                            <th>Badge Year</th>
+							<td><?=$subciptionsArray->badge_year?></td>
                         </tr>
                         <tr>
                             <th>Membership renewed on</th>

@@ -5,13 +5,13 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\CardReceipt;
+use backend\models\CardReceiptDate;
 
 /**
  * CardReceiptSearch represents the model behind the search form about `backend\models\Clubs`.
  */
 
-class CardReceiptSearch extends CardReceipt {
+class CardReceiptDateSearch extends CardReceiptDate {
     /**
      * @inheritdoc
      */
@@ -40,7 +40,7 @@ class CardReceiptSearch extends CardReceipt {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = CardReceipt::find()
+        $query = CardReceiptDate::find()
 		->select(['badge_subscriptions_date.created_at','badge_subscriptions_date.transaction_type','badge_subscriptions_date.badge_number','cc_receipts_date.*'])
 		->from('cc_receipts_date')
 		->joinWith('badges', true, 'LEFT JOIN')
@@ -78,7 +78,7 @@ class CardReceiptSearch extends CardReceipt {
 		}
 
 		//if(isset($this->id)) { $query->andFilterWhere(['id' => $this->id ]); }
-		if(isset($this->badge_number)) { $query->andFilterWhere(['like', 'cc_receipts.badge_number', $this->badge_number]); }
+		if(isset($this->badge_number)) { $query->andFilterWhere(['like', 'cc_receipts_date.badge_number', $this->badge_number]); }
         if(isset($this->cart)) { $query->andFilterWhere(['like', 'cart', $this->cart]); }
 		if(isset($this->name)) { $query->andFilterWhere(['like', 'name', $this->name]); }
 		if(isset($this->amount)) { $query->andFilterWhere(['like', 'amount', $this->amount]); }

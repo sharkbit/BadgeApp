@@ -17,7 +17,7 @@ class MembershipTypeSearch extends MembershipType
      */
     public function rules() {
         return [
-            [['id'], 'integer'],
+            [['id','renew_yearly','self_service'], 'integer'],
             [['status','type'], 'safe'],
         ];
     }
@@ -56,8 +56,10 @@ class MembershipTypeSearch extends MembershipType
 
         // grid filtering conditions
         if(isset($this->id)) { $query->andFilterWhere(['id' => $this->id]); }
-		if(isset($this->type)) { $query->andFilterWhere(['like', 'type', $this->type]); }
+		if(isset($this->renew_yearly)) { $query->andFilterWhere(['renew_yearly' => $this->renew_yearly]); }
+		if(isset($this->self_service)) { $query->andFilterWhere(['self_service' => $this->self_service]); }
 		if(isset($this->status)) { $query->andFilterWhere(['like', 'status', $this->status]); }
+		if(isset($this->type)) { $query->andFilterWhere(['like', 'type', $this->type]); }
 
         return $dataProvider;
     }

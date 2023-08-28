@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = ['label' => $model->badge_number, 'url' => ['vi
 
     <?= $this->render('_update', [
         'model' => $model,
+		'confParams'=>$confParams,
         'badgeSubscriptions'=>$badgeSubscriptions,
         'badgeCertification'=> $badgeCertification,
     ]) ?>

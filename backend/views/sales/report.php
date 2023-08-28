@@ -53,13 +53,14 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 			<?php ActiveForm::end(); ?>
 		</div>
 	</div>
+
 	<?php
 	$gridColumns = [
 		'club_name',
 		'short_name',
-		[	'attribute'=>'new',
+		[	'attribute'=>'c_new',
 			'value' => function($dataProvider) {
-				if($dataProvider['new']==0) {return '';} else {return $dataProvider['new'];}
+				if($dataProvider['c_new']==0) {return '';} else {return $dataProvider['c_new'];}
 			}
 		],
 		[	'header'=>'Renew',
@@ -106,19 +107,15 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		]) . "<hr>\n";?>
 		</div>
 	</div>
-	
+
 	<div class="row">
 		<div class="col-xs-12">
-
-
 			<?php
 			   echo GridView::widget([
 					'dataProvider' => $dataProvider,
 					'columns' => $gridColumns,
 				]);
-
 			?>
 		</div>
-
 	</div>
 </div>

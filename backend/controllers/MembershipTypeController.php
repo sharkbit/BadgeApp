@@ -27,13 +27,14 @@ class MembershipTypeController extends AdminController {
 
     public function actionFeesByType($from,$id) {
         $feeArray =  MembershipType::find()->where(['id'=>$id])->one();
-		
+
 		if(isset($feeArray->sku_full)) {
 			$Full_Price = $feeArray->fullprice->price;
 			$confParams  = Params::findOne('1');
 			$nowNumbers = strtotime(yii::$app->controller->getNowTime());
 			if (isset($feeArray->sku_half) && (date('Y-m-d', $nowNumbers) >= date('Y-07-01', $nowNumbers)) && (date('Y-m-d', $nowNumbers) <= date('Y-'.$confParams->sell_date, $nowNumbers)) && ($from=='n') && ((int)$feeArray->fullprice->price < 301 )) {
 				//discount
+				$Full_Price = $feeArray->halfprice->price;
 				$Half_Price = $feeArray->halfprice->price;
 				$item_sku=$feeArray->halfprice->sku;
 				$item_name=$feeArray->halfprice->item;
@@ -46,7 +47,7 @@ class MembershipTypeController extends AdminController {
 			$Full_Price=0;
 			$Half_Price = 0;
 			$item_sku='Free';
-			$item_name="Free $feeArray->type Badge";
+			@$item_name="Free $feeArray->type Badge";
 		}
 		
 		$feeOffer = [

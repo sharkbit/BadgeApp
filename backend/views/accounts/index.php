@@ -47,11 +47,13 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		[
 			'attribute' => 'clubs',
 			'value'=> function($model) {
-				if(is_array(json_decode($model->clubs))) {
-					$clubList = (new clubs)->getClubList(true);	$clubStr='';
-					foreach(json_decode($model->clubs) as $club) { $clubStr.=$clubList[$club].', '; }
-					return rtrim($clubStr, ', ');
-				}
+				if(!is_null($model->clubs)) {
+					if(is_array(json_decode($model->clubs))) {
+						$clubList = (new clubs)->getClubList(true);	$clubStr='';
+						foreach(json_decode($model->clubs) as $club) { $clubStr.=$clubList[$club].', '; }
+						return rtrim($clubStr, ', ');
+					}
+				} else { return ''; }
 			}
 		],
 		[

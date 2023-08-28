@@ -5,16 +5,15 @@ namespace backend\models;
 use Yii;
 
 /**
- * This is the model class for table "badge_to_club".
+ * This is the model class for view "bn_to_by".
  *
- * @property integer $id
  * @property integer $badge_number
- * @property integer $club_id
+ * @property integer $badge_year
  */
-class BadgeToClubs extends \yii\db\ActiveRecord {
+class BadgeToYear extends \yii\db\ActiveRecord {
 
     public static function tableName() {
-        return 'badge_to_club';
+        return 'bn_to_by';
     }
 
     /**
@@ -22,8 +21,8 @@ class BadgeToClubs extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['badge_number', 'club_id'], 'required'],
-            [['badge_number', 'club_id'], 'number'],
+            [['badge_number', 'badge_year'], 'required'],
+            [['badge_number', 'badge_year'], 'number'],
         ];
     }
 

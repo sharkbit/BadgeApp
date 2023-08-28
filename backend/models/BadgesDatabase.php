@@ -2,41 +2,13 @@
 
 namespace backend\models;
 
+use backend\models\BadgeToYear;
+use backend\models\ClubView;
+use backend\models\MembershipType;
 use Yii;
 
 /**
  * This is the model class for table "badges".
- *
- * @property integer $id
- * @property string $badge_number
- * @property string $prefix
- * @property string $first_name
- * @property string $last_name
- * @property string $suffix
- * @property string $address
- * @property string $city
- * @property string $state
- * @property string $zip
- * @property string $gender
- * @property string $yob
- * @property string $email
- * @property string $phone
- * @property string $phone_op
- * @property string $ice_contact
- * @property string $ice_phone
- * @property integer $club_id
- * @property integer $mem_type
- * @property integer $primary
- * @property string $incep
- * @property string $expires
- * @property string $qrcode
- * @property string $wt_date
- * @property string $wt_instru
- * @property string $remarks
- * @property string $status
- * @property string $soft_delete
- * @property string $created_at
- * @property string $updated_at
  */
 class BadgesDatabase extends \yii\db\ActiveRecord {
     /**
@@ -55,7 +27,7 @@ class BadgesDatabase extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['prefix', 'first_name', 'last_name', 'address', 'city', 'state', 'zip', 'club_id', 'mem_type', 'incep', 'expires', 'wt_date', 'remarks'], 'required'],
+            [['prefix', 'first_name', 'last_name', 'address', 'city', 'state', 'zip', 'club_id', 'mem_type', 'incep', 'wt_date', 'remarks'], 'required'],
             [['address', 'gender', 'qrcode', 'remarks', 'status', 'soft_delete'], 'string'],
             [['badge_number', 'mem_type', 'primary','email_vrfy'], 'integer'],
             [['incep', 'club_id', 'expires', 'wt_date', 'created_at', 'updated_at'], 'safe'],
@@ -80,32 +52,31 @@ class BadgesDatabase extends \yii\db\ActiveRecord {
             'prefix' => 'Prefix',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
-            'suffix' => 'Suffix',
-            'address' => 'Address',
-            'city' => 'City',
-            'state' => 'State',
-            'zip' => 'Zip',
-            'gender' => 'Gender',
             'yob' => 'Yob',
-            'email' => 'Email',
             'email_vrfy' => 'Verified',
-            'phone' => 'Phone',
             'phone_op' => 'Phone Op',
             'ice_contact' => 'Ice Contact',
             'ice_phone' => 'Ice Phone',
             'club_id' => 'Club(s)',
             'mem_type' => 'Mem Type',
-            'primary' => 'Primary',
-            'incep' => 'Incep',
-            'expires' => 'Expires',
-            'qrcode' => 'Qrcode',
+            'qrcode' => 'QR Code',
             'wt_date' => 'WT Date',
             'wt_instru' => 'WT Instru',
-            'remarks' => 'Remarks',
-            'status' => 'Status',
             'soft_delete' => 'Soft Delete',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
     }
+
+	public function getBadgeToYear() {
+		return $this->hasOne(BadgeToYear::className(), ['badge_number' => 'badge_number']);
+	}
+
+	public function getClubView() {
+		return $this->hasMany(ClubView::className(), ['badge_number' => 'badge_number']);
+	}
+
+	public function getMembershipType() {
+		return $this->hasOne(MembershipType::className(),['id'=>'mem_type']);
+	}
 }

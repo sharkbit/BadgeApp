@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use backend\controllers\AdminController;
+use backend\controllers\SalesController;
 use backend\models\AgcCal;
 use backend\models\BadgeCertification;
 use backend\models\Badges;
@@ -49,7 +50,7 @@ class Phone extends \yii\db\ActiveRecord {
 
 class BadgesController extends AdminController {
 
-	public $enableCsrfValidation = false;
+	public $enableCsrfValidation = true;
 	public $myFilters = ['badge_number','club_id','expire_condition','first_name','last_name','mem_type','suffix','status'];
 
 	public function behaviors() {
@@ -115,106 +116,119 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionApiGenerateRenavalFee() {
-		if(Yii::$app->request->post()) {
-			//From Update Badge
-			$badgeNumber = $_POST['badgeNumber'];
-			$badgeFee = $_POST['BadgeFee'];
-			$isCurent = $_POST['isCurent'];
-			$badgeYear = $_POST['badgeYear'];
-		} else {
-			//From Issue New Badge
-			$badgeNumber = $_GET['friend_badge'];
-			$badgeFee = $_GET['BadgeFee'];
-			$idCurrent = false;
-			$badgeYear = $_GET['badgeYear'];
-		}
-
-		if(!isset($_SESSION['BasePriFee'])) {
-			$BasePriFeeTmp =  MembershipType::find()->where(['id'=>50])->one();
-			$BasePriFee = $BasePriFeeTmp->fullprice->price;
-			$_SESSION['BasePriFee']=$BasePriFee;
-		} else { $BasePriFee=$_SESSION['BasePriFee']; }
-
-		if($BasePriFee < $badgeFee) {
-			$BaseFee = $BasePriFee;
-		} else {
-			$BaseFee = $badgeFee;
-		}
-
-		$workcreditper = $BaseFee / 40;
-
-		$DateChk = date('Y-01-31',strtotime("+1 years",strtotime($this->getNowTime())));
-		$badgeYear =  date('Y-m-d',strtotime($badgeYear));
-		if ($badgeYear == $DateChk) {
-			$myBefDate = date('Y-01-01', strtotime($this->getNowTime()));
-			$myAftDate = date('Y-12-31', strtotime("-2 years",strtotime($this->getNowTime())));
-		} else {
-			$myBefDate = date('Y-01-01', strtotime("+1 years",strtotime($this->getNowTime())));
-			$myAftDate = date('Y-12-31', strtotime("-1 years",strtotime($this->getNowTime())));
-		}
-
-		$sql="SELECT badge_number,sum(work_hours) as creditSum FROM work_credits ".
-			"WHERE badge_number=".$badgeNumber." and work_date<'".$myBefDate."' and  work_date>'".$myAftDate."' and status=1 ".
-			"GROUP BY badge_number";
-
-		$command = Yii::$app->getDb()->createCommand($sql);
-		$AvalCreditCheck = $command->queryAll();
-
-		if (isset($AvalCreditCheck[0]['creditSum'])) {$credit=$AvalCreditCheck[0]['creditSum'];} else {$credit=0;}
-		if($credit<0) {$credit=0;}
-
-		if($badgeFee > $BaseFee) {
-			if(isset($isCurent) && ($isCurent==1)) {$discount = $BaseFee;} else {$discount=0;}
-			$discount = ($workcreditper * $credit) + $discount;
-			if($discount > $badgeFee) {
-				return json_encode('recalculate',true);
+		if(isset($_REQUEST['_csrf-backend']) && (strlen($_REQUEST['_csrf-backend'])>60 )) {
+			if(Yii::$app->request->post()) {
+				//From Update Badge
+				$badgeNumber = $_POST['badgeNumber'];
+				$badgeFee = $_POST['BadgeFee'];
+				$isCurent = $_POST['isCurent'];
+				$renBadgeYear = $_POST['renBadgeYear'];
 			} else {
+				//From Issue New Badge
+				$badgeNumber = $_GET['friend_badge'];
+				$badgeFee = $_GET['BadgeFee'];
+				$idCurrent = false;
+				$renBadgeYear = $_GET['renBadgeYear'];
+			}
+
+			if(!isset($_SESSION['BasePriFee'])) {
+				$BasePriFeeTmp =  MembershipType::find()->where(['id'=>50])->one();
+				$BasePriFee = $BasePriFeeTmp->fullprice->price;
+				$_SESSION['BasePriFee']=$BasePriFee;
+			} else { $BasePriFee=$_SESSION['BasePriFee']; }
+
+			if($BasePriFee < $badgeFee) {
+				$BaseFee = $BasePriFee;
+			} else {
+				$BaseFee = $badgeFee;
+			}
+
+			$workcreditper = $BaseFee / 40;
+
+			$params = Params::findOne('1');
+			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
+			$DateChk = date("Y-".$params['sell_date'], strtotime(yii::$app->controller->getNowTime()));
+
+			if ($DateChk <= $nowDate) {
+				$myDate = date('Y', strtotime($nowDate));
+			} else {
+				$myDate = date('Y', strtotime("-1 years",strtotime($nowDate)));
+			}
+
+			$sql="SELECT badge_number,sum(work_hours) as creditSum FROM work_credits ".
+				"WHERE badge_number=".$badgeNumber." and year(work_date)='".$myDate."' and status=1 ".
+				"GROUP BY badge_number";
+
+			$command = Yii::$app->getDb()->createCommand($sql);
+			$AvalCreditCheck = $command->queryAll();
+
+			if (isset($AvalCreditCheck[0]['creditSum'])) {$credit=$AvalCreditCheck[0]['creditSum'];} else {$credit=0;}
+			if($credit<0) {$credit=0;}
+
+			if($badgeFee > $BaseFee) {
+				if(isset($isCurent) && ($isCurent==1)) {$discount = $BaseFee;} else {$discount=0;}
+				$discount = ($workcreditper * $credit) + $discount;
+				if($discount > $badgeFee) {
+					return json_encode('recalculate',true);
+				} else {
+					$redeemableCredit = $credit;
+				}
+			} elseif($credit>40) {
+				$discount = $workcreditper * 40;
+				$redeemableCredit = 40;
+			} else {
+				$discount = $workcreditper * $credit;
 				$redeemableCredit = $credit;
 			}
-		} elseif($credit>40) {
-			$discount = $workcreditper * 40;
-			$redeemableCredit = 40;
-		} else {
-			$discount = $workcreditper * $credit;
-			$redeemableCredit = $credit;
-		}
-		$discount = floor($discount*4)/4;
+			$discount = floor($discount*4)/4;
 
-		$responce = [
-			'badgeNumber'=>$badgeNumber,
-			'BadgeFee' => (int)$badgeFee,
-			'discount' => $discount,
-			'amountDue' => $badgeFee - $discount,
-			'redeemableCredit'=> $redeemableCredit,
-		];
-		return json_encode($responce,true);
+			$responce = [
+				'badgeNumber'=>$badgeNumber,
+				'BadgeFee' => (int)$badgeFee,
+				'discount' => $discount,
+				'amountDue' => $badgeFee - $discount,
+				'redeemableCredit'=> $redeemableCredit,
+			];
+			return json_encode($responce,true);
+		} else {
+			return  $this->redirect(['/']);
+		}
 	}
 
 	public function actionApiRequestFamily($badge_number) {
-		$badgeArray = Badges::find()->where(['badge_number' => $badge_number])->one();
-		if(!empty($badgeArray)) {
-			if($badgeArray->phone) {$ice_phone=$badgeArray->phone;} else {$ice_phone=$badgeArray->phone_op;}
-			$responce = [
-				'status'=> 'success',
-				'badge_number' => $badgeArray->badge_number,
-				'prefix' => $badgeArray->prefix,
-				'suffix' => $badgeArray->suffix,
-				'first_name' => $badgeArray->first_name,
-				'last_name' => $badgeArray->last_name,
-				'address' => $badgeArray->address,
-				'city' => $badgeArray->city,
-				'state' => $badgeArray->state,
-				'zip' => $badgeArray->zip,
-				'ice_phone' => $ice_phone,
-				'mem_type' => $badgeArray->mem_type,
-				'expires' => $badgeArray->expires,
-			];
+		if(isset($_REQUEST['_csrf-backend']) && (strlen($_REQUEST['_csrf-backend'])>60 )) {
+			$badgeArray = Badges::find()->where(['badge_number' => $badge_number])->one();
+			if(!empty($badgeArray)) {
+
+				$params = Params::findOne('1');
+				$isExpired = Badges::isExpired($badge_number,$params);
+
+				if($badgeArray->phone) {$ice_phone=$badgeArray->phone;} else {$ice_phone=$badgeArray->phone_op;}
+				$responce = [
+					'status'=> 'success',
+					'badge_number' => $badgeArray->badge_number,
+					'prefix' => $badgeArray->prefix,
+					'suffix' => $badgeArray->suffix,
+					'first_name' => $badgeArray->first_name,
+					'last_name' => $badgeArray->last_name,
+					'address' => $badgeArray->address,
+					'city' => $badgeArray->city,
+					'state' => $badgeArray->state,
+					'zip' => $badgeArray->zip,
+					'ice_phone' => $ice_phone,
+					'mem_type' => $badgeArray->mem_type,
+					'isExpired'=> $isExpired
+				];
+			} else {
+				$responce = [
+					'status'=> 'error',
+				];
+			}
+			return Json::encode($responce,true);
 		} else {
-			$responce = [
-				'status'=> 'error',
-			];
+			return  $this->redirect(['/']);
 		}
-		return Json::encode($responce,true);
+
 	}
 
 	private function fwrite_stream($fp, $string) {
@@ -228,6 +242,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionApiCheck($unpub=false) {		// Test Functions to Fix database issues.  Use  ./badges/api-check
+	yii::$app->controller->createLog(true, 'trex_B_C_BC-apiCheck', var_export($_REQUEST,true));
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
@@ -509,6 +524,7 @@ class BadgesController extends AdminController {
 					$MyCart = ["item"=>$_POST['item_name'],"sku"=>$_POST['item_sku'],"ea"=>$model->badge_fee ,"qty"=>"1","price"=>$model->badge_fee ];
 					$MyCart = "[".rtrim( json_encode($MyCart),",")."]";
 					if(isset($_POST['cart'])) {
+						SalesController::processCart($_POST['cart']);
 						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
 					}
 
@@ -581,8 +597,7 @@ class BadgesController extends AdminController {
 
 				$badgeSubscriptionsModel = new BadgeSubscriptions();
 				$badgeSubscriptionsModel->badge_number = $model->badge_number;
-				$badgeSubscriptionsModel->valid_from = date('Y-m-d',strtotime($model->incep));
-				$badgeSubscriptionsModel->valid_true = date('Y-m-d',strtotime($model->expires));
+				$badgeSubscriptionsModel->badge_year = $model->badge_year;
 				$badgeSubscriptionsModel->payment_type = $model->payment_method;
 				$badgeSubscriptionsModel->status = 'active';
 				$badgeSubscriptionsModel->created_at = $this->getNowTime();
@@ -741,6 +756,11 @@ class BadgesController extends AdminController {
 			} else {
 				$mergtwo=['wcCurYr'=>$myCurYr,'wcCurHr'=>0,'wcLasYr'=>$myLasYr,'wcLasHr'=>0];
 			}
+
+			$params = Params::findOne('1');
+			$isExpired = Badges::isExpired($badge_number,$params);
+			$mergtwo=array_merge($mergtwo,['isExpired'=> $isExpired]);
+
 			$mergtwo=array_merge($mergtwo,['clubs'=> (New clubs)->getMyClubs($badge_number)]);
 
 			$responceA = Json::encode($badgeArray,JSON_PRETTY_PRINT);
@@ -751,8 +771,15 @@ class BadgesController extends AdminController {
 		}
 
 		if($rtn){
+
 			return Json::decode($responce);
-		} else {Yii::$app->response->data = $responce;}
+		} else {
+			if(isset($_REQUEST['_csrf-backend']) && (strlen($_REQUEST['_csrf-backend'])>60 )) {
+				Yii::$app->response->data = $responce;
+			} else {
+				return  $this->redirect(['/']);
+			}
+		}
 	}
 
 	public function actionGetBadgeName($badge_number) {
@@ -987,19 +1014,15 @@ class BadgesController extends AdminController {
 		if ($model->load(Yii::$app->request->post())) {
 			$this->expireBadgeSubcription($model->badge_number);
 
-			$myexpires = date('Y-m-d',strtotime($model->expires));
-
 			if ($model->payment_type=='creditnow') {
 				$model->payment_type = 'credit'; $needRecpt=false;
 			} else { $needRecpt=true; }
-			$model->expires = $myexpires;
 			$wt_date_reIssue = null;
 			if($model->wt_date!='') {
 				$wt_date_reIssue = date('Y-m-d',strtotime($model->wt_date));
 				$wt_instru_reIssue = $model->wt_instru;
 			}
-			$model->valid_from = date('Y-m-d',strtotime($this->getNowTime()));
-			$model->valid_true = $myexpires;
+			$model->badge_year = $_REQUEST['renBadgeYear'];
 			$model->status = 'active';
 			$model->created_at = $this->getNowTime();
 			$model->paid_amount = $model->amount_due;
@@ -1027,6 +1050,7 @@ class BadgesController extends AdminController {
 						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($d_cart)));
 					}
 					if(isset($_POST['cart'])) {
+						SalesController::processCart($_POST['cart']);
 						$MyCart = json_encode(array_merge(json_decode($MyCart),json_decode($_POST['cart'])));
 					}
 					$savercpt = new CardReceipt();
@@ -1047,7 +1071,6 @@ class BadgesController extends AdminController {
 					}
 				}
 
-				$badgeRecords->expires = $myexpires;
 				$badgeRecords->work_credits = (int)$badgeRecords->work_credits - (int)$model->redeemable_credit;
 				$badgeRecords->sticker = $model->sticker;
 				$badgeRecords->wt_date = $wt_date_reIssue !=null ? $wt_date_reIssue : $badgeRecords->wt_date;
@@ -1450,7 +1473,7 @@ class BadgesController extends AdminController {
 
 	public function UpdateQR($model) {
 		if(strlen($model->qrcode)<>14) {
-			$clubs = (new clubs)::getMyClubs($model->badge_number);
+			$clubs = (new clubs)->getMyClubs($model->badge_number);
 			$characters = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 			$randomString = '';
 			for ($i = 0; $i < 2; $i++) {

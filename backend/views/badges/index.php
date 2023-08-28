@@ -80,30 +80,32 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'attribute' => 'suffix',
 				'contentOptions' =>['style' => 'width:20px'],
 			],
-			[ 
-				'attribute' => 'club_id',
+			[	'attribute' => 'club_id',
 				'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(false,false,2),['class'=>'form-control','prompt' => 'All']),
 				'format' => 'raw',
-                //'value' => 'activeClub.club_name',
-				'value'=>function($model) {
-					return (new clubs)->getMyClubsNames($model->badge_number,true);
-				}
-            ],
+				'value'=> function($searchModel, $attribute) {
+					$myClubsNames='';
+					foreach($searchModel->clubView as $club){
+						$myClubsNames .= $club['short_name'].' <img src="/images/note.png" title="'.$club['club_name'].'" style="width:18px" />, ';
+					}
+					return rtrim($myClubsNames, ', ');
+				},		
+			],
 			[
 				'attribute' => 'status',
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new Badges)->getMemberStatus(),['class'=>'form-control','prompt' => 'All']),
 				'value'=>function($model,$attribute) {
 					return (new Badges)->getMemberStatus($model->status);}
 			],
-            [
-                'attribute'=>'expires',
-				// 'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'expire_condition',['all'=>'All','active'=>'Active','active+2'=>'Active +2','expired<2'=>'Expired <2','expired>2'=>'Expired >2','inactive'=>'Inactive'],['value'=>$searchModel->expire_condition !=null ? $searchModel->expire_condition : 'active+2','class'=>'form-control']),
-				'value' => function($model, $attribute) {
-                    return date('M d, Y',strtotime($model->expires));
-                },
-            ],
-            [
+			[	'header' => 'Badge Year',
+				'attribute' => 'badgeyear',
+				'contentOptions' =>['style' => 'width:100px'],
+				'value'=>function($model,$attribute) { if(is_null($model->badgeToYear)) 
+					{ return '2016';} else {return $model->badgeToYear->badge_year;}
+				},
+			],
+			[
                 'header' => 'Actions',
                 'class' => 'yii\grid\ActionColumn',
 				'template'=>' {view} {update} {print} {delete} ',

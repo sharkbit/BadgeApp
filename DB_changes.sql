@@ -622,23 +622,144 @@ CHANGE COLUMN `shift` `shift` VARCHAR(2) NULL DEFAULT NULL ;
 ALTER TABLE `BadgeDB`.`events` 
 ADD COLUMN `sponsor` INT NULL AFTER `e_poc`;
 
--- Added Field Cash Drop to RSO Report
+-- Added Field Cash Drop to RSO Report  #169
 ALTER TABLE `BadgeDB`.`rso_reports` 
 ADD COLUMN `cash_drop` DECIMAL(7,2) NULL DEFAULT 0.00 AFTER `cash_bos`;
 
--- Email list for RSO report #195
+-- Email list for RSO report  #195
 ALTER TABLE `BadgeDB`.`params` 
 ADD COLUMN `rso_email` TEXT NULL DEFAULT NULL AFTER `status`;
 
 -- Sales Summary  #151
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `Cart_Summary` AS select `t1`.`tx_date` AS `tx_date`,`s3`.`item` AS `cat`,`t1`.`tx_type` AS `tx_type`,`refunds`.`csku` AS `csku`,`refunds`.`citem` AS `citem`,`refunds`.`ea` AS `ea`,`refunds`.`qty` AS `qty`,`refunds`.`cprice` AS `cprice` from (`cc_receipts` `t1` join ((json_table(`t1`.`cart`, '$[*]' columns (`ea` decimal(7,2) path '$.ea', `qty` int path '$.qty', `csku` text character set utf8mb4 path '$.sku', `citem` text character set utf8mb4 path '$.item', `cprice` decimal(7,2) path '$.price')) `refunds` left join `store_items` `s2` on((`refunds`.`csku` = `s2`.`sku`))) left join `store_items` `s3` on((`s2`.`paren` = `s3`.`item_id`)))) order by `t1`.`tx_date` desc;
 
--- Env Update
+-- Env Update  #214
 ALTER TABLE `BadgeDB`.`params` 
 DROP COLUMN `qb_env`;
 
+-- Cal Enent status fix for #225
+ALTER TABLE `associat_agcnew`.`range_status` 
+ADD COLUMN `restricted` TINYINT NULL DEFAULT 0 AFTER `active`;
+update associat_agcnew.range_status set restricted=1 where name='Caliber Restriction';
+
+-- Sales Report Update #151
+
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `badge_subscriptions_date` AS
+    SELECT 
+        `badge_subscriptions`.`id` AS `id`,
+        `badge_subscriptions`.`badge_number` AS `badge_number`,
+        `badge_subscriptions`.`club_id` AS `club_id`,
+        `badge_subscriptions`.`valid_from` AS `valid_from`,
+        `badge_subscriptions`.`valid_true` AS `valid_true`,
+        `badge_subscriptions`.`payment_type` AS `payment_type`,
+        `badge_subscriptions`.`status` AS `status`,
+        `badge_subscriptions`.`sticker` AS `sticker`,
+        `badge_subscriptions`.`created_at` AS `created_at`,
+        `badge_subscriptions`.`badge_fee` AS `badge_fee`,
+        `badge_subscriptions`.`paid_amount` AS `paid_amount`,
+        `badge_subscriptions`.`discount` AS `discount`,
+        `badge_subscriptions`.`transaction_type` AS `transaction_type`,
+        `badge_subscriptions`.`is_migrated` AS `is_migrated`,
+        `badge_subscriptions`.`cc_x_id` AS `cc_x_id`,
+        CAST(`badge_subscriptions`.`created_at` AS DATE) AS `bs_c_date`
+    FROM
+        `badge_subscriptions`;
+		
+		
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `cc_receipts_date` AS
+    SELECT 
+        `cc_receipts`.`id` AS `id`,
+        `cc_receipts`.`badge_number` AS `badge_number`,
+        `cc_receipts`.`tx_date` AS `tx_date`,
+        `cc_receipts`.`tx_type` AS `tx_type`,
+        `cc_receipts`.`status` AS `status`,
+        `cc_receipts`.`amount` AS `amount`,
+        `cc_receipts`.`tax` AS `tax`,
+        `cc_receipts`.`authCode` AS `authCode`,
+        `cc_receipts`.`name` AS `name`,
+        `cc_receipts`.`cardNum` AS `cardNum`,
+        `cc_receipts`.`cardType` AS `cardType`,
+        `cc_receipts`.`expYear` AS `expYear`,
+        `cc_receipts`.`expMonth` AS `expMonth`,
+        `cc_receipts`.`cashier` AS `cashier`,
+        `cc_receipts`.`cashier_badge` AS `cashier_badge`,
+        `cc_receipts`.`on_qb` AS `on_qb`,
+        `cc_receipts`.`cart` AS `cart`,
+        `cc_receipts`.`guest_cred` AS `guest_cred`,
+        CAST(`cc_receipts`.`tx_date` AS DATE) AS `cc_c_date`
+    FROM
+        `cc_receipts`;
+
+-- Everyone Renews!  #184
+ALTER TABLE `BadgeDB`.`badge_subscriptions` 
+ADD COLUMN `badge_year` INT NULL AFTER `club_id`;
+
+UPDATE BadgeDB.badge_subscriptions set badge_year =  year(valid_true)-1;
+
+ALTER TABLE `BadgeDB`.`badge_subscriptions` 
+DROP COLUMN `valid_true`,
+DROP COLUMN `valid_from`;
+
+ALTER TABLE `BadgeDB`.`membership_type` 
+ADD COLUMN `renew_yearly` INT NOT NULL DEFAULT 1 AFTER `sku_full`;
+
+ALTER TABLE `BadgeDB`.`badges` 
+CHANGE COLUMN `expires` `expires` DATE NULL DEFAULT NULL ;
+
+-- fix badge Year #254
+CREATE INDEX badge_to_year on badge_subscriptions(badge_number, badge_year);
+
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `bn_to_by` AS
+    SELECT 
+        `badge_subscriptions`.`badge_number` AS `badge_number`,
+        MAX(`badge_subscriptions`.`badge_year`) AS `badge_year`
+    FROM
+        `badge_subscriptions`
+    GROUP BY `badge_subscriptions`.`badge_number`;
+
+-- Updated Club Search
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `bn_to_cl` AS
+    SELECT 
+        `badge_to_club`.`badge_number` AS `badge_number`,
+        `badge_to_club`.`club_id` AS `club_id`,
+        `clubs`.`short_name` AS `short_name`,
+        `clubs`.`club_name` AS `club_name`
+    FROM
+        (`badge_to_club`
+        LEFT JOIN `clubs` ON ((`clubs`.`club_id` = `badge_to_club`.`club_id`)))
+    ORDER BY `badge_to_club`.`badge_number`;
+
+ALTER TABLE `BadgeDB`.`badge_to_club` 
+DROP PRIMARY KEY,
+DROP COLUMN `id`,
+ADD PRIMARY KEY (`badge_number`, `club_id`),
+DROP INDEX `id` ;;
+
+-- for Gender Bender #246
+ALTER TABLE `BadgeDB`.`badges` 
+CHANGE COLUMN `gender` `gender` VARCHAR(2) NULL DEFAULT NULL ;
+
+update BadgeDB.badges set gender='m' where gender=0;
+update BadgeDB.badges set gender='f' where not gender='m';
+
 -- VIP Roles #165
---  v2.1.16
+--  v2.1.19
 ALTER TABLE `BadgeDB`.`clubs` 
 CHANGE COLUMN `allow_self` `allow_members` INT NOT NULL DEFAULT '1';
 UPDATE BadgeDB.clubs set allow_members=1 where is_club>0;

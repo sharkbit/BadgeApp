@@ -154,17 +154,18 @@ $randStr = generateRandomString();
   });
 
   function changeBadgeName(badgeNumber) {
+	var formData = $("#form_signup").serializeArray();
     jQuery.ajax({
-      method: 'GET',
+      method: 'POST',
       url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
+	  data: formData,
       crossDomain: false,
       success: function(responseData, textStatus, jqXHR) {
         responseData =  JSON.parse(responseData);
         //console.log(responseData);
-        var PrimeExpTimestamp = getTimestamp(responseData.expires);
         var resExpTimestamp = Math.floor(Date.now() / 1000);
 
-        if(PrimeExpTimestamp < resExpTimestamp) {
+        if(responseData.isExpired) {
           $("#signupform-f_name").val('No Active Member Found');
           $("#signupform-l_name").val('');
           $("#signupform-email").val('');

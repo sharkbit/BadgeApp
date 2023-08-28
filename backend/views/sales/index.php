@@ -14,7 +14,7 @@ $confParams  = Params::findOne('1');
 
 $is_dev=false;
 if(yii::$app->controller->hasPermission('sales/all')) {
-	$myList=['cash'=>'Cash','check'=>'Check','online'=>'On Line','other'=>'Other'];
+	$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online','other'=>'Other'];
 	$pgLimited=false;
 } else {
 	$myList=[];
@@ -203,10 +203,10 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 					echo "<tr><td colspan=4><b>".$item['cat'].":</b></td></tr>"; $curCat = $item['cat'];
 				}
 				$colo ="bgcolor='#f3f3f3'";
-				$item_qty =	'<input class="right" type="text" name="qty" size="3" value=0 onKeyUp="doCalcSale()" />';
+				$item_qty =	'<input class="right" type="text" name="qty" size="3" value=0 onfocus="doCheckField()" onKeyUp="doCalcSale()" />';
 				if ($item['sku']== $confParams->guest_sku ) {
 					if ($guest_total>0) {
-						$item_qty =	'<input class="right" type="text" name="qty" size="3" value='.$guest_total.' onKeyUp="doCalcSale()" />';
+						$item_qty =	'<input class="right" type="text" name="qty" size="3" value='.$guest_total.' onfocus="doCheckField()" onKeyUp="doCalcSale()" />';
 					} else {
 						$item_qty='<input class="right" type="text" name="qty" size="3" value=0 disabled />';
 						$guest_note=' - <a href="/guest/index">  <B><u>Use Pay Now Option<u></a>';
@@ -231,6 +231,11 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 <?php ActiveForm::end(); ?>
 
 <script>
+	function doCheckField(e) {
+		e = e || window.event;
+		if(e.target.value=='0') e.target.value='';
+	};
+
 	doCalcSale();
 
 	function doCalcSale() {
@@ -281,8 +286,10 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 	}
 
 	function getReporterName(badgeNumber) {
+		var formData = $("#SalesForm").serializeArray();
         jQuery.ajax({
-            method: 'GET',
+            method: 'POST',
+			data: formData,
             url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number='+badgeNumber,
             crossDomain: false,
             success: function(responseData, textStatus, jqXHR) {
@@ -364,7 +371,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 						}
 					} else {
 						console.log("Data error " + JSON.stringify(responseData));
-						SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:532');
+						SwipeError(JSON.stringify(responseData.responseText),'b_v_s_i:367');
 						$("p#cc_info").html(responseData.message);
 						$("#sales-Process_CC").show();
 					}
@@ -372,7 +379,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 				},
 				error: function (responseData, textStatus, errorThrown) {
 					$("p#cc_info").html("PHP error:<br>"+responseData.message);
-                    SwipeError(JSON.stringify(responseData.responseText),'b-v-l-m:532');
+                    SwipeError(JSON.stringify(responseData.responseText),'b_v_s_i:375');
                     console.log("error "+ responseData.responseText);
 					$("#sales-Process_CC").show();
 				},
@@ -557,7 +564,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			}
 
 		}
-		else if (cleanUPC.match(/B\d{16}/g)) {  // Matched Credit Card!
+		else if (cleanUPC.match(/[Bb]\d{16}/g)) {  // Matched Credit Card!
 			console.log('Credit Card Scanned: ', cleanUPC);
 			var ccNum = cleanUPC.substring(1,17);
 			var fExp = cleanUPC.indexOf('^')+1;
@@ -571,7 +578,7 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
 			document.getElementById("sales-cc_num").value = ccNum;
 			document.getElementById("sales-cc_exp_mo").value = ExpMo;
 			document.getElementById("sales-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b-v-s-i:403'); }
+		} else { SwipeError(cleanUPC,'b_v_s_i:579'); }
 		cleanUPC = '';
 	};
 

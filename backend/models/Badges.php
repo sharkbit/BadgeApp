@@ -4,6 +4,8 @@ namespace backend\models;
 use Yii;
 use DateTime;
 use backend\models\BadgeSubscriptions;
+use backend\models\BadgeToYear;
+use backend\models\ClubView;
 use backend\models\clubs;
 use backend\models\MembershipType;
 use backend\models\Params;
@@ -22,6 +24,7 @@ class Badges extends \yii\db\ActiveRecord {
 	public $amount_paid;
 	public $amt_due;
 	public $badge_fee;
+	public $badge_year;
 	public $cat;
 	public $cc_num;
 	public $cc_cvc;
@@ -50,11 +53,11 @@ class Badges extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name', 'last_name', 'address', 'city','state', 'zip', 'gender', 'mem_type','club_id', 'incep', 'expires','wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
-			[['address', 'gender', 'qrcode','status','cc_num','cc_x_id'], 'string'],
-			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
+			[['first_name', 'last_name', 'address', 'city','state', 'zip', 'gender', 'mem_type','club_id', 'incep', 'wt_date','discounts','amt_due','badge_fee','payment_method','wt_instru'], 'required'],
+			[['address', 'qrcode','status','cc_num','cc_x_id'], 'string'],
+			[['gender','incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','payment_method','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip', 'mem_type','cc_cvc','cc_exp_yr','cc_exp_mo','email_vrfy','yob'], 'integer'],
-			[['badge_fee', 'amt_due','tax'], 'number'],
+			[['badge_fee','badge_year', 'amt_due','tax'], 'number'],
 			[['prefix', 'suffix'], 'string', 'max' => 15],
 			['email', 'string', 'max' => 60],
 			['email', 'filter', 'filter' => 'trim'],
@@ -83,6 +86,7 @@ class Badges extends \yii\db\ActiveRecord {
 
 	public function attributeLabels() {
 		return [
+			'badgeyear'=>'Badge Year',
 			'yob' => 'YOB',
 			'email_vrfy' => 'Verified',
 			'phone_op' => 'Phone Optional',
@@ -101,9 +105,41 @@ class Badges extends \yii\db\ActiveRecord {
 		];
 	}
 
-	//public function getclubs() {
-    //    return $this->hasMany(Clubs::className(), ['club_id' => 'club_id']);
-    //}
+	public function getBadgeToYear() {
+		return $this->hasOne(BadgeToYear::className(), ['badge_number' => 'badge_number']);
+	}
+
+	public function getBadgeYear() {
+		$bgyr = BadgeSubscriptions::find()->where(['badge_number'=>$this->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one();
+		if ($bgyr) {return $bgyr->badge_year; } else { return null; }
+    }
+
+	public function getClubView() {
+		return $this->hasMany(ClubView::className(), ['badge_number' => 'badge_number']);
+	}
+
+	public static function isExpired($badge_number,$confParams) {
+		$bgyr = BadgeSubscriptions::find()->where(['badge_number'=>$badge_number])->orderBy(['badge_year'=>SORT_DESC])->one();
+		if ($bgyr) {
+			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
+			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
+			if ($DateChk <= $nowDate) {
+				$nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));
+			} else {
+				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
+			}
+			$cur_Badge_year = $bgyr->badge_year;
+			$WtExpiresDate = date('Y', strtotime("-2 years",strtotime($nowDate)));
+			$badge_year_chk = date('Y',  strtotime($nextExpire.' - 1 year'));
+
+			// mem_type needs to renew? Test:
+			if ((int)$cur_Badge_year < (int)$badge_year_chk) {
+				//echo "//is expired";
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public function getMembershipType($mem_type='') {
 		if($mem_type<>"") {
@@ -158,7 +194,6 @@ class Badges extends \yii\db\ActiveRecord {
 		$model->phone_op = preg_replace('/\D/','',$model->phone_op);
 		$model->ice_phone = preg_replace('/\D/','',$model->ice_phone);
 		$model->wt_date = date('Y-m-d',strtotime($model->wt_date));
-		$model->expires = date('Y-m-d',strtotime($model->expires));
 		$model->incep = date('Y-m-d H:i:s',strtotime($model->incep));
 
 		if(isset($model->payment_method)) {
@@ -168,7 +203,7 @@ class Badges extends \yii\db\ActiveRecord {
 			if(isset($model->club_id)) {
 				if($model->club_id=='') {
 					yii::$app->controller->createLog(true, 'trex_zod_1',  Yii::$app->controller->id.'->'.Yii::$app->controller->action->id);
-					(new clubs)->saveClub($model->badge_number,[35]); 
+					(new clubs)->saveClub($model->badge_number,[35]);
 					$dirty[]='Club';
 				} else {
 					$mine = (new clubs)->getMyClubs($model->badge_number);
@@ -178,7 +213,7 @@ class Badges extends \yii\db\ActiveRecord {
 					}
 				}
 			} else {
-				if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]); $dirty[]='Club'; 
+				if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]); $dirty[]='Club';
 				yii::$app->controller->createLog(true, 'trex_zod_2',  Yii::$app->controller->id.'->'.Yii::$app->controller->action->id);}
 			}
 		}
@@ -243,7 +278,6 @@ class Badges extends \yii\db\ActiveRecord {
 			'ice_phone' => 'Emergency Contact Phone',
 			'mem_type' => 'Membership Type',
 			'primary' => 'Primary',
-			'expires' => 'Expires',
 			'qrcode' => 'qrcode',
 			'wt_date' => 'WT Date',
 			'wt_instru' => 'WT Instructor',

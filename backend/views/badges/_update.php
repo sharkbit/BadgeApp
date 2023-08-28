@@ -26,7 +26,6 @@ for ($x = 0; $x <= 90; $x++) {
 }
 $YearList = json_decode(str_replace('}{',',',$YearList));
 
-$confParams  = Params::findOne('1');
 if(yii::$app->controller->hasPermission('badges/all')) {$restrict=false;} else {$restrict=true;}
 
 $nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
@@ -37,29 +36,30 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	} else {
 		$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
 	}
+	$DateExpires = $model->BadgeYear;
+	$WtExpiresDate = $DateExpires + 2;
+	$model->badge_year = $badge_year_chk = date('Y',  strtotime($nextExpire.' - 1 year'));
 
-    $DateExpires = date('Y-m-d',strtotime($model->expires));
-	$WtExpiresDate = date('Y-01-31', strtotime("-2 years",strtotime($nowDate)));
-
-    if($DateExpires <= $WtExpiresDate) {
+    if((int)$WtExpiresDate < (int)$badge_year_chk) {
         $New_WT_Needed = true;
 	} else { $New_WT_Needed = false; }
 
-	if ($DateExpires >= $nextExpire){ // Show Renew?
-		$hide_Renew=true;
-	} else {
-		if ($model->canRenew($model->status)) {
-			if (yii::$app->controller->hasPermission('badges/renew-membership')) {
-				$hide_Renew=false; } else { $hide_Renew=true; }
-		} else {
-			$hide_Renew=true;
-		}
-	}
+	// mem_type needs to renew? Test:
+	if ((int)$DateExpires < (int)$badge_year_chk) {									// Is BadgeSubscription Current?
+		if (yii::$app->controller->hasPermission('badges/renew-membership')) {		// Can User Process & Renew Badges?
+			if ($model->canRenew($model->status)) {									// Is badge active / not restricted?
+				$mem_renew = backend\models\MembershipType::findOne(['id'=>$model->mem_type])->renew_yearly;
+				if ($mem_renew) {													// Does Membership type need to renew?	
+					$hide_Renew=false; 
+				} else { $hide_Renew=true; }
+			} else { $hide_Renew=true; }
+		} else { $hide_Renew=true; }
+	} else { $hide_Renew=true; }
 
 	// Show Certifications?
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }
 	if ($model->canRenew($model->status)) {} else { $hide_Cert=true; }
-	if ($nowDate > $DateExpires ) { $hide_Cert=true; }
+	if ((int)$DateExpires < (int)$badge_year_chk ) { $hide_Cert=true; }
 ?>
 <div class="badges-form">
 <div class="row">
@@ -82,6 +82,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 
         <div class="row">
             <div class="col-xs-6 col-sm-3">
+				<?php echo Html::hiddenInput("renBadgeYear",$badge_year_chk,['id'=>'badges-renBadgeYear']), PHP_EOL; ?>
 				<?= $form->field($model, 'prefix')->dropDownList(['Ms'=>'Ms','Miss'=>'Miss','Mrs'=>'Mrs','Mr'=>'Mr','Master'=>'Master','Fr'=>'Father (Fr)','Rev'=>'Reverend (Rev)','Dr'=>'Doctor (Dr)','Atty'=>'Attorney (Atty)','Hon'=>'Honorable (Hon)','Prof'=>'Professor (Prof)','Pres'=>'President (Pres)','VP'=>'Vice President (VP)','Gov'=>'Governor (Gov)','Ofc'=>'Officer (Ofc)'],['value'=>$model->prefix,'readonly'=> yii::$app->controller->hasPermission('badges/rename') ? false : true,]).PHP_EOL; ?>
             </div>
             <div class="col-xs-6 col-sm-3">
@@ -135,7 +136,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
                 <?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates()) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
-                <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female']).PHP_EOL; ?>
+                <?=  $form->field($model, 'gender')->radioList([ 'm'=>'Male', 'f'=> 'Female']).PHP_EOL; ?>
             </div>
             <div class="col-xs-6 col-sm-2">
                  <?= $form->field($model, 'yob')->dropDownList($YearList).PHP_EOL; //->textInput(['maxlength'=>true]).PHP_EOL; ?>
@@ -168,12 +169,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 			<?php $model->incep = date('M d, Y h:i:s A',strtotime($model->incep)); ?>
             <?= $form->field($model, 'incep')->textInput(['disabled' => true,'value'=>date('M d, Y',strtotime($model->incep))]).PHP_EOL; ?>
             </div>
-            <div class="col-xs-6 col-sm-4">
-                <?php $model->expires = date('M d, Y',strtotime($model->expires)); ?>
-                <?= $form->field($model, 'expires')->textInput(['readOnly'=>true]).PHP_EOL; ?>
-                <input type="hidden" value='<?php echo date('M d, Y',strtotime($nextExpire)); ?>' id='defDate' />
-            </div>
-
+ 
              <div class="col-xs-6 col-sm-4">
         <?php   $WTDate = strtotime($model->wt_date);
                 $startDate = date('1999-01-01 12:00:00');
@@ -289,9 +285,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<?php echo Html::hiddenInput("item_sku",'',['id'=>'badgesubscriptions-item_sku']), PHP_EOL; ?>
 		<?php echo Html::hiddenInput("isCurent",$hide_Renew,['id'=>'badgesubscriptions-isCurent','class'=>'form-control']), PHP_EOL; ?>
 		<?php echo Html::hiddenInput("sell_date",$confParams['sell_date'],['id'=>'badges-sell_date']), PHP_EOL; ?>
-
-		<?php $badgeSubscriptions->expires = date('M d, Y',strtotime($nextExpire)); ?>
-		<?= $form1->field($badgeSubscriptions, 'expires')->textInput(['readOnly'=>true]).PHP_EOL; ?>
+		<?php echo Html::hiddenInput("renBadgeYear",$badge_year_chk,['id'=>'badgesubscriptions-renBadgeYear']), PHP_EOL; ?>
 
 		<?= $form1->field($badgeSubscriptions, 'badge_fee')->textInput(['readOnly'=>true]).PHP_EOL; ?>
 		<?= $form1->field($badgeSubscriptions, 'redeemable_credit')->textInput(['value'=>'']).PHP_EOL; ?>
@@ -308,7 +302,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				'<input type=hidden name="sku" value="'.$item['sku'].'" />'.
 				'<input type=hidden name="tax_rate" value="'.$item['tax_rate'].'" /></td>'.
 				'<td><input type="text" name="ea" size="3" value='.$item['price'].' disabled /></td>'.
-				'<td><input class="right" type="text" name="qty" size="3" value=0 onKeyUp="doCalcUp()" /></td>'.
+				'<td><input class="right" type="text" name="qty" size="3" value=0 onfocus="doCheckField()" onKeyUp="doCalcUp()" /></td>'.
 				'<td><input class="right" type="text" name="price" size="3" readonly /></td></tr>'."\n";
 		} ?>
 		</table>
@@ -493,6 +487,11 @@ $ccYear = range($curYr,$curYr+25);  ?>
         } else  {$("#extras_store_div").show();}
 	});
 
+	function doCheckField(e) {
+		e = e || window.event;
+		if(e.target.value=='0') e.target.value='';
+	};
+
 	function doCalcUp(){
 		var ContainerID = document.getElementById('store_items');
 
@@ -667,7 +666,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 					}
 				} else {
 					console.log("Data error " + JSON.stringify(responseData));
-					SwipeError(JSON.stringify(responseData),'b-v-l-m:788');
+					SwipeError(JSON.stringify(responseData),'b_v_b_u:670');
 					$("p#cc_info").html(responseData.message);
 					$("#badgecertification-Process_CC").show();
 				}
@@ -675,7 +674,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			},
 			error: function (responseData, textStatus, errorThrown) {
 				$("p#cc_info").html("PHP error:<br>"+responseData.responseText);
-				SwipeError(JSON.stringify(responseData),'b-v-l-m:795');
+				SwipeError(JSON.stringify(responseData),'b_v_b_u:678');
 				console.log("error "+ JSON.stringify(responseData));
 				$("#badgecertification-Process_CC").show();
 			},
@@ -723,6 +722,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 					$("#online_search").hide();
 					document.getElementById("renew_btn").disabled = false;
 				},
+				timeout: 10000
 			});
 		} else {
 			$("#online_search_results").html("Requires a Valid Email to Check Tests!");
@@ -821,7 +821,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			}
 
 		}
-		else if (cleanUPC.match(/B\d{16}/g)) {  // Matched Credit Card!
+		else if (cleanUPC.match(/[Bb]\d{16}/g)) {  // Matched Credit Card!
 			console.log('Credit Card Scanned: ', cleanUPC);
 			var ccNum = cleanUPC.substring(1,17);
 			var fExp = cleanUPC.indexOf('^')+1;
@@ -835,16 +835,13 @@ $ccYear = range($curYr,$curYr+25);  ?>
 			document.getElementById("badgesubscriptions-cc_num").value = ccNum;
 			document.getElementById("badgesubscriptions-cc_exp_mo").value = ExpMo;
 			document.getElementById("badgesubscriptions-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b-v-g-u:686'); }
+		} else { SwipeError(cleanUPC,'b_v_b_u:843'); }
 		cleanUPC = '';
 	};
 
 	$("#form_badge_cert").on('submit', function(e,messages){
 		var f = document.forms.badgeUpdate;
-		var postData = [];
-		for (var i = 0; i < f.elements.length; i++) {
-			postData.push(f.elements[i].name + "=" + f.elements[i].value);
-		}
+		var postData = $("#badgeUpdate,#form_badge_cert,#form_badge_renew").serializeArray();
 		var xhr = new XMLHttpRequest();
 		xhr.open("POST", '/badges/update?badge_number=<?=$model->badge_number?>', true);
 		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

@@ -29,7 +29,7 @@ class AdminController extends \yii\web\Controller {
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/delete-X','membership-type/view'],
 		'Guest' => ['guest/all','guest/modify','guest/update','guest/stats','guest/delete'],
 		'Index' => ['site/new-member','site/no-email','site/verify'],
-		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/update','legelemail/delete'],
+		'LegeslativeEmails'=>['legelemail/index','legelemail/create','legelemail/groups','legelemail/update','legelemail/delete'],
 		'Params' => ['params/update'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
 		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/delete','rso-rpt/index','rso-rpt/remarks','rso-rpt/settings','rso-rpt/sticker','rso-rpt/update','rso-rpt/view','sticker/add','sticker/move','rso-rpt/sticker-update','rso-rpt/sticker-delete'],
@@ -171,7 +171,8 @@ class AdminController extends \yii\web\Controller {
 				$_SESSION['back'][]=$_SERVER['REQUEST_URI'];
 			}
 			if(!$this->hasPermission(Yii::$app->controller->id."/".Yii::$app->controller->action->id)){
-				throw new \yii\web\UnauthorizedHttpException();
+				//throw new \yii\web\UnauthorizedHttpException();
+				return $this->redirect(['/']); 
 			}
 		} else if (yii::$app->user->isGuest) {
 			// Pages that dont require login
@@ -343,8 +344,9 @@ class AdminController extends \yii\web\Controller {
 		return $string;
 	}
 
-	public function RestoreSession(&$searchModel,$form,$filters,$tst=true) {
+	public function RestoreSession(&$searchModel,$form,$filters,$tst=false) {
 		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_'.$form, 'Hit from '.$form);
+		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_', var_export($filters,true));
 		if($tst) yii::$app->controller->createLog(true, 'trex_Admin_RS_', var_export($_REQUEST,true));
 		if(isset($_REQUEST['reset'])) {
 			foreach($filters as $filtr) {
@@ -389,7 +391,7 @@ class AdminController extends \yii\web\Controller {
 			@rename($dir."java_logs.txt",   $dir."java_log.$yr-$log_mon.txt");
 
 			$param->log_rotate = $mon;
-			$param->save();
+			$param->save(false);
 		}
 	}
 
@@ -455,8 +457,8 @@ class AdminController extends \yii\web\Controller {
 	}
 
 	public function mergeRemarks($old,$nowRemakrs) {
-		$remarksOld = json_decode($old,true);
-		if($remarksOld != '') {
+		if($old) {
+			$remarksOld = json_decode($old,true);
 			array_push($remarksOld,$nowRemakrs);
 		} else {
 			$remarksOld = [

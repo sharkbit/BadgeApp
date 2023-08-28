@@ -15,7 +15,7 @@ use backend\models\clubs;
  * @property string $status
  * @property string $created_at
  */
-class BadgeSubscriptions extends \yii\db\ActiveRecord {
+class BadgeSubscriptionsDate extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
@@ -25,6 +25,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
 	public $cc_cvc;
 	public $cc_exp_mo;
 	public $cc_exp_yr;
+	public $expires;
 	public $item_name;
 	public $item_sku;
     public $mem_id;
@@ -36,7 +37,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
     public $wt_instru;
 
     public static function tableName() {
-        return 'badge_subscriptions';
+        return 'badge_subscriptions_date';
     }
 
     /**
@@ -44,7 +45,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['badge_number', 'badge_year', 'payment_type', 'status','sticker','created_at','badge_fee'], 'required'],
+            [['badge_number', 'badge_year','payment_type', 'status','sticker','created_at','badge_fee'], 'required'],
             ['amount_due', 'required', 'when' => function ($model) {
                 $currentUrl = yii::$app->controller->getCurrentUrl();
                 if($currentUrl['controllerId']=='badges'&&$currentUrl['actionId']=='update') {
@@ -52,7 +53,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
                 }
               }, 
             ],
-            [['badge_year','created_at','badge_fee','mem_id','mem_type','redeemable_credit','transaction_type','club_id','wt_date','wt_instru','is_migrated'], 'safe'],
+            [['badge_year','bs_c_date','created_at','badge_fee','mem_id','mem_type','expires','redeemable_credit','transaction_type','club_id','wt_date','wt_instru','is_migrated'], 'safe'],
 			[['amount_due','paid_amount','tax'],'number'],
 			[['cc_cvc','cc_exp_yr','cc_exp_mo'],'integer'],
 			[['sticker'],'string','min'=>8, 'max'=>10],

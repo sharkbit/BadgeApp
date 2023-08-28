@@ -43,6 +43,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $formatter->formatCurrency($model->halfprice->price, 'USD');
                 },
             ],
+			[	'attribute'=>'renew_yearly',
+				'value'=>function($model) { if($model->renew_yearly=='1') {return 'Yes'; } else {return 'No'; } },
+			],
             [       
                 'attribute'=>'status',
                 'value'=> function($model,$attribute) {

@@ -91,14 +91,18 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
             // 'ice_phone',
             // 'club_name',
             // 'club_id',
-			[
-				'attribute' => 'club_id',
+			[	'attribute' => 'club_id',
 				'format' => 'raw',
 				'contentOptions' =>['style' => 'width:100px; overflow: auto; word-wrap: break-word; white-space: normal;'],
 				'value'=> function($searchModel, $attribute) {
-					return (new clubs)->getMyClubsNames($searchModel->badge_number,true);
-					},
+					$myClubsNames='';
+					foreach($searchModel->clubView as $club){
+						$myClubsNames .= $club['short_name'].' <img src="/images/note.png" title="'.$club['club_name'].'" style="width:18px" />, ';
+					}
+					return rtrim($myClubsNames, ', ');
+				},
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
+				
 			],
             // 'mem_type',
             // 'primary',

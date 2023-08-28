@@ -46,7 +46,9 @@ class BadgesSearch extends Badges {
      */
     public function search($params) {
         $query = Badges::find()
-			->joinWith(['membershipType']);
+			->joinWith(['membershipType'])
+			->joinWith(['badgeToYear'])
+			->joinWith(['clubView']);
 
         // add conditions that should always apply here
 
@@ -57,10 +59,7 @@ class BadgesSearch extends Badges {
         $this->load($params);
 //yii::$app->controller->createLog(false, 'trex_M_S_BS params', var_export($params,true));
 		if(!isset($params['sort'])) { 
-	//		yii::$app->controller->createLog(false, 'trex_M_S_BS', 'No Sort'); 
 			$query->orderBy( ['updated_at' => SORT_DESC] ); 
-		}
-		else { //yii::$app->controller->createLog(false, 'trex_M_S_BS', var_export($params['sort'],true)); 
 		}
 		
         $this->nowDateplus2 = date('Y-m-d', strtotime("+2 years",strtotime(yii::$app->controller->getNowTime())));
@@ -73,28 +72,25 @@ class BadgesSearch extends Badges {
         }
 
         if($this->expire_condition=='active+2') {
-            $query->andFilterWhere(['>=','expires',$this->nowDate]);
-            $query->orFilterWhere(['between','expires',$this->nowDateMin2, $this->nowDate]);
+            $query->andFilterWhere(['>=','bn_to_by.badge_year',$this->nowDate]);
+            $query->orFilterWhere(['between','bn_to_by.badge_year',$this->nowDateMin2, $this->nowDate]);
         }
         else if($this->expire_condition=='active') {
-            $query->andFilterWhere(['>=','expires',$this->nowDate]);
+            $query->andFilterWhere(['>=','bn_to_by.badge_year',$this->nowDate]);
         }
         else if($this->expire_condition=='expired<2') {
-            $query->andFilterWhere(['between','expires',$this->nowDateMin2,$this->nowDate]);
+            $query->andFilterWhere(['between','bn_to_by.badge_year',$this->nowDateMin2,$this->nowDate]);
         }
         else if($this->expire_condition=='expired>2') {
-             $query->andFilterWhere(['<','expires',$this->nowDateMin2]);
+             $query->andFilterWhere(['<','bn_to_by.badge_year',$this->nowDateMin2]);
         }
         else if($this->expire_condition=='inactive') {
-             $query->andFilterWhere(['<','expires',$this->nowDateMin5]);
+             $query->andFilterWhere(['<','bn_to_by.badge_year',$this->nowDateMin5]);
         }
-        else {// no filter needed for all
-			//if($this->expire_condition=='all') {
-            // $query->andFilterWhere(['between', 'expires', '1999-01-01', '2999-01-01']);
-        }
+        else { /* no filter needed for all */ }
 
 		if(!yii::$app->controller->hasPermission('badges/all')) {
-			$query->andFilterWhere(['badge_number'=>$_SESSION["badge_number"]]);
+			$query->andFilterWhere(['badges.badge_number'=>$_SESSION["badge_number"]]);
 		}
 
         if($this->expire_date_range==null) {
@@ -116,21 +112,16 @@ class BadgesSearch extends Badges {
 
         // grid filtering conditions
         $query->andFilterWhere([
-           // 'status'=>$this->status,
             'yob' => $this->yob,
-            'mem_type' => $this->mem_type,
-            'incep' => $this->incep,
-			'expires'=>$this->expires,
+            'mem_type' => $this->mem_type
         ]);
 
         if(isset($this->club_id) && ($this->club_id <>'')) {
-		//	yii::$app->controller->createLog(true, 'trex-m-s-bs', 'ClubID: '.var_export($this->club_id,true));
-			$query->andWhere("badge_number IN (SELECT badge_number FROM badge_to_club WHERE club_id=".$this->club_id.")"); }
+			$query->andWhere("badges.badge_number IN (SELECT badge_number FROM badge_to_club WHERE club_id=".$this->club_id.")"); }
 
 		if(isset($this->badge_number)) { 
 			$this->badge_number=ltrim($this->badge_number, '0');
-			//$query->andFilterWhere(['like', 'badge_number', $this->badge_number]);
-			$query->andFilterWhere(['badge_number'=>$this->badge_number]);  
+			$query->andFilterWhere(['badges.badge_number'=>$this->badge_number]);  
 		}
 		if(isset($this->first_name)) { $query->andFilterWhere(['like', 'first_name', $this->first_name]); }
 		if(isset($this->last_name)) { $query->andFilterWhere(['like', 'last_name', $this->last_name]); }

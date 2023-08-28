@@ -125,10 +125,6 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
 		'columns' => [
-			[	'attribute'=>'s_id',
-				'visible' => (yii::$app->controller->hasPermission('params/update')) ? true : false,
-				'headerOptions' => ['style' => 'width:5%'],
-			],
 			[	'attribute'=>'sticker',	],
 			[	'attribute'=>'status',
 				'value' => function($model) { return $model->listStickerStatus($model->status); },

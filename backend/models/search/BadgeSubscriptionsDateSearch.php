@@ -5,12 +5,12 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\BadgePayments;
+use backend\models\BadgeSubscriptionsDate;
 
 /**
- * BadgePaymentsSearch represents the model behind the search form about `backend\models\BadgePayments`.
+ * BadgeSubscriptionsSearch represents the model behind the search form about `backend\models\BadgeSubscriptionsDate`.
  */
-class BadgePaymentsSearch extends BadgePayments {
+class BadgeSubscriptionsDateSearch extends BadgeSubscriptionsDate {
     /**
      * @inheritdoc
      */
@@ -18,6 +18,7 @@ class BadgePaymentsSearch extends BadgePayments {
         return [
             [['id', 'badge_number'], 'integer'],
             [['badge_year', 'payment_type', 'status', 'created_at'], 'safe'],
+            [['badge_fee', 'paid_amount', 'discount'], 'number'],
         ];
     }
 
@@ -37,7 +38,8 @@ class BadgePaymentsSearch extends BadgePayments {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = BadgePayments::find();
+        $query = BadgeSubscriptionsDate::find();
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -58,6 +60,9 @@ class BadgePaymentsSearch extends BadgePayments {
             'badge_number' => $this->badge_number,
             'badge_year' => $this->badge_year,
             'created_at' => $this->created_at,
+            'badge_fee' => $this->badge_fee,
+            'paid_amount' => $this->paid_amount,
+            'discount' => $this->discount,
         ]);
 
         $query->andFilterWhere(['like', 'payment_type', $this->payment_type])
