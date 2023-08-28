@@ -2,41 +2,13 @@
 
 namespace backend\models;
 
+use backend\models\BadgeToYear;
+use backend\models\ClubView;
+use backend\models\MembershipType;
 use Yii;
 
 /**
  * This is the model class for table "badges".
- *
- * @property integer $id
- * @property string $badge_number
- * @property string $prefix
- * @property string $first_name
- * @property string $last_name
- * @property string $suffix
- * @property string $address
- * @property string $city
- * @property string $state
- * @property string $zip
- * @property string $gender
- * @property string $yob
- * @property string $email
- * @property string $phone
- * @property string $phone_op
- * @property string $ice_contact
- * @property string $ice_phone
- * @property integer $club_id
- * @property integer $mem_type
- * @property integer $primary
- * @property string $incep
- * @property string $expires
- * @property string $qrcode
- * @property string $wt_date
- * @property string $wt_instru
- * @property string $remarks
- * @property string $status
- * @property string $soft_delete
- * @property string $created_at
- * @property string $updated_at
  */
 class BadgesDatabase extends \yii\db\ActiveRecord {
     /**
@@ -95,4 +67,16 @@ class BadgesDatabase extends \yii\db\ActiveRecord {
             'updated_at' => 'Updated At',
         ];
     }
+
+	public function getBadgeToYear() {
+		return $this->hasOne(BadgeToYear::className(), ['badge_number' => 'badge_number']);
+	}
+
+	public function getClubView() {
+		return $this->hasMany(ClubView::className(), ['badge_number' => 'badge_number']);
+	}
+
+	public function getMembershipType() {
+		return $this->hasOne(MembershipType::className(),['id'=>'mem_type']);
+	}
 }

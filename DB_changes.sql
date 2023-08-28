@@ -729,3 +729,25 @@ VIEW `bn_to_by` AS
         `badge_subscriptions`
     GROUP BY `badge_subscriptions`.`badge_number`;
 
+-- Updated Club Search
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `bn_to_cl` AS
+    SELECT 
+        `badge_to_club`.`badge_number` AS `badge_number`,
+        `badge_to_club`.`club_id` AS `club_id`,
+        `clubs`.`short_name` AS `short_name`,
+        `clubs`.`club_name` AS `club_name`
+    FROM
+        (`badge_to_club`
+        LEFT JOIN `clubs` ON ((`clubs`.`club_id` = `badge_to_club`.`club_id`)))
+    ORDER BY `badge_to_club`.`badge_number`;
+
+ALTER TABLE `BadgeDB`.`badge_to_club` 
+DROP PRIMARY KEY,
+DROP COLUMN `id`,
+ADD PRIMARY KEY (`badge_number`, `club_id`),
+DROP INDEX `id` ;;
+

@@ -47,7 +47,8 @@ class BadgesSearch extends Badges {
     public function search($params) {
         $query = Badges::find()
 			->joinWith(['membershipType'])
-			->joinWith(['badgeToYear']);
+			->joinWith(['badgeToYear'])
+			->joinWith(['clubView']);
 
         // add conditions that should always apply here
 

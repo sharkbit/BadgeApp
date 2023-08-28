@@ -80,16 +80,18 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'attribute' => 'suffix',
 				'contentOptions' =>['style' => 'width:20px'],
 			],
-			[ 
-				'attribute' => 'club_id',
+			[	'attribute' => 'club_id',
 				'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
 				'format' => 'raw',
-                //'value' => 'activeClub.club_name',
-				'value'=>function($model) {
-					return (new clubs)->getMyClubsNames($model->badge_number,true);
-				}
-            ],
+				'value'=> function($searchModel, $attribute) {
+					$myClubsNames='';
+					foreach($searchModel->clubView as $club){
+						$myClubsNames .= $club['short_name'].' <img src="/images/note.png" title="'.$club['club_name'].'" style="width:18px" />, ';
+					}
+					return rtrim($myClubsNames, ', ');
+				},		
+			],
 			[
 				'attribute' => 'status',
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new Badges)->getMemberStatus(),['class'=>'form-control','prompt' => 'All']),

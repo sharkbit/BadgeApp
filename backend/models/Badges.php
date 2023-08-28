@@ -5,6 +5,7 @@ use Yii;
 use DateTime;
 use backend\models\BadgeSubscriptions;
 use backend\models\BadgeToYear;
+use backend\models\ClubView;
 use backend\models\clubs;
 use backend\models\MembershipType;
 use backend\models\Params;
@@ -112,6 +113,10 @@ class Badges extends \yii\db\ActiveRecord {
 		$bgyr = BadgeSubscriptions::find()->where(['badge_number'=>$this->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one();
 		if ($bgyr) {return $bgyr->badge_year; } else { return null; }
     }
+
+	public function getClubView() {
+		return $this->hasMany(ClubView::className(), ['badge_number' => 'badge_number']);
+	}
 
 	public static function isExpired($badge_number,$confParams) {
 		$bgyr = BadgeSubscriptions::find()->where(['badge_number'=>$badge_number])->orderBy(['badge_year'=>SORT_DESC])->one();
