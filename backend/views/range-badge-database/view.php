@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
 				'attribute'=>'gender',
 				'value'=> function($model, $attribute) {
-					if($model->gender) { return 'Female';} else { return 'Male';}
+					if($model->gender=='m') { return 'Male';} else { return 'Female';}
 				}
 			],
             'yob',

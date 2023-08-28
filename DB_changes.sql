@@ -751,3 +751,9 @@ DROP COLUMN `id`,
 ADD PRIMARY KEY (`badge_number`, `club_id`),
 DROP INDEX `id` ;;
 
+-- for Gender Bender #246
+ALTER TABLE `BadgeDB`.`badges` 
+CHANGE COLUMN `gender` `gender` VARCHAR(2) NULL DEFAULT NULL ;
+
+update BadgeDB.badges set gender='m' where gender=0;
+update BadgeDB.badges set gender='f' where not gender='m';

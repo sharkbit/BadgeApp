@@ -141,7 +141,7 @@ input[type='checkbox'] {
 			<?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates(),['value'=>'MD']) ?>
 		</div>
 		<div class="col-xs-6 col-sm-2">
-			<p><?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female'],['value'=>0]) ?></p>
+			<p><?=  $form->field($model, 'gender')->radioList([ 'm'=>'Male', 'f'=> 'Female'],['value'=>'m']) ?></p>
 		</div>
 		<div class="col-xs-6 col-sm-2">
 			<?= $form->field($model, 'yob')->dropDownList($YearList,['value'=>$MyYr-13 ]) ?>

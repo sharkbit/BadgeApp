@@ -81,7 +81,7 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates(),['value'=>'MD']) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
-                <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female'],['value'=>0]) ?>
+                <?=  $form->field($model, 'gender')->radioList([ 'm'=>'Male', 'f'=> 'Female'],['value'=>'m']) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
                 <?= $form->field($model, 'yob')->dropDownList($YearList,['value'=>$MyYr-13 ]) ?>

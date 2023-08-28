@@ -136,7 +136,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
                 <?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates()) ?>
             </div>
             <div class="col-xs-6 col-sm-2">
-                <?=  $form->field($model, 'gender')->radioList([ '0'=>'Male', '1'=> 'Female']).PHP_EOL; ?>
+                <?=  $form->field($model, 'gender')->radioList([ 'm'=>'Male', 'f'=> 'Female']).PHP_EOL; ?>
             </div>
             <div class="col-xs-6 col-sm-2">
                  <?= $form->field($model, 'yob')->dropDownList($YearList).PHP_EOL; //->textInput(['maxlength'=>true]).PHP_EOL; ?>
@@ -841,10 +841,7 @@ $ccYear = range($curYr,$curYr+25);  ?>
 
 	$("#form_badge_cert").on('submit', function(e,messages){
 		var f = document.forms.badgeUpdate;
-		var postData = [];
-		for (var i = 0; i < f.elements.length; i++) {
-			postData.push(f.elements[i].name + "=" + f.elements[i].value);
-		}
+		var postData = $("#badgeUpdate,#form_badge_cert,#form_badge_renew").serializeArray();
 		var xhr = new XMLHttpRequest();
 		xhr.open("POST", '/badges/update?badge_number=<?=$model->badge_number?>', true);
 		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
