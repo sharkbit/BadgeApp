@@ -12,10 +12,14 @@ $this->params['breadcrumbs'][] = ['label' => $model->club_name.' ('.$model->club
 $this->params['breadcrumbs'][] = 'Update';
 
 ?>
-<div class="clubs-update">
-<h2><?= Html::encode($this->title) ?></h2>
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="row">
+	<div class="col-xs-12">
+		<?= $this->render('_view-tab-menu') ?>
+	</div>
+	<div class="col-xs-12" class="clubs-update">
+		<h2><?= Html::encode($this->title) ?></h2>
+	</div>
+	<?= $this->render('_form', [
+		'model' => $model,
+	]) ?>
 </div>

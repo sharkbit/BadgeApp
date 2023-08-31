@@ -11,7 +11,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admi
 $this->params['breadcrumbs'][] = ['label' => 'Member Club List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="clubs-view">
+<div class="row">
+	<div class="col-xs-12">
+		<?= $this->render('_view-tab-menu') ?>
+	</div>
+	<div class="col-xs-12" class="clubs-view">
 
     <h2><?= Html::encode($this->title) ?></h2>
 
@@ -43,5 +47,5 @@ $this->params['breadcrumbs'][] = $this->title;
 
         ],
     ]) ?>
-
+	</div>
 </div>

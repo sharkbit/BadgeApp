@@ -37,7 +37,7 @@ class ClubView extends \yii\db\ActiveRecord {
 			'badge_number' => 'Badge Number',
 			'club_id' => 'Club ID',
 			'club_name' => 'Club Name',
-            'short_name' => 'Short Name'		
+            'short_name' => 'Short Name'
         ];
     }
 

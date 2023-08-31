@@ -10,9 +10,19 @@ use yii\widgets\Pjax;
 $this->title = 'Member Club List';
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/index']];
+
+if (isset($_SESSION['pagesize'])) {
+	$pagesize = $_SESSION['pagesize'];
+} else {
+	$pagesize=20;
+}
+$dataProvider->pagination = ['pageSize' => $pagesize];
 ?>
 <div class="clubs-index">
 	<div class="row">
+		<div class="col-xs-12">
+		<?= $this->render('_view-tab-menu') ?>
+	</div>
 		<div class="col-xs-12">
 			<h2><?= Html::encode($this->title) ?></h2>
 <?php if(yii::$app->controller->hasPermission('clubs/create')) { ?>
@@ -70,7 +80,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/ind
 						'data-placement'=>'top',
 						'title'=>'Delete',
 						'data' => [
-							'confirm' => 'Are you sure you want to delete this item?',
+							'confirm' => 'Are you sure you want to delete club '.$model->club_name.'?',
 							'method' => 'post',
 						],
 					]); }

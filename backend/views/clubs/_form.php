@@ -44,7 +44,3 @@ use yii\widgets\ActiveForm;
 </div>
 <?php ActiveForm::end(); ?>
 </div>
-
-<?= $this->render('_club_officers', [
-	'model' => $model,
-]) ?>
