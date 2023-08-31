@@ -8,7 +8,8 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Club Roles';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
+if(yii::$app->controller->hasPermission('site/admin-menu')) {
+	$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']]; }
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/roles']];
 
 if (isset($_SESSION['pagesize'])) {
@@ -43,6 +44,9 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				],
 				'role_name',
 				'disp_order',
+				[	'attribute' => 'privs',
+					'visible' => (yii::$app->controller->hasPermission('privileges/create')),
+				],
 				[	'header'=>'Action',
 					'class' => 'yii\grid\ActionColumn',
 					'template'=>' {update} {delete} ',

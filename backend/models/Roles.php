@@ -13,6 +13,7 @@ class Roles extends \yii\db\ActiveRecord {
      * @inheritdoc
      */
 	public $pagesize;
+	public $privs;
 
     public static function tableName() {
         return 'roles';
@@ -34,7 +35,8 @@ class Roles extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'role_name' => 'Role Name',
+            'privs' => 'Privileges',
+			'role_name' => 'Role Name',
 			'disp_order' => 'Display Order'
         ];
     }

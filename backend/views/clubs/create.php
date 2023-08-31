@@ -6,7 +6,8 @@ use yii\helpers\Html;
 /* @var $model backend\models\Clubs */
 
 $this->title = 'Create Club';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
+if(yii::$app->controller->hasPermission('site/admin-menu')) {
+	$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']]; }
 $this->params['breadcrumbs'][] = ['label' => 'Member Club List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
