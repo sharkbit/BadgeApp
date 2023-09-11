@@ -49,7 +49,7 @@ class Stickers extends \yii\db\ActiveRecord{
 			$whr=['status'=>'cas']; }
 		elseif (array_intersect([3,6], json_decode(yii::$app->user->identity->privilege))) {
 			$whr=['status'=>'rso']; }
-		else {$whr='x';}
+		else {$whr='1=2';}
 		$sticker = (new Stickers)->find()->where($whr)->limit($limit)->orderBy('sticker')->all();
 		if($sticker){
 			$use = ArrayHelper::map($sticker,'sticker','sticker');

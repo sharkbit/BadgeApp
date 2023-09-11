@@ -913,7 +913,6 @@ class BadgesController extends AdminController {
 					$data = base64_decode($img);
 					$myfile = "files/badge_photos/".str_pad($_GET['badge'], 5, '0', STR_PAD_LEFT).$ext;
 					if(is_file($myfile)) {
-						chmod($myfile, 0777);
 						unlink($myfile);
 					}
 

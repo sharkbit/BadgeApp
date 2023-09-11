@@ -76,10 +76,11 @@ $csrfToken=Yii::$app->request->getCsrfToken();
 	$("#save_photo").click(function(event) {
 		console.log("saving...");
 console.log( "using: "+ JSON.stringify(myimg).length );
+		var csrf = $('meta[name="csrf-token"]').attr('content');
 		$.ajax({
 			type: "POST",
 			url: "/badges/photo-add?badge=<?=$_GET['badge']?>",
-			data: { imgBase64: myimg }
+			data: { imgBase64: myimg ,'_csrf-backend':csrf}
 		}).done(function(o) {
 			console.log("saved");
 			window.location.href = "/badges/photo-crop?badge=<?=$_GET['badge']?>";
