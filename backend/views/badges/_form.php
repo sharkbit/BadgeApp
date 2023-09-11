@@ -22,6 +22,9 @@ for ($x = 1; $x <= 90; $x++) {
 $YearList = json_decode(str_replace('}{',',',$YearList));
 
 $confParams  = Params::findOne('1');
+
+$Club_List = (new clubs)->getClubList(false,false,true);
+if(empty($Club_List)) { Yii::$app->response->redirect(['clubs/index'])->send(); return; }
 ?>
 
 <div class="badges-form">
@@ -52,7 +55,7 @@ $confParams  = Params::findOne('1');
                 <?= $form->field($model, 'mem_type')->dropDownList($model->getMemberShipList(),['prompt'=>'select']).PHP_EOL; ?>
             </div>
             <div class="col-xs-6 col-sm-6 col-md-4">
-                <?= $form->field($model, 'club_id')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'select']).PHP_EOL; ?>
+                <?= $form->field($model, 'club_id')->dropDownList($Club_List, ['prompt'=>'select']).PHP_EOL; ?>
             </div>
 			<div  class="col-xs-12" id="primary-badge-summary">
 			<div class="row">

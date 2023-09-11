@@ -121,7 +121,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 	foreach ($myClub as $key => $row) {
 		$myClub_value[$key] = $row['total'];
 	}
-	array_multisort($myClub_value, SORT_DESC, $myClub);
+	if($myClub) { array_multisort($myClub_value, SORT_DESC, $myClub); }
 
 	$cnt=0;
 	foreach ($myClub as $key => $value) {
@@ -166,7 +166,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 		$vc_array_value[$key] = $row;
 		$vc_array_name[$key] = $key;
 	}
-	array_multisort($vc_array_value, SORT_DESC, $vc_array_name, SORT_ASC, $mydata);
+	if($mydata) { array_multisort($vc_array_value, SORT_DESC, $vc_array_name, SORT_ASC, $mydata); }
 
 	$viol_list = ViolationsController::getViolationsList();
 	

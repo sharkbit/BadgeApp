@@ -46,11 +46,15 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		],
 		[
 			'attribute' => 'clubs',
+			'format' => 'raw',
 			'value'=> function($model) {
 				if(!is_null($model->clubs)) {
 					if(is_array(json_decode($model->clubs))) {
 						$clubList = (new clubs)->getClubList(true);	$clubStr='';
-						foreach(json_decode($model->clubs) as $club) { $clubStr.=$clubList[$club].', '; }
+						foreach(json_decode($model->clubs) as $club) {
+							if(isset($clubList[$club])) { $clubStr.=$clubList[$club].', '; 
+							} else { $clubStr.='<b>Deleted: '.$club.'</b>, '; }
+						}
 						return rtrim($clubStr, ', ');
 					}
 				} else { return ''; }

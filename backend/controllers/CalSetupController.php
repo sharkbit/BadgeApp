@@ -4,11 +4,9 @@ namespace backend\controllers;
 
 use Yii;
 use backend\controllers\AdminController;
-use backend\models\agcClubs;
 use backend\models\agcFacility;
 use backend\models\agcRangeStatus;
 use backend\models\agcEventStatus;
-use backend\models\search\agcClubsSearch;
 use backend\models\search\agcEventStatusSearch;
 use backend\models\search\agcFacilitySearch;
 use backend\models\search\agcRangeStatusSearch;
@@ -33,17 +31,6 @@ class CalSetupController extends AdminController {
 				],
 			],
 		];
-	}
-
-	public function actionClubs() {
-		$searchModel = new agcClubsSearch();
-		$this->RestoreSession($searchModel,'agcClubs',$this->myFilters);
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-		return $this->render('Clubs', [
-			'searchModel' => $searchModel,
-			'dataProvider' => $dataProvider,
-		]);
 	}
 
 	public function actionCreate() {
@@ -102,23 +89,6 @@ class CalSetupController extends AdminController {
 			'dataProvider' => $dataProvider,
 		]);
 	}	
-
-
-
-	public function actionUpdateclu($id) {
-		$model = agcClubs::findOne($id);
-
-		if ($model->load(Yii::$app->request->post())) {
-			if($model->save()) {
-				Yii::$app->getSession()->setFlash('success', 'Club has been updated.');
-			} else { Yii::$app->getSession()->setFlash('error', 'Update Failed.');}
-			return $this->redirect(['updateclu', 'id' => $model->club_id]);
-		} else {
-			return $this->render('updateclu', [
-				'model' => $model,
-			]);
-		}
-	}
 
 	public function actionUpdateeven($id) {
 		$model = agcEventStatus::findOne($id);

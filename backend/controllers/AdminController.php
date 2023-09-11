@@ -275,21 +275,23 @@ class AdminController extends \yii\web\Controller {
 		foreach($myNames as $id){
 			$myNames_a[$id['badge_number']] = $id['badge_number'].','.$id['bname'];
 		}
-		return base64_encode(implode(";",$myNames_a));
+		if(isset($myNames_a)) { return base64_encode(implode(";",$myNames_a)); }
 	}
 
 	public function decodeBadgeName($badge_nu) {
 		if($badge_nu==0) {return 'Admin';}
-		$myNames = explode(';',base64_decode($_SESSION['names']));
-		foreach($myNames as $id){
-			$expNmaes=explode(',',$id);
-			$myNames_a[$expNmaes[0]] = $expNmaes[1];
-		}
-		if (empty($myNames_a[$badge_nu])) {
-			return "Unknown";
-		} else {
-			return $myNames_a[$badge_nu];
-		}
+		if(isset($_SESSION['names'])) {
+			$myNames = explode(';',base64_decode($_SESSION['names']));
+			foreach($myNames as $id){
+				$expNmaes=explode(',',$id);
+				$myNames_a[$expNmaes[0]] = $expNmaes[1];
+			}
+			if (empty($myNames_a[$badge_nu])) {
+				return "Unknown";
+			} else {
+				return $myNames_a[$badge_nu];
+			}
+		} else { return "Unknown"; }
 	}
 
 	public function getNowDigit() {

@@ -497,6 +497,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionCreate() {
+		parent::init();
 		$confParams  = Params::findOne('1');
 		$model = new Badges();
 

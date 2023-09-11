@@ -8,5 +8,5 @@ echo $this->render('_view-tab-menu', ['confParams' => $confParams]).PHP_EOL;
 
    
 echo $this->render('_inventory', [
-        'dataService' => $dataService
+       // 'dataService' => $dataService
     ]) ?>

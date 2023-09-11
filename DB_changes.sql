@@ -798,3 +798,7 @@ VIEW `officers` AS
         JOIN `badges` ON ((`badges`.`badge_number` = `badge_to_role`.`badge_number`)))
         JOIN `roles` ON ((`roles`.`role_id` = `badge_to_role`.`role`)))
         JOIN `clubs` ON ((`clubs`.`club_id` = `badge_to_role`.`club`)));
+
+-- ################################
+-- #- Core Database File Updated -#
+-- ################################

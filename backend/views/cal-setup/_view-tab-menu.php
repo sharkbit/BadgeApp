@@ -14,7 +14,6 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
     <li class="<?php if($urlStatus['actionId']=='facility')echo'active';?>"> <a href="<?=Url::to(['/cal-setup/facility'])?>"><span class="glyphicon glyphicon-home"></span> Facilities</a></li>
     <li class="<?php if($urlStatus['actionId']=='rangestatus')echo'active';?>"><a href="<?=Url::to(['/cal-setup/rangestatus'])?>">  <span class="glyphicon glyphicon-road"></span> Range Status</a></li>
     <li class="<?php if($urlStatus['actionId']=='eventstatus')echo'active';?>"><a href="<?=Url::to(['/cal-setup/eventstatus'])?>"> <span class="glyphicon glyphicon-flag"></span> Event Status</a></li>
-    <li class="<?php if($urlStatus['actionId']=='clubs')echo'active';?>"><a href="<?=Url::to(['/cal-setup/clubs'])?>"><span class="glyphicon glyphicon-thumbs-down"></span> Calendar Clubs</a></li>
 
     <li class="<?php if($urlStatus['actionId']=='Calendar')echo'active';?>"><a href="<?=Url::to(['/calendar/index'])?>"> - <span class="glyphicon glyphicon-th"></span> Calendar - </a></li>
 </ul>

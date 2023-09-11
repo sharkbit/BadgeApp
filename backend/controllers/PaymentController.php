@@ -246,9 +246,11 @@ class PaymentController extends AdminController {
 
 	public function actionInventory() {
 		$confParams = Params::findOne('1');
-		return $this->render('inventory', [
+	/*	return $this->render('inventory', [
 			'confParams' => $confParams
-		]);
+		]);  */
+		Yii::$app->getSession()->setFlash('error', 'Quick Books not integrated');
+		return $this->redirect(['index']);
 	}
 
 	public function GetInventory() {
