@@ -4,8 +4,12 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\clubs;
+use backend\models\Roles;
+use backend\models\BadgeToRoles;
 use backend\models\Badges;
 use backend\models\search\ClubsSearch;
+use backend\models\search\OfficerSearch;
+use backend\models\search\RolesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -210,20 +214,9 @@ class ClubsController extends AdminController {
         ]);
     }
 
-    public function actionView($id) {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
     public function actionCreate() {
 		$model = new Clubs();
         if ($model->load(Yii::$app->request->post())){
-			$sql='SELECT t.club_id + 1 AS FirstAvailableId FROM clubs t LEFT JOIN clubs t1 ON t1.club_id = t.club_id + 1 WHERE t1.club_id IS NULL ORDER BY t.club_id LIMIT 0, 1';
-			$connection = Yii::$app->getDb();
-			$command = $connection->createCommand($sql);
-			$NewId = $command->queryAll();
-			$model->club_id = $NewId[0]['FirstAvailableId'];
 			$model->status = 0;
 
 			if ($model->save()) {
@@ -240,6 +233,113 @@ class ClubsController extends AdminController {
 				'model' => $model,
 			]);
 		}
+    }
+
+    public function actionOfficers() {
+        $searchModel = new OfficerSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 100;
+
+        return $this->render('officers', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+	public function actionOfficersCreate() {
+		$model = new BadgeToRoles();
+        if ($model->load(Yii::$app->request->post())){
+
+			if ($model->save()) {
+				$this->createLog($this->getNowTime(), $_SESSION['user'], 'New Officer Created : '.$model->full_name);
+				Yii::$app->getSession()->setFlash('success', 'Officer '.$model->full_name.' has been created');
+				return $this->redirect(['officers']);
+			} else {
+				return $this->render('officers-create', [
+					'model' => $model,
+				]);
+			}
+		} else {
+			return $this->render('officers-create', [
+				'model' => $model,
+			]);
+		}
+    }
+
+    public function actionOfficersDelete($badge_number,$club,$role) {
+        $deleteModel = BadgeToRoles::findOne(['badge_number' => $badge_number,'club'=>$club,'role'=>$role]);
+        $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Officer Deleted : '.$badge_number. ' role: ' .$role.' Club: '.$club);
+        Yii::$app->getSession()->setFlash('success', 'Officer '.$badge_number.' has been Deleted from club '.$club);
+		$deleteModel->delete();
+
+        return $this->redirect(['officers']);
+    }
+
+    public function actionOfficersUpdate($badge_number,$club,$role) {
+		$model = BadgeToRoles::findOne(['badge_number' => $badge_number,'club'=>$club,'role'=>$role]);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->createLog($this->getNowTime(), $_SESSION['user'], 'Officer Updated : '.$model->badge_number.' club: '.$club);
+            Yii::$app->getSession()->setFlash('success', 'Officer '.$badge_number.' Role: '.$model->role.' has been updated');
+            return $this->redirect(['officers-update', 'badge_number' => $badge_number,'club'=>$model->club,'role'=>$model->role]);
+        } else {
+            return $this->render('officers-update', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    public function actionRoles() {
+        $searchModel = new RolesSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('roles', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+	public function actionRoleCreate() {
+		$model = new Roles();
+        if ($model->load(Yii::$app->request->post())){
+
+			if ($model->save()) {
+				$this->createLog($this->getNowTime(), $_SESSION['user'], 'New Club Role Created : '.$model->role_id);
+				Yii::$app->getSession()->setFlash('success', 'Club Role '.$model->role_name.' has been created');
+				return $this->redirect(['roles']);
+			} else {
+				return $this->render('role-create', [
+					'model' => $model,
+				]);
+			}
+		} else {
+			return $this->render('role-create', [
+				'model' => $model,
+			]);
+		}
+    }
+
+    public function actionRoleDelete($id) {
+        $deleteModel = Roles::findOne($id);
+        $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Role Deleted : '.$deleteModel->role_name. ' ' .$deleteModel->role_id);
+        Yii::$app->getSession()->setFlash('success', 'Role '.$deleteModel->role_name.' has been Deleted');
+		$deleteModel->delete();
+
+        return $this->redirect(['roles']);
+    }
+
+    public function actionRoleUpdate($id) {
+        $model = Roles::findOne($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->createLog($this->getNowTime(), $_SESSION['user'], 'Club Role Updated : '.$model->role_id);
+            Yii::$app->getSession()->setFlash('success', 'Club Role '.$model->role_name.' has been updated');
+            return $this->redirect(['role-update', 'id' => $model->role_id]);
+        } else {
+            return $this->render('role-update', [
+                'model' => $model,
+            ]);
+        }
     }
 
     public function actionUpdate($id) {
@@ -260,9 +360,15 @@ class ClubsController extends AdminController {
         $deleteModel = Clubs::findOne($id);
         $this->findModel($id)->delete();
         $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Club Deleted : '.$deleteModel->club_id);
-        Yii::$app->getSession()->setFlash('success', 'Club '.$deleteModel->short_name.' has been updated');
+        Yii::$app->getSession()->setFlash('success', 'Club '.$deleteModel->short_name.' has been Deleted');
 
         return $this->redirect(['index']);
+    }
+
+    public function actionView($id) {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
     }
 
     protected function findModel($id) {

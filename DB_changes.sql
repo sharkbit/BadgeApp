@@ -757,3 +757,44 @@ CHANGE COLUMN `gender` `gender` VARCHAR(2) NULL DEFAULT NULL ;
 
 update BadgeDB.badges set gender='m' where gender=0;
 update BadgeDB.badges set gender='f' where not gender='m';
+
+-- VIP Roles #165
+--  v2.1.19
+ALTER TABLE `BadgeDB`.`clubs` 
+CHANGE COLUMN `allow_self` `allow_members` INT NOT NULL DEFAULT '1';
+UPDATE BadgeDB.clubs set allow_members=1 where is_club>0;
+
+CREATE TABLE `BadgeDB`.`roles` (
+  `role_id` int NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(45) NOT NULL,
+  `disp_order` int DEFAULT NULL,
+  PRIMARY KEY (`role_id`),
+  UNIQUE KEY `role_name_UNIQUE` (`role_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+
+
+CREATE TABLE `BadgeDB`.`badge_to_role` (
+  `badge_number` int NOT NULL,
+  `role` int NOT NULL,
+  `club` int NOT NULL,
+  PRIMARY KEY (`badge_number`,`role`,`club`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE 
+    DEFINER = `root`@`localhost` 
+VIEW `officers` AS
+    SELECT 
+        `badge_to_role`.`badge_number` AS `badge_number`,
+        CONCAT(`badges`.`first_name`,
+                ' ',
+                `badges`.`last_name`) AS `full_name`,
+        `badge_to_role`.`role` AS `role`,
+        `roles`.`role_name` AS `role_name`,
+        `badge_to_role`.`club` AS `club`,
+        `clubs`.`club_name` AS `club_name`,
+        `clubs`.`short_name` AS `short_name`
+    FROM
+        (((`badge_to_role`
+        JOIN `badges` ON ((`badges`.`badge_number` = `badge_to_role`.`badge_number`)))
+        JOIN `roles` ON ((`roles`.`role_id` = `badge_to_role`.`role`)))
+        JOIN `clubs` ON ((`clubs`.`club_id` = `badge_to_role`.`club`)));

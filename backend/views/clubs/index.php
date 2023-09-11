@@ -8,46 +8,57 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Member Club List';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
+if(yii::$app->controller->hasPermission('site/admin-menu')) {
+	$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']]; }
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/index']];
+
+if (isset($_SESSION['pagesize'])) {
+	$pagesize = $_SESSION['pagesize'];
+} else {
+	$pagesize=20;
+}
+$dataProvider->pagination = ['pageSize' => $pagesize];
 ?>
 <div class="clubs-index">
-    <div class="row">
-        <div class="col-xs-12">
-            <h2><?= Html::encode($this->title) ?></h2>
-
-            <div class="btn btn-group pull-right"> 
-                <?= Html::a('Create Club', ['create'], ['class' => 'btn btn-success']) ?> 
-            </div >
-            
-            <?php Pjax::begin(); ?>    
-            <?= GridView::widget([
-                'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
-                'columns' => [
-                    //['class' => 'yii\grid\SerialColumn'],
-                    [   
-                        'attribute'=>'club_id',
-                        'headerOptions' => ['style' => 'width:15%'],
-                    ],
-                    'club_name',
-                    'short_name',
+	<div class="row">
+		<div class="col-xs-12">
+		<?= $this->render('_view-tab-menu') ?>
+	</div>
+		<div class="col-xs-12">
+			<h2><?= Html::encode($this->title) ?></h2>
+<?php if(yii::$app->controller->hasPermission('clubs/create')) { ?>
+			<div class="btn btn-group pull-right">
+				<?= Html::a('Create Club', ['create'], ['class' => 'btn btn-success']) ?>
+			</div >
+<?php } ?>
+			<?php Pjax::begin(); ?>
+			<?= GridView::widget([
+				'dataProvider' => $dataProvider,
+				'filterModel' => $searchModel,
+				'columns' => [
+					//['class' => 'yii\grid\SerialColumn'],
+					[
+						'attribute'=>'club_id',
+						'headerOptions' => ['style' => 'width:15%'],
+					],
+					'club_name',
+					'short_name',
 					[	'attribute'=>'avoid',
 						'header'=>'Words to Avoid',
 					],
-                    'poc_email',
+					'poc_email',
 					[   'attribute'=>'is_club',
-                            'value' => function($model, $attribute) { if($model->is_club==0) {return 'No';} elseif($model->is_club==1){ return 'Yes';} else { return 'AGC Sponsored'; } },
-                            'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_club', ['0' => 'No', '1' => 'Yes' , '2' => 'AGC Sponsored'],['class'=>'form-control','prompt' => 'All']),
-                    ],
-					[   'attribute'=>'allow_self',
-                            'value' => function($model, $attribute){ if($model->allow_self==0) {return 'No';} else {return 'Yes';} },
-                            'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'allow_self', ['0' => 'No', '1' => 'Yes'],['class'=>'form-control','prompt' => 'All']),
-                    ],
-                    [   'attribute'=>'Status',
-                            'value' => function($model, $attribute){ if($model->status==0) {return 'Active';} else {return 'Inactive';} },
-                            'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status', ['0' => 'Active', '1' => 'Inactive'],['class'=>'form-control','prompt' => 'All']),
-                    ],
+							'value' => function($model, $attribute) { if($model->is_club==0) {return 'CIO';} elseif($model->is_club==1){ return 'Club';} else { return 'AGC Sponsored'; } },
+							'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_club', ['1' => 'Club','0' => 'CIO','2' => 'AGC Sponsored'],['class'=>'form-control','prompt' => 'All']),
+					],
+					[   'attribute'=>'allow_members',
+							'value' => function($model, $attribute){ if($model->allow_members==0) {return 'No';} else {return 'Yes';} },
+							'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'allow_members', ['0' => 'No', '1' => 'Yes'],['class'=>'form-control','prompt' => 'All']),
+					],
+					[   'attribute'=>'Status',
+							'value' => function($model, $attribute){ if($model->status==0) {return 'Active';} else {return 'Inactive';} },
+							'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status', ['0' => 'Active', '1' => 'Inactive'],['class'=>'form-control','prompt' => 'All']),
+					],
 		[
 			'header' => 'Actions',
 			'class' => 'yii\grid\ActionColumn',
@@ -70,7 +81,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/ind
 						'data-placement'=>'top',
 						'title'=>'Delete',
 						'data' => [
-							'confirm' => 'Are you sure you want to delete this item?',
+							'confirm' => 'Are you sure you want to delete club '.$model->club_name.'?',
 							'method' => 'post',
 						],
 					]); }
@@ -80,13 +91,13 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/ind
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',
 						'title'=>'View',
-					]); 
+					]);
 				},
 			]
 		],
-                ],
-            ]); ?>
-            <?php Pjax::end(); ?>
-        </div>
-    </div>
+				],
+			]); ?>
+			<?php Pjax::end(); ?>
+		</div>
+	</div>
 </div>

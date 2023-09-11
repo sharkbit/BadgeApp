@@ -20,39 +20,34 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 ?>
 <div class="privileges-index">
     <div class="row">
-        <div class="col-xs-12">
-            <h2><?= Html::encode($this->title) ?></h2>
+	   <div class="col-xs-12">
+		  <h2><?= Html::encode($this->title) ?></h2>
 
-            <div class="btn btn-group pull-right"> 
-                <?= Html::a('Add Privilege', ['create'], ['class' => 'btn btn-success']) ?> 
-            </div >
-            
-            <?php Pjax::begin(); ?>    
-            <?= GridView::widget([
-                'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
-                'columns' => [
-       
-                    [   
-                        'attribute'=>'id',
-                        'headerOptions' => ['style' => 'width:15%'],
-                    ],
-                    'privilege',
-                    'priv_sort',
-                    'timeout',
-					[
-						'attribute'=>'restricted',
-						'value' => function($model, $attribute) { if($model->restricted==0) {return 'No';} else { return 'Yes';} },
-                           
-					],
-                    [
-                        'header'=>'Action',
-                        'class' => 'yii\grid\ActionColumn',
-						'template'=>' {update} {delete} ',
-                    ],
-                ],
-            ]); ?>
-            <?php Pjax::end(); ?>
-        </div>
+		  <div class="btn btn-group pull-right">
+			 <?= Html::a('Add Privilege', ['create'], ['class' => 'btn btn-success']) ?>
+		  </div >
+
+		  <?php Pjax::begin(); ?>
+		  <?= GridView::widget([
+			 'dataProvider' => $dataProvider,
+			 'filterModel' => $searchModel,
+			 'columns' => [
+				[	'attribute'=>'id',
+				    'headerOptions' => ['style' => 'width:15%'],
+				],
+				'privilege',
+				'priv_sort',
+				'timeout',
+				[	'attribute'=>'restricted',
+					'value' => function($model, $attribute) { if($model->restricted==0) {return 'No';} else { return 'Yes';} },
+				],
+				[	'header'=>'Action',
+				    'class' => 'yii\grid\ActionColumn',
+					'template'=>' {update} {delete} ',
+				],
+			 ],
+		  ]); ?>
+		  <?php Pjax::end(); ?>
+	   </div>
     </div>
 </div>

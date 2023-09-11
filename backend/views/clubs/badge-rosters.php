@@ -14,12 +14,16 @@ use yii\widgets\ActiveForm;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Create Badge Rosters for Clubs';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
+if(yii::$app->controller->hasPermission('site/admin-menu')) {
+	$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']]; }
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url'=>['badge-rosters']];
 ?>
 <div class="clubs-index" ng-controller="clubRosterpage">
     <div class="row"> 
-        <idv class="col-xs-12" id="uploadingInfo" style="display: none;">
+        <div class="col-xs-12">
+		<?= $this->render('_view-tab-menu') ?>
+		</div>
+	<idv class="col-xs-12" id="uploadingInfo" style="display: none;">
             <h4> <img src="<?php echo Yii::$app->params['rootUrl']; ?>/images/animation_processing.gif" style="width: 100px;">  Please wait while the Data is being exported.</h4>
         </idv>
         <div class="col-xs-8">

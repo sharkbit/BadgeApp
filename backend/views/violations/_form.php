@@ -26,7 +26,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 	if ($model->badge_involved) { $bg_involved = $model->badge_involved; } else { $bg_involved = ''; }
 	$file_name = "files/badge_photos/".str_pad($bg_involved, 5, '0', STR_PAD_LEFT).".jpg";
 	if(isset($model->was_guest) && ($model->was_guest=='1')) {
-		echo "<img src='/files/badge_photos/guest.png' id='warm'>";
+		echo "<img src='/files/badge_photos/guest.jpg'  width='260' height='340' id='guest'>";
 	}
 	elseif(file_exists($file_name)) {
 		echo "<img src='/".$file_name."?dummy=".rand(10000,99999).

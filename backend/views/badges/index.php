@@ -82,7 +82,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			],
 			[	'attribute' => 'club_id',
 				'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(false,false,2),['class'=>'form-control','prompt' => 'All']),
 				'format' => 'raw',
 				'value'=> function($searchModel, $attribute) {
 					$myClubsNames='';

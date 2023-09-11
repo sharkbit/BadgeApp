@@ -4,17 +4,18 @@ namespace backend\models;
 
 use Yii;
 /**
- * This is the model class for table "work_credits".
+ * This is the model class for table "Officers".
  *
 */
-class agcFacility extends \yii\db\ActiveRecord {
+class BadgeToRoles extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
+	public $full_name;
 	public $pagesize;
 
     public static function tableName() {
-        return 'associat_agcnew.facilities';
+        return 'badge_to_role';
     }
 
     /**
@@ -22,9 +23,8 @@ class agcFacility extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-			[['name'], 'required'],
-			[['active','available_lanes','display_order','facility_id'], 'integer'],
-			[['name'], 'safe'],
+			[['badge_number','club','role'], 'required'],
+			[['badge_number','club','role'], 'integer']
 		];
     }
 
@@ -33,7 +33,7 @@ class agcFacility extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'name' => 'Facility Name'
+            'badge_number' => 'Badge Number',
         ];
     }
 }

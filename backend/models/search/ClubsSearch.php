@@ -18,7 +18,7 @@ class ClubsSearch extends Clubs {
     public function rules() {
         return [
             [['club_id'], 'integer'],
-            [['avoid','club_name', 'short_name', 'poc_email', 'status', 'is_club','allow_self'], 'safe'],
+            [['avoid','club_name', 'short_name', 'poc_email', 'status', 'is_club','allow_members'], 'safe'],
         ];
     }
 
@@ -64,7 +64,7 @@ class ClubsSearch extends Clubs {
 		if(isset($this->short_name)) { $query->andFilterWhere(['like','short_name',$this->short_name]); }
 		if(isset($this->club_id)) { $query->andFilterWhere(['club_id'=>$this->club_id]); }
 		if(isset($this->is_club)) { $query->andFilterWhere(['is_club'=>$this->is_club]); }
-		if(isset($this->allow_self)) { $query->andFilterWhere(['allow_self'=>$this->allow_self]); }
+		if(isset($this->allow_members)) { $query->andFilterWhere(['allow_members'=>$this->allow_members]); }
 		if(isset($this->status)) { $query->andFilterWhere(['status'=>$this->status]); }
 
         return $dataProvider;
