@@ -24,7 +24,10 @@ $YearList = json_decode(str_replace('}{',',',$YearList));
 $confParams  = Params::findOne('1');
 
 $Club_List = (new clubs)->getClubList(false,false,true);
-if(empty($Club_List)) { Yii::$app->response->redirect(['clubs/index'])->send(); return; }
+if(empty($Club_List)) { 
+	$_SESSION['myFlash'] = 'error^Please add a Club First.';
+	Yii::$app->response->redirect(['clubs/index'])->send(); return; 
+}
 ?>
 
 <div class="badges-form">

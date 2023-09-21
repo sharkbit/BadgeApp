@@ -201,6 +201,11 @@ class AdminController extends \yii\web\Controller {
 				exit;
 			}
 		}
+		if(isset($_SESSION['myFlash'])) {
+			$flash=explode('^',$_SESSION['myFlash']);
+			Yii::$app->getSession()->setFlash($flash[0], $flash[1]);
+			unset ($_SESSION['myFlash']);
+		}
 		return parent::beforeAction($event);
 	}
 
