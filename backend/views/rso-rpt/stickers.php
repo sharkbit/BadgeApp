@@ -172,14 +172,18 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 
         $("#java-show-move").click(function(e) {
             e.preventDefault();
-			$("#Move-Stickers").show();
-			$("#Add-Stickers").hide();
+            if(document.getElementById("Move-Stickers").style.display=='none') {
+				$("#Move-Stickers").show();
+            } else { $("#Move-Stickers").hide(); }
+            $("#Add-Stickers").hide();
 		});
 
 		$("#java-show-add").click(function(e) {
             e.preventDefault();
-			$("#Move-Stickers").hide();
-			$("#Add-Stickers").show();
+            if(document.getElementById("Add-Stickers").style.display=='none') {
+				$("#Add-Stickers").show();
+            } else { $("#Add-Stickers").hide(); }
+            $("#Move-Stickers").hide();
 		});
 
 		$("#stickerssearch-stkrs").keyup(function(e){
