@@ -257,4 +257,25 @@ class PaymentController extends AdminController {
 		$inventory = $dataService->Query('SELECT * FROM Item');
 		return $inventory;
 	}
+
+	public static function GetPaymentTypes($confParams) {
+		$myList=['cash'=>'Cash','check'=>'Check'];
+		
+		if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 
+			|| strlen($confParams->conv_d_pin)>2))  {
+			if(Yii::$app->params['env'] == 'prod') {
+				$myList= array_merge($myList,['creditnow'=>'Credit Card Now!']);
+			} else { $myList= array_merge($myList,['creditnow'=>'TEST CC (Do not use)']); $is_dev=true; }
+		}
+		if(yii::$app->controller->hasPermission('sales/report')) {
+			$myList= array_merge($myList,['terminal'=>'Terminal']);
+		} 
+		if(yii::$app->controller->hasPermission('sales/all')) {
+			$myList= array_merge($myList,['online'=>'Online','other'=>'Other']);
+		}
+		if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->pp_id)>2 || strlen($confParams->pp_sec)>2))  {
+			$myList= array_merge($myList,['paypal'=>'PayPal']);
+		}
+		return $myList;
+	}
 }

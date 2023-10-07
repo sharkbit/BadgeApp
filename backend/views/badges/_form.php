@@ -28,6 +28,8 @@ if(empty($Club_List)) {
 	$_SESSION['myFlash'] = 'error^Please add a Club First.';
 	Yii::$app->response->redirect(['clubs/index'])->send(); return; 
 }
+
+$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
 
 <div class="badges-form">
@@ -240,15 +242,7 @@ if(empty($Club_List)) {
 					<?= $form->field($model, 'tax')->hiddenInput()->label(false).PHP_EOL;?>
                 </div>
                 <div class="col-xs-12 col-sm-12">
-      <?php if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
-				if(Yii::$app->params['env'] == 'prod') {
-					$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online','other'=>'Other'];
-				} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)','online'=>'Online','other'=>'Other']; }
-
-			} else {
-				$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online'];
-			}
-			if($model->amt_due <=0) $model->payment_method='cash';
+      <?php if($model->amt_due <=0) $model->payment_method='cash';
 			echo $form->field($model, 'payment_method')->dropDownList($myList,['prompt'=>'select']).PHP_EOL; ?>
                 </div>
 

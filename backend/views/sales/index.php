@@ -14,24 +14,15 @@ $confParams  = Params::findOne('1');
 
 $is_dev=false;
 if(yii::$app->controller->hasPermission('sales/all')) {
-	$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online','other'=>'Other'];
 	$pgLimited=false;
 } else {
-	$myList=[];
 	$pgLimited=true;
 	if(is_null($model->badge_number)) {
 		$_REQUEST['badge']=$_SESSION['badge_number'];
 	}
 }
 
-if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
-	if(Yii::$app->params['env'] == 'prod') {
-		$myList= array_merge($myList,['creditnow'=>'Credit Card Now!']);
-	} else { $myList= array_merge($myList,['creditnow'=>'TEST CC (Do not use)']); $is_dev=true;}
-}
-if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->pp_id)>2 || strlen($confParams->pp_sec)>2))  {
-	$myList= array_merge($myList,['paypal'=>'PayPal']);
-}
+$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 
 // If post from Guest page Charge for All unprecessed Guests
 if (isset($_REQUEST['badge'])) {

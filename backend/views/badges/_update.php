@@ -60,6 +60,8 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }
 	if ($model->canRenew($model->status)) {} else { $hide_Cert=true; }
 	if ((int)$DateExpires < (int)$badge_year_chk ) { $hide_Cert=true; }
+
+	$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
 <div class="badges-form">
 <div class="row">
@@ -327,15 +329,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				])->label('WT Date').PHP_EOL;;
 			?>
 				<?= $form1->field($badgeSubscriptions, 'wt_instru')->textInput([])->label('WT Instru').PHP_EOL; ?>
-		<?php }
-			if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 || strlen($confParams->conv_d_pin)>2))  {
-				if(Yii::$app->params['env'] == 'prod') {
-					$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!','online'=>'Online','other'=>'Other'];
-				} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)','online'=>'Online','other'=>'Other']; }
-			} else {
-				$myList=['cash'=>'Cash','check'=>'Check','online'=>'Online'];
-			}
-		?>
+		<?php } ?>
 		<?= $form1->field($badgeSubscriptions, 'payment_type')->dropdownList($myList,['prompt'=>'Payment Type']).PHP_EOL;?>
 
 				<div id="cc_form_div" style="display:none; margin-left: 10px">

@@ -37,13 +37,7 @@ $confParams = Params::findOne('1');
 $guest_band = (new backend\models\StoreItems)->find()->where(['sku'=>$confParams->guest_sku])->one();
 if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2>'; return;}
 
-if(yii::$app->controller->hasPermission('payment/charge')) {
-	if(Yii::$app->params['env'] == 'prod') {
-		$myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit Card Now!'];
-	} else { $myList=['cash'=>'Cash','check'=>'Check','creditnow'=>'TEST CC (Do not use)']; }
-} else {
-	$myList=['cash'=>'Cash','check'=>'Check'];
-}
+$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
 
 <div class="guest-form" ng-controller="GuestFrom">
