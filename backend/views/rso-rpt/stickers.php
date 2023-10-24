@@ -68,7 +68,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		<h2 class='pull-right'>Move Stickers:</h2>
 	</div>
 	<div class="col-xs-2 col-sm-1">
-		<?= $form->field($searchModel, 'yr_mv')->dropDownlist(yii::$app->controller->getYear()); ?>
+		<?= $form->field($searchModel, 'yr_mv')->dropDownlist(yii::$app->controller->getYear(),['value' => date('Y',strtotime(yii::$app->controller->getNowTime())) ]); ?>
 	</div>
 	<div class="col-xs-4 col-sm-2">
 		<?= $form->field($searchModel, 'stkrs')->textinput(['placeholder'=>'2,4,7-9']); ?>
@@ -90,7 +90,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		<h2 class='pull-right'>Add Stickers:</h2>
 	</div>
 	<div class="col-xs-2 col-sm-1">
-		<?= $form->field($searchModel, 'yr')->dropDownlist(yii::$app->controller->getYear()); ?>
+		<?= $form->field($searchModel, 'yr')->dropDownlist(yii::$app->controller->getYear(),['value' => date('Y',strtotime(yii::$app->controller->getNowTime())) ]); ?>
 	</div>
 	<div class="col-xs-2 col-sm-1">
 		<?= $form->field($searchModel, 'start')->textinput(); ?>
