@@ -204,17 +204,20 @@ class SiteController extends AdminController {
 	}
 
 	public function actionIndex() {
+		$nowYear = date('Y',strtotime($this->getNowTime()));
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
-		$badges = Badges::find()->where(['>', 'expires', $nowDate])->all();
 		$sell_date = Params::findOne('1')->sell_date;
-		$chkDate = date('Y-'.$sell_date,strtotime($this->getNowTime()));
+		$chkDate = date('Y-'.$sell_date,strtotime($nowDate));
 		if($chkDate <= $nowDate) { $add=1; } else { $add=0; }
-		$badge_year = BadgeSubscriptions::find()->where(['>=','badge_year',date('Y')+$add])->all();
+		$badge_yearA = $nowYear+$add;
+		$badge_year_a = BadgeSubscriptions::find()->where(['>=','badge_year',$badge_yearA])->all();
+		$badge_yearB = (int)$nowYear + (int)$add -1;
+		$badge_year_b = BadgeSubscriptions::find()->where(['>=','badge_year',$badge_yearB])->all();
 		$guests = Guest::find()->where(['is', 'time_out',null])->all();
 
 		return $this->render('index',[
-			'badgeyear'=> count($badge_year),
-			'badgeCount'=> count($badges),
+			'badgeyearA'=> [$badge_yearA,count($badge_year_a)],
+			'badgeyearB'=> [$badge_yearB,count($badge_year_b)],
 			'guestCount'=> count($guests)
 		]);
 	}
