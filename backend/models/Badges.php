@@ -121,23 +121,31 @@ class Badges extends \yii\db\ActiveRecord {
 	public static function isExpired($badge_number,$confParams) {
 		$bgyr = BadgeSubscriptions::find()->where(['badge_number'=>$badge_number])->orderBy(['badge_year'=>SORT_DESC])->one();
 		if ($bgyr) {
+			$cur_Badge_year = $bgyr->badge_year;
+			$cur_Year = date('Y',strtotime(yii::$app->controller->getNowTime()));
+
 			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
-			if ($DateChk <= $nowDate) {
-				$nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));
-			} else {
+//yii::$app->controller->createLog(true, 'trex-isexp 129', 'found Sub');
+			if ($cur_Badge_year >= $cur_Year) {
+//yii::$app->controller->createLog(true, 'trex-isexp 131','mem Year: '.$cur_Badge_year.' >= '.$cur_Year);
+				return false;
+			} elseif ($DateChk <= $nowDate) {
 				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
+				yii::$app->controller->createLog(true, 'trex-isexp 137', 'date '.$nextExpire);
+			} else {
+				yii::$app->controller->createLog(true, 'trex-isexp 139', 'How?');
 			}
-			$cur_Badge_year = $bgyr->badge_year;
-			$WtExpiresDate = date('Y', strtotime("-2 years",strtotime($nowDate)));
 			$badge_year_chk = date('Y',  strtotime($nextExpire.' - 1 year'));
-
+//yii::$app->controller->createLog(true, 'trex-isexp 140 ','Member Year: '.$cur_Badge_year.' < '.$badge_year_chk);
 			// mem_type needs to renew? Test:
 			if ((int)$cur_Badge_year < (int)$badge_year_chk) {
+//yii::$app->controller->createLog(true, 'trex-isexp 143 true', 'expired');
 				//echo "//is expired";
 				return true;
 			}
 		}
+//yii::$app->controller->createLog(true, 'trex-isexp 148 false', 'how ?');
 		return false;
 	}
 

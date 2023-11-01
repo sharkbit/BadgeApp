@@ -802,3 +802,32 @@ VIEW `officers` AS
 -- ################################
 -- #- Core Database File Updated -#
 -- ################################
+
+-- For #165 Email
+USE `BadgeDB`;
+ALTER TABLE `BadgeDB`.`mass_email` 
+ADD COLUMN `mass_to_co` JSON NULL DEFAULT NULL AFTER `mass_to_users`;
+
+CREATE 
+     OR REPLACE ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `officers` AS
+    SELECT 
+        `badge_to_role`.`badge_number` AS `badge_number`,
+        CONCAT(`badges`.`first_name`,
+                ' ',
+                `badges`.`last_name`) AS `full_name`,
+        `badge_to_role`.`role` AS `role`,
+        `roles`.`role_name` AS `role_name`,
+        `badge_to_role`.`club` AS `club`,
+        `clubs`.`club_name` AS `club_name`,
+        `clubs`.`short_name` AS `short_name`,
+        `badges`.`email` as `email`,
+        `badges`.`email_vrfy` as `email_vrfy`
+    FROM
+        (((`badge_to_role`
+        JOIN `badges` ON ((`badges`.`badge_number` = `badge_to_role`.`badge_number`)))
+        JOIN `roles` ON ((`roles`.`role_id` = `badge_to_role`.`role`)))
+        JOIN `clubs` ON ((`clubs`.`club_id` = `badge_to_role`.`club`)));
+
