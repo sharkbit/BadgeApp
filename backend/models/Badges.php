@@ -125,28 +125,21 @@ class Badges extends \yii\db\ActiveRecord {
 			$cur_Year = date('Y',strtotime(yii::$app->controller->getNowTime()));
 
 			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
-			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
-//yii::$app->controller->createLog(true, 'trex-isexp 129', 'found Sub');
+			$DateChk = date("Y-01-31", strtotime(yii::$app->controller->getNowTime()));
+
 			if ($cur_Badge_year >= $cur_Year) {
-//yii::$app->controller->createLog(true, 'trex-isexp 131','mem Year: '.$cur_Badge_year.' >= '.$cur_Year);
+				//is Valid
 				return false;
-			} elseif ($DateChk <= $nowDate) {
-				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
-				yii::$app->controller->createLog(true, 'trex-isexp 137', 'date '.$nextExpire);
-			} else {
-				yii::$app->controller->createLog(true, 'trex-isexp 139', 'How?');
-			}
-			$badge_year_chk = date('Y',  strtotime($nextExpire.' - 1 year'));
-//yii::$app->controller->createLog(true, 'trex-isexp 140 ','Member Year: '.$cur_Badge_year.' < '.$badge_year_chk);
-			// mem_type needs to renew? Test:
-			if ((int)$cur_Badge_year < (int)$badge_year_chk) {
-//yii::$app->controller->createLog(true, 'trex-isexp 143 true', 'expired');
-				//echo "//is expired";
-				return true;
+			}  elseif ($DateChk >= $nowDate) {
+				//is Grace Period
+				yii::$app->controller->createLog(false, 'trex-isexp 137', 'is grace');
+				$last_Year=$cur_Year-1;
+				if ($cur_Badge_year <= $last_Year) {
+					yii::$app->controller->createLog(false, 'trex-isexp 137 false', 'cur '.$cur_Badge_year.' <= '.$last_Year);
+					return false; }
 			}
 		}
-//yii::$app->controller->createLog(true, 'trex-isexp 148 false', 'how ?');
-		return false;
+		return true;
 	}
 
 	public function getMembershipType($mem_type='') {

@@ -7,6 +7,7 @@ use backend\controllers\AdminController;
 use backend\models\Badges;
 use backend\models\Events;
 use backend\models\Event_Att;
+use backend\models\Params;
 use backend\models\search\EventsSearch;
 use backend\models\WorkCredits;
 
@@ -166,8 +167,9 @@ class EventsController extends AdminController {
     public function actionReg($id,$badge=null,$f_name=null,$l_name=null,$e_wb=null) {
 		if($badge>0){
 			yii::$app->controller->createLog(false, 'trex_C_EC reg', 'badge ');
-			$badge_chk = Badges::find()->where(['>','expires',date('Y-02-01',time())])->andwhere(['badge_number'=>$badge])->one();
-			if($badge_chk){
+			$params = Params::findOne('1');
+			$isExpired = Badges::isExpired($badge,$params);
+			if(!$isExpired) {
 
 				$event_chk = Event_Att::find()->where(['ea_event_id'=>$id,'ea_badge'=>$badge])->one();
 				if($event_chk) {

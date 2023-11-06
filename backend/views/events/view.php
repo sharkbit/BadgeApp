@@ -74,6 +74,7 @@ $div_closed=false;
 <div class="events-attendees-form">
 
 <?php $form = ActiveForm::begin(['id'=>'event_att']); ?>
+	<?= Html::input('hidden',Yii::$app->request->csrfParam,Yii::$app->request->csrfToken)?>
 	<?= $form->field($model_ea, 'ea_event_id')->hiddenInput(['value'=>$model->e_id])->label(false).PHP_EOL ?>
 	<?= $form->field($model_ea, 'ea_type')->hiddenInput(['value'=>$model->e_type])->label(false).PHP_EOL ?>
 <div class="row" style="margin: auto;">
@@ -177,7 +178,8 @@ if($att_count>0) {
 	$('#event_att-ea_badge').on('input', function() {
 		document.getElementById("event_att-ea_f_name").value='';
 		document.getElementById("event_att-ea_l_name").value='';
-		document.getElementById("event_att-ea_wb_serial").value='';
+		if (document.getElementById("event_att-ea_wb_serial") != null) {
+		    document.getElementById("event_att-ea_wb_serial").value=''; }
 		var badgeNumber = $(this).val();
 		if((badgeNumber!='') && (badgeNumber!=0)) {
 			changeBadgeNam(badgeNumber);
@@ -235,7 +237,7 @@ if($att_count>0) {
 	});
 
 	function changeBadgeNam(badgeNumber) {
-		var formData = $("#w0").serializeArray();
+		var formData = $("#event_att").serializeArray();
 		$("#badge_name").html('Searching');
 		jQuery.ajax({
 			method: 'POST',

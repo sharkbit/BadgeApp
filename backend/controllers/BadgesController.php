@@ -768,7 +768,7 @@ class BadgesController extends AdminController {
 			$responceB = Json::encode($mergtwo,JSON_PRETTY_PRINT);
 			$responce=trim(rtrim($responceA,"}")).",".ltrim($responceB,"{");
 		} else {
-			$responce=Json::encode(['success'=>false]);
+			$responce=Json::encode(['success'=>false,'first_name'=>'No Badge Found','last_name'=>'','isExpired'=>true]);
 		}
 
 		if($rtn){
