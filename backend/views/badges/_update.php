@@ -44,6 +44,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
         $New_WT_Needed = true;
 	} else { $New_WT_Needed = false; }
 
+	$isExpired = Badges::isExpired($model->badge_number,$confParams);
 	// mem_type needs to renew? Test:
 	if ((int)$DateExpires < (int)$badge_year_chk) {									// Is BadgeSubscription Current?
 		if (yii::$app->controller->hasPermission('badges/renew-membership')) {		// Can User Process & Renew Badges?
@@ -59,7 +60,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	// Show Certifications?
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }
 	if ($model->canRenew($model->status)) {} else { $hide_Cert=true; }
-	if ((int)$DateExpires < (int)$badge_year_chk ) { $hide_Cert=true; }
+	if ($isExpired) { $hide_Cert=true; }
 
 	$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
