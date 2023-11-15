@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\models\Badges;
 use backend\models\MassEmail;
+use backend\models\Officers;
 use backend\models\User;
 use backend\models\search\ParamsSearch;
 use backend\models\search\MassEmailSearch;
@@ -36,7 +37,6 @@ class MassEmailController extends AdminController {
         if ($model->load(Yii::$app->request->post())){
 			$model->mass_created = date('Y-m-d H:i:s', strtotime($this->getNowTime()));
 			$model->mass_created_by =  $_SESSION['badge_number'];
-			$model->mass_to_users = str_replace('"',"",json_encode($model->mass_to_users));
 
 			if(($_REQUEST['MassEmail']['to_active']) || ($_REQUEST['MassEmail']['to_expired'])) {
 				$model->mass_to='';
@@ -79,16 +79,16 @@ class MassEmailController extends AdminController {
 	public function actionProcess($id) {
 		if (!$id) {return $this->redirect('index'); }
 		$model = MassEmail::findOne($id);
-		
+
 		if(!$model) {return $this->redirect('index'); }
 		if ($model->mass_running == True) {
-			
+
 		//	$timenow = strtotime($this->getNowTime());
 		//	$timetest = strtotime('+20 minutes', strtotime($model->mass_runtime));
-		
+
 		//	if ($timenow < $timetest) {
 				yii::$app->controller->createEmailLog(true, 'Mass-Email:process', 'Already Running...');
-				Yii::$app->response->data .= "Emailer Running."; 
+				Yii::$app->response->data .= "Emailer Running.";
 				return "Process: Emailer Running.";
 		} else {
 			$model->mass_running = True;
@@ -100,18 +100,32 @@ class MassEmailController extends AdminController {
 		if (!$email) {
 			Yii::$app->getSession()->setFlash('error', 'Email System disabled'); echo "email-setup failed";
 			yii::$app->controller->createEmailLog(true, 'Mass-Email:', 'Disabled');
+			$model->mass_running = false;
+			$model->save(false);
 			return;
 		}
 		$active_date = date('Y-m-d', strtotime($this->getNowTime()));
 
-		if(strlen($model->mass_to_users) > 1) {
-			echo " process user ";
+		$members=[];
+		if(strpos(" ".$model->mass_to, '*A') && strpos(" ".$model->mass_to, '*E')) {
+			$getMembers = Badges::find()->where(['not',['email'=>null]])->andWhere('email_vrfy=1')->orderBy(['badge_number' => SORT_ASC])->all();
+			array_push($members,$getMembers) ;
+		} elseif(strpos(" ".$model->mass_to, '*A')) {
+			$getMembers = Badges::find()->where(['not',['email'=>null]])->andWhere(['>', 'expires', $active_date])->andWhere('email_vrfy=1')->orderBy(['badge_number' => SORT_ASC])->all();
+			array_push($members,$getMembers) ;
+		} elseif(strpos(" ".$model->mass_to, '*E')) {
+			$getMembers = Badges::find()->where(['not',['email'=>null]])->andWhere(['<', 'expires', $active_date])->andWhere('email_vrfy=1')->orderBy(['badge_number' => SORT_ASC])->all();
+			array_push($members,$getMembers) ;
+		}
+
+		yii::$app->controller->createEmailLog(false, 'Mass-Email:', 'process to user');
+		if($model->mass_to_users) {
+			echo " process user <br />";
 			$where='';
-			foreach(json_decode($model->mass_to_users) as $usr) {
+			foreach($model->mass_to_users as $usr) {
 				$where .= "JSON_CONTAINS(privilege,'".$usr."') OR ";
 			} $where = rtrim($where," OR ");
 			$myUsers = User::find()->where("email<>'' AND ($where)")->all(); //->createCommand()->sql; //echo $myUsers->sql; // exit;
-			$members=[];
 			foreach($myUsers as $usr){
 				$TstEmail = new Badges();
 				if($usr->badge_number>0) {$TstEmail->badge_number = $usr->badge_number;} else {$TstEmail->badge_number = 0;}
@@ -122,13 +136,34 @@ class MassEmailController extends AdminController {
 				$TstEmail->subcat=true;
 				array_push($members,$TstEmail) ;
 			}
+			echo '<pre>'; var_dump($members); echo '</pre><hr />';
+		}
+
+		yii::$app->controller->createEmailLog(false, 'Mass-Email:', 'process to officers');
+		if($model->mass_to_co) {
+			echo " process club officers <br />";
+			$where='';
+			foreach($model->mass_to_co as $officer) {
+				$where .= "role=".$officer." OR ";
+			} $where = rtrim($where," OR ");
+			$myOfficers = Officers::find()->where("email_vrfy=1 AND email<>'' AND $where")->all(); //->createCommand()->sql; echo $myOfficers->sql;  exit;
+			foreach($myOfficers as $officer){
+				$TstEmail = new Badges();
+				if($officer->badge_number>0) {$TstEmail->badge_number = $officer->badge_number;} else {$TstEmail->badge_number = 0;}
+				$TstEmail -> email = trim($officer->email);
+				$TstEmail->first_name=$officer->full_name;
+				$TstEmail->last_name='';
+				$TstEmail->status = "approved";
+				$TstEmail->subcat=true;
+				array_push($members,$TstEmail) ;
+			}
+			echo '<pre>'; var_dump($members); echo '</pre><hr />';
 		}
 
 		if(strpos(" ".$model->mass_to,'@')) {
 			if(strpos($model->mass_to,';')) {
 				$emails=explode(';',$model->mass_to);
 			} else { $emails = array($model->mass_to); }
-			if(!isset($members)) { $members=[]; }
 			foreach($emails as $anEmail) {
 				if (filter_var(trim($anEmail), FILTER_VALIDATE_EMAIL)) {
 					$TstEmail = new Badges();
@@ -144,18 +179,20 @@ class MassEmailController extends AdminController {
 					Yii::$app->response->data .= "Bad Email <br />\n";
 				}
 			}
-		} elseif(strpos(" ".$model->mass_to, '*A') && strpos(" ".$model->mass_to, '*E')) {
-			$members = Badges::find()->where(['not',['email'=>null]])->andWhere('email_vrfy=1')->orderBy(['badge_number' => SORT_ASC])->all();
-		} elseif(strpos(" ".$model->mass_to, '*A')) {
-			$members = Badges::find()->where(['not',['email'=>null]])->andWhere(['>', 'expires', $active_date])->andWhere('email_vrfy=1')->orderBy(['badge_number' => SORT_ASC])->all();
-		} elseif(strpos(" ".$model->mass_to, '*E')) {
-			$members = Badges::find()->where(['not',['email'=>null]])->andWhere(['<', 'expires', $active_date])->andWhere('email_vrfy=1')->orderBy(['badge_number' => SORT_ASC])->all();
-		} else { Yii::$app->response->data .= "Nothing Checked <br />\n"; exit; }
+		}
+
+		if (!members) {
+			Yii::$app->response->data .= "No Members Found <br />\n";
+			$model->mass_running = false;
+			$model->save(false);
+			exit;
+		}
 
 		$model->mass_start =  date('Y-m-d H:i:s', strtotime($this->getNowTime()));
 		$model->mass_running = true;
 		$model->save(false);
 
+		yii::$app->controller->createEmailLog(false, 'Mass-Email:', 'ready to start sending');
 		foreach ($members as $key => $value) {
 			//Auto Continue (if it breaks?)
 			if(($model->mass_lastbadge) && $value['badge_number'] <= $model->mass_lastbadge) { continue; }
@@ -181,14 +218,14 @@ class MassEmailController extends AdminController {
 						$mail->addAddress($value['email']);
 
 						$mail->Subject = $model->mass_subject;
-						
+
 						$hi = "<p>Hello ".trim($value['first_name']." ".$value['last_name']).",</p>";
 						if($value['subcat']==true) {$foot='';} else {
 						$foot = '<br /><br />< <a href="'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$value['email'].'"> UnSubscribe from the AGC mailer</a> >';}
 						$mail->Body = $hi.$model->mass_body.$foot;
-						
+
 						sleep(3);  // Default 3,  Throttled by cPanel ~ 2000 Emails per Hour
-						$mail->send();
+	// testing					$mail->send();
 						//echo ->  Yii::$app->response->data = "Message has been sent<br />?n";
 						yii::$app->controller->createEmailLog(true, 'Mass-Email', "Sent to ".$value['email'].', '.$value['expires'].', '.$value['badge_number']);
 					} catch (Exception $e) {
@@ -221,7 +258,7 @@ class MassEmailController extends AdminController {
 			$model->mass_runtime = NULL;
 			$model->mass_finished = NULL;
 		} elseif ($model->mass_running == True) {
-			Yii::$app->response->data .= "Emailer Running."; 
+			Yii::$app->response->data .= "Emailer Running.";
 			return "Send: Emailer Running.";
 		} else {
 			// Run!!
@@ -239,24 +276,23 @@ class MassEmailController extends AdminController {
 			}
 			$model->mass_updated = date('Y-m-d H:i:s', strtotime($this->getNowTime()));
 			$model->mass_updated_by = $_SESSION['badge_number'];
-			$model->mass_to_users = str_replace('"',"",json_encode($model->mass_to_users));
 			$model->save(false);
 		}
 
 		$cmd = 'wget -O/dev/null -q --no-check-certificate '. yii::$app->params['rootUrl'].'/mass-email/process?id='.$id;
 		shell_exec($cmd);
 		yii::$app->controller->createEmailLog(true, 'Mass-Email:send', 'Send Start!');
-		return json_encode(['ststus'=>'Success','msg'=>'Processing was started']);
+		return json_encode(['status'=>'Success','msg'=>'Processing was started']);
 	}
 
     public function actionUpdate($id) {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-
 			$model->mass_updated = date('Y-m-d H:i:s', strtotime($this->getNowTime()));
 			$model->mass_updated_by =  $_SESSION['badge_number'];
-			$model->mass_to_users = str_replace('"',"",json_encode($model->mass_to_users));
+			if($_REQUEST['MassEmail']['to_users']==0) { $model->mass_to_users = null; }
+			if($_REQUEST['MassEmail']['to_club_o']==0) { $model->mass_to_co = null; }
 			if(($_REQUEST['MassEmail']['to_active']) || ($_REQUEST['MassEmail']['to_expired'])) {
 				$model->mass_to='';
 				if ($_REQUEST['MassEmail']['to_active']) {

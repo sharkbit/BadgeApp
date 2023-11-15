@@ -38,7 +38,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	}
 	$DateExpires = $model->BadgeYear;
 	$WtExpiresDate = $DateExpires + 2;
-	$model->badge_year = $badge_year_chk = date('Y',  strtotime($nextExpire.' - 1 year'));
+	$model->badge_year = $badge_year_chk = date('Y', strtotime($nextExpire.' - 1 year'));
 
     if((int)$WtExpiresDate < (int)$badge_year_chk) {
         $New_WT_Needed = true;

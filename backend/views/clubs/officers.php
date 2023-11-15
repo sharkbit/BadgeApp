@@ -54,6 +54,15 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club',(new clubs)->getClubList(false,false,2),['class'=>'form-control','prompt' => 'All']),
 				],
 				'short_name',
+				[   'attribute'=>'email',
+					'format' => 'raw',
+					'value'=> function($model, $attribute) {
+						if($model->email_vrfy) {
+							$vrfy='<i class="fa fa-thumbs-up" title="Email Verified"></i>';}
+							else {$vrfy='<i style="color: red" class="fa fa-thumbs-down" title="Email Not Verified"></i>';}
+						return $model->email. ' &nbsp '.$vrfy;
+					},
+				],
 				[	'header'=>'Action',
 					'class' => 'yii\grid\ActionColumn',
 					'template'=>' {update} {delete} ',

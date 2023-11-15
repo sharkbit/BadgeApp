@@ -1,10 +1,14 @@
 <?php
 
 use backend\controllers\AdminController;
+use backend\models\Roles;
 use backend\models\User;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
+if($model->mass_to_co) {
+	$model->to_club_o=true;
+}
 if(strpos(" ".$model->mass_to,'@')) {
 	$model->to_single=true;
 	$model->to_email=$model->mass_to;
@@ -13,8 +17,7 @@ if(strpos(" ".$model->mass_to,'@')) {
 	if (strpos(" ".$model->mass_to, '*E')) { $model->to_expired=true; }
 }
 if($model->mass_to_users<>'') {
-	$model->to_users=true;
-	$model->mass_to_users = json_decode($model->mass_to_users);
+	$model->to_users=true;	
 }
 
 $form = ActiveForm::begin(['id'=>'email']); ?>
@@ -30,6 +33,9 @@ $form = ActiveForm::begin(['id'=>'email']); ?>
 		<?=Html::label("Email To:")?>
 	</div>
 	<div class="col-xs-6 col-sm-2" >
+		<?= $form->field($model, 'to_club_o')->checkbox() ?>
+	</div>
+	<div class="col-xs-6 col-sm-2" >
 		<?= $form->field($model, 'to_active')->checkbox() ?>
 	</div>
 	<div class="col-xs-6 col-sm-2" style="background-color: WhiteSmoke;">
@@ -40,6 +46,9 @@ $form = ActiveForm::begin(['id'=>'email']); ?>
 	</div>
 	<div class="col-xs-6 col-sm-2" >
 		<?= $form->field($model, 'to_single')->checkbox() ?>
+	</div>
+	<div class="col-xs-12 col-sm-6" id="to_co" >
+		<?=$form->field($model, 'mass_to_co')->dropDownList((new Roles)->getRoles(), ['value'=>$model->mass_to_co,'prompt'=>'select','id'=>'mass_to_co','multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 	</div>
 	<div class="col-xs-12 col-sm-6" id="to_usr" >
 		<?=$form->field($model, 'mass_to_users')->dropDownList((new User)->getPrivList(), ['value'=>$model->mass_to_users,'prompt'=>'select','id'=>'mass_to_users','multiple'=>true, 'size'=>false]).PHP_EOL; ?>
@@ -124,8 +133,10 @@ function validateEmail(email) {
   return re.test(email);
 }
 
-$("#mass_to_users").select2({placeholder_text_multiple:'Select User Roll',width: "100%"})
+$("#mass_to_co").select2({placeholder_text_multiple:'Select Officer Roll',width: "100%"});
+$("#mass_to_users").select2({placeholder_text_multiple:'Select User Roll',width: "100%"});
 
+	if (!document.getElementById("massemail-to_club_o").checked) {$("#to_co").hide(); }
 	if (!document.getElementById("massemail-to_single").checked) {$("#to_email_addr").hide(); }
 	if (!document.getElementById("massemail-to_users").checked) {$("#to_usr").hide(); }
 
@@ -135,7 +146,17 @@ $("#mass_to_users").select2({placeholder_text_multiple:'Select User Roll',width:
 		var ex=document.getElementById('email_prev');
 		ex.innerHTML = $("#massemail-mass_body").val();
 	  }, false);
-	}
+	};
+
+$("#massemail-to_club_o").change(function(event) {
+	console.log('to_club_o');
+    var checkbox = event.target;
+    if (checkbox.checked) {
+		$("#to_co").show();
+		document.getElementById("massemail-to_active").checked=false;
+		document.getElementById("massemail-to_expired").checked=false;
+    } else {$("#to_co").hide();}
+});
 
 $("#massemail-to_single").change(function(event) {
 	console.log('to_single');
@@ -184,7 +205,7 @@ $("#massemail-to_users").change(function(event) {
 $("#massemail-to_email").change(function(e) {
 	var to_email = $("#massemail-to_email")
 	emails= to_email.val().replace(/(;$)/g, "").split(/,|;/);
-	
+
 	var good_emails = ''; var bad_emails='';
 	emails.forEach(function (addr) {
 		console.log(addr);
@@ -197,16 +218,16 @@ $("#massemail-to_email").change(function(e) {
 	to_email.val(good_emails.slice(0,-1));
 	if (bad_emails != '') {$("#email_err").html('<b  style="color:red;">Email not valid: '+bad_emails.slice(0,-1)+'</b><br><br>');} else {$("#email_err").html('');}
 	console.log("good:"+good_emails+", Bad emailz: "+bad_emails);
-	
+
 });
 
 $("#email_send").click(function() {
 
 	if($("#massemail-mass_subject").val().length < 2) {
 		$("p#email_info").html("<b>Check Message Subject.</b>"); return; }
-	if(document.getElementById("massemail-to_active").checked==false && 
-		document.getElementById("massemail-to_expired").checked==false && 
-		document.getElementById("massemail-to_users").checked==false && 
+	if(document.getElementById("massemail-to_active").checked==false &&
+		document.getElementById("massemail-to_expired").checked==false &&
+		document.getElementById("massemail-to_users").checked==false &&
 		document.getElementById("massemail-to_single").checked==false) {
 			$("p#email_info").html("<b>No Email Groupd Selected.</b>"); return; }
 

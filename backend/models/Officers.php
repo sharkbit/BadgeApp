@@ -23,8 +23,8 @@ class Officers extends \yii\db\ActiveRecord {
     public function rules() {
         return [
 			[['badge_number','club','role'], 'required'],
-			[['badge_number','club','role'], 'integer'],
-			[['club_name','role_name','short_name'], 'safe'],
+			[['badge_number','club','email_vrfy','role'], 'integer'],
+			[['club_name','email','role_name','short_name'], 'safe'],
 		];
     }
 
@@ -35,6 +35,7 @@ class Officers extends \yii\db\ActiveRecord {
         return [
             'badge_number' => 'Badge Number',
 			'club_name' => 'Club',
+			'email_vrfy' => 'Email Verified',
 			'role_name' => 'Role',
 			'short_name' => 'Club Short Name'			
         ];

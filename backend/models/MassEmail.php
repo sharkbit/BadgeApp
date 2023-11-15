@@ -11,6 +11,7 @@ use Yii;
 class MassEmail extends \yii\db\ActiveRecord{
 
 	public $to_email;
+	public $to_club_o;
 	public $to_active;
 	public $to_expired;
 	public $to_single;
@@ -23,22 +24,24 @@ class MassEmail extends \yii\db\ActiveRecord{
     public function rules() {
         return [
 			[['mass_subject','mass_body'], 'required'],
-
 			[['mass_to','mass_subject','mass_body'], 'safe'],
 			[['id','mass_lastbadge','mass_created_by','mass_updated_by','mass_running'], 'number'],
+			[['mass_to_co','mass_to_users'],'integer','allowArray' => true],
 			//[['type'], 'string', 'max' => 25],
 			['mass_reply_to',  'email'],
-			[['mass_to_users','mass_start','mass_finished','mass_created','mass_updated','mass_runtime','mass_reply_name'],'safe']
+			[['mass_start','mass_finished','mass_created','mass_updated','mass_runtime','mass_reply_name'],'safe']
        ];
     }
 
     public function attributeLabels() {
         return [
 			'to_active'=> 'Active Members',
+			'to_club_o' => 'Club Officers',
 			'to_expired' => 'Expired Members',
 			'to_single' => 'Specific Address(s)',
 			'to_users' => ' To Users',
 			'mass_to' => 'To',
+			'mass_to_co' => 'Club Officers:',
 			'mass_to_users'=>'Users:',
 			'mass_reply_to' => 'Reply To',
 			'mass_subject' => 'Subject',

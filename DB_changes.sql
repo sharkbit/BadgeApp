@@ -831,3 +831,11 @@ VIEW `officers` AS
         JOIN `roles` ON ((`roles`.`role_id` = `badge_to_role`.`role`)))
         JOIN `clubs` ON ((`clubs`.`club_id` = `badge_to_role`.`club`)));
 
+
+-- more for club officers
+update  BadgeDB.mass_email set mass_to_users = null;
+
+ALTER TABLE `BadgeDB`.`mass_email` 
+CHANGE COLUMN `mass_to_users` `mass_to_users` JSON NULL DEFAULT NULL ;
+
+UPDATE `BadgeDB`.`mass_email` SET `mass_to_users` = '["1"]' WHERE (`id` = '1');
