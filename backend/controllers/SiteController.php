@@ -204,11 +204,13 @@ class SiteController extends AdminController {
 	}
 
 	public function actionIndex() {
+		$displayB=false;
 		$nowYear = date('Y',strtotime($this->getNowTime()));
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
 		$sell_date = Params::findOne('1')->sell_date;
 		$chkDate = date('Y-'.$sell_date,strtotime($nowDate));
-		if($chkDate <= $nowDate) { $add=1; } else { $add=0; }
+		if($chkDate <= $nowDate) { $add=1; $displayB=true; } else { $add=0; }
+		if(date('y-m-d',strtotime($nowYear."01-31")) <= $nowDate) { $displayB=true; }
 		$badge_yearA = $nowYear+$add;
 		$badge_year_a = BadgeSubscriptions::find()->where(['>=','badge_year',$badge_yearA])->all();
 		$badge_yearB = (int)$nowYear + (int)$add -1;
@@ -218,6 +220,7 @@ class SiteController extends AdminController {
 		return $this->render('index',[
 			'badgeyearA'=> [$badge_yearA,count($badge_year_a)],
 			'badgeyearB'=> [$badge_yearB,count($badge_year_b)],
+			'DisplayB'  => $displayB,
 			'guestCount'=> count($guests)
 		]);
 	}
