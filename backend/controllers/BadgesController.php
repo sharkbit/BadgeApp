@@ -695,7 +695,7 @@ class BadgesController extends AdminController {
 		if($certificationModel->badge_number==$membership_id) {
 			$certificationModel->delete();
 			Yii::$app->getSession()->setFlash('success', 'Certificate has been deleted');
-			return $this->redirect(['badges/view-certifications-list','id'=>$membership_id]);
+			return $this->redirect(['badges/view-certifications-list','badge_number'=>$membership_id]);
 		}
 	}
 
