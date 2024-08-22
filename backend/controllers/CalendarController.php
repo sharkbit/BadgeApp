@@ -470,7 +470,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','".$model->event_name.'('.$model->calendar_id.')');
 
 					if($model->event_status_id=19) {$model->event_status_id=1; $model->save(false);}
-					if($model->range_status_id=4) {$model->range_status_id=1; $model->save(false);}
+//					if($model->range_status_id=4) {$model->range_status_id=1; $model->save(false);}
 					if ($force_order) {
 						$nowTime = date('Y-01-01 00:00:00', strtotime(yii::$app->controller->getNowTime() . " + 1 year"));
 					} else {
