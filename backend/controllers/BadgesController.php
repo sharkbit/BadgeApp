@@ -661,7 +661,7 @@ class BadgesController extends AdminController {
 		if($reciepts) { // Fail
 			Yii::$app->getSession()->setFlash('error', 'Can not Delete Member that was a Cashier!');
 		} else {
-		$sql="SELECT * from violations WHERE badge_involved like '%".$badge_id->badge_number."%'";
+		$sql="SELECT * from violations WHERE badge_involved = ".$badge_id->badge_number;
 		$command = Yii::$app->getDb()->createCommand($sql);
 		$ViolationsCheck = $command->queryAll();
 		if(!$ViolationsCheck) { //NO Violations, Okay to Delete
