@@ -63,7 +63,11 @@ td { margin: 0px; padding: 0px; }
 	&nbsp;
 	<img class="face" src="<?=Yii::$app->params['rootUrl']."/files/badge_photos/".str_pad($model->badge_number, 5, '0', STR_PAD_LEFT)?>.jpg" >
 	&nbsp;
-<?php } else { echo " &nbsp; &nbsp; &nbsp; No Photo &nbsp; &nbsp; "; } ?>
+<?php } else { // echo " &nbsp; &nbsp; &nbsp; No Photo &nbsp; &nbsp; "; } ?>
+	&nbsp;
+	<img class="face" src="<?=Yii::$app->params['rootUrl']."/files/badge_photos/guest" ?>.jpg" >
+	&nbsp;
+<?php } ?>
 	<img src="<?php echo Yii::$app->params['rootUrl']; ?>/images/AGC_Logo.jpg" style="width: 95px" >
 <?php	$Badge_bar ='<div class="row" style="background-color: black; color: white; font-weight: bold; height:30px;">'.
 		'<div class="col-xs-2" style="font-size: 24px; text-align:center; ">';
