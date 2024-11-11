@@ -30,13 +30,8 @@ $csrfToken=Yii::$app->request->getCsrfToken();
     </div>
 </div>
 <div class="row" id="video_block">
-	<div class="col-md-12 text-center"> 
-		<div class="select">
-			<label for="videoSource">Video source: </label> <select id="videoSource"></select>
-		</div>
-
-		<!-- <video muted autoplay></video> -->
-		<video muted autoplay id="my_photo" style="width:80%; max-width:600px;"></video>
+	<div class="col-md-12 text-center">
+		<video id="my_photo" style="width:80%; max-width:600px;"></video>
 	</div>
 	<div class="col-md-12 text-center">
 		<button id="take_snapshots" class="btn btn-success btn-sm">Take Snapshots</button>
@@ -52,16 +47,52 @@ $csrfToken=Yii::$app->request->getCsrfToken();
 	</div>
 </div>
 
-<br> If you change your video source, hold picture to refresh...  
+<br> If you change your video source, hold picture to refresh...
 </div>
 <!-- <a href="https://simpl.info/getusermedia/sources/" target="_blank">test</a> -->
-<script src="/js/GetMedia.js"></script>
+
 <script>
   (function() {
 	"use strict";
+	var width = 600;
+	var height = 0;		// This will be computed based on the input stream
+
 	var myimg
 	var video = document.querySelector("video"), canvas;
-	var localStream;
+	var photo = null;
+	var streaming = false;
+
+ function startup() {
+    video = document.getElementById('my_photo');
+    photo = document.getElementById('new_badge_photo');
+    navigator.mediaDevices.getUserMedia({video: true, audio: false})
+    .then((stream) => {
+      video.srcObject = stream;
+      video.play();
+    })
+    .catch((err) => {
+      console.log("An error occurred: " + err);
+    });
+
+    video.addEventListener('canplay', (event) => {
+      if (!streaming) {
+        height = video.videoHeight / (video.videoWidth/width);
+
+        // Firefox currently has a bug where the height can't be read from
+        // the video, so we will make assumptions if this happens.
+
+        if (isNaN(height)) {
+          height = width / (4/3);
+        }
+
+		// Define video settings.
+
+        video.setAttribute('width', width);
+        video.setAttribute('height', height);
+        streaming = true;
+      }
+    }, false);
+  }
 
     $("#take_snapshots").click(function(event) {
       console.log("take photo clicked");
@@ -110,6 +141,8 @@ console.log( "using: "+ JSON.stringify(myimg).length );
 		$("#video_block").hide();
 		new_badge_photo.append(canvas);
     }
+
+	window.addEventListener('load', startup, false);
   })();
 
 </script>
