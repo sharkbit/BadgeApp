@@ -77,6 +77,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 				if(yii::$app->controller->hasPermission('badges/photo-add')) {
 					echo "<b><a href='/badges/photo-add?badge=".$model->badge_number."'>[ <span class='glyphicon glyphicon-camera'></span> Click to add ]</a></b>";
 				}
+				echo "<br /><b><a href='/badges/print?badge_number=".$model->badge_number."' target='_blank'>[ <span class='glyphicon glyphicon-print'></span> Print Temp Badge ]</a></b>";
 				echo "</b>".PHP_EOL;
 			}?></center>
             </div>
