@@ -78,7 +78,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 			'headerOptions' => ['style' => 'width:10%'] ],
 		[
 			'attribute'=>'e_poc',
-			'value'=>function($model) { return $model->badges->first_name.' '.$model->badges->last_name; },
+			'value'=>function($model) { return $model->badges?->first_name.' '.$model->badges?->last_name; },
 			'headerOptions' => ['style' => 'width:10%']
 		],
 		[
