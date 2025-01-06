@@ -60,14 +60,14 @@ class AdminController extends \yii\web\Controller {
 		'Accounts' => ['accounts/index','accounts/view'],
 		'Admin' => ['site/admin-menu'],
 		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
-		'Clubs' => ['clubs/index','clubs/view'],
+		'Clubs' => ['clubs/index','clubs/view','clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update'],
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all','guest/stats'],
 		'Rso Report'=>['rso-rpt/index','rso-rpt/view'],
 		'Rules'=> ['rules/index','rules/view'],
 		'sales' => ['sales/all','sales/stock','sales/summary'],
 		'violations' => ['violations/all','violations/stats'],
-		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update'],
+		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update','work-credits/delete'],
 	];
 	
 	public $cashierPermission = [
