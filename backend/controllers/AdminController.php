@@ -60,7 +60,7 @@ class AdminController extends \yii\web\Controller {
 		'Accounts' => ['accounts/index','accounts/view'],
 		'Admin' => ['site/admin-menu'],
 		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
-		'Clubs' => ['clubs/index','clubs/view','clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update'],
+		'Clubs' => ['clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update','clubs/index','clubs/view'],
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all','guest/stats'],
 		'Rso Report'=>['rso-rpt/index','rso-rpt/view'],
