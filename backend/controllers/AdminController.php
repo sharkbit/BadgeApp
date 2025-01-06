@@ -53,7 +53,7 @@ class AdminController extends \yii\web\Controller {
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
 		'sales' => ['sales/all','sales/create','sales/delete-sale','sales/stock','sales/summary','sales/report','sales/update'],
 		'violations' => ['violations/all','violations/board','violations/create','violations/delete','violations/report','violations/stats','violations/update'],
-		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update'],
+		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update','work-credits/delete'],
 	];
 
 	public $adminViewPermission = [
