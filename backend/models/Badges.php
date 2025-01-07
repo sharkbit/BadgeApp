@@ -296,7 +296,8 @@ class Badges extends \yii\db\ActiveRecord {
 	}
 
 	public function getFirstFreeBadge(){
-		$sql='SELECT t.badge_number + 1 AS FirstAvailableId FROM badges t LEFT JOIN badges t1 ON t1.badge_number = t.badge_number + 1 WHERE t1.badge_number IS NULL ORDER BY t.badge_number LIMIT 0, 1';
+		$sql='SELECT t.badge_number + 1 AS FirstAvailableId FROM badges t LEFT JOIN badges t1 ON t1.badge_number = t.badge_number + 1 WHERE t1.badge_number IS NULL ORDER BY t.badge_number LIMIT 0, 1';  //Fill in missing #'s
+		$sql='SELECT t.badge_number + 1 AS FirstAvailableId from badges t where t.badge_number <> 99999 order by t.badge_number desc LIMIT 0, 1';  // Next Highest Number
 		$connection = Yii::$app->getDb();
 		$command = $connection->createCommand($sql);
 		$NewId = $command->queryAll();
