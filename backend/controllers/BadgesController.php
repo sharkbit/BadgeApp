@@ -11,12 +11,14 @@ use backend\models\Badges;
 use backend\models\BadgeSubscriptions;
 use backend\models\CardReceipt;
 use backend\models\clubs;
+use backend\models\Event_Att;
 use backend\models\Guest;
 use backend\models\MembershipType;
 use backend\models\Params;
 use backend\models\PostPrintTransactions;
 use backend\models\StoreItems;
 use backend\models\WorkCredits;
+use backend\models\Violations;
 use backend\models\search\BadgesSearch;
 use backend\models\search\BadgeCertificationSearch;
 use backend\models\search\BadgeSubscriptionsSearch;
@@ -657,34 +659,40 @@ class BadgesController extends AdminController {
 	public function actionDelete($id,$back_to=null) {
 		$badge_id = Badges::find()->where(['id' => $id])->one();
 
-		$reciepts = CardReceipt::find()->where(['cashier_badge'=>$badge_id->badge_number])->all();
-		if($reciepts) { // Fail
-			Yii::$app->getSession()->setFlash('error', 'Can not Delete Member that was a Cashier!');
-		} else {
-		$sql="SELECT * from violations WHERE badge_involved = ".$badge_id->badge_number;
-		$command = Yii::$app->getDb()->createCommand($sql);
-		$ViolationsCheck = $command->queryAll();
-		if(!$ViolationsCheck) { //NO Violations, Okay to Delete
-			BadgeCertification::deleteAll(['badge_number' => $badge_id->badge_number]);
-			BadgeSubscriptions::deleteAll(['badge_number' => $badge_id->badge_number]);
-			PostPrintTransactions::deleteAll(['badge_number' => $badge_id->badge_number]);
-
-			$sql="DELETE FROM badge_to_club WHERE badge_number=".$badge_id->badge_number;
+		$reciepts = CardReceipt::find()->where(['cashier_badge'=>$badge_id->badge_number])->andWhere(['!=','badge_number',$badge_id->badge_number])->all();
+		if(!$reciepts) { // Not A Cashere
+			$sql="SELECT * from violations WHERE badge_involved = ".$badge_id->badge_number;
 			$command = Yii::$app->getDb()->createCommand($sql);
-			$cmd = $command->execute();
+			$ViolationsCheck = $command->queryAll();
+			if(!$ViolationsCheck) { //NO Violations, Okay to Delete
+				$Issued_violation = Violations::find()->where(['badge_reporter'=>$badge_id->badge_number])->all();
+				if (!$Issued_violation) { // Not an RSO that has issued violations
+					BadgeCertification::deleteAll(['badge_number' => $badge_id->badge_number]);
+					BadgeSubscriptions::deleteAll(['badge_number' => $badge_id->badge_number]);
+					CardReceipt::deleteAll(['badge_number' => $badge_id->badge_number]);
+					PostPrintTransactions::deleteAll(['badge_number' => $badge_id->badge_number]);
 
-			Guest::deleteAll(['badge_number' => $badge_id->badge_number]);
-			WorkCredits::deleteAll(['badge_number' => $badge_id->badge_number]);
+					$sql="DELETE FROM badge_to_club WHERE badge_number=".$badge_id->badge_number;
+					$command = Yii::$app->getDb()->createCommand($sql);
+					$cmd = $command->execute();
 
-			if(BadgesController::findModel($id)->delete()) {
-			//if($this->findModel($id)->delete()) {
-			   yii::$app->controller->createLog(true, $_SESSION['user'], 'Deleted Badge: '.$badge_id->badge_number.' - '.$badge_id->first_name.' '.$badge_id->last_name);
-			}
-			Yii::$app->getSession()->setFlash('success', "Member Deleted.");
-		} else {
-			Yii::$app->getSession()->setFlash('error', 'Can not Delete Member with Violations!');
-		}
-		}
+					Event_Att::deleteAll(['ea_badge' => $badge_id->badge_number]);
+					Guest::deleteAll(['badge_number' => $badge_id->badge_number]);
+					Violations::deleteAll(['badge_involved' => $badge_id->badge_number]);
+					WorkCredits::deleteAll(['badge_number' => $badge_id->badge_number]);
+					$their_photo = "files/badge_photos/".str_pad($badge_id->badge_number, 5, '0', STR_PAD_LEFT).".jpg";
+					if(file_exists($their_photo)) {
+						unlink(realpath($their_photo));
+					}
+
+					if(BadgesController::findModel($id)->delete()) {
+					//if($this->findModel($id)->delete()) {
+					   yii::$app->controller->createLog(true, $_SESSION['user'], 'Deleted Badge: '.$badge_id->badge_number.' - '.$badge_id->first_name.' '.$badge_id->last_name);
+					}
+					Yii::$app->getSession()->setFlash('success', "Member Deleted.");
+				} else { Yii::$app->getSession()->setFlash('error', 'Can not Delete RSO that Issued Violations!'); }
+			} else { Yii::$app->getSession()->setFlash('error', 'Can not Delete Member with Violations!'); }
+		} else { Yii::$app->getSession()->setFlash('error', 'Can not Delete Member that was a Cashier!'); }
 		if (!$back_to) {
 			return $this->redirect('index');
 		}
