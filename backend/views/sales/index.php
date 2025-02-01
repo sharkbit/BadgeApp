@@ -22,7 +22,7 @@ if(yii::$app->controller->hasPermission('sales/all')) {
 	}
 }
 
-$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
+$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams,true);
 
 // If post from Guest page Charge for All unprecessed Guests
 if (isset($_REQUEST['badge'])) {

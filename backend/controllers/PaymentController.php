@@ -258,9 +258,14 @@ class PaymentController extends AdminController {
 		return $inventory;
 	}
 
-	public static function GetPaymentTypes($confParams) {
-		$myList=['cash'=>'Cash','check'=>'Check'];
-		
+	public static function GetPaymentTypes($confParams,$store=false) {
+
+		if( (yii::$app->controller->hasPermission('sales/all')) OR ($store == false) ) {
+			$myList=['cash'=>'Cash','check'=>'Check'];
+		} else {
+			$myList=[];
+		}
+
 		if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->conv_p_pin)>2 
 			|| strlen($confParams->conv_d_pin)>2))  {
 			if(Yii::$app->params['env'] == 'prod') {
