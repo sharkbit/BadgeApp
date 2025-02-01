@@ -34,6 +34,7 @@ class BadgeSubscriptions extends \yii\db\ActiveRecord {
     public $total_credit;
     public $wt_date;
     public $wt_instru;
+	public $amount_override;
 
     public static function tableName() {
         return 'badge_subscriptions';
