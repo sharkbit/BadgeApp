@@ -358,6 +358,10 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				</div>
 		<p> </P>
 		<?= $form1->field($badgeSubscriptions, 'sticker')->dropDownList((new backend\models\Stickers)->getlist(),['prompt'=>'Select Sticker']) ?>
+
+		<?php if(yii::$app->controller->hasPermission('badges/overideprice')) { ?><center>
+			<?= $form1->field($badgeSubscriptions, 'amount_override')->checkbox().PHP_EOL; ?>
+		<?php } ?>
 			<div class="form-group">
 
 				<?= Html::submitButton( '<i class="fa fa-refresh" aria-hidden="true"></i> RENEW BADGE', ['class' => 'btn btn-primary pull-right', 'id' => 'renew_btn']).PHP_EOL; ?>
@@ -480,6 +484,16 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		if($('#extras_store_div').is(':visible')) {
 			$("#extras_store_div").hide();
         } else  {$("#extras_store_div").show();}
+	});
+
+	$("#badgesubscriptions-amount_override").change(function(e) {
+		if (document.getElementById("badgesubscriptions-amount_override").checked == true){
+			document.getElementById("badgesubscriptions-amount_due").readOnly = false;
+			console.log('editable');
+		} else {
+			document.getElementById("badgesubscriptions-amount_due").readOnly = true;
+			console.log('locked');
+		}
 	});
 
 	function doCheckField(e) {
