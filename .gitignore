@@ -19,6 +19,14 @@ backend\config\main-local.php
 backend/config/main-local.php
 common\config\main-local.php
 common/config/main-local.php
+frontend\runtime\debug\*.*
+frontend/runtime/debug/*.*
+frontend\runtime\logs\*.*
+frontend/runtime/logs/*.*
+frontend\web\assets\*.*
+frontend/web/assets/*.*
+console\runtime\logs\*.*
+console/runtime/logs/*.*
 vendor
 comms_constants.php
 backend/web/passwd

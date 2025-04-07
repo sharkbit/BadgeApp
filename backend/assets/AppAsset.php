@@ -8,21 +8,21 @@ use yii\web\AssetBundle;
  * Main backend application asset bundle.
  */
 
-class AppAsset extends AssetBundle {
+class AppAsset extends AssetBundle
+{
     public $basePath = '@webroot';
     public $baseUrl = '@web';
-	public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
+    public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
 
     public $css = [
         'css/site.css',
     ];
 
-    public $js = [
-    ];
+    public $js = [];
 
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
-		'yii\web\JqueryAsset', //jQueryAsset
+        'yii\web\JqueryAsset', //jQueryAsset
     ];
 }
