@@ -44,37 +44,58 @@ class ViolationsController extends SiteController {
 			if(isset($model->hear_sum)) {$model->hear_sum = trim(preg_replace('/\r\n?/', " ", $model->hear_sum)); }
 			
 			if($model->save()) {
-				Yii::$app->getSession()->setFlash('success', 'Violation has been saved!');
-				if($model->vi_type==4){
+				// Increment violation count and update status
+				$violationStatus = \backend\models\ViolationStatus::incrementViolation($model->badge_involved);
+				
+				// Get current status for notification
+				$status = \backend\models\ViolationStatus::findOne(['badge_number' => $model->badge_involved]);
+				
+				// Prepare notification message based on status
+				$notificationMessage = '';
+				if ($status) {
+					switch ($status->status) {
+						case \backend\models\ViolationStatus::STATUS_WARNING:
+							$notificationMessage = "First violation warning issued to badge #{$model->badge_involved}";
+							break;
+						case \backend\models\ViolationStatus::STATUS_ESCALATED:
+							$notificationMessage = "Second violation - escalated warning issued to badge #{$model->badge_involved}. Admin contact required.";
+							break;
+						case \backend\models\ViolationStatus::STATUS_BLOCKED:
+							$notificationMessage = "Third violation - badge #{$model->badge_involved} has been blocked until {$status->blocked_until}. Admin contact required.";
+							break;
+					}
+				}
+
+				Yii::$app->getSession()->setFlash('success', 'Violation has been saved! ' . $notificationMessage);
+				
+				if($model->vi_type==4 || ($status && $status->status === \backend\models\ViolationStatus::STATUS_BLOCKED)){
 					$member = (new Badges)->findOne(['badge_number'=>$model->badge_involved]);
 					$member->status='suspended';
-					$nowRemakrs = ['created_at'=>yii::$app->controller->getNowTime(), 'data'=>'Badge Suspended ', 'changed'=> 'Suspender by '.$_SESSION['user'], ];
+					$nowRemakrs = [
+						'created_at'=>yii::$app->controller->getNowTime(), 
+						'data'=>'Badge Suspended', 
+						'changed'=> 'Suspender by '.$_SESSION['user']
+					];
 					$remarksOld = $member->remarks;
 					if($remarksOld != '') {
 						$remarksOld = json_decode($remarksOld);
 						array_push($remarksOld,$nowRemakrs);
 					} else {
-						$remarksOld = [	$nowRemakrs, ];
+						$remarksOld = [$nowRemakrs];
 					}
 					$member->remarks = json_encode($remarksOld,true);
-					
 					$member->save(false);
 				}
-				//$violations = Violations::find()->where(['id'=>$model->id])->one();
-				$this->createLog($this->getNowTime(), $_SESSION['user'], 'Logged Range Violation for: '.$model->badge_involved);
-
-                return $this->redirect(['view', 'id' => $model->id]);   
 				
+				$this->createLog($this->getNowTime(), $_SESSION['user'], 'Logged Range Violation for: '.$model->badge_involved);
+				return $this->redirect(['view', 'id' => $model->id]);   
 			} else {
 				Yii::$app->getSession()->setFlash('error', 'action create - no save?');
 				return $this->redirect(['/violations/index']);
 			}
-		} 
-		else {
+		} else {
 			return $this->render('create', [
 				'model' => $model,
-				//'id' => $violationsID
-			 
 			]);
 		}
 	}

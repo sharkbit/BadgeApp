@@ -16,7 +16,6 @@
     "require": {
         "php": ">=7.4.0",
         "yiisoft/yii2": ">2.0.15",
-        "yiisoft/yii2-bootstrap": ">2.0.0",
         "kartik-v/yii2-widget-datepicker": "@dev",
         "kartik-v/yii2-widgets": "*",
         "mpdf/mpdf": "*",
@@ -34,7 +33,9 @@
 		
 		"league/omnipay": "^3",
 		"markroland/converge-api-php": ">0.4",
-        "bower-asset/fontawesome": ">5.0"
+        "bower-asset/fontawesome": ">5.0",
+        "twbs/bootstrap": "5.3.3",
+        "bower-asset/jquery.gritter": "^1.7"
     },
     "require-dev": {
         "yiisoft/yii2-debug": ">2.0.0",

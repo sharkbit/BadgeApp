@@ -1,4 +1,3 @@
 <?php
-header("Location: /requirements.php");
+header("Location: requirements.php");
 exit;
-?>
