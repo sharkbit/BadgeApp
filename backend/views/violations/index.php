@@ -37,6 +37,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 	<?= Html::a('<i class="fa fa-plus-square" aria-hidden="true"></i> Add Violations', ['create'], ['class' => 'btn btn-success ']) ?>
 	</div>
 	<?php } ?>
+	<?= Html::a('<i class="fa fa-user"></i> View Guest Violations', ['guest-violations'], ['class' => 'btn btn-info']) ?>
 	<?= GridView::widget([
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,

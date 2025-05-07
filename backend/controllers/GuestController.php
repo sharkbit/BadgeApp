@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\controllers\SiteController;
 use backend\models\Badges;
+use backend\models\ViolationStatus;
 
 /**
  * GuestController implements the CRUD actions for Guest model.
@@ -36,6 +37,12 @@ class GuestController extends SiteController {
 			return yii\widgets\ActiveForm::validate($model);
 		}
 		elseif ($model->load(Yii::$app->request->post())) {
+			// Check if guest is blocked
+			if (ViolationStatus::isBlocked($model->badge_number)) {
+				Yii::$app->getSession()->setFlash('error', 'This guest is currently blocked due to violations and cannot be signed in.');
+				return $this->redirect(['/guest/index']);
+			}
+
 			$model->g_first_name = trim($model->g_first_name);
 			$model->g_last_name = trim($model->g_last_name);
 			$model->g_city = trim($model->g_city);
