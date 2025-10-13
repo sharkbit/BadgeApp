@@ -124,13 +124,11 @@ class BadgesController extends AdminController {
 				$badgeNumber = $_POST['badgeNumber'];
 				$badgeFee = $_POST['BadgeFee'];
 				$isCurent = $_POST['isCurent'];
-				$renBadgeYear = $_POST['renBadgeYear'];
 			} else {
 				//From Issue New Badge
 				$badgeNumber = $_GET['friend_badge'];
 				$badgeFee = $_GET['BadgeFee'];
 				$idCurrent = false;
-				$renBadgeYear = $_GET['renBadgeYear'];
 			}
 
 			if(!isset($_SESSION['BasePriFee'])) {
@@ -1030,7 +1028,6 @@ class BadgesController extends AdminController {
 				$wt_date_reIssue = date('Y-m-d',strtotime($model->wt_date));
 				$wt_instru_reIssue = $model->wt_instru;
 			}
-			$model->badge_year = $_REQUEST['renBadgeYear'];
 			$model->status = 'active';
 			$model->created_at = $this->getNowTime();
 			$model->paid_amount = $model->amount_due;

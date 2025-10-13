@@ -119,13 +119,17 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 		<?php 
 			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
 			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
+			echo '<div class="col-xs-6 col-sm-2">';
 			if ($DateChk <= $nowDate) {
-				$nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));
-			} else {
 				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
+				$myYear=date('Y', strtotime($nextExpire.' - 1 year'));
+				$BadgeYearList = json_decode(str_replace('}{',',',json_encode([$myYear=>$myYear,$myYear+1=>$myYear+1]) ));
+				echo $form->field($model, 'badge_year')->dropDownList($BadgeYearList,['value'=>$myYear+1]). PHP_EOL; 
+			} else {
+				$nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));				
+				echo $form->field($model, 'badge_year')->textInput(['readonly' => true, 'value'=>date('Y',  strtotime($nextExpire.' - 1 year'))]). PHP_EOL; 
 			}
-			echo $form->field($model, 'badge_year')->hiddenInput(['value'=>date('Y',  strtotime($nextExpire.' - 1 year'))])->label(false). PHP_EOL; 
-
+			echo '</div>';
 		if(1==2) { //** section curently disabled ** Only enable for timed badges  ...  15yr .. ?>
             <div class="col-xs-6 col-sm-4">
                 <?php $model->expires = date('M d, Y',strtotime($nextExpire)); ?>
