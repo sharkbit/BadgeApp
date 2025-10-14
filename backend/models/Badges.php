@@ -203,19 +203,20 @@ class Badges extends \yii\db\ActiveRecord {
 		if((yii::$app->controller->hasPermission('badges/all')) && (Yii::$app->controller->id.'->'.Yii::$app->controller->action->id <> 'sales->index')) {
 			if(isset($model->club_id)) {
 				if($model->club_id=='') {
-					yii::$app->controller->createLog(true, 'trex_zod_1',  Yii::$app->controller->id.'->'.Yii::$app->controller->action->id);
 					(new clubs)->saveClub($model->badge_number,[35]);
 					$dirty[]='Club';
 				} else {
 					$mine = (new clubs)->getMyClubs($model->badge_number);
+					$OldNames = (new clubs)->getMyClubsNames($model->badge_number);
 					if ($mine != $model->club_id) {
 						(new clubs)->saveClub($model->badge_number,$model->club_id);
-						$dirty[]='Club';
+						$NewNames = (new clubs)->getMyClubsNames($model->badge_number);
+						$dirty[]=' OLD CLUB(s): '.$OldNames.'; NEW CLUB(s): '.$NewNames.'.';
 					}
 				}
 			} else {
 				if(!$isNew) {(new clubs)->saveClub($model->badge_number,[35]); $dirty[]='Club';
-				yii::$app->controller->createLog(true, 'trex_zod_2',  Yii::$app->controller->id.'->'.Yii::$app->controller->action->id);}
+				yii::$app->controller->createLog(true, 'trex_zod_220',  Yii::$app->controller->id.'->'.Yii::$app->controller->action->id);}
 			}
 		}
 		$dirty = implode(", ",$dirty);
@@ -278,6 +279,7 @@ class Badges extends \yii\db\ActiveRecord {
 			'ice_contact' => 'Emergency Contact',
 			'ice_phone' => 'Emergency Contact Phone',
 			'mem_type' => 'Membership Type',
+			'club_id' => 'Clubs',
 			'primary' => 'Primary',
 			'qrcode' => 'qrcode',
 			'wt_date' => 'WT Date',
