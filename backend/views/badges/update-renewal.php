@@ -7,6 +7,13 @@ $this->params['breadcrumbs'][] = ['label' => 'Badges', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->badge_number, 'url' => ['/badges/view','badge_number'=>$model->badge_number]];
 $this->params['breadcrumbs'][] = ['label' => 'Renewal History', 'url' => ['/badges/view-renewal-history','badge_number'=>$model->badge_number]];
 $this->params['breadcrumbs'][] = $this->title;
+
+$startYear = date('Y')+3;
+$endYear = date('Y')-3;
+$years = [];
+for ($year = $startYear; $year >= $endYear; $year--) {
+    $years[$year] = $year;
+}
 ?>
 
 <div class="row">
@@ -15,6 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			<ul> 
 			<?php $form = ActiveForm::begin(); ?>
 			<li> <?=Html::label($model->getLabel('badge_number'))?> <span class="pull-right"> <?=$model->badge_number?>  </span> </li>
+			<li> <?= $form->field($model, 'badge_year')->dropDownList($years,['value'=>$model->badge_year]); ?>
 			<li> <?=Html::label($model->getLabel('transaction_type'))?> <span class="pull-right"> <?=$model->transaction_type?>  </span> </li>
 			<li> <?php if($model->is_migrated) { 
 				echo Html::label($model->getLabel('payment_type'))?> <span class="pull-right"> <?=$model->payment_type?>  </span>

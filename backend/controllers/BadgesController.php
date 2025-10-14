@@ -1241,6 +1241,7 @@ class BadgesController extends AdminController {
 		$model = BadgeSubscriptions::find()->where(['id'=>$id])->one();
 		if ($model->load(Yii::$app->request->post())) {
 			if($model->save()) {
+				$this->createLog($this->getNowTime(), $_SESSION['user'], "Updated Badge Renew History','".$model->badge_number);
 				Yii::$app->getSession()->setFlash('success', 'Badge Holder Details has been updated');
 				return $this->redirect(['view-renewal-history', 'badge_number' => $model->badge_number]);
 			} else {
