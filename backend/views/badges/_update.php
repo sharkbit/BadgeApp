@@ -288,7 +288,8 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<?php echo Html::hiddenInput("isCurent",$hide_Renew,['id'=>'badgesubscriptions-isCurent','class'=>'form-control']), PHP_EOL; ?>
 		<?php echo Html::hiddenInput("sell_date",$confParams['sell_date'],['id'=>'badges-sell_date']), PHP_EOL; ?>
 
-		<?php $BadgeYearList = json_decode(str_replace('}{',',',json_encode([$badge_year_chk-1=>$badge_year_chk-1,$badge_year_chk=>$badge_year_chk]) )); 
+		<?php $badge_year_minus = $badge_year_chk -1;
+		$BadgeYearList = json_decode(str_replace('}{',',',json_encode([$badge_year_minus=>$badge_year_minus,$badge_year_chk=>$badge_year_chk]) )); 
 		echo $form1->field($badgeSubscriptions, 'badge_year')->dropDownList($BadgeYearList,['value'=>$badge_year_chk]).PHP_EOL; ?>
 
 		<?= $form1->field($badgeSubscriptions, 'badge_fee')->textInput(['readOnly'=>true]).PHP_EOL; ?>

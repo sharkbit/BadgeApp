@@ -126,7 +126,7 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 				$BadgeYearList = json_decode(str_replace('}{',',',json_encode([$myYear=>$myYear,$myYear+1=>$myYear+1]) ));
 				echo $form->field($model, 'badge_year')->dropDownList($BadgeYearList,['value'=>$myYear+1]). PHP_EOL; 
 			} else {
-				$nextExpire = date('Y-01-31', strtotime("+2 years",strtotime($nowDate)));				
+				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));				
 				echo $form->field($model, 'badge_year')->textInput(['readonly' => true, 'value'=>date('Y',  strtotime($nextExpire.' - 1 year'))]). PHP_EOL; 
 			}
 			echo '</div>';
