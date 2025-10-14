@@ -12,6 +12,35 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
+        'assetManager' => [
+            'bundles' => [
+                'yii\web\JqueryAsset' => [
+                    'sourcePath' => '@vendor/bower-asset/jquery/dist',
+                    'js' => ['jquery.min.js'],
+                ],
+                'yii\bootstrap\BootstrapAsset' => [
+                    'sourcePath' => '@vendor/bower-asset/bootstrap/dist',
+                    'css' => ['css/bootstrap.min.css'],
+                ],
+                'yii\bootstrap\BootstrapPluginAsset' => [
+                    'sourcePath' => '@vendor/bower-asset/bootstrap/dist',
+                    'js' => ['js/bootstrap.min.js'],
+                ],
+                'yii\web\YiiAsset' => [
+                    'sourcePath' => '@vendor/yiisoft/yii2/assets',
+                    'js' => ['yii.js'],
+                ],
+                'backend\assets\FontAwesomeAsset' => [
+                    'sourcePath' => '@vendor/bower-asset/fontawesome',
+                    'css' => ['css/all.min.css'],  // Adjust this according to the FontAwesome version.
+                ],
+                'skinka\widgets\gritter\AlertGritterWidget' => [
+                    'sourcePath' => '@vendor/bower-asset/jquery.gritter',
+                    'js' => ['js/jquery.gritter.min.js'],
+                    'css' => ['css/jquery.gritter.css'],
+                ],
+            ],
+        ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],

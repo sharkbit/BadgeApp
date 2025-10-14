@@ -1,0 +1,1030 @@
+2025-02-27 18:22:27 [-][-][-][error][yii\db\Exception] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php:722
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(722): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue), NULL)
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(637): yii\db\Connection->createPdoInstance()
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#6 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#12 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#14 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#15 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#16 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#17 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#18 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#19 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#20 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#21 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#22 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#23 {main}
+
+Next yii\db\Exception: SQLSTATE[HY000] [2002] No such file or directory in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php:648
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#6 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#12 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#14 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#15 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#16 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#17 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#18 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#19 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#20 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#21 {main}
+Additional Information:
+Array
+(
+    [0] => HY000
+    [1] => 2002
+    [2] => No such file or directory
+)
+
+2025-02-27 18:22:27 [-][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = []
+
+$_SERVER = [
+    'TERM_SESSION_ID' => 'w0t3p0:ACF16F97-CCE9-4282-ACE2-E2E201E10F16'
+    'SSH_AUTH_SOCK' => '/private/tmp/com.apple.launchd.BQ8OSErr2Z/Listeners'
+    'LC_TERMINAL_VERSION' => '3.5.4'
+    'COLORFGBG' => '15;0'
+    'ITERM_PROFILE' => 'Default'
+    'XPC_FLAGS' => '0x0'
+    'LANG' => 'en_US.UTF-8'
+    'PWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'SHELL' => '/bin/zsh'
+    '__CFBundleIdentifier' => 'com.googlecode.iterm2'
+    'SECURITYSESSIONID' => '186ab'
+    'TERM_FEATURES' => 'T3LrMSc7UUw9Ts3BFGsSyHNoSxF'
+    'TERM_PROGRAM_VERSION' => '3.5.4'
+    'TERM_PROGRAM' => 'iTerm.app'
+    'PATH' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/iTerm.app/Contents/Resources/utilities:/Users/shahid/Library/Android/sdk/emulator:/Users/shahid/Library/Android/sdk/platform-tools:/Users/shahid/Library/Android/sdk/cmdline-tools/10.0/bin:/Users/shahid/.local/bin'
+    'LC_TERMINAL' => 'iTerm2'
+    'COLORTERM' => 'truecolor'
+    'COMMAND_MODE' => 'unix2003'
+    'TERM' => 'xterm-256color'
+    'TERMINFO_DIRS' => '/Applications/iTerm.app/Contents/Resources/terminfo:/usr/share/terminfo'
+    'HOME' => '/Users/shahid'
+    'TMPDIR' => '/var/folders/g3/3qshvllj5fdb3rtlh_0nbzj40000gp/T/'
+    'USER' => 'shahid'
+    'XPC_SERVICE_NAME' => '0'
+    'LOGNAME' => 'shahid'
+    'LaunchInstanceID' => '1A921673-7FCE-4564-B107-7A276164C5E6'
+    '__CF_USER_TEXT_ENCODING' => '0x1F6:0x0:0x0'
+    'ITERM_SESSION_ID' => 'w0t3p0:ACF16F97-CCE9-4282-ACE2-E2E201E10F16'
+    'SHLVL' => '1'
+    'OLDPWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'HOMEBREW_PREFIX' => '/opt/homebrew'
+    'HOMEBREW_CELLAR' => '/opt/homebrew/Cellar'
+    'HOMEBREW_REPOSITORY' => '/opt/homebrew'
+    'INFOPATH' => '/opt/homebrew/share/info:'
+    'NVM_DIR' => '/Users/shahid/.nvm'
+    'NVM_CD_FLAGS' => '-q'
+    'NVM_BIN' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin'
+    'NVM_INC' => '/Users/shahid/.nvm/versions/node/v20.11.0/include/node'
+    'ANDROID_HOME' => '/Users/shahid/Library/Android/sdk'
+    'ZSH' => '/Users/shahid/.oh-my-zsh'
+    'PAGER' => 'less'
+    'LESS' => '-R'
+    'LSCOLORS' => 'Gxfxcxdxbxegedabagacad'
+    'LS_COLORS' => 'di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    'P9K_SSH' => '0'
+    '_P9K_SSH_TTY' => '/dev/ttys003'
+    'P9K_TTY' => 'old'
+    '_P9K_TTY' => '/dev/ttys003'
+    '_' => '/opt/homebrew/bin/php'
+    'PHP_SELF' => 'yii'
+    'SCRIPT_NAME' => 'yii'
+    'SCRIPT_FILENAME' => 'yii'
+    'PATH_TRANSLATED' => 'yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1740680547.4381
+    'REQUEST_TIME' => 1740680547
+    'argv' => [
+        0 => 'yii'
+        1 => 'migrate'
+    ]
+    'argc' => 2
+]
+2025-02-27 18:24:05 [-][-][-][error][yii\db\Exception] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php:722
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(722): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue), NULL)
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(637): yii\db\Connection->createPdoInstance()
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#6 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#12 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#14 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#15 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#16 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#17 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#18 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#19 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#20 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#21 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#22 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#23 {main}
+
+Next yii\db\Exception: SQLSTATE[HY000] [2002] No such file or directory in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php:648
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#6 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#12 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#14 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#15 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#16 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#17 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#18 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#19 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#20 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#21 {main}
+Additional Information:
+Array
+(
+    [0] => HY000
+    [1] => 2002
+    [2] => No such file or directory
+)
+
+2025-02-27 18:24:05 [-][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = []
+
+$_SERVER = [
+    'TERM_SESSION_ID' => 'w0t3p0:ACF16F97-CCE9-4282-ACE2-E2E201E10F16'
+    'SSH_AUTH_SOCK' => '/private/tmp/com.apple.launchd.BQ8OSErr2Z/Listeners'
+    'LC_TERMINAL_VERSION' => '3.5.4'
+    'COLORFGBG' => '15;0'
+    'ITERM_PROFILE' => 'Default'
+    'XPC_FLAGS' => '0x0'
+    'LANG' => 'en_US.UTF-8'
+    'PWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'SHELL' => '/bin/zsh'
+    '__CFBundleIdentifier' => 'com.googlecode.iterm2'
+    'SECURITYSESSIONID' => '186ab'
+    'TERM_FEATURES' => 'T3LrMSc7UUw9Ts3BFGsSyHNoSxF'
+    'TERM_PROGRAM_VERSION' => '3.5.4'
+    'TERM_PROGRAM' => 'iTerm.app'
+    'PATH' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/iTerm.app/Contents/Resources/utilities:/Users/shahid/Library/Android/sdk/emulator:/Users/shahid/Library/Android/sdk/platform-tools:/Users/shahid/Library/Android/sdk/cmdline-tools/10.0/bin:/Users/shahid/.local/bin'
+    'LC_TERMINAL' => 'iTerm2'
+    'COLORTERM' => 'truecolor'
+    'COMMAND_MODE' => 'unix2003'
+    'TERM' => 'xterm-256color'
+    'TERMINFO_DIRS' => '/Applications/iTerm.app/Contents/Resources/terminfo:/usr/share/terminfo'
+    'HOME' => '/Users/shahid'
+    'TMPDIR' => '/var/folders/g3/3qshvllj5fdb3rtlh_0nbzj40000gp/T/'
+    'USER' => 'shahid'
+    'XPC_SERVICE_NAME' => '0'
+    'LOGNAME' => 'shahid'
+    'LaunchInstanceID' => '1A921673-7FCE-4564-B107-7A276164C5E6'
+    '__CF_USER_TEXT_ENCODING' => '0x1F6:0x0:0x0'
+    'ITERM_SESSION_ID' => 'w0t3p0:ACF16F97-CCE9-4282-ACE2-E2E201E10F16'
+    'SHLVL' => '1'
+    'OLDPWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'HOMEBREW_PREFIX' => '/opt/homebrew'
+    'HOMEBREW_CELLAR' => '/opt/homebrew/Cellar'
+    'HOMEBREW_REPOSITORY' => '/opt/homebrew'
+    'INFOPATH' => '/opt/homebrew/share/info:'
+    'NVM_DIR' => '/Users/shahid/.nvm'
+    'NVM_CD_FLAGS' => '-q'
+    'NVM_BIN' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin'
+    'NVM_INC' => '/Users/shahid/.nvm/versions/node/v20.11.0/include/node'
+    'ANDROID_HOME' => '/Users/shahid/Library/Android/sdk'
+    'ZSH' => '/Users/shahid/.oh-my-zsh'
+    'PAGER' => 'less'
+    'LESS' => '-R'
+    'LSCOLORS' => 'Gxfxcxdxbxegedabagacad'
+    'LS_COLORS' => 'di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    'P9K_SSH' => '0'
+    '_P9K_SSH_TTY' => '/dev/ttys003'
+    'P9K_TTY' => 'old'
+    '_P9K_TTY' => '/dev/ttys003'
+    '_' => '/opt/homebrew/bin/php'
+    'PHP_SELF' => 'yii'
+    'SCRIPT_NAME' => 'yii'
+    'SCRIPT_FILENAME' => 'yii'
+    'PATH_TRANSLATED' => 'yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1740680645.5217
+    'REQUEST_TIME' => 1740680645
+    'argv' => [
+        0 => 'yii'
+        1 => 'migrate'
+    ]
+    'argc' => 2
+]
+2025-02-27 18:30:03 [-][-][-][error][yii\db\Exception] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php:722
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(722): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue), NULL)
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(637): yii\db\Connection->createPdoInstance()
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#6 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#12 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#14 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#15 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#16 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#17 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#18 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#19 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#20 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#21 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#22 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#23 {main}
+
+Next yii\db\Exception: SQLSTATE[HY000] [2002] No such file or directory in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php:648
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#6 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#12 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#14 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#15 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#16 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#17 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#18 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#19 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#20 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#21 {main}
+Additional Information:
+Array
+(
+    [0] => HY000
+    [1] => 2002
+    [2] => No such file or directory
+)
+
+2025-02-27 18:30:03 [-][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = []
+
+$_SERVER = [
+    'TERM_SESSION_ID' => 'w0t3p0:ACF16F97-CCE9-4282-ACE2-E2E201E10F16'
+    'SSH_AUTH_SOCK' => '/private/tmp/com.apple.launchd.BQ8OSErr2Z/Listeners'
+    'LC_TERMINAL_VERSION' => '3.5.4'
+    'COLORFGBG' => '15;0'
+    'ITERM_PROFILE' => 'Default'
+    'XPC_FLAGS' => '0x0'
+    'LANG' => 'en_US.UTF-8'
+    'PWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'SHELL' => '/bin/zsh'
+    '__CFBundleIdentifier' => 'com.googlecode.iterm2'
+    'SECURITYSESSIONID' => '186ab'
+    'TERM_FEATURES' => 'T3LrMSc7UUw9Ts3BFGsSyHNoSxF'
+    'TERM_PROGRAM_VERSION' => '3.5.4'
+    'TERM_PROGRAM' => 'iTerm.app'
+    'PATH' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/iTerm.app/Contents/Resources/utilities:/Users/shahid/Library/Android/sdk/emulator:/Users/shahid/Library/Android/sdk/platform-tools:/Users/shahid/Library/Android/sdk/cmdline-tools/10.0/bin:/Users/shahid/.local/bin'
+    'LC_TERMINAL' => 'iTerm2'
+    'COLORTERM' => 'truecolor'
+    'COMMAND_MODE' => 'unix2003'
+    'TERM' => 'xterm-256color'
+    'TERMINFO_DIRS' => '/Applications/iTerm.app/Contents/Resources/terminfo:/usr/share/terminfo'
+    'HOME' => '/Users/shahid'
+    'TMPDIR' => '/var/folders/g3/3qshvllj5fdb3rtlh_0nbzj40000gp/T/'
+    'USER' => 'shahid'
+    'XPC_SERVICE_NAME' => '0'
+    'LOGNAME' => 'shahid'
+    'LaunchInstanceID' => '1A921673-7FCE-4564-B107-7A276164C5E6'
+    '__CF_USER_TEXT_ENCODING' => '0x1F6:0x0:0x0'
+    'ITERM_SESSION_ID' => 'w0t3p0:ACF16F97-CCE9-4282-ACE2-E2E201E10F16'
+    'SHLVL' => '1'
+    'OLDPWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'HOMEBREW_PREFIX' => '/opt/homebrew'
+    'HOMEBREW_CELLAR' => '/opt/homebrew/Cellar'
+    'HOMEBREW_REPOSITORY' => '/opt/homebrew'
+    'INFOPATH' => '/opt/homebrew/share/info:'
+    'NVM_DIR' => '/Users/shahid/.nvm'
+    'NVM_CD_FLAGS' => '-q'
+    'NVM_BIN' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin'
+    'NVM_INC' => '/Users/shahid/.nvm/versions/node/v20.11.0/include/node'
+    'ANDROID_HOME' => '/Users/shahid/Library/Android/sdk'
+    'ZSH' => '/Users/shahid/.oh-my-zsh'
+    'PAGER' => 'less'
+    'LESS' => '-R'
+    'LSCOLORS' => 'Gxfxcxdxbxegedabagacad'
+    'LS_COLORS' => 'di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    'P9K_SSH' => '0'
+    '_P9K_SSH_TTY' => '/dev/ttys003'
+    'P9K_TTY' => 'old'
+    '_P9K_TTY' => '/dev/ttys003'
+    '_' => '/opt/homebrew/bin/php'
+    'PHP_SELF' => 'yii'
+    'SCRIPT_NAME' => 'yii'
+    'SCRIPT_FILENAME' => 'yii'
+    'PATH_TRANSLATED' => 'yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1740681003.2936
+    'REQUEST_TIME' => 1740681003
+    'argv' => [
+        0 => 'yii'
+        1 => 'migrate'
+    ]
+    'argc' => 2
+]
+2025-02-27 18:32:46 [-][-][-][error][yii\db\Exception] PDOException: SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'user' already exists in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php:1320
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1320): PDOStatement->execute()
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1120): yii\db\Command->internalExecute('CREATE TABLE `u...')
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Migration.php(334): yii\db\Command->execute()
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/console/migrations/m130524_201442_init.php(15): yii\db\Migration->createTable('{{%user}}', Array, 'CHARACTER SET u...')
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(758): m130524_201442_init->up()
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(216): yii\console\controllers\BaseMigrateController->migrateUp('m130524_201442_...')
+#6 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#12 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#14 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#15 {main}
+
+Next yii\db\Exception: SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'user' already exists
+The SQL being executed was: CREATE TABLE `user` (
+	`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`username` varchar(255) NOT NULL UNIQUE,
+	`auth_key` varchar(32) NOT NULL,
+	`password_hash` varchar(255) NOT NULL,
+	`password_reset_token` varchar(255) UNIQUE,
+	`email` varchar(255) NOT NULL UNIQUE,
+	`status` smallint(6) NOT NULL DEFAULT 10,
+	`created_at` int(11) NOT NULL,
+	`updated_at` int(11) NOT NULL
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php:676
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1325): yii\db\Schema->convertException(Object(PDOException), 'CREATE TABLE `u...')
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1120): yii\db\Command->internalExecute('CREATE TABLE `u...')
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Migration.php(334): yii\db\Command->execute()
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/console/migrations/m130524_201442_init.php(15): yii\db\Migration->createTable('{{%user}}', Array, 'CHARACTER SET u...')
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(758): m130524_201442_init->up()
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(216): yii\console\controllers\BaseMigrateController->migrateUp('m130524_201442_...')
+#6 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#12 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#14 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#15 {main}
+Additional Information:
+Array
+(
+    [0] => 42S01
+    [1] => 1050
+    [2] => Table 'user' already exists
+)
+
+2025-02-27 18:32:41 [-][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = []
+
+$_SERVER = [
+    'TERM_SESSION_ID' => 'w0t3p0:ACF16F97-CCE9-4282-ACE2-E2E201E10F16'
+    'SSH_AUTH_SOCK' => '/private/tmp/com.apple.launchd.BQ8OSErr2Z/Listeners'
+    'LC_TERMINAL_VERSION' => '3.5.4'
+    'COLORFGBG' => '15;0'
+    'ITERM_PROFILE' => 'Default'
+    'XPC_FLAGS' => '0x0'
+    'LANG' => 'en_US.UTF-8'
+    'PWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'SHELL' => '/bin/zsh'
+    '__CFBundleIdentifier' => 'com.googlecode.iterm2'
+    'SECURITYSESSIONID' => '186ab'
+    'TERM_FEATURES' => 'T3LrMSc7UUw9Ts3BFGsSyHNoSxF'
+    'TERM_PROGRAM_VERSION' => '3.5.4'
+    'TERM_PROGRAM' => 'iTerm.app'
+    'PATH' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/iTerm.app/Contents/Resources/utilities:/Users/shahid/Library/Android/sdk/emulator:/Users/shahid/Library/Android/sdk/platform-tools:/Users/shahid/Library/Android/sdk/cmdline-tools/10.0/bin:/Users/shahid/.local/bin'
+    'LC_TERMINAL' => 'iTerm2'
+    'COLORTERM' => 'truecolor'
+    'COMMAND_MODE' => 'unix2003'
+    'TERM' => 'xterm-256color'
+    'TERMINFO_DIRS' => '/Applications/iTerm.app/Contents/Resources/terminfo:/usr/share/terminfo'
+    'HOME' => '/Users/shahid'
+    'TMPDIR' => '/var/folders/g3/3qshvllj5fdb3rtlh_0nbzj40000gp/T/'
+    'USER' => 'shahid'
+    'XPC_SERVICE_NAME' => '0'
+    'LOGNAME' => 'shahid'
+    'LaunchInstanceID' => '1A921673-7FCE-4564-B107-7A276164C5E6'
+    '__CF_USER_TEXT_ENCODING' => '0x1F6:0x0:0x0'
+    'ITERM_SESSION_ID' => 'w0t3p0:ACF16F97-CCE9-4282-ACE2-E2E201E10F16'
+    'SHLVL' => '1'
+    'OLDPWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'HOMEBREW_PREFIX' => '/opt/homebrew'
+    'HOMEBREW_CELLAR' => '/opt/homebrew/Cellar'
+    'HOMEBREW_REPOSITORY' => '/opt/homebrew'
+    'INFOPATH' => '/opt/homebrew/share/info:'
+    'NVM_DIR' => '/Users/shahid/.nvm'
+    'NVM_CD_FLAGS' => '-q'
+    'NVM_BIN' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin'
+    'NVM_INC' => '/Users/shahid/.nvm/versions/node/v20.11.0/include/node'
+    'ANDROID_HOME' => '/Users/shahid/Library/Android/sdk'
+    'ZSH' => '/Users/shahid/.oh-my-zsh'
+    'PAGER' => 'less'
+    'LESS' => '-R'
+    'LSCOLORS' => 'Gxfxcxdxbxegedabagacad'
+    'LS_COLORS' => 'di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    'P9K_SSH' => '0'
+    '_P9K_SSH_TTY' => '/dev/ttys003'
+    'P9K_TTY' => 'old'
+    '_P9K_TTY' => '/dev/ttys003'
+    '_' => '/opt/homebrew/bin/php'
+    'PHP_SELF' => 'yii'
+    'SCRIPT_NAME' => 'yii'
+    'SCRIPT_FILENAME' => 'yii'
+    'PATH_TRANSLATED' => 'yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1740681161.9896
+    'REQUEST_TIME' => 1740681161
+    'argv' => [
+        0 => 'yii'
+        1 => 'migrate'
+    ]
+    'argc' => 2
+]
+2025-03-11 11:50:02 [-][-][-][error][yii\db\Exception] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php:722
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(722): PDO->__construct('mysql:host=127....', 'root', Object(SensitiveParameterValue), NULL)
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(637): yii\db\Connection->createPdoInstance()
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#6 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#12 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#14 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#15 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#16 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#17 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#18 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#19 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#20 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#21 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#22 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#23 {main}
+
+Next yii\db\Exception: SQLSTATE[HY000] [2002] Connection refused in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php:648
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#6 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#12 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#14 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#15 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#16 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#17 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#18 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#19 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#20 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#21 {main}
+Additional Information:
+Array
+(
+    [0] => HY000
+    [1] => 2002
+    [2] => Connection refused
+)
+
+2025-03-11 11:50:02 [-][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = []
+
+$_SERVER = [
+    'TERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SSH_AUTH_SOCK' => '/private/tmp/com.apple.launchd.BQ8OSErr2Z/Listeners'
+    'LC_TERMINAL_VERSION' => '3.5.4'
+    'COLORFGBG' => '15;0'
+    'ITERM_PROFILE' => 'Default'
+    'XPC_FLAGS' => '0x0'
+    'LANG' => 'en_US.UTF-8'
+    'PWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'SHELL' => '/bin/zsh'
+    '__CFBundleIdentifier' => 'com.googlecode.iterm2'
+    'SECURITYSESSIONID' => '186ab'
+    'TERM_FEATURES' => 'T3LrMSc7UUw9Ts3BFGsSyHNoSxF'
+    'TERM_PROGRAM_VERSION' => '3.5.4'
+    'TERM_PROGRAM' => 'iTerm.app'
+    'PATH' => '/Users/shahid/.yarn/bin:/Users/shahid/.config/yarn/global/node_modules/.bin:/Users/shahid/.nvm/versions/node/v20.11.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/iTerm.app/Contents/Resources/utilities:/Users/shahid/Library/Android/sdk/emulator:/Users/shahid/Library/Android/sdk/platform-tools:/Users/shahid/Library/Android/sdk/cmdline-tools/10.0/bin:/Users/shahid/.local/bin'
+    'LC_TERMINAL' => 'iTerm2'
+    'COLORTERM' => 'truecolor'
+    'COMMAND_MODE' => 'unix2003'
+    'TERM' => 'xterm-256color'
+    'TERMINFO_DIRS' => '/Applications/iTerm.app/Contents/Resources/terminfo:/usr/share/terminfo'
+    'HOME' => '/Users/shahid'
+    'TMPDIR' => '/var/folders/g3/3qshvllj5fdb3rtlh_0nbzj40000gp/T/'
+    'USER' => 'shahid'
+    'XPC_SERVICE_NAME' => '0'
+    'LOGNAME' => 'shahid'
+    'LaunchInstanceID' => '1A921673-7FCE-4564-B107-7A276164C5E6'
+    '__CF_USER_TEXT_ENCODING' => '0x1F6:0x0:0x0'
+    'ITERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SHLVL' => '1'
+    'OLDPWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'HOMEBREW_PREFIX' => '/opt/homebrew'
+    'HOMEBREW_CELLAR' => '/opt/homebrew/Cellar'
+    'HOMEBREW_REPOSITORY' => '/opt/homebrew'
+    'INFOPATH' => '/opt/homebrew/share/info:'
+    'NVM_DIR' => '/Users/shahid/.nvm'
+    'NVM_CD_FLAGS' => '-q'
+    'NVM_BIN' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin'
+    'NVM_INC' => '/Users/shahid/.nvm/versions/node/v20.11.0/include/node'
+    'ANDROID_HOME' => '/Users/shahid/Library/Android/sdk'
+    'P9K_TTY' => 'old'
+    '_P9K_TTY' => '/dev/ttys000'
+    'ZSH' => '/Users/shahid/.oh-my-zsh'
+    'PAGER' => 'less'
+    'LESS' => '-R'
+    'LSCOLORS' => 'Gxfxcxdxbxegedabagacad'
+    'LS_COLORS' => 'di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    'P9K_SSH' => '0'
+    '_P9K_SSH_TTY' => '/dev/ttys000'
+    '_' => '/opt/homebrew/bin/php'
+    'PHP_SELF' => 'yii'
+    'SCRIPT_NAME' => 'yii'
+    'SCRIPT_FILENAME' => 'yii'
+    'PATH_TRANSLATED' => 'yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1741693802.3618
+    'REQUEST_TIME' => 1741693802
+    'argv' => [
+        0 => 'yii'
+        1 => 'migrate'
+    ]
+    'argc' => 2
+]
+2025-03-11 11:51:16 [-][-][-][error][yii\db\Exception] PDOException: SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'user' already exists in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php:1320
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1320): PDOStatement->execute()
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1120): yii\db\Command->internalExecute('CREATE TABLE `u...')
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Migration.php(334): yii\db\Command->execute()
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/console/migrations/m130524_201442_init.php(15): yii\db\Migration->createTable('{{%user}}', Array, 'CHARACTER SET u...')
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(758): m130524_201442_init->up()
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(216): yii\console\controllers\BaseMigrateController->migrateUp('m130524_201442_...')
+#6 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#12 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#14 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#15 {main}
+
+Next yii\db\Exception: SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'user' already exists
+The SQL being executed was: CREATE TABLE `user` (
+	`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`username` varchar(255) NOT NULL UNIQUE,
+	`auth_key` varchar(32) NOT NULL,
+	`password_hash` varchar(255) NOT NULL,
+	`password_reset_token` varchar(255) UNIQUE,
+	`email` varchar(255) NOT NULL UNIQUE,
+	`status` smallint(6) NOT NULL DEFAULT 10,
+	`created_at` int(11) NOT NULL,
+	`updated_at` int(11) NOT NULL
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Schema.php:676
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1325): yii\db\Schema->convertException(Object(PDOException), 'CREATE TABLE `u...')
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Command.php(1120): yii\db\Command->internalExecute('CREATE TABLE `u...')
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/db/Migration.php(334): yii\db\Command->execute()
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/console/migrations/m130524_201442_init.php(15): yii\db\Migration->createTable('{{%user}}', Array, 'CHARACTER SET u...')
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(758): m130524_201442_init->up()
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(216): yii\console\controllers\BaseMigrateController->migrateUp('m130524_201442_...')
+#6 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#8 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#9 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#10 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#11 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#12 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#13 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#14 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#15 {main}
+Additional Information:
+Array
+(
+    [0] => 42S01
+    [1] => 1050
+    [2] => Table 'user' already exists
+)
+
+2025-03-11 11:51:11 [-][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = []
+
+$_SERVER = [
+    'TERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SSH_AUTH_SOCK' => '/private/tmp/com.apple.launchd.BQ8OSErr2Z/Listeners'
+    'LC_TERMINAL_VERSION' => '3.5.4'
+    'COLORFGBG' => '15;0'
+    'ITERM_PROFILE' => 'Default'
+    'XPC_FLAGS' => '0x0'
+    'LANG' => 'en_US.UTF-8'
+    'PWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'SHELL' => '/bin/zsh'
+    '__CFBundleIdentifier' => 'com.googlecode.iterm2'
+    'SECURITYSESSIONID' => '186ab'
+    'TERM_FEATURES' => 'T3LrMSc7UUw9Ts3BFGsSyHNoSxF'
+    'TERM_PROGRAM_VERSION' => '3.5.4'
+    'TERM_PROGRAM' => 'iTerm.app'
+    'PATH' => '/Users/shahid/.yarn/bin:/Users/shahid/.config/yarn/global/node_modules/.bin:/Users/shahid/.nvm/versions/node/v20.11.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/iTerm.app/Contents/Resources/utilities:/Users/shahid/Library/Android/sdk/emulator:/Users/shahid/Library/Android/sdk/platform-tools:/Users/shahid/Library/Android/sdk/cmdline-tools/10.0/bin:/Users/shahid/.local/bin'
+    'LC_TERMINAL' => 'iTerm2'
+    'COLORTERM' => 'truecolor'
+    'COMMAND_MODE' => 'unix2003'
+    'TERM' => 'xterm-256color'
+    'TERMINFO_DIRS' => '/Applications/iTerm.app/Contents/Resources/terminfo:/usr/share/terminfo'
+    'HOME' => '/Users/shahid'
+    'TMPDIR' => '/var/folders/g3/3qshvllj5fdb3rtlh_0nbzj40000gp/T/'
+    'USER' => 'shahid'
+    'XPC_SERVICE_NAME' => '0'
+    'LOGNAME' => 'shahid'
+    'LaunchInstanceID' => '1A921673-7FCE-4564-B107-7A276164C5E6'
+    '__CF_USER_TEXT_ENCODING' => '0x1F6:0x0:0x0'
+    'ITERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SHLVL' => '1'
+    'OLDPWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'HOMEBREW_PREFIX' => '/opt/homebrew'
+    'HOMEBREW_CELLAR' => '/opt/homebrew/Cellar'
+    'HOMEBREW_REPOSITORY' => '/opt/homebrew'
+    'INFOPATH' => '/opt/homebrew/share/info:'
+    'NVM_DIR' => '/Users/shahid/.nvm'
+    'NVM_CD_FLAGS' => '-q'
+    'NVM_BIN' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin'
+    'NVM_INC' => '/Users/shahid/.nvm/versions/node/v20.11.0/include/node'
+    'ANDROID_HOME' => '/Users/shahid/Library/Android/sdk'
+    'P9K_TTY' => 'old'
+    '_P9K_TTY' => '/dev/ttys000'
+    'ZSH' => '/Users/shahid/.oh-my-zsh'
+    'PAGER' => 'less'
+    'LESS' => '-R'
+    'LSCOLORS' => 'Gxfxcxdxbxegedabagacad'
+    'LS_COLORS' => 'di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    'P9K_SSH' => '0'
+    '_P9K_SSH_TTY' => '/dev/ttys000'
+    '_' => '/opt/homebrew/bin/php'
+    'PHP_SELF' => 'yii'
+    'SCRIPT_NAME' => 'yii'
+    'SCRIPT_FILENAME' => 'yii'
+    'PATH_TRANSLATED' => 'yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1741693871.0463
+    'REQUEST_TIME' => 1741693871
+    'argv' => [
+        0 => 'yii'
+        1 => 'migrate'
+    ]
+    'argc' => 2
+]
+2025-03-12 10:38:18 [-][-][-][error][yii\console\Exception] yii\console\Exception: Missing required arguments: configFile, bundleFile in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php:256
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/InlineAction.php(51): yii\console\Controller->bindActionParams(Object(yii\base\InlineAction), Array)
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('asset', Array)
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('asset', Array)
+#6 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#7 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#8 {main}
+2025-03-12 10:38:18 [-][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = []
+
+$_SERVER = [
+    'TERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SSH_AUTH_SOCK' => '/private/tmp/com.apple.launchd.BQ8OSErr2Z/Listeners'
+    'LC_TERMINAL_VERSION' => '3.5.4'
+    'COLORFGBG' => '15;0'
+    'ITERM_PROFILE' => 'Default'
+    'XPC_FLAGS' => '0x0'
+    'LANG' => 'en_US.UTF-8'
+    'PWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'SHELL' => '/bin/zsh'
+    '__CFBundleIdentifier' => 'com.googlecode.iterm2'
+    'SECURITYSESSIONID' => '186ab'
+    'TERM_FEATURES' => 'T3LrMSc7UUw9Ts3BFGsSyHNoSxF'
+    'TERM_PROGRAM_VERSION' => '3.5.4'
+    'TERM_PROGRAM' => 'iTerm.app'
+    'PATH' => '/Users/shahid/.yarn/bin:/Users/shahid/.config/yarn/global/node_modules/.bin:/Users/shahid/.nvm/versions/node/v20.11.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/iTerm.app/Contents/Resources/utilities:/Users/shahid/Library/Android/sdk/emulator:/Users/shahid/Library/Android/sdk/platform-tools:/Users/shahid/Library/Android/sdk/cmdline-tools/10.0/bin:/Users/shahid/.local/bin'
+    'LC_TERMINAL' => 'iTerm2'
+    'COLORTERM' => 'truecolor'
+    'COMMAND_MODE' => 'unix2003'
+    'TERM' => 'xterm-256color'
+    'TERMINFO_DIRS' => '/Applications/iTerm.app/Contents/Resources/terminfo:/usr/share/terminfo'
+    'HOME' => '/Users/shahid'
+    'TMPDIR' => '/var/folders/g3/3qshvllj5fdb3rtlh_0nbzj40000gp/T/'
+    'USER' => 'shahid'
+    'XPC_SERVICE_NAME' => '0'
+    'LOGNAME' => 'shahid'
+    'LaunchInstanceID' => '1A921673-7FCE-4564-B107-7A276164C5E6'
+    '__CF_USER_TEXT_ENCODING' => '0x1F6:0x0:0x0'
+    'ITERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SHLVL' => '1'
+    'OLDPWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'HOMEBREW_PREFIX' => '/opt/homebrew'
+    'HOMEBREW_CELLAR' => '/opt/homebrew/Cellar'
+    'HOMEBREW_REPOSITORY' => '/opt/homebrew'
+    'INFOPATH' => '/opt/homebrew/share/info:'
+    'NVM_DIR' => '/Users/shahid/.nvm'
+    'NVM_CD_FLAGS' => '-q'
+    'NVM_BIN' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin'
+    'NVM_INC' => '/Users/shahid/.nvm/versions/node/v20.11.0/include/node'
+    'ANDROID_HOME' => '/Users/shahid/Library/Android/sdk'
+    'P9K_TTY' => 'old'
+    '_P9K_TTY' => '/dev/ttys000'
+    'ZSH' => '/Users/shahid/.oh-my-zsh'
+    'PAGER' => 'less'
+    'LESS' => '-R'
+    'LSCOLORS' => 'Gxfxcxdxbxegedabagacad'
+    'LS_COLORS' => 'di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    'P9K_SSH' => '0'
+    '_P9K_SSH_TTY' => '/dev/ttys000'
+    '_' => '/opt/homebrew/bin/php'
+    'PHP_SELF' => 'yii'
+    'SCRIPT_NAME' => 'yii'
+    'SCRIPT_FILENAME' => 'yii'
+    'PATH_TRANSLATED' => 'yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1741775898.6554
+    'REQUEST_TIME' => 1741775898
+    'argv' => [
+        0 => 'yii'
+        1 => 'asset'
+    ]
+    'argc' => 2
+]
+2025-03-12 10:39:26 [-][-][-][error][yii\console\UnknownCommandException] yii\base\InvalidRouteException: Unable to resolve the request: asset/publish in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php:149
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('publish', Array)
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('publish', Array)
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('asset/publish', Array)
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('asset/publish', Array)
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#6 {main}
+
+Next yii\console\UnknownCommandException: Unknown command "asset/publish". in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php:183
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('asset/publish', Array)
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#3 {main}
+2025-03-12 10:39:26 [-][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = []
+
+$_SERVER = [
+    'TERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SSH_AUTH_SOCK' => '/private/tmp/com.apple.launchd.BQ8OSErr2Z/Listeners'
+    'LC_TERMINAL_VERSION' => '3.5.4'
+    'COLORFGBG' => '15;0'
+    'ITERM_PROFILE' => 'Default'
+    'XPC_FLAGS' => '0x0'
+    'LANG' => 'en_US.UTF-8'
+    'PWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'SHELL' => '/bin/zsh'
+    '__CFBundleIdentifier' => 'com.googlecode.iterm2'
+    'SECURITYSESSIONID' => '186ab'
+    'TERM_FEATURES' => 'T3LrMSc7UUw9Ts3BFGsSyHNoSxF'
+    'TERM_PROGRAM_VERSION' => '3.5.4'
+    'TERM_PROGRAM' => 'iTerm.app'
+    'PATH' => '/Users/shahid/.yarn/bin:/Users/shahid/.config/yarn/global/node_modules/.bin:/Users/shahid/.nvm/versions/node/v20.11.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/iTerm.app/Contents/Resources/utilities:/Users/shahid/Library/Android/sdk/emulator:/Users/shahid/Library/Android/sdk/platform-tools:/Users/shahid/Library/Android/sdk/cmdline-tools/10.0/bin:/Users/shahid/.local/bin'
+    'LC_TERMINAL' => 'iTerm2'
+    'COLORTERM' => 'truecolor'
+    'COMMAND_MODE' => 'unix2003'
+    'TERM' => 'xterm-256color'
+    'TERMINFO_DIRS' => '/Applications/iTerm.app/Contents/Resources/terminfo:/usr/share/terminfo'
+    'HOME' => '/Users/shahid'
+    'TMPDIR' => '/var/folders/g3/3qshvllj5fdb3rtlh_0nbzj40000gp/T/'
+    'USER' => 'shahid'
+    'XPC_SERVICE_NAME' => '0'
+    'LOGNAME' => 'shahid'
+    'LaunchInstanceID' => '1A921673-7FCE-4564-B107-7A276164C5E6'
+    '__CF_USER_TEXT_ENCODING' => '0x1F6:0x0:0x0'
+    'ITERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SHLVL' => '1'
+    'OLDPWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'HOMEBREW_PREFIX' => '/opt/homebrew'
+    'HOMEBREW_CELLAR' => '/opt/homebrew/Cellar'
+    'HOMEBREW_REPOSITORY' => '/opt/homebrew'
+    'INFOPATH' => '/opt/homebrew/share/info:'
+    'NVM_DIR' => '/Users/shahid/.nvm'
+    'NVM_CD_FLAGS' => '-q'
+    'NVM_BIN' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin'
+    'NVM_INC' => '/Users/shahid/.nvm/versions/node/v20.11.0/include/node'
+    'ANDROID_HOME' => '/Users/shahid/Library/Android/sdk'
+    'P9K_TTY' => 'old'
+    '_P9K_TTY' => '/dev/ttys000'
+    'ZSH' => '/Users/shahid/.oh-my-zsh'
+    'PAGER' => 'less'
+    'LESS' => '-R'
+    'LSCOLORS' => 'Gxfxcxdxbxegedabagacad'
+    'LS_COLORS' => 'di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    'P9K_SSH' => '0'
+    '_P9K_SSH_TTY' => '/dev/ttys000'
+    '_' => '/opt/homebrew/bin/php'
+    'PHP_SELF' => 'yii'
+    'SCRIPT_NAME' => 'yii'
+    'SCRIPT_FILENAME' => 'yii'
+    'PATH_TRANSLATED' => 'yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1741775966.6325
+    'REQUEST_TIME' => 1741775966
+    'argv' => [
+        0 => 'yii'
+        1 => 'asset/publish'
+    ]
+    'argc' => 2
+]
+2025-03-12 10:41:27 [-][-][-][error][yii\console\UnknownCommandException] yii\base\InvalidRouteException: Unable to resolve the request: asset/clean in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Controller.php:149
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('clean', Array)
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('clean', Array)
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('asset/clean', Array)
+#3 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('asset/clean', Array)
+#4 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#5 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#6 {main}
+
+Next yii\console\UnknownCommandException: Unknown command "asset/clean". in /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php:183
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('asset/clean', Array)
+#1 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#2 /Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master/yii(27): yii\base\Application->run()
+#3 {main}
+2025-03-12 10:41:27 [-][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = []
+
+$_SERVER = [
+    'TERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SSH_AUTH_SOCK' => '/private/tmp/com.apple.launchd.BQ8OSErr2Z/Listeners'
+    'LC_TERMINAL_VERSION' => '3.5.4'
+    'COLORFGBG' => '15;0'
+    'ITERM_PROFILE' => 'Default'
+    'XPC_FLAGS' => '0x0'
+    'LANG' => 'en_US.UTF-8'
+    'PWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'SHELL' => '/bin/zsh'
+    '__CFBundleIdentifier' => 'com.googlecode.iterm2'
+    'SECURITYSESSIONID' => '186ab'
+    'TERM_FEATURES' => 'T3LrMSc7UUw9Ts3BFGsSyHNoSxF'
+    'TERM_PROGRAM_VERSION' => '3.5.4'
+    'TERM_PROGRAM' => 'iTerm.app'
+    'PATH' => '/Users/shahid/.yarn/bin:/Users/shahid/.config/yarn/global/node_modules/.bin:/Users/shahid/.nvm/versions/node/v20.11.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/iTerm.app/Contents/Resources/utilities:/Users/shahid/Library/Android/sdk/emulator:/Users/shahid/Library/Android/sdk/platform-tools:/Users/shahid/Library/Android/sdk/cmdline-tools/10.0/bin:/Users/shahid/.local/bin'
+    'LC_TERMINAL' => 'iTerm2'
+    'COLORTERM' => 'truecolor'
+    'COMMAND_MODE' => 'unix2003'
+    'TERM' => 'xterm-256color'
+    'TERMINFO_DIRS' => '/Applications/iTerm.app/Contents/Resources/terminfo:/usr/share/terminfo'
+    'HOME' => '/Users/shahid'
+    'TMPDIR' => '/var/folders/g3/3qshvllj5fdb3rtlh_0nbzj40000gp/T/'
+    'USER' => 'shahid'
+    'XPC_SERVICE_NAME' => '0'
+    'LOGNAME' => 'shahid'
+    'LaunchInstanceID' => '1A921673-7FCE-4564-B107-7A276164C5E6'
+    '__CF_USER_TEXT_ENCODING' => '0x1F6:0x0:0x0'
+    'ITERM_SESSION_ID' => 'w0t0p0:991C15DF-55C0-411E-BB2B-FD26CF52C9E1'
+    'SHLVL' => '1'
+    'OLDPWD' => '/Applications/XAMPP/xamppfiles/htdocs/BadgeApp-master'
+    'HOMEBREW_PREFIX' => '/opt/homebrew'
+    'HOMEBREW_CELLAR' => '/opt/homebrew/Cellar'
+    'HOMEBREW_REPOSITORY' => '/opt/homebrew'
+    'INFOPATH' => '/opt/homebrew/share/info:'
+    'NVM_DIR' => '/Users/shahid/.nvm'
+    'NVM_CD_FLAGS' => '-q'
+    'NVM_BIN' => '/Users/shahid/.nvm/versions/node/v20.11.0/bin'
+    'NVM_INC' => '/Users/shahid/.nvm/versions/node/v20.11.0/include/node'
+    'ANDROID_HOME' => '/Users/shahid/Library/Android/sdk'
+    'P9K_TTY' => 'old'
+    '_P9K_TTY' => '/dev/ttys000'
+    'ZSH' => '/Users/shahid/.oh-my-zsh'
+    'PAGER' => 'less'
+    'LESS' => '-R'
+    'LSCOLORS' => 'Gxfxcxdxbxegedabagacad'
+    'LS_COLORS' => 'di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    'P9K_SSH' => '0'
+    '_P9K_SSH_TTY' => '/dev/ttys000'
+    '_' => '/opt/homebrew/bin/php'
+    'PHP_SELF' => 'yii'
+    'SCRIPT_NAME' => 'yii'
+    'SCRIPT_FILENAME' => 'yii'
+    'PATH_TRANSLATED' => 'yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1741776087.3893
+    'REQUEST_TIME' => 1741776087
+    'argv' => [
+        0 => 'yii'
+        1 => 'asset/clean'
+    ]
+    'argc' => 2
+]

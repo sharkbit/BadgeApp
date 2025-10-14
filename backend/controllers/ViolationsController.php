@@ -32,51 +32,71 @@ class ViolationsController extends SiteController {
 
 	public function actionCreate() {
 		$model = new Violations();
-		
-		if ($model->load(Yii::$app->request->post())) {
-			$model->vi_rules = implode(", ",$model->vi_rules);
-			if(isset($model->badge_reporter)) {$model->badge_reporter = ltrim($model->badge_reporter, '0'); }
-			if(isset($model->badge_involved)) {$model->badge_involved = ltrim($model->badge_involved, '0'); }
-			if(isset($model->badge_witness)) {$model->badge_witness = ltrim($model->badge_witness, '0'); }
-			if(isset($model->vi_sum)) {$model->vi_sum = trim(preg_replace('/\r\n?/', " ", $model->vi_sum)); }
-			if(isset($model->vi_report)) {$model->vi_report = trim(preg_replace('/\r\n?/', " ", $model->vi_report)); }
-			if(isset($model->vi_action)) {$model->vi_action = trim(preg_replace('/\r\n?/', " ", $model->vi_action)); }
-			if(isset($model->hear_sum)) {$model->hear_sum = trim(preg_replace('/\r\n?/', " ", $model->hear_sum)); }
-			
-			if($model->save()) {
-				Yii::$app->getSession()->setFlash('success', 'Violation has been saved!');
-				if($model->vi_type==4){
-					$member = (new Badges)->findOne(['badge_number'=>$model->badge_involved]);
-					$member->status='suspended';
-					$nowRemakrs = ['created_at'=>yii::$app->controller->getNowTime(), 'data'=>'Badge Suspended ', 'changed'=> 'Suspender by '.$_SESSION['user'], ];
-					$remarksOld = $member->remarks;
-					if($remarksOld != '') {
-						$remarksOld = json_decode($remarksOld);
-						array_push($remarksOld,$nowRemakrs);
-					} else {
-						$remarksOld = [	$nowRemakrs, ];
-					}
-					$member->remarks = json_encode($remarksOld,true);
-					
-					$member->save(false);
-				}
-				//$violations = Violations::find()->where(['id'=>$model->id])->one();
-				$this->createLog($this->getNowTime(), $_SESSION['user'], 'Logged Range Violation for: '.$model->badge_involved);
-
-                return $this->redirect(['view', 'id' => $model->id]);   
-				
-			} else {
-				Yii::$app->getSession()->setFlash('error', 'action create - no save?');
-				return $this->redirect(['/violations/index']);
-			}
-		} 
-		else {
-			return $this->render('create', [
-				'model' => $model,
-				//'id' => $violationsID
-			 
-			]);
+		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+			Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+			return yii\widgets\ActiveForm::validate($model);
 		}
+		elseif ($model->load(Yii::$app->request->post())) {
+			$model->badge_reporter = $_SESSION['badge_number'];
+			$model->vi_date = date('Y-m-d H:i:s',strtotime($model->vi_date));
+			$model->vi_rules = implode(", ",$model->vi_rules);
+			$model->vi_sum = trim($model->vi_sum);
+			$model->vi_report = trim($model->vi_report);
+			$model->vi_action = trim($model->vi_action);
+			if(isset($model->hear_sum)) { $model->hear_sum = trim($model->hear_sum); }
+			if($model->hear_date) {
+				$model->hear_date = date('Y-m-d H:i:s',strtotime($model->hear_date));
+			}
+
+			if($model->save()) {
+				// Increment violation count and get current status
+				ViolationStatus::incrementViolation($model->badge_involved, $model->was_guest == 1);
+				$currentStatus = ViolationStatus::findOne(['badge_number' => $model->badge_involved]);
+				
+				// Prepare notification message based on status
+				$notificationMessage = '';
+				if ($currentStatus) {
+					switch ($currentStatus->status) {
+						case ViolationStatus::STATUS_WARNING:
+							$notificationMessage = $model->was_guest ? 
+								'Guest has received a warning for their first violation.' :
+								'Member has received a warning for their first violation.';
+							break;
+						case ViolationStatus::STATUS_ESCALATED:
+							$notificationMessage = 'Member has received an escalated warning for their second violation. Admin contact is required.';
+							break;
+						case ViolationStatus::STATUS_BLOCKED:
+							$notificationMessage = $model->was_guest ?
+								'Guest has been blocked for 30 days due to multiple violations.' :
+								'Member has been blocked for 30 days due to three violations.';
+							break;
+					}
+				}
+
+				// Add notification message to flash
+				if ($notificationMessage) {
+					Yii::$app->getSession()->setFlash('warning', $notificationMessage);
+				}
+
+				// If violation type is 4 or status is blocked, update badge status
+				if ($model->vi_type == 4 || ($currentStatus && $currentStatus->status === ViolationStatus::STATUS_BLOCKED)) {
+					$badge = Badges::findOne(['badge_number' => $model->badge_involved]);
+					if ($badge) {
+						$badge->status = 'suspended';
+						$badge->remarks = $badge->remarks ? 
+							$badge->remarks . "\n" . date('Y-m-d') . " - Suspended due to violation" :
+							date('Y-m-d') . " - Suspended due to violation";
+						$badge->save();
+					}
+				}
+
+				$this->createLog($this->getNowTime(), $_SESSION['user'], 'Created Violation: '.$model->id.' For Badge: '.$model->badge_involved);
+				return $this->redirect(['view', 'id' => $model->id]);
+			}
+		}
+		return $this->render('create', [
+			'model' => $model,
+		]);
 	}
 
 	public function actionReport() {
@@ -170,6 +190,20 @@ class ViolationsController extends SiteController {
 			$myViol_lst[$id['rule_abrev'].'-C'.$id['vi_type']] = $id['rule_name'];
 		}
 		return $myViol_lst;
+	}
+
+	public function actionGuestViolations()
+	{
+		$searchModel = new \backend\models\search\ViolationsSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		
+		// Filter to show only guest violations
+		$dataProvider->query->andWhere(['was_guest' => 1]);
+		
+		return $this->render('guest-violations', [
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+		]);
 	}
 
 	protected function findModel($id) {

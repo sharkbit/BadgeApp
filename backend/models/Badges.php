@@ -209,8 +209,12 @@ class Badges extends \yii\db\ActiveRecord {
 				} else {
 					$mine = (new clubs)->getMyClubs($model->badge_number);
 					if ($mine != $model->club_id) {
+						// Get original club names before change
+						$originalClubs = (new clubs)->getMyClubsNames($model->badge_number);
 						(new clubs)->saveClub($model->badge_number,$model->club_id);
 						$dirty[]='Club';
+						// Add original club to remarks
+						$model->remarks_temp = "Club changed from: " . $originalClubs;
 					}
 				}
 			} else {

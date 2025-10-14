@@ -114,6 +114,37 @@ class PaymentController extends AdminController {
 				$price_ea=($cc_amount / $model->guest_count);
 				$MyCart = "[".json_encode(["item"=>"Guest Bracelet Fee","sku"=>$confParams->guest_sku,"ea"=>number_format($price_ea, 2, '.', ''),"qty"=>$model->guest_count,"price"=>number_format($cc_amount, 2, '.', '') ])."]";
 
+				// Process credit card payment
+				if($model->payment_type == 'creditnow') {
+					$result = $this->processCreditCardPayment($model, $MyCart);
+					if($result['success']) {
+						// Auto-register the guest
+						$guest = new Guest();
+						$guest->badge_number = $model->badge_number;
+						$guest->g_first_name = $first_name;
+						$guest->g_last_name = $last_name;
+						$guest->g_city = $cc_city;
+						$guest->g_state = $cc_state;
+						$guest->g_zip = $cc_zip;
+						$guest->g_address = $cc_address;
+						$guest->time_in = date('Y-m-d H:i:s');
+						$guest->g_paid = '1'; // Mark as paid
+						$guest->payment_type = 'creditnow';
+						$guest->guest_count = $model->guest_count;
+						
+						if($guest->save()) {
+							Yii::$app->getSession()->setFlash('success', 'Guest has been registered and payment processed successfully.');
+							return $this->redirect(['/guest/index']);
+						} else {
+							Yii::$app->getSession()->setFlash('error', 'Payment processed but guest registration failed.');
+							return $this->redirect(['/guest/create']);
+						}
+					} else {
+						Yii::$app->getSession()->setFlash('error', 'Payment failed: ' . $result['message']);
+						return $this->redirect(['/guest/create']);
+					}
+				}
+
 			} else {   		// Create
 				if(!(float)$model->amt_due>0) { $err='Amount Due'; } 	else { $cc_amount = $model->amt_due; }
 				if($model->state=='') { $err='State'; }		else { $cc_state = $model->state; }
