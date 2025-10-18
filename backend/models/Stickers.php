@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use backend\models\Params;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -53,13 +54,23 @@ class Stickers extends \yii\db\ActiveRecord{
 		$sticker = (new Stickers)->find()->where($whr)->limit($limit)->orderBy('sticker')->all();
 		if($sticker){
 			$use = ArrayHelper::map($sticker,'sticker','sticker');
-			$tmpstkr = substr(array_values($use)[0],0,5).'zzzz';
+
+			$confParams  = Params::findOne('1');
+			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
+			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
+
+			$tmpstkr = date('Y', strtotime($nowDate)).'-zzzz';
 			$use = array_merge($use,[$tmpstkr=>$tmpstkr]);
+
+			if ($DateChk <= $nowDate) {
+				$tmpstkr = date('Y', strtotime("+1 years",strtotime($nowDate))).'-zzzz';
+				$use = array_merge($use,[$tmpstkr=>$tmpstkr]);
+			}
 			return $use;
 		} else {
 			return ['fix'=>'No Stickers. See Admin'];
 		}
-		
+
 	}
 
 	public function listStickerStatus($stat=false) {
