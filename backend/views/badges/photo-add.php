@@ -13,6 +13,7 @@ $this->params['breadcrumbs'][] = ['label' => $_GET['badge'], 'url' => ['/badges/
 $this->params['breadcrumbs'][] = $this->title;
 
 $csrfToken=Yii::$app->request->getCsrfToken();
+$agent = $_SERVER['HTTP_USER_AGENT'];
 ?>
 <div class="container">
 <ul>
@@ -29,9 +30,10 @@ $csrfToken=Yii::$app->request->getCsrfToken();
       </div>
     </div>
 </div>
+<?php if (str_contains($agent, 'Windows') || str_contains($agent, 'Android')) { ?>
 <div class="row" id="video_block">
 	<div class="col-md-12 text-center">
-		<video id="my_photo" style="width:80%; max-width:600px;"></video>
+		<video accept="image/*" capture="camera" id="my_photo" style="width:80%;"></video>
 	</div>
 	<div class="col-md-12 text-center">
 		<button id="take_snapshots" class="btn btn-success btn-sm">Take Snapshots</button>
@@ -46,10 +48,12 @@ $csrfToken=Yii::$app->request->getCsrfToken();
 		<button id="save_photo" class="btn btn-success btn-sm">Use Photo</button>
 	</div>
 </div>
+<br /> If you change your video source, hold picture to refresh...
+<?php } else {
+		echo "<p>Unsupported Device</p>".$agent.'<p><a href="/badges/view?badge_number='.$_GET['badge'].'">Back to User info</a></p>';
+} ?>
 
-<br> If you change your video source, hold picture to refresh...
 </div>
-<!-- <a href="https://simpl.info/getusermedia/sources/" target="_blank">test</a> -->
 
 <script>
   (function() {
@@ -62,6 +66,7 @@ $csrfToken=Yii::$app->request->getCsrfToken();
 	var photo = null;
 	var streaming = false;
 
+<?php if (str_contains($agent, 'Windows') || str_contains($agent, 'Android')) { ?>
  function startup() {
     video = document.getElementById('my_photo');
     photo = document.getElementById('new_badge_photo');
@@ -76,19 +81,6 @@ $csrfToken=Yii::$app->request->getCsrfToken();
 
     video.addEventListener('canplay', (event) => {
       if (!streaming) {
-        height = video.videoHeight / (video.videoWidth/width);
-
-        // Firefox currently has a bug where the height can't be read from
-        // the video, so we will make assumptions if this happens.
-
-        if (isNaN(height)) {
-          height = width / (4/3);
-        }
-
-		// Define video settings.
-
-        video.setAttribute('width', width);
-        video.setAttribute('height', height);
         streaming = true;
       }
     }, false);
@@ -125,8 +117,8 @@ console.log( "using: "+ JSON.stringify(myimg).length );
     var takeSnapshot = function () {
 		myimg = document.querySelector("my_photo");
 		var context;
-		var width = video.offsetWidth
-		, height = video.offsetHeight;
+		var width = video.videoWidth
+		, height = video.videoHeight;
 
 		canvas = canvas || document.createElement("canvas");
 		canvas.width = width;
@@ -145,4 +137,5 @@ console.log( "using: "+ JSON.stringify(myimg).length );
 	window.addEventListener('load', startup, false);
   })();
 
+<?php } ?>
 </script>
