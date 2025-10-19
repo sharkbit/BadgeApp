@@ -43,7 +43,7 @@ class Stickers extends \yii\db\ActiveRecord{
 	public function getList() {
 		$limit=15;
 		if (array_intersect([1,2], json_decode(yii::$app->user->identity->privilege))) {
-			$whr="status='adm' OR status='cas'"; $limit=150; }
+			$whr="status='adm' OR status='cas'"; $limit=300; }
 		elseif ((in_array(3, json_decode(yii::$app->user->identity->privilege))) && (in_array(10, json_decode(yii::$app->user->identity->privilege)))) {
 			$whr="status='rso' OR status='cas'"; $limit=150;}
 		elseif (array_intersect([10], json_decode(yii::$app->user->identity->privilege))) {
