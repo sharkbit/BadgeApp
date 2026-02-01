@@ -46,16 +46,9 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'Calender',
-			'loc'=>['prod'],
-			'url' => false,
-			'allow' => 'calendar/index',
-			'target'=>'cal',
-			'color' => 'btn-danger',
-		],
-		[
-			'label'=>'Calender',
-			'loc' => ['cal','dev'],
+			'loc'=>['cal','prod'],
 			'url' => '/calendar/index',
+			'allow' => 'calendar/index',
 			'color' => 'btn-danger',
 		],
 		[
@@ -71,15 +64,9 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'Events',
-			'loc'=>['prod','dev'],
+			'loc'=>['cal','prod','dev'],
 			'url' => '/events/index',
 			'color' => 'btn-info',
-		],
-		[
-			'label'=>'Legislative Emails',
-			'loc'=>['leg','cal','dev'],
-			'url' => '/legelemail/index',
-			'color' => 'btn-success',
 		],
 		[
 			'label'=>'Range Violations',
