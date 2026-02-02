@@ -91,7 +91,7 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'Admin Functions',
-			'loc'=>['prod','cal','dev'],
+			'loc'=>['prod','dev'],
 			'url' => '/site/admin-menu',
 			'color' => 'btn-warning',
 		],
@@ -139,7 +139,7 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'Range Badge Database',
-			'loc'=>['prod','cal','dev'],
+			'loc'=>['prod','dev'],
 			'url' => '/range-badge-database/index',
 		],
 		[
@@ -149,12 +149,12 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'Scan Badge',
-			'loc'=>['prod','cal','dev'],
+			'loc'=>['prod','dev'],
 			'url' => '/badges/scan-badge',
 		],
 		[
 			'label'=>'Settings',
-			'loc'=>['prod','cal','dev'],
+			'loc'=>['prod','dev'],
 			'url' => '/params/update',
 		],
 		[
