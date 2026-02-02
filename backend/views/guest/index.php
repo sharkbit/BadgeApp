@@ -75,14 +75,13 @@ if(yii::$app->controller->hasPermission('guest/delete')) {
 						if (yii::$app->controller->hasPermission('sales/all')) {
 							return Html::a('Pay Now'.$p_type,'/sales/index?badge='.$model->badge_number.'&id='.$model->id);
 						} else {
-							return "Not Paid ". $p_type;
+							return "See Cashier"; //". $p_type;
 						}
 					} else {
 						return 'paid';
 					}
 				},
 			],
-			//'tmp_badge',
 			[
 				'attribute'=>'time_in',
 				'value'=>function($model) {

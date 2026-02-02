@@ -13,16 +13,6 @@ if ( ($model->isNewRecord) && ($_SESSION["badge_number"]>0) ) { $model->badge_nu
 
 $model->time_in = yii::$app->controller->getNowTime();
 $Payment_block=''; $msg='Register';
-if ( isset( $_SESSION['stickyForm'] ) ) {
-	$model->guest_count = $_SESSION['stickyForm']['guest_count'];
-	$model->badge_number = $_SESSION['stickyForm']['badge_number'];
-	$model->payment_type = $_SESSION['stickyForm']['payment_type'];
-	if($_SESSION['stickyForm']['g_paid']) {$model->g_paid = $_SESSION['stickyForm']['g_paid'];}
-	else {$model->g_paid='0';}
-	$model->time_in = $_SESSION['stickyForm']['time_in'];
-	if ($model->guest_count > 1) {$msg='Add Next Guest';}
-	$Payment_block='display: none;';
-}
 
 if(!yii::$app->controller->hasPermission('guest/modify')) {
 	$isguest = true;
@@ -36,8 +26,6 @@ if(!yii::$app->controller->hasPermission('guest/modify')) {
 $confParams = Params::findOne('1');
 $guest_band = (new backend\models\StoreItems)->find()->where(['sku'=>$confParams->guest_sku])->one();
 if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2>'; return;}
-
-$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
 
 <div class="guest-form" ng-controller="GuestFrom">
@@ -110,7 +98,7 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 				<?= $form->field($model, 'g_state'); } ?>
 		</div>
 	</div>
-	<h3><p><b>Type of Visitor?</b></p></h3>		
+	<h3><p><b>Type of Visitor?</b></p></h3>
 	<div class="row">
 		<div class="col-xs-6 col-sm-3" ><p>
 	<?php if($model->isNewRecord) { ?>
@@ -137,7 +125,7 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 					case 'o': echo "is an Observer"; break;
 					case 's': echo "is a Spouse"; break;
 					case 'y': echo "is a Youth Participant"; break;
-				}; 
+				};
 				echo "</font></b></p>";
 		  } ?>
 			<div class="help-block"></div>
@@ -147,7 +135,7 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 	</div>
 
 		<div id="search_error"> </div>
-		
+
 	<?php if($model->isNewRecord) { ?>
 	<div class="row">
 		<div class="col-xs-12 col-sm-12">
@@ -165,90 +153,13 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 		  <li>If your Badge Holder needs to leave the firing line, make sure the firearm is made safe (unloaded, ECI inserted) step off the concrete pad and do not handle any firearms until your Badge Holder returns.</li>
 		</ol>
 		<p>Please ask your Guest to acknowledge the above statements and that they understand each statement. If your guest is a minor, you can acknowledge for them.</p>
-		 <?= Html::Button('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
+		 <?= Html::submitButton('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
 		</div>
 	</div>
 	<?php } ?>
 	</div>
-	<?php if($model->isNewRecord) { ?>
-	  <div class="col-xs-12 col-sm-4">
-		<div class="row summary-block-payment" style="margin: 0px;<?=$Payment_block?>" id="Div_Payment_Block">
-			<h3>$<?=$guest_band->price ?>  per Shooter</h3><hr />
-			<input type="hidden" id='guest_price' value='<?=$guest_band->price ?>' />
-			<?= $form->field($model, 'guest_count')->dropDownList(['1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8,'9'=>9,'10'=>10,'11'=>11,'12'=>12,'13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'18'=>18,'19'=>19],['value'=>'1'])->label('Shooter Count').PHP_EOL; ?>
-			<?= $form->field($model, 'amount_due')->textInput(['value' => number_format(($guest_band->price+$guest_band->price*$guest_band->tax_rate),2)]).PHP_EOL; ?>
-			<?= $form->field($model, 'tax')->hiddenInput(['value'=>$guest_band->tax_rate])->label(false).PHP_EOL; ?>
-			<?= $form->field($model, 'payment_type')->dropdownList($myList,['value'=>'cash']).PHP_EOL;?>
-			<div id="cc_form_div" style="margin-left: 1px">
-				<div id="CC_success">
-					<div class="col-xs-12 col-sm-12">
-						<input type="radio" id="Who_pays" name="Who_pays" onclick="g_handleClick(this);" checked /> &nbsp;<label for="guest"> Guest info:</label> &nbsp; &nbsp; | &nbsp; &nbsp;
-						<input type="radio" id="Who_pays" name="Who_pays" onclick="m_handleClick(this);" /> &nbsp;<label for="member"> Member info:</label>
-					</div>
-					<div class="col-xs-8 col-sm-8">
-						<?= $form->field($model, 'cc_name')->textInput().PHP_EOL; ?>
-					</div>
-					<div class="col-xs-4 col-sm-4">
-						<?= $form->field($model, 'cc_zip')->textInput().PHP_EOL; ?>
-					</div>
-					<div class="col-xs-12 col-sm-12">
-						<?= $form->field($model, 'cc_address')->textInput().PHP_EOL; ?>
-					</div>
-					<div class="col-xs-8 col-sm-8">
-						<?= $form->field($model, 'cc_city')->textInput().PHP_EOL; ?>
-					</div>
-					<div class="col-xs-4 col-sm-4">
-						<?= $form->field($model, 'cc_state')->textInput().PHP_EOL; ?>
-					</div>
-					<div class="col-xs-12 col-sm-12">
-						<?= $form->field($model, 'cc_num')->textInput(['maxlength'=>true]).PHP_EOL; ?>
-					</div>
-					<div class="col-xs-4 col-sm-4">
-						<?= $form->field($model, 'cc_exp_mo')->dropDownList(['01'=>'01 Jan','02'=>'02 Feb','03'=>'03 Mar','04'=>'04 Apr','05'=>'05 May','06'=>'06 Jun','07'=>'07 Jul','08'=>'08 Aug','09'=>'09 Sep','10'=>'10 Oct','11'=>'11 Nov','12'=>'12 Dec']).PHP_EOL; ?>
-					</div>
-					<div class="col-xs-5 col-sm-5">
-					<?php 	$curYr = date('Y',strtotime(yii::$app->controller->getNowTime()));
-					$ccYear = range($curYr,$curYr+25);  ?>
-						<?= $form->field($model, 'cc_exp_yr')->dropDownList($ccYear).PHP_EOL; ?>
-					</div>
-					<div class="col-xs-3 col-sm-3">
-						<?= $form->field($model, 'cc_cvc')->textInput(['maxlength'=>true]).PHP_EOL; ?>
-					</div>
-				</div>
-				<?= $form->field($model, 'cc_x_id')->hiddenInput()->label(false).PHP_EOL; ?>
-				<div class="col-xs-4 col-sm-4 form-group">
-					<?= Html::Button('<i class="fa fa-credit-card"> Process</i>', ['id'=>'guest-Process_CC','class' => 'btn btn-danger']), PHP_EOL ?>
-				</div>
-				<div class="col-xs-8 col-sm-8">
-					<p id="cc_info"> </p>
-				</div>
-				<div class="col-xs-12" id="cert_online_search" style="display: none">
-				<center><img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 50px" />Searching..</center>
-				<p>  </p>
-				</div><?php if(Yii::$app->params['env'] == 'dev') {echo "Test CC: 4111-1111-1111-1111";} ?>
-			</div>
-			<p> </p>
-
-		</div>
-		<div class="row">
-			<div class="col-xs-12" id="cert_search" ><!--style="display: none"> -->
-				<center><img src="<?=yii::$app->params['rootUrl']?>/images/animation_processing.gif" style="width: 50px" />Searching..</center>
-				<p>  </p>
-			</div>
-			<div class="col-xs-12 text-center" id="cert_search_results" > </div>
-		</div>
-			<div class="clearfix"> </div>
-	</div>
-	<?php } ?> 
-	<?php if ($Payment_block) { ?>
-		<div class="col-xs-12 col-sm-4">		
-		<?= $form->field($model, 'guest_count')->hiddenInput().PHP_EOL ?>
-		</div>
-	<?php } ?>
-		<div class="btn-group pull-right" id="guest_save_div" <?php if($model->isNewRecord) {echo 'style="display:none"';}?>> <br /><br /><div id="CC_Save">
-			<?= Html::submitButton($model->isNewRecord ? $msg : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success done-Guest' : 'btn btn-primary done-Guest','id'=>'save_btn']).PHP_EOL;  ?>
-		</div></div>
-	</div>
+<?= $form->field($model, 'guest_count')->hiddenInput(['value'=>'1'])->label(false).PHP_EOL; ?>
+<?= $form->field($model, 'payment_type')->hiddenInput(['value'=>'cash'])->label(false).PHP_EOL; ?>
 <input type="hidden" id='m_first_n' />
 <input type="hidden" id='m_last_n' />
 <input type="hidden" id='m_address' />
@@ -265,62 +176,6 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 
 	if($("#guest-badge_number").val()) {get_member($("#guest-badge_number").val());};
 
-$('#GuestForm').on('submit', function() {
-    $('input, select').prop('disabled', false);
-});
-
-    function RefreshAmount() {
-		var guest_price = document.getElementById("guest_price").value
-		var guest_count = parseInt(document.getElementById("guest-guest_count").value);
-		document.getElementById("guest-amount_due").value = (guest_price * guest_count + (guest_price * guest_count * <?=$guest_band->tax_rate ?>)).toFixed(2);
-		document.getElementById("guest-tax").value = (guest_price * guest_count * <?=$guest_band->tax_rate ?>);
-	};
-
- <?php if($model->isNewRecord) { ?>
-    $("#guest-guest_count").change(function(e) {
-        addTime();
-        var guest_price = document.getElementById("guest_price").value;
-		var guest_count = parseInt(document.getElementById("guest-guest_count").value);
-		document.getElementById("guest-amount_due").value = (guest_price * guest_count + (guest_price * guest_count * <?=$guest_band->tax_rate ?>)).toFixed(2);
-		document.getElementById("guest-tax").value = (guest_price * guest_count * <?=$guest_band->tax_rate ?>);
-		if(guest_count>1) {
-			document.getElementById("save_btn").innerHTML = 'Add Next Guest';
-		} else {
-			document.getElementById("save_btn").innerHTML = 'Save';
-		}
-	});
-
-	$("#guest-payment_type").change(function(e) {
-        addTime();
-        var pay_meth = document.getElementById("guest-payment_type");
-        var selectedVal = pay_meth.options[pay_meth.selectedIndex].value;
-        if(selectedVal=="creditnow") {
-            $("#cc_form_div").show(500);
-			$("#CC_Save").hide();
-			document.getElementById("guest-g_paid").value = '';
-			$("#guest-cc_name").val($("#guest-g_first_name").val()+ ' '+$("#guest-g_last_name").val());
-			$("#guest-cc_zip").val(document.getElementById("guest-g_zip").value);
-			$("#guest-cc_state").val(document.getElementById("guest-g_state").value);
-			$("#guest-cc_city").val(document.getElementById("guest-g_city").value);
-        } else if(selectedVal=="cash") {
-			$("#cc_form_div").hide(500);
-			$("#CC_Save").show();
-			document.getElementById("guest-g_paid").value = 'a';
-		} else {
-            $("#cc_form_div").hide(500);
-			$("#CC_Save").show();
-			document.getElementById("guest-g_paid").value = 'h';
-        }
-    });
-
-   document.getElementById('guest-cc_num').addEventListener('keyup',function(evt){
-        var ccnum = document.getElementById('guest-cc_num');
-        var charCode = (evt.which) ? evt.which : evt.keyCode;
-        ccnum.value = ccFormat(ccnum.value);
-    });
-
- <?php } ?>
-
     $("#guest-isObserver").change(function() {
         if (document.getElementById("guest-isObserver").checked == true){
 			document.getElementById("guest-isShooter").checked = false;
@@ -328,18 +183,8 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-isMinor").checked = false;
 			document.getElementById("guest-isYouth").checked = false;
 			$("#guest-g_paid").val('o');
-			$("#guest-guest_count").val('1');
-			document.getElementById("guest-guest_count").disabled=true;
-			$("#guest-payment_type").val('cash');
-			document.getElementById("guest-payment_type").disabled=true;
-			document.getElementById("guest-amount_due").value = ('0.00');			
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
-			$("#guest-g_paid").val('');
-			$("#guest-guest_count").val('');
-			document.getElementById("guest-guest_count").disabled=false;
-			$("#guest-payment_type").val('');
-			document.getElementById("guest-payment_type").disabled=false;
 		}
 	});
 
@@ -349,45 +194,27 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-isSpouse").checked = false;
 			document.getElementById("guest-isObserver").checked = false;
 			document.getElementById("guest-isYouth").checked = false;
-			
+
 			if(document.getElementById('guest-g_yob')) {
 				if (document.getElementById('guest-g_yob').value=='') {
 					alert("Enter your Birth Year.");
 					document.getElementById("guest-isMinor").checked = false;
 					document.getElementById("guest-isShooter").checked = true;
-					document.getElementById("guest-guest_count").disabled=false;
-				    document.getElementById("guest-payment_type").disabled=false;
-					RefreshAmount();
 				} else if (new Date().getFullYear() - document.getElementById('guest-g_yob').value <= 18 ) {
 					$("#guest-g_paid").val('m');
-					$("#guest-guest_count").val('1');
-					document.getElementById("guest-guest_count").disabled=true;
-					$("#guest-payment_type").val('cash');
-					document.getElementById("guest-amount_due").value = ('0.00');
-					document.getElementById("guest-payment_type").disabled=true;
 				} else {
 					alert("No Longer A Minor");
 					document.getElementById("guest-isMinor").checked = false;
 					document.getElementById("guest-isShooter").checked = true;
-					document.getElementById("guest-guest_count").disabled=false;
-				    document.getElementById("guest-payment_type").disabled=false;
-					RefreshAmount();
 				}
 			} else {
 				alert(" Please Check Year Of Birth ");
 				document.getElementById("guest-isMinor").checked = false;
 				document.getElementById("guest-isShooter").checked = true;
-				document.getElementById("guest-guest_count").disabled=false;
-				document.getElementById("guest-payment_type").disabled=false;
-				RefreshAmount();
 			}
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
 			$("#guest-g_paid").val('');
-			$("#guest-guest_count").val('');
-			document.getElementById("guest-guest_count").disabled=false;
-			$("#guest-payment_type").val('');
-			document.getElementById("guest-payment_type").disabled=false;
 		}
 	});
 
@@ -398,17 +225,7 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-isMinor").checked = false;
 			document.getElementById("guest-isYouth").checked = false;
 			$("#guest-g_paid").val('');
-			$("#guest-guest_count").val('1');
-			RefreshAmount();
-			document.getElementById("guest-guest_count").disabled=false;
-			document.getElementById("guest-payment_type").disabled=false;
-        } else  {
-			$("#guest-g_paid").val('');
-			$("#guest-guest_count").val('');
-			document.getElementById("guest-guest_count").disabled=false;
-			$("#guest-payment_type").val('');
-			document.getElementById("guest-payment_type").disabled=false;
-		}
+        }
 	});
 
     $("#guest-isSpouse").change(function() {
@@ -418,19 +235,9 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-isMinor").checked = false;
 			document.getElementById("guest-isYouth").checked = false;
 			$("#guest-g_paid").val('s');
-			document.getElementById("guest-amount_due").value = ('0.00');
-			
-			$("#guest-guest_count").val('1');
-			document.getElementById("guest-guest_count").disabled=true;
-			$("#guest-payment_type").val('cash');
-			document.getElementById("guest-payment_type").disabled=true;
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
 			$("#guest-g_paid").val('');
-			$("#guest-guest_count").val('');
-			document.getElementById("guest-guest_count").disabled=false;
-			$("#guest-payment_type").val('');
-			document.getElementById("guest-payment_type").disabled=false;
 		}
     });
 
@@ -441,40 +248,24 @@ $('#GuestForm').on('submit', function() {
 			document.getElementById("guest-isObserver").checked = false;
 			document.getElementById("guest-isMinor").checked = false;
 			$("#guest-g_paid").val('y');
-			$("#guest-guest_count").val('1');
-			document.getElementById("guest-guest_count").disabled=true;
-			$("#guest-payment_type").val('cash');
-			document.getElementById("guest-payment_type").disabled=true;
-			document.getElementById("guest-amount_due").value = ('0.00');
         } else  {
 			document.getElementById("guest-isShooter").checked = true;
 			$("#guest-g_paid").val('');
-			$("#guest-guest_count").val('');
-			document.getElementById("guest-guest_count").disabled=false;
-			$("#guest-payment_type").val('');
-			document.getElementById("guest-payment_type").disabled=false;
 		}
-    });
-
-    $("#guest-agree").click(function(e) {
-        e.preventDefault();
-		addTime();
-        $("#guest_save_div").show();
-        $("#guest-agree").hide();
     });
 
 	$("#guest-Process_CC").click(function(e) {
 		console.log('_form:465: here');
-		
+
 		var $form = $("#GuestForm"),data = $form.data("yiiActiveForm");
 		$.each(data.attributes, function() {
 		   this.status = 3;
 		});
 		$form.yiiActiveForm("validate");
-	
+
 		if ($("#GuestForm").find(".has-error").length) {
 			console.log('_form:476: Validation Failed');
-			return false; 
+			return false;
 		} else {
 			//document.getElementById("self_save").disabled=false;
 			console.log('_form:478: Pass');
@@ -501,7 +292,6 @@ $('#GuestForm').on('submit', function() {
 						document.getElementById("guest-isObserver").disabled = true;
 						document.getElementById("guest-isSpouse").disabled = true;
 						document.getElementById("guest-payment_type").disabled = true;
-						document.getElementById("guest-guest_count").disabled=true;
 						$("#CC_Save").show();
 						$("#CC_success").hide();
 					} else {

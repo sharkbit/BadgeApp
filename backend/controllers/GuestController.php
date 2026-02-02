@@ -51,7 +51,7 @@ class GuestController extends SiteController {
 				}
 
 				if(($_POST['Guest']['guest_count']) && $_POST['Guest']['guest_count'] > 1 )  {
-					$this->createLog($this->getNowTime(), $_SESSION['user'], 'Added Guest: '.$model->g_first_name.' For Badge: '.$model->badge_number.' Paid: '.$model->g_paid.' and ' );
+					yii::$app->controller->createLog($this->getNowTime(), $_SESSION['user'], 'Added Guest: '.$model->g_first_name.' For Badge: '.$model->badge_number.' Paid: '.$model->g_paid.' and ' );
 					$stickyGuest = [
 						'badge_number'=>$model->badge_number,
 						'g_paid'=>$model->g_paid,
@@ -62,14 +62,13 @@ class GuestController extends SiteController {
 					$_SESSION['stickyForm'] = $stickyGuest;
 					return $this->redirect(['/guest/create']);
 				} else  {
-					$this->createLog($this->getNowTime(), $_SESSION['user'], 'Added Guest: '.$model->g_first_name.' For Badge: '.$model->badge_number.' Paid: '.$model->g_paid );
+					yii::$app->controller->createLog($this->getNowTime(), $_SESSION['user'], 'Added Guest: '.$model->g_first_name.' For Badge: '.$model->badge_number.' Paid: '.$model->g_paid );
 					unset( $_SESSION['stickyForm'] );
 					return $this->redirect(['/guest/index']);
 				}
 
 			} else {
-				$this->createLog(true, 'trex_C_GC:70 SaVE ERROR', var_export($model->errors,true));
-
+				yii::$app->controller->createLog(true, 'trex_C_GC:71 SaVE ERROR', var_export($model->errors,true));
 				Yii::$app->getSession()->setFlash('error', 'action create - no save?');
 				return $this->redirect(['/guest/index']);
 			}
@@ -81,7 +80,7 @@ class GuestController extends SiteController {
 
 	public function actionDelete($id) {
 		if($model=$this->findModel($id)) {
-			$this->createLog($this->getNowTime(), $_SESSION['user'], 'Deleted Guest: '.$id." Name: ".$model->g_first_name.' of Badge: '.$model->badge_number.' Paid: '.$model->g_paid );
+			yii::$app->controller->createLog($this->getNowTime(), $_SESSION['user'], 'Deleted Guest: '.$id." Name: ".$model->g_first_name.' of Badge: '.$model->badge_number.' Paid: '.$model->g_paid );
 			$model->delete();
 			Yii::$app->getSession()->setFlash('success', 'Guest #'.$id.' Deleted');
 		} 
