@@ -42,15 +42,15 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 		</div>
 
 	<div class="row">
-		<div class="col-sm-2">
+		<div class="col-xs-3 col-sm-2">
         <?php if($model->isNewRecord) {
 			echo $form->field($model, 'badge_number')->textInput(['value'=>$model->badge_number,'readonly'=> $isguest]);
-			echo '</div><div class="col-sm-2">';
+			echo '</div><div class="col-xs-6 col-sm-4">';
 			echo $form->field($model, 'time_in')->textInput(['readonly' => true,'value'=>(yii::$app->controller->getNowTime())]).PHP_EOL;
 			echo $form->field($model, 'g_paid')->hiddenInput(['value'=>(isset($_SESSION['stickyForm'])) ? $_SESSION['stickyForm']['g_paid'] : 'a'])->label(false).PHP_EOL;
 		} else {
 			echo $form->field($model, 'badge_number')->textInput(['readOnly'=>'true']);
-			echo '</div><div class="col-sm-2">';
+			echo '</div><div class="col-xs-6 col-sm-2">';
 			echo $form->field($model, 'time_in')->textInput(['readOnly'=>'true','value'=>yii::$app->controller->pretydtg($model->time_in)]);
 			echo '</div><div class="col-sm-2">';
 			if ($model->g_paid==1) {
@@ -80,28 +80,30 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-xs-6 col-sm-2">
-			<?php if($model->isNewRecord) {
-				echo $form->field($model, 'g_zip'); ?>
-				</div>
-				<div class="col-xs-6 col-sm-2"><h3><i class="fa fa-thumbs-down" id="zip_check"></i></h3>
-				<?= $form->field($model, 'g_city')->hiddenInput()->label(false); ?>
-				<?php }  else { ?>
-					<?= $form->field($model, 'g_city') ?>
-				<?php } ?>
-
-			<?php if($model->isNewRecord) {
-				echo $form->field($model, 'g_state')->hiddenInput()->label(false);
-			} else { ?>
-			</div>
-			<div class="col-xs-6 col-sm-8">
-				<?= $form->field($model, 'g_state'); } ?>
+		<?php if($model->isNewRecord) { ?>
+		<div class="col-xs-4 col-sm-2">
+			<?= $form->field($model, 'g_zip'); ?>
+		</div>
+		<div class="col-xs-2 col-sm-1">
+			<h3><i class="fa fa-thumbs-down" id="zip_check"></i></h3>
+		</div>
+		<?php } ?>
+		<div class="col-xs-6 col-sm-4">
+			<?= $form->field($model, 'g_city') ?>
+		</div>
+		<div class="col-xs-3 col-sm-2">
+			<?= $form->field($model, 'g_state'); ?>
 		</div>
 	</div>
-	<h3><p><b>Type of Visitor?</b></p></h3>
+
+	<?php if($model->isNewRecord) { ?>
+	<div class="row">
+		<div class="col-xs-12">
+			<h3><p><b>Type of Visitor?</b></p></h3>
+		</div>
+	</div>
 	<div class="row">
 		<div class="col-xs-6 col-sm-3" ><p>
-	<?php if($model->isNewRecord) { ?>
 			<?php echo Html::checkbox('guest-isShooter' ,true,['value'=>1,'id'=>'guest-isShooter']), PHP_EOL; ?><b> - Shooter</b></p>
 			<div class="help-block"></div>
 		</div>
@@ -119,44 +121,38 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 		</div>
 		<div class="col-xs-6 col-sm-2" ><p>
 			<?php echo Html::checkbox('guest-isObserver' ,false,['value'=>0,'id'=>'guest-isObserver']), PHP_EOL; ?><b> - Observer</b></p>
-	<?php } else { echo "<b><font size=+1>";
+			<div class="help-block"></div>
+		</div>
+	</div>
+	<?php } else { ?>
+	<div class="row">
+		<div class="col-xs-12">
+		<b><font size=+1> Visitor <?php
+
+	//	yii::$app->controller->createLog(true, 'trex', var_export($model->getAttributes(),true));
 				switch ($model->g_paid) {
 					case 'm': echo "is a Minor"; break;
 					case 'o': echo "is an Observer"; break;
 					case 's': echo "is a Spouse"; break;
 					case 'y': echo "is a Youth Participant"; break;
-				};
-				echo "</font></b></p>";
-		  } ?>
+				}; ?>
+			</font></b></p>
 			<div class="help-block"></div>
-		</div>
-		<div class="col-sm-1">
-		</div>
-	</div>
-
-		<div id="search_error"> </div>
-
-	<?php if($model->isNewRecord) { ?>
-	<div class="row">
-		<div class="col-xs-12 col-sm-12">
-
-		<h4><p><b>Guest Safety Acknowledgement:</b></p></h4>
-		<ol>
-		  <li><b>Guests or Responsible Adult agrees to AGC <a href="<?=yii::$app->params['wp_site']?>/waiver" target="_blank">Waiver of Liability</a>.</b></li>
-		  <li>Assume every gun is always loaded.</li>
-		  <li>Never allow your firearm to point in any direction other than downrange (toward your target) or straight up.</li>
-		  <li>Keep your finger off the trigger until your sights are on the target and you are ready to shoot.</li>
-		  <li>Be sure of your target and what is beyond it.</li>
-		  <li>When “CEASE FIRE” is called, stop shooting immediately and allow the Badge Holder to make the firearm safe.</li>
-		  <li>During a Cease Fire, you are not to have any contact with any firearm.  Step off the concrete pad and remain off. You can go with the Badge Holder downrange to change your targets. When you return from downrange, you shall remain off of the concrete pad.</li>
-		  <li>Your Badge Holder will be held accountable for any range rules you break.  You are to be “closely supervised and monitored” by the Badge Holder who signed you in.</li>
-		  <li>If your Badge Holder needs to leave the firing line, make sure the firearm is made safe (unloaded, ECI inserted) step off the concrete pad and do not handle any firearms until your Badge Holder returns.</li>
-		</ol>
-		<p>Please ask your Guest to acknowledge the above statements and that they understand each statement. If your guest is a minor, you can acknowledge for them.</p>
-		 <?= Html::submitButton('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
 		</div>
 	</div>
 	<?php } ?>
+
+	<div id="search_error"> </div>
+	<div class="row">
+		<div class="col-xs-12 col-sm-12">
+	<?php if($model->isNewRecord) { ?>
+		<?php yii::$app->controller->getWaver();  ?>
+		<?= Html::submitButton('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
+	<?php } else { ?>
+		<?= Html::submitButton('Save', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
+	<?php } ?>
+		</div>
+	</div>
 	</div>
 <?= $form->field($model, 'guest_count')->hiddenInput(['value'=>'1'])->label(false).PHP_EOL; ?>
 <?= $form->field($model, 'payment_type')->hiddenInput(['value'=>'cash'])->label(false).PHP_EOL; ?>
@@ -166,6 +162,7 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 <input type="hidden" id='m_city' />
 <input type="hidden" id='m_state' />
 <input type="hidden" id='m_zip' />
+</div>
 <?php ActiveForm::end(); ?>
 </div>
 <script>
@@ -253,67 +250,6 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 			$("#guest-g_paid").val('');
 		}
     });
-
-	$("#guest-Process_CC").click(function(e) {
-		console.log('_form:465: here');
-
-		var $form = $("#GuestForm"),data = $form.data("yiiActiveForm");
-		$.each(data.attributes, function() {
-		   this.status = 3;
-		});
-		$form.yiiActiveForm("validate");
-
-		if ($("#GuestForm").find(".has-error").length) {
-			console.log('_form:476: Validation Failed');
-			return false;
-		} else {
-			//document.getElementById("self_save").disabled=false;
-			console.log('_form:478: Pass');
-
-		document.getElementById("guest-Process_CC").disabled=true;
-		$("p#cc_info").html("Processing...");
-		document.getElementById("guest-amount_due").disabled=false;
-
-		var formDataB = $("#GuestForm,#form_badge_cert").serializeArray();
-		jQuery.ajax({
-			method: 'POST',
-			crossDomain: false,
-			data: formDataB,
-			dataType: 'json',
-			url: '<?=yii::$app->params['rootUrl']?>/payment/charge',
-			success: function(responseData, textStatus, jqXHR) {
-				if(responseData.status=="success") {
-					console.log("success " + JSON.stringify(responseData));
-					if(responseData.message.status=="CAPTURED") {
-						$("p#cc_info").html( "Card Captured, Auth Code: "+ responseData.message.authCode);
-						$("#guest-cc_x_id").val(responseData.message.id);
-						$("#guest-Process_CC").hide();
-						$("#guest-g_paid").val('1');
-						document.getElementById("guest-isObserver").disabled = true;
-						document.getElementById("guest-isSpouse").disabled = true;
-						document.getElementById("guest-payment_type").disabled = true;
-						$("#CC_Save").show();
-						$("#CC_success").hide();
-					} else {
-						$("p#cc_info").html( "Card: "+ responseData.message);
-					}
-				} else {
-					console.log("Data error " + JSON.stringify(responseData));
-					SwipeError(JSON.stringify(responseData),'b_v_g_f:518');
-					$("p#cc_info").html(responseData.message);
-				}
-
-			},
-			error: function (responseData, textStatus, errorThrown) {
-				$("p#cc_info").html("PHP error:<br>"+responseData.responseText);
-				SwipeError(JSON.stringify(responseData),'b_v_g_f:525');
-				console.log("error "+ JSON.stringify(responseData.responseText));
-			},
-		});
-		document.getElementById("guest-Process_CC").disabled=false;
-		document.getElementById("guest-amount_due").disabled=true;
-		}
-	});
 
 	function g_handleClick(myRadio) {  // Guest Radio
 		$("#guest-cc_name").val($("#guest-g_first_name").val()+ ' '+$("#guest-g_last_name").val());

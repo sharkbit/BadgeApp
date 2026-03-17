@@ -84,6 +84,7 @@ $div_closed=false;
 	<div class="col-xs-12 col-sm-1"><h2>OR</h2></div>
 	<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_f_name')->textInput().PHP_EOL; ?></div>
 	<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_l_name')->textInput().PHP_EOL; ?></div>
+	<div class="col-xs-12"> <?php yii::$app->controller->getWaver();  ?> </div>
 <?php if($model->e_type=='cio') { ?>
 	<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
 <?php } } ?>

@@ -474,6 +474,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionApiZip($zip) {
+		/* need new USPS API
 		$params = Params::findOne('1');
 		if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
 			$verify = new CityStateLookup($params->usps_api);
@@ -491,9 +492,11 @@ class BadgesController extends AdminController {
 			} else {
 				return json_encode('Error: '.$verify->getErrorMessage());
 			}
-		} else {
+		} else { 
 			return json_encode(['city'=>'','state'=>'']);
 		}
+		*/
+		return json_encode(['Error'=>'need new USPS API']);
 	}
 
 	public function actionCreate() {

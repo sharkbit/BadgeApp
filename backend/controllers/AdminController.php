@@ -5,6 +5,7 @@ use DateInterval;
 use DateTime;
 use DateTimeZone;
 use yii;
+use yii\helpers\Html;
 use common\models\User;
 use backend\models\Badges;
 use backend\models\Params;
@@ -69,7 +70,7 @@ class AdminController extends \yii\web\Controller {
 		'violations' => ['violations/all','violations/stats'],
 		'Work Credits'=>['work-credits/all','work-credits/approve','work-credits/update','work-credits/delete'],
 	];
-	
+
 	public $cashierPermission = [
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/overideprice','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
@@ -143,7 +144,7 @@ class AdminController extends \yii\web\Controller {
 	public $shootPermission = [
 		'Calendar' => ['calendar/all','calendar/shoot'],
 	];
-	
+
 	public $AllPermission = [
 		'Badges'=>['badges/api-zip','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
 		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
@@ -172,7 +173,7 @@ class AdminController extends \yii\web\Controller {
 			}
 			if(!$this->hasPermission(Yii::$app->controller->id."/".Yii::$app->controller->action->id)){
 				//throw new \yii\web\UnauthorizedHttpException();
-				return $this->redirect(['/']); 
+				return $this->redirect(['/']);
 			}
 		} else if (yii::$app->user->isGuest) {
 			// Pages that dont require login
@@ -331,6 +332,22 @@ class AdminController extends \yii\web\Controller {
 		return ['AL'=>'Alabama','AK'=>'Alaska','AZ'=>'Arizona','AR'=>'Arkansas','CA'=>'California','CO'=>'Colorado','CT'=>'Connecticut','DE'=>'Delaware','FL'=>'Florida','GA'=>'Georgia','HI'=>'Hawaii','ID'=>'Idaho','IL'=>'Illinois','IN'=>'Indiana','IA'=>'Iowa','KS'=>'Kansas','KY'=>'Kentucky','LA'=>'Louisiana','ME'=>'Maine','MD'=>'Maryland','MA'=>'Massachusetts','MI'=>'Michigan','MN'=>'Minnesota','MS'=>'Mississippi','MO'=>'Missouri','MT'=>'Montana','NE'=>'Nebraska','NV'=>'Nevada','NH'=>'New Hampshire','NJ'=>'New Jersey','NM'=>'New Mexico','NY'=>'New York','NC'=>'North Carolina','ND'=>'North Dakota','OH'=>'Ohio','OK'=>'Oklahoma','OR'=>'Oregon','PA'=>'Pennsylvania','RI'=>'Rhode Island','SC'=>'South Carolina','SD'=>'South Dakota','TN'=>'Tennessee','TX'=>'Texas','UT'=>'Utah','VT'=>'Vermont','VA'=>'Virginia','WA'=>'Washington','WV'=>'West Virginia','WI'=>'Wisconsin','WY'=>'Wyoming','DC'=>'District of Columbia','GU'=>'Guam','MH'=>'Marshall Islands','MP'=>'Northern Mariana Island','PR'=>'Puerto Rico','VI'=>'Virgin Islands','AE'=>'Armed Forces Africa','AA'=>'Armed Forces Americas','AE'=>'Armed Forces Canada','AE'=>'Armed Forces Europe','AE'=>'Armed Forces Middle East','AP'=>'Armed Forces Pacific'];
 	}
 
+	public function getWaver() {
+		echo '<h4><p><b>Guest Safety Acknowledgement:</b></p></h4>
+		<ol>
+		  <li><b>Guests or Responsible Adult agrees to AGC <a href="'. yii::$app->params['wp_site'].'/waiver" target="_blank">Waiver of Liability</a>.</b></li>
+		  <li>Assume every gun is always loaded.</li>
+		  <li>Never allow your firearm to point in any direction other than downrange (toward your target) or straight up.</li>
+		  <li>Keep your finger off the trigger until your sights are on the target and you are ready to shoot.</li>
+		  <li>Be sure of your target and what is beyond it.</li>
+		  <li>When “CEASE FIRE” is called, stop shooting immediately and allow the Badge Holder to make the firearm safe.</li>
+		  <li>During a Cease Fire, you are not to have any contact with any firearm.  Step off the concrete pad and remain off. You can go with the Badge Holder downrange to change your targets. When you return from downrange, you shall remain off of the concrete pad.</li>
+		  <li>Your Badge Holder will be held accountable for any range rules you break.  You are to be “closely supervised and monitored” by the Badge Holder who signed you in.</li>
+		  <li>If your Badge Holder needs to leave the firing line, make sure the firearm is made safe (unloaded, ECI inserted) step off the concrete pad and do not handle any firearms until your Badge Holder returns.</li>
+		</ol>
+		<p>Please ask your Guest to acknowledge the above statements and that they understand each statement. If your guest is a minor, you can acknowledge for them.</p>';
+		}
+
 	public function validateExcell($excell_type,$items) {
 		if($excell_type=='workcredit') {
 			$item = $items[0];
@@ -445,7 +462,7 @@ class AdminController extends \yii\web\Controller {
 	//Server settings
 		$mail_conf = yii::$app->params['mail'];
 		if ($mail_conf['Enabled']) {
-			
+
 			$mail->isSMTP();									// Set mailer to use SMTP
 			if($mail_conf['Debug']) {$mail->SMTPDebug = $mail_conf['Debug'];}	// Enable verbose debug output  2= good,  4 = connection
 			$mail->Host = $mail_conf['Host'];
@@ -505,7 +522,7 @@ class AdminController extends \yii\web\Controller {
 			if($type=='new') {
 				$extra = '<p>Your new Badge Number is: <b>'.$model->badge_number.'</b><br />And your Login code is: <b>'.$model->qrcode.'</b><br />This information wil also be on the back of your badge.</p>';
 			} else { $extra=''; }
-				
+
 			try {
 				//Recipients
 				$mail->setFrom(yii::$app->params['mail']['Username'], 'AGC Range');
