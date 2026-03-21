@@ -104,6 +104,7 @@ foreach($agc_event as $an_event){
 		<div class="col-xs-6 col-sm-2" id="e_serial" style="display:none;"><?= $formR->field($event_model, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
 		</div>
 	</div>
+	<div class="col-xs-12"> <?php yii::$app->controller->getWaver();  ?> </div>
 	<div class="row"><div id='reg_notes'> </div>
 		<div class="col-xs-2">
 		<button id="reg_button" type="submit" class="btn btn-success" onclick="jsReg();" >Register <i class="fa fa-child"> </i></button>
@@ -282,7 +283,11 @@ foreach($agc_event as $an_event){
 				success: function(responseData, textStatus, jqXHR) {
 					responseData =  JSON.parse(responseData);
 					console.log(responseData);
-					$("div#reg_notes").html("<p>"+responseData.msg+"</p>");
+					document.getElementById("event_att-ea_badge").value = null;
+					document.getElementById("event_att-ea_f_name").value = null;
+					document.getElementById("event_att-ea_l_name").value = null;
+					window.alert(responseData.msg);
+					document.getElementById('myModal').style.display = 'none';
 				},
 				error: function (responseData, textStatus, errorThrown) {
 					console.log('login_member:207'); console.log(textStatus);
@@ -304,7 +309,11 @@ foreach($agc_event as $an_event){
 					success: function(responseData, textStatus, jqXHR) {
 						responseData =  JSON.parse(responseData);
 						console.log(responseData);
-						$("div#reg_notes").html("<p>"+responseData.msg+"</p>");
+						document.getElementById("event_att-ea_badge").value = null;
+						document.getElementById("event_att-ea_f_name").value = null;
+						document.getElementById("event_att-ea_l_name").value = null;
+						window.alert(responseData.msg);
+						document.getElementById('myModal').style.display = 'none';
 					},
 					error: function (responseData, textStatus, errorThrown) {
 						console.log('login_member:226'); console.log(textStatus);

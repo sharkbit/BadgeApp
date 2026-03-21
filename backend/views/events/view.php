@@ -307,13 +307,13 @@ if($att_count>0) {
 			var l_name = document.getElementById("event_att-ea_l_name").value;
 			var ea_serial='';
 			if((f_name) && (l_name)) {
-				var ea_wb_serial = document.getElementById("event_att-ea_wb_serial").value;
-
-				if(document.getElementById("event_att-ea_type").value=='cio' && (!ea_wb_serial)) {
+				if(document.getElementById("event_att-ea_type").value=='cio') {
+					var ea_wb_serial = document.getElementById("event_att-ea_wb_serial").value;
+					if (!ea_wb_serial) {
 					console.log('yes yes:300');
 					alert("A Wrist Band is required for this individual.");
 					return;
-				}
+				}}
 				if(ea_wb_serial) {ea_serial='&e_wb='+ea_wb_serial;}
 				console.log('/events/reg?id='+reg_id+'&f_name='+f_name+'&l_name='+l_name+ea_serial);
 				jQuery.ajax({
