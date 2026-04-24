@@ -499,7 +499,7 @@ class AdminController extends \yii\web\Controller {
 
 			$mail = $this->emailSetup();
 			if ($mail) {
-			$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$email.'>');
+			$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['cal_site'].'/comms.php?unsubscribe='.$email.'>');
 
 		// Only send out email to user after waiting 10 min.
 			if(isset($model->badge_number)) {
@@ -540,11 +540,11 @@ class AdminController extends \yii\web\Controller {
 				$message = "<!DOCTYPE html><html>\n<body>\n" .
 					'<p>'.$welcome.'</p>'.$extra.
 					'<p>Please take a moment to verify your Email by clicking on the link below.</p>' .
-					'<p><a href="'.yii::$app->params['wp_site'].'/comms.php?verifyemail='.$email.'"> Verify your Email: '.$email.' </a></p><br>' .
+					'<p><a href="'.yii::$app->params['cal_site'].'/comms.php?verifyemail='.$email.'"> Verify your Email: '.$email.' </a></p><br>' .
 					'<p>Thank You,<br />Associated Gun Clubs of Baltimore.</p>' ."\n".
-					'<a href="'.yii::$app->params['wp_site'].'">'.yii::$app->params['wp_site'].'</a>' ."\n".
+					'<a href="'.yii::$app->params['cal_site'].'">'.yii::$app->params['cal_site'].'</a>' ."\n".
 					"<br /><br><p>P.S. We know our email probably went to the spam folder. Please tell your provider It's not Spam!. </p>\n".
-					'<br /><p> or Click here to <a href="'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$email.'">remove your email from our List</a>.</p>'. "\n".
+					'<br /><p> or Click here to <a href="'.yii::$app->params['cal_site'].'/comms.php?unsubscribe='.$email.'">remove your email from our List</a>.</p>'. "\n".
 					"</body>\n</html>";
 
 					//Content
@@ -552,7 +552,7 @@ class AdminController extends \yii\web\Controller {
 				$mail->Body	= $message;
 				$mail->AltBody = $welcome."\n\n".
 					"Please take a moment to verify your Email by clicking on the link below.\n\n".
-					yii::$app->params['wp_site'].'/comms.php?verifyemail='.$email."\n\n".
+					yii::$app->params['cal_site'].'/comms.php?verifyemail='.$email."\n\n".
 					"Thank You,\nAssociated Gun Clubs of Baltimore.";
 
 				$mail->send();
