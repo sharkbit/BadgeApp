@@ -540,11 +540,11 @@ class AdminController extends \yii\web\Controller {
 				$message = "<!DOCTYPE html><html>\n<body>\n" .
 					'<p>'.$welcome.'</p>'.$extra.
 					'<p>Please take a moment to verify your Email by clicking on the link below.</p>' .
-					'<p><a href="'.yii::$app->params['cal_site'].'/comms.php?verifyemail='.$email.'"> Verify your Email: '.$email.' </a></p><br>' .
+					'<p><a href="'.yii::$app->params['cal_site'].'/site/verify?email='.$email.'"> Verify your Email: '.$email.' </a></p><br>' .
 					'<p>Thank You,<br />Associated Gun Clubs of Baltimore.</p>' ."\n".
-					'<a href="'.yii::$app->params['cal_site'].'">'.yii::$app->params['cal_site'].'</a>' ."\n".
+					'<a href="'.yii::$app->params['wp_site'].'">'.yii::$app->params['wp_site'].'</a>' ."\n".
 					"<br /><br><p>P.S. We know our email probably went to the spam folder. Please tell your provider It's not Spam!. </p>\n".
-					'<br /><p> or Click here to <a href="'.yii::$app->params['cal_site'].'/comms.php?unsubscribe='.$email.'">remove your email from our List</a>.</p>'. "\n".
+					'<br /><p> or Click here to <a href="'.yii::$app->params['cal_site'].'/site/no-email?unsubscribe='.$email.'">remove your email from our List</a>.</p>'. "\n".
 					"</body>\n</html>";
 
 					//Content
