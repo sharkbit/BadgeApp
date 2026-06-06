@@ -259,7 +259,7 @@ class PaymentController extends AdminController {
 	}
 
 	public static function GetPaymentTypes($confParams,$store=false) {
-
+/*
 		if( (yii::$app->controller->hasPermission('sales/all')) OR ($store == false) ) {
 			$myList=['cash'=>'Cash','check'=>'Check'];
 		} else {
@@ -280,7 +280,8 @@ class PaymentController extends AdminController {
 		}
 		if(yii::$app->controller->hasPermission('payment/charge') && (strlen($confParams->pp_id)>2 || strlen($confParams->pp_sec)>2))  {
 			$myList= array_merge($myList,['paypal'=>'PayPal']);
-		}
+		} */
+		$myList=['pos'=>'POS'];
 		return $myList;
 	}
 }
