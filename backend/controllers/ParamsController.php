@@ -3,7 +3,9 @@
 namespace backend\controllers;
 
 use Yii;
+use backend\models\Discount;
 use backend\models\Params;
+use backend\models\search\DiscountSearch;
 use backend\models\search\ParamsSearch;
 use yii\base\Model;
 use yii\web\Controller;
@@ -65,6 +67,37 @@ class ParamsController extends AdminController {
 			'status'=> $status,
 		]);
 	}
+
+    public function actionDiscount() {
+		$searchModel = new DiscountSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+		return $this->render('discount', [
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+		]);
+    }
+
+    public function actionDiscountupdate($id=1) {
+        $model = Discount::findOne($id);
+        if ($model->load(Yii::$app->request->post())) {
+			$model->save();
+			Yii::$app->getSession()->setFlash('success', 'Discount has been updated.');
+            return $this->redirect(['discountview']);
+        } else {
+            return $this->render('discountupdate', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    public function actionDiscountview($id=1) {
+        $model = Discount::findOne($id);
+
+		return $this->render('discountview', [
+			'model' => $model,
+		]);
+    }
 
     public function actionUpdate($id=1) {
         $model = $this->findModel($id);

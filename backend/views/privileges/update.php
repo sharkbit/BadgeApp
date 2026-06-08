@@ -5,12 +5,12 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Privileges */
 
-$this->title = 'Create Privilege';
+$this->title = 'Update Privilege';
 $this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => 'Privileges', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="privileges-create">
+<div class="privileges-update">
 
     <h2><?= Html::encode($this->title) ?></h2>
 

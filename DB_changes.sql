@@ -839,3 +839,22 @@ ALTER TABLE `BadgeDB`.`mass_email`
 CHANGE COLUMN `mass_to_users` `mass_to_users` JSON NULL DEFAULT NULL ;
 
 UPDATE `BadgeDB`.`mass_email` SET `mass_to_users` = '["1"]' WHERE (`id` = '1');
+
+
+-- Add Discount into DB
+-- for #276
+CREATE TABLE `BadgeDB`.`discount` (
+  `dis_id` INT NOT NULL AUTO_INCREMENT ;
+  `dis_name` VARCHAR(45) NULL,
+  `dis_amount` INT NULL DEFAULT 0,
+  `dis_short` VARCHAR(1) NULL,
+  `dis_allowed` VARCHAR(45) NULL,
+  `dis_active` INT NULL DEFAULT 1,
+  `dis_def` INT NULL DEFAULT 0,
+  PRIMARY KEY (`dis_id`),
+  UNIQUE INDEX `dis_short_UNIQUE` (`dis_short` ASC) VISIBLE,
+  UNIQUE INDEX `dis_name_UNIQUE` (`dis_name` ASC) VISIBLE);
+
+INSERT INTO `BadgeDB`.`discount` (`dis_id`, `dis_name`, `dis_amount`, `dis_short`, `dis_allowed`, `dis_def`) VALUES (0, 'None', 0, 'n', 'new,renew', 1);
+INSERT INTO `BadgeDB`.`discount` (`dis_id`, `dis_name`, `dis_amount`, `dis_short`, `dis_allowed`) VALUES (1, 'Open House', 50, 'o', 'new,renew');
+INSERT INTO `BadgeDB`.`discount` (`dis_id`, `dis_name`, `dis_amount`, `dis_short`, `dis_allowed`) VALUES (2, 'Student', 10, 's', 'new');

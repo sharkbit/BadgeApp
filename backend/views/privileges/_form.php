@@ -30,7 +30,7 @@ use yii\widgets\ActiveForm;
     	<?= Html::resetButton('Reset <i class="fa fa-eraser"> </i>', ['class' => 'btn btn-danger']) ?>
     </div>
 
+	</div>
 </div>
 </div>
 <?php ActiveForm::end(); ?>
-</div>

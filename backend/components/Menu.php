@@ -111,6 +111,11 @@ class Menu extends Widget{
 			'url' => '/clubs/badge-rosters',
 		],
 		[
+			'label'=>'Discount List',
+			'loc'=>['prod','dev'],
+			'url' => '/params/discount',
+		],
+		[
 			'label'=>'Mass Email',
 			'loc'=>['prod','dev'],
 			'url' => '/mass-email/index',

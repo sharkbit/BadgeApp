@@ -2,6 +2,7 @@
 
 use backend\models\Badges;
 use backend\models\clubs;
+use backend\models\Discount;
 use backend\models\Params;
 use backend\models\StoreItems;
 use yii\bootstrap\ActiveForm;
@@ -61,6 +62,9 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }
 	if ($model->canRenew($model->status)) {} else { $hide_Cert=true; }
 	if ($isExpired) { $hide_Cert=true; }
+
+	$Discounts = (new Discount)->getDiscounts('renew');
+	$Discounts_def = (new Discount)->getDiscountDefault();
 
 	$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
@@ -294,7 +298,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 
 		<?= $form1->field($badgeSubscriptions, 'badge_fee')->textInput(['readOnly'=>true]).PHP_EOL; ?>
 		<?= $form1->field($badgeSubscriptions, 'redeemable_credit')->textInput(['value'=>'']).PHP_EOL; ?>
-		<?= $form1->field($badgeSubscriptions, 'discount')->dropDownList(['n:0'=>'None'],['value'=>'n:0','multiple'=>true,'size'=>2]).PHP_EOL; ?>
+		<?= $form1->field($badgeSubscriptions, 'discount')->dropDownList($Discounts,['value'=>$Discounts_def,'multiple'=>true,'size'=>2]).PHP_EOL; ?>
 		<div class="col-xs-12">
 		<p class="pull-right"><a href="" class="badge_store_div" > Extras </a></p></div>
 		<div class="form-group" id="extras_store_div" style="display:none" > <!-- class="col-xs-12 col-sm-12"  -->
