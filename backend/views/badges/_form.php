@@ -1,5 +1,6 @@
 <?php
 use backend\models\clubs;
+use backend\models\Discount;
 use backend\models\Params;
 use backend\models\StoreItems;
 use kartik\money\MaskMoney;
@@ -28,6 +29,9 @@ if(empty($Club_List)) {
 	$_SESSION['myFlash'] = 'error^Please add a Club First.';
 	Yii::$app->response->redirect(['clubs/index'])->send(); return; 
 }
+
+$Discounts = (new Discount)->getDiscounts('new');
+$Discounts_def = (new Discount)->getDiscountDefault();
 
 $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
@@ -202,7 +206,7 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
                     <?= $form->field($model, 'badge_fee')->textInput(['readOnly'=>true,'class'=>'form-control Money']); ?>
                 </div>
 				<div class="col-xs-6 col-sm-12">
-					<?= $form->field($model, 'discounts')->dropDownList(['n:0'=>'None','s:10'=>'Student'],['value'=>'n:0','multiple'=>true,'size'=>2]).PHP_EOL; ?>
+					<?= $form->field($model, 'discounts')->dropDownList($Discounts,['value'=>$Discounts_def,'multiple'=>true,'size'=>2]).PHP_EOL; ?>
                 </div>
 				<div id="div_friend_block" style="display:none" >
                 <div class="col-xs-6 col-sm-12" >
