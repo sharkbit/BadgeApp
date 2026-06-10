@@ -299,8 +299,12 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<?= $form1->field($badgeSubscriptions, 'badge_fee')->textInput(['readOnly'=>true]).PHP_EOL; ?>
 		<?= $form1->field($badgeSubscriptions, 'redeemable_credit')->textInput(['value'=>'']).PHP_EOL; ?>
 		<?= $form1->field($badgeSubscriptions, 'discount')->dropDownList($Discounts,['value'=>$Discounts_def,'multiple'=>true,'size'=>2]).PHP_EOL; ?>
-		<div class="col-xs-12">
-		<p class="pull-right"><a href="" class="badge_store_div" > Extras </a></p></div>
+		<div  class="col-xs-6" >
+			<div id="discount_amt_div"  style="display:none" > </div>
+		</div>		
+		<div class="col-xs-6">
+			<p class="pull-right"><a href="" class="badge_store_div" > Extras </a></p>
+		</div>
 		<div class="form-group" id="extras_store_div" style="display:none" > <!-- class="col-xs-12 col-sm-12"  -->
 		<style type="text/css"> .right { text-align:right; } </style>
 		<table id='store_items' border=1 width="100%">
@@ -556,6 +560,17 @@ $ccYear = range($curYr,$curYr+25);  ?>
 					discount +=d_opt[1];
 				}
 			}
+		}
+
+		const myDivDiscount = document.getElementById("discount_amt_div");
+		if((discount) && (discount>0)) {  //extras grand
+			$("#discount_amt_div").show();
+			myDivDiscount.textContent = 'Discount: ' + Number(discount);
+			console.log('Discount: '+ Number(discount) );
+		} else {
+			myDivDiscount.textContent = '';
+			$("#discount_amt_div").hide();
+			console.log('No discount ');
 		}
 
 		var amountDue = badgeFee - discount;

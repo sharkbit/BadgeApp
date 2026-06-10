@@ -25,9 +25,9 @@ $YearList = json_decode(str_replace('}{',',',$YearList));
 $confParams  = Params::findOne('1');
 
 $Club_List = (new clubs)->getClubList(false,false,true);
-if(empty($Club_List)) { 
+if(empty($Club_List)) {
 	$_SESSION['myFlash'] = 'error^Please add a Club First.';
-	Yii::$app->response->redirect(['clubs/index'])->send(); return; 
+	Yii::$app->response->redirect(['clubs/index'])->send(); return;
 }
 
 $Discounts = (new Discount)->getDiscounts('new');
@@ -120,7 +120,7 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
                 <?= $form->field($model, 'incep')->textInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))]) ?>
             </div>
 
-		<?php 
+		<?php
 			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
 			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 			echo '<div class="col-xs-6 col-sm-2">';
@@ -128,10 +128,10 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
 				$myYear=date('Y', strtotime($nextExpire.' - 1 year'));
 				$BadgeYearList = json_decode(str_replace('}{',',',json_encode([$myYear=>$myYear,$myYear+1=>$myYear+1]) ));
-				echo $form->field($model, 'badge_year')->dropDownList($BadgeYearList,['value'=>$myYear+1]). PHP_EOL; 
+				echo $form->field($model, 'badge_year')->dropDownList($BadgeYearList,['value'=>$myYear+1]). PHP_EOL;
 			} else {
-				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));				
-				echo $form->field($model, 'badge_year')->textInput(['readonly' => true, 'value'=>date('Y',  strtotime($nextExpire.' - 1 year'))]). PHP_EOL; 
+				$nextExpire = date('Y-01-31', strtotime("+1 years",strtotime($nowDate)));
+				echo $form->field($model, 'badge_year')->textInput(['readonly' => true, 'value'=>date('Y',  strtotime($nextExpire.' - 1 year'))]). PHP_EOL;
 			}
 			echo '</div>';
 		if(1==2) { //** section curently disabled ** Only enable for timed badges  ...  15yr .. ?>
@@ -224,7 +224,10 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 					<div class="help-block" ></div>
 				</div>
 				</div>
-				<div class="col-xs-6 col-sm-12">
+				<div  class="col-xs-6" >
+					<div id="discount_amt_div"  style="display:none" > </div>
+				</div>
+				<div class="col-xs-6">
 					<p class="pull-right"><a href="" class="badge_store_div" > Extras </a></p>
 				</div>
 					<div  class="form-group" id="extras_store_div" style="display:none" > <!--   -->
@@ -354,6 +357,18 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 				}
 			}
 		}
+
+		const myDivDiscount = document.getElementById("discount_amt_div");
+		if((discount) && (discount>0)) {  //extras grand
+			$("#discount_amt_div").show();
+			myDivDiscount.textContent = 'Discount: ' + Number(discount);
+			console.log('Discount: '+ Number(discount) );
+		} else {
+			myDivDiscount.textContent = '';
+			$("#discount_amt_div").hide();
+			console.log('No discount ');
+		}
+
 		var amountDue = badgeFee - discount;
 		if(amountDue<0) {
 			amountDue = 0.00;
