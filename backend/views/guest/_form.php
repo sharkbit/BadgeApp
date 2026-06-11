@@ -147,7 +147,7 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 		<div class="col-xs-12 col-sm-12">
 	<?php if($model->isNewRecord) { ?>
 		<?php yii::$app->controller->getWaver();  ?>
-		<?= Html::submitButton('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
+		<?= Html::submitButton('<i class="fa fa-thumbs-up"> </i> I Agree', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
 	<?php } else { ?>
 		<?= Html::submitButton('Save', ['id'=>'guest-agree','class' => 'btn btn-primary']), PHP_EOL ?>
 	<?php } ?>
