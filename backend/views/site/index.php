@@ -11,7 +11,8 @@ $activeUser = yii::$app->controller->getActiveuser();
     <div class="col">
         <h1 class="text-center">AGC Range Badge Tracking System</h1>
     </div>
-</div>	
+</div>
+<?php if (!str_contains(Yii::$app->params['env'],'cal')) { ?>
 <div class="row">
 	<div id="sum_box" >
 	<div class="col-sm-3 col-md-3"></div>
@@ -49,8 +50,8 @@ $activeUser = yii::$app->controller->getActiveuser();
 		
 	<div class="col-sm-3 col-md-3"></div>
 	</div>
-
-</div>	
+</div>
+<?php } ?>
 <div class="row">
 	 <div class="col">
         <div class="menu-box-parent">
