@@ -5,7 +5,6 @@ use DateInterval;
 use DateTime;
 use DateTimeZone;
 use yii;
-use yii\helpers\Html;
 use common\models\User;
 use backend\models\Badges;
 use backend\models\Params;
@@ -499,7 +498,7 @@ class AdminController extends \yii\web\Controller {
 
 			$mail = $this->emailSetup();
 			if ($mail) {
-			$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['cal_site'].'/comms.php?unsubscribe='.$email.'>');
+			$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['cal_site'].'/site/no-email?unsubscribe='.$email.'>');
 
 		// Only send out email to user after waiting 10 min.
 			if(isset($model->badge_number)) {
@@ -552,7 +551,7 @@ class AdminController extends \yii\web\Controller {
 				$mail->Body	= $message;
 				$mail->AltBody = $welcome."\n\n".
 					"Please take a moment to verify your Email by clicking on the link below.\n\n".
-					yii::$app->params['cal_site'].'/comms.php?verifyemail='.$email."\n\n".
+					yii::$app->params['cal_site'].'/site/verify?email='.$email."\n\n".
 					"Thank You,\nAssociated Gun Clubs of Baltimore.";
 
 				$mail->send();
