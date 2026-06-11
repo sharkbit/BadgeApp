@@ -23,7 +23,7 @@ class MembershipStatus extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['act_id','act_login','act_prefill','act_order','act_active','act_renew'],'number'],
+            [['act_id','act_login','act_prefill','act_order','act_active','act_renew','act_signup'],'number'],
             [['act_color'], 'string', 'max' => 20],
 			[['act_name'], 'string', 'max' => 45],
             [['act_short'], 'string', 'max' => 3],
@@ -46,6 +46,7 @@ class MembershipStatus extends \yii\db\ActiveRecord {
 			'act_desc' => 'Description',
 			'act_order'=>'Order',
 			'act_renew'=>'can Renew',
+			'act_signup'=>'Self Regester',
         ];
     }
 
@@ -66,8 +67,15 @@ class MembershipStatus extends \yii\db\ActiveRecord {
 		if ($memStatus) { return $memStatus->act_name; } else {return ' Account Status Error '; }
 	}
 
-	static public function getMemberStatus() {
-		$MemberStatus = (New MembershipStatus)->find()->where(['act_active' => 1 ])->orderby(['act_order' => SORT_ASC])->all();
+
+	static public function getMemberStatus($all=false,$current=false) {
+		if ($all) {
+			$MemberStatus = (New MembershipStatus)->find()->orderby(['act_order' => SORT_ASC])->all();
+		} else if ($current) {  // make sure disable show up if selected
+			$MemberStatus = (New MembershipStatus)->find()->where(['act_active' => 1 ])->orWhere(['act_short' => $current])->orderby(['act_order' => SORT_ASC])->all();
+		} else {
+			$MemberStatus = (New MembershipStatus)->find()->where(['act_active' => 1 ])->orderby(['act_order' => SORT_ASC])->all();
+		}
 		return ArrayHelper::map($MemberStatus,'act_short','act_name');
 	}
 
@@ -76,5 +84,11 @@ class MembershipStatus extends \yii\db\ActiveRecord {
 		$mydata= json_encode( ArrayHelper::getColumn($preFill,'act_short') );
 		//yii::$app->controller->createLog(true, 'trex--mydata', var_export($mydata,true));
 		return $mydata;
+	}
+
+	static public function getSignup() {
+		$SignupName = (New MembershipStatus)->find('act_short')->where(['act_active' =>1,'act_signup'=>1])->one();
+		yii::$app->controller->createLog(true, 'trexsb', var_export($SignupName,true));
+		if ($SignupName) { return $SignupName->act_short; } else {return false; }
 	}
 }

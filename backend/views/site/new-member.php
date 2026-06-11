@@ -1,5 +1,6 @@
 <?php
 use backend\models\clubs;
+use backend\models\MembershipStatus;
 use backend\models\Params;
 use backend\models\StoreItems;
 use kartik\money\MaskMoney;
@@ -86,7 +87,7 @@ input[type='checkbox'] {
 		</tr>
 	</table>
 	<br>
-	<?= Html::Button('<i class="fa fa-thumbs-up"> I Agree</i>', ['id'=>'new-agree', 'class' => 'btn btn-primary', 'onclick' => 'AckAgree();']), PHP_EOL ?> 
+	<?= Html::Button('<i class="fa fa-thumbs-up"> </i> I Agree', ['id'=>'new-agree', 'class' => 'btn btn-primary', 'onclick' => 'AckAgree();']), PHP_EOL ?> 
 </div>
 <div class="container badgessm-form" id="div_FormBody" style="display:none;">
     <?php $form = ActiveForm::begin([
@@ -198,7 +199,7 @@ input[type='checkbox'] {
 	<?= $form->field($model, 'badge_number')->hiddenInput(['readonly'=>true, 'value' =>str_pad($model->badge_number, 5, '0', STR_PAD_LEFT) ])->label(false) ?>
 	<?= $form->field($model, 'incep')->hiddenInput(['readonly' => true,'value'=>date('M d, Y h:i A',strtotime(yii::$app->controller->getNowTime()))])->label(false) ?>
 	<?= $form->field($model, 'qrcode')->hiddenInput(['readOnly'=>true])->label(false) ?>
-	<?= $form->field($model, 'status')->hiddenInput(['value'=>"self"])->label(false) ?>
+	<?= $form->field($model, 'status')->hiddenInput(['value'=>(New MembershipStatus)->getSignup()])->label(false) ?>
 
 	<?php ActiveForm::end(); ?>
 </div>

@@ -223,9 +223,9 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
             </div>
             <div class="col-xs-3 col-sm-3">
 		<?php if ($restrict) {
-                echo $form->field($model, 'status')->textInput(['readonly' => true]).PHP_EOL;
+               echo $form->field($model, 'status')->dropdownList((new MembershipStatus)->getMemberStatus(false,$model->status), ['disabled' => 'disabled']).PHP_EOL;
 			} else {
-				echo $form->field($model, 'status')->dropdownList((new MembershipStatus)->getMemberStatus()).PHP_EOL;
+				echo $form->field($model, 'status')->dropdownList((new MembershipStatus)->getMemberStatus(false,$model->status)).PHP_EOL;
 			}?>
             </div>
             <div class="col-xs-12 col-sm-12">

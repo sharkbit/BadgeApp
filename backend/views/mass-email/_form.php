@@ -91,9 +91,9 @@ Marc";}
 
 	<div class="col-xs-12 col-sm-6">
 <?php if ($model->mass_running==0) {
-		echo Html::submitButton('<i class="fa fa-envelope "> Save </i>', ['id'=>'email_save','class' => 'btn btn-primary']), PHP_EOL;
+		echo Html::submitButton('<i class="fa fa-envelope "> </i> Save ', ['id'=>'email_save','class' => 'btn btn-primary']), PHP_EOL;
 		echo "&nbsp;  &nbsp; ";
-		if (!$model->isNewRecord) { echo Html::Button('<i class="fa fa-envelope "> Send Emails</i>', ['id'=>'email_send','class' => 'btn btn-danger']), PHP_EOL; }
+		if (!$model->isNewRecord) { echo Html::Button('<i class="fa fa-envelope "> </i> Send Emails', ['id'=>'email_send','class' => 'btn btn-danger']), PHP_EOL; }
 	} else {
 
 		echo "<div class='col-xs-6'> badge: $model->mass_lastbadge @ $model->mass_runtime<div class='help-block' ></div></div>".PHP_EOL;
@@ -106,15 +106,15 @@ Marc";}
 			$since_running = $date_running->diff(new DateTime(yii::$app->controller->getNowTime()));
 
 			if ($since_running->i > 15) {
-				echo Html::Button('<i class="fa fa-envelope "> Restart Emails</i>', ['id'=>'email_send','class' => 'btn btn-danger']), PHP_EOL;
+				echo Html::Button('<i class="fa fa-envelope "> </i> Restart Emails', ['id'=>'email_send','class' => 'btn btn-danger']), PHP_EOL;
 				echo " Restart Needed! ".$since_running->h.' hours '.$since_running->i.' minutes ';
 			}
 
 			echo "<div class='col-xs-6 pull-right'><b>Processing...</b> ". $since_start->h.' hours '.$since_start->i.' minutes'."<div class='help-block' ></div></div>".PHP_EOL;
 		} else {
 			echo "<div class='col-xs-6 pull-right'><b>Message Was Sent</b>: ".$model->mass_finished." <div class='help-block' ></div></div>".PHP_EOL;
-			echo Html::submitButton('<i class="fa fa-envelope "> Save </i>', ['id'=>'email_save','class' => 'btn btn-primary']), PHP_EOL;
-			echo Html::Button('<i class="fa fa-envelope "> Re-Send Emails</i>', ['id'=>'email_resend','class' => 'btn btn-danger']), PHP_EOL;
+			echo Html::submitButton('<i class="fa fa-envelope "> </i> Save ', ['id'=>'email_save','class' => 'btn btn-primary']), PHP_EOL;
+			echo Html::Button('<i class="fa fa-envelope "> </i> Re-Send Emails', ['id'=>'email_resend','class' => 'btn btn-danger']), PHP_EOL;
 		}
 	} ?>
 

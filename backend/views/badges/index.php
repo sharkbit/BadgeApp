@@ -95,7 +95,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			],
 			[
 				'attribute' => 'status',
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new MembershipStatus)::getMemberStatus(),['class'=>'form-control','prompt' => 'All']),
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new MembershipStatus)::getMemberStatus(true),['class'=>'form-control','prompt' => 'All']),
 				'value'=>function($model,$attribute) {
 					return (new MembershipStatus)->GetMemStatus($model->status);}
 			],

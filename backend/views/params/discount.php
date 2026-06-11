@@ -58,7 +58,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		[
 			'header' => 'Actions',
 			'class' => 'yii\grid\ActionColumn',
-			'template'=>'{view} {update} {delete}',
+			'template'=>'{update} {delete}',
 			'buttons'=> [
 				'update' => function ($url, $model) {
 					if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||

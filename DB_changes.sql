@@ -897,3 +897,7 @@ update BadgeDB.badges set `status`= 'pen' where `status`= 'pending';
 update BadgeDB.badges set `status`= 'pro' where `status`= 'prob';
 update BadgeDB.badges set `status`= 'sel' where `status`= 'self';
 
+
+-- added Account Signup Checks
+ALTER TABLE `BadgeDB`.`account_status` 
+ADD COLUMN `act_signup` INT NULL DEFAULT 0 AFTER `act_renew`;

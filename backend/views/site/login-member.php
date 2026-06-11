@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use backend\models\Events;
 use backend\models\Event_Att;
+use backend\models\MembershipStatus;
 use backend\models\Params;
 
 /* @var $this yii\web\View */
@@ -65,13 +66,15 @@ foreach($agc_event as $an_event){
             </div>
         </div>
         <div class="col-xs-12 col-md-4" >
-<?php if( ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge") ) || (Yii::$app->params['env'] == 'dev') ){ ?>
+<?php if( ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge") ) || (Yii::$app->params['env'] == 'dev') ) { 
+		$SignupName = (New MembershipStatus)->getSignup();
+		if ($SignupName) { ?>
 			<div style=" padding: 20px;"><p> <br /> </p>
 				<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<p> </p> <center><h3><a href="/site/new-member">New Member Signup</a></h3></center>
 				</div>
 			</div>
-<?php } ?>
+<?php } } ?>
 		</div>
     </div>
 </div>

@@ -37,16 +37,19 @@ $this->params['breadcrumbs'][] = 'Update';
 		</div>
 
 		<div class="row">
-			<div class="col-xs-6 col-sm-3">
+			<div class="col-xs-6 col-sm-2">
 				<?= $form->field($model, 'act_login')->DropDownList(['0'=>'No','1'=>'Yes']).PHP_EOL ?>
 			</div>
-			<div class="col-xs-6 col-sm-3">
+			<div class="col-xs-6 col-sm-2">
 				<?= $form->field($model, 'act_prefill')->DropDownList(['0'=>'No','1'=>'Yes']).PHP_EOL ?>
 			</div>
-			<div class="col-xs-6 col-sm-3">
+			<div class="col-xs-6 col-sm-2">
 				<?= $form->field($model, 'act_renew')->DropDownList(['0'=>'No','1'=>'Yes']).PHP_EOL ?>
 			</div>
-			<div class="col-xs-6 col-sm-3">
+			<div class="col-xs-6 col-sm-2">
+				<?= $form->field($model, 'act_signup')->DropDownList(['0'=>'No','1'=>'Yes']).PHP_EOL ?>
+			</div>
+			<div class="col-xs-6 col-sm-4">
 				<?= $form->field($model, 'act_color')->DropDownList(['green'=>'Green','yellow'=>'Yellow','orange'=>'Orange','red'=>'Red','black'=>'Black']).PHP_EOL ?>
 			</div>
 		</div>

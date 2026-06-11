@@ -120,6 +120,9 @@ class ParamsController extends AdminController {
     public function actionMembershipstatusupdate($id=1) {
         $model = MembershipStatus::findOne($id);
         if ($model->load(Yii::$app->request->post())) {
+			if ($model->act_signup=1) {
+				MembershipStatus::updateAll(['act_signup' => 0], []);
+			}
 			$model->save();
 			Yii::$app->getSession()->setFlash('success', 'Membership Status has been updated.');
             return $this->redirect(['membershipstatusview', 'id'=>$model->act_id]);

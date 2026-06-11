@@ -59,6 +59,11 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 						'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'act_renew', ['0' => 'No', '1' => 'Yes'],['class'=>'form-control','prompt' => 'All']),
 						//'headerOptions' => ['style' => 'width:15%'],
 					],
+					[   'attribute' => 'act_signup',
+						'value' => function($model) { if($model->act_signup==0) {return 'No';} else {return 'Yes';} },
+						'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'act_signup', ['0' => 'No', '1' => 'Yes'],['class'=>'form-control','prompt' => 'All']),
+						//'headerOptions' => ['style' => 'width:15%'],
+					],
 					'act_color',
 					'act_order',
 					
@@ -71,7 +76,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		[
 			'header' => 'Actions',
 			'class' => 'yii\grid\ActionColumn',
-			'template'=>'{view} {update} {delete}',
+			'template'=>'{update} {delete}',
 			'buttons'=> [
 				'update' => function ($url, $model) {
 					if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||
