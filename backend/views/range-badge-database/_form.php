@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use backend\models\Badges;
+use backend\models\MembershipStatus;
 use backend\models\clubs;
 
 /* @var $this yii\web\View */
@@ -36,7 +37,7 @@ use backend\models\clubs;
     <?= $form->field($model, 'wt_date')->textInput() ?>
     <?= $form->field($model, 'wt_instru')->textInput() ?>
     <?= $form->field($model, 'remarks')->textarea(['rows' => 2]) ?>
-    <?= $form->field($model, 'status')->dropDownList((new Badges)->getMemberStatus(), ['prompt' => '']) ?>
+    <?= $form->field($model, 'status')->dropDownList((new MembershipStatus)->getMemberStatus(), ['prompt' => '']) ?>
     <?= $form->field($model, 'created_at')->textInput() ?>
     <?= $form->field($model, 'updated_at')->textInput() ?>
     <div class="form-group">

@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use backend\models\Badges;
+use backend\models\MembershipStatus;
 use backend\models\clubs;
 
 /* @var $this yii\web\View */
@@ -35,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'attribute'=>'status',
 				'value'=>function($model,$attribute) {
-					return (new Badges)->getMemberStatus($model->status);}
+					return (new MembershipStatus)->GetMemStatus($model->status);}
 			],
             'prefix',
             'first_name',

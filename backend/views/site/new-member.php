@@ -182,7 +182,7 @@ input[type='checkbox'] {
 
 		</div>
 		 <div class="col-xs-6 col-sm-4">
-			<?= $form->field($model, 'wt_instru')->textInput(['placeholder'=>'Required']) ?>
+			<?= $form->field($model, 'wt_instru') ?>
 		</div>
 	</div>
 	<div class="row">

@@ -132,6 +132,12 @@ class Menu extends Widget{
 			'color' => 'btn-success',
 		],
 		[
+			'label'=>'Membership Status',
+			'loc'=>['prod','dev'],
+			'url' => '/params/membershipstatus',
+			'color' => 'btn-success',
+		],
+		[
 			'label'=>'Payment Setup',
 			'loc'=>['prod','dev'],
 			'url' => '/payment/index',

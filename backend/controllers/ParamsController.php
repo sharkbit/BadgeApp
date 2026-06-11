@@ -4,8 +4,10 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\Discount;
+use backend\models\MembershipStatus;
 use backend\models\Params;
 use backend\models\search\DiscountSearch;
+use backend\models\search\MembershipStatusSearch;
 use backend\models\search\ParamsSearch;
 use yii\base\Model;
 use yii\web\Controller;
@@ -53,14 +55,12 @@ class ParamsController extends AdminController {
 
 	public function actionPassword() {
 		$model = New Passwd;
-
 		if ($model->load(Yii::$app->request->post())) {
 			$status = " Updated password ";
 			$status = $this->RemoteUser('update',$_SESSION['r_user'],$model->pwd);
 		} else {
 			$status = $this->RemoteUser('check',$_SESSION['r_user']);
 			$status ="Exists?";
-
 		}
 		return $this->render('passwd',[
 			'model' => $model,
@@ -71,7 +71,6 @@ class ParamsController extends AdminController {
     public function actionDiscount() {
 		$searchModel = new DiscountSearch();
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
 		return $this->render('discount', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
@@ -81,9 +80,12 @@ class ParamsController extends AdminController {
     public function actionDiscountupdate($id=1) {
         $model = Discount::findOne($id);
         if ($model->load(Yii::$app->request->post())) {
+			if ($model->dis_def=1) {
+				Discount::updateAll(['dis_def' => 0], []);
+			}
 			$model->save();
 			Yii::$app->getSession()->setFlash('success', 'Discount has been updated.');
-            return $this->redirect(['discountview']);
+            return $this->redirect(['discountview', 'id'=>$model->dis_id]);
         } else {
             return $this->render('discountupdate', [
                 'model' => $model,
@@ -99,9 +101,37 @@ class ParamsController extends AdminController {
 		]);
     }
 
+    public function actionMembershipstatusview($id=1) {
+        $model = MembershipStatus::findOne($id);
+		return $this->render('membershipstatusview', [
+			'model' => $model,
+		]);
+    }
+
+	public function actionMembershipstatus(){
+		$searchModel = new MembershipStatusSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		return $this->render('membershipstatus', [
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+		]);
+    }
+
+    public function actionMembershipstatusupdate($id=1) {
+        $model = MembershipStatus::findOne($id);
+        if ($model->load(Yii::$app->request->post())) {
+			$model->save();
+			Yii::$app->getSession()->setFlash('success', 'Membership Status has been updated.');
+            return $this->redirect(['membershipstatusview', 'id'=>$model->act_id]);
+        } else {
+            return $this->render('membershipstatusupdate', [
+                'model' => $model,
+            ]);
+        }
+    }
+
     public function actionUpdate($id=1) {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post())) {
 			$model->whitelist = json_encode($model->whitelist);
 			$model->rso_email = json_encode($model->rso_email);

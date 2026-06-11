@@ -24,7 +24,7 @@ class Discount extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['dis_allowed'], 'safe'],
-			
+
 			[['dis_id', 'dis_active', 'dis_amount','dis_def'],'number'],
             [['dis_name'], 'string', 'max' => 45],
             [['dis_short'], 'string', 'max' => 1],
@@ -98,6 +98,5 @@ class Discount extends \yii\db\ActiveRecord {
 		} else {
 			return 'n:0';
 		}
-			
 	}
 }

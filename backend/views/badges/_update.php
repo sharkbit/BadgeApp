@@ -3,6 +3,7 @@
 use backend\models\Badges;
 use backend\models\clubs;
 use backend\models\Discount;
+use backend\models\MembershipStatus;
 use backend\models\Params;
 use backend\models\StoreItems;
 use yii\bootstrap\ActiveForm;
@@ -49,10 +50,10 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	// mem_type needs to renew? Test:
 	if ((int)$DateExpires < (int)$badge_year_chk) {									// Is BadgeSubscription Current?
 		if (yii::$app->controller->hasPermission('badges/renew-membership')) {		// Can User Process & Renew Badges?
-			if ($model->canRenew($model->status)) {									// Is badge active / not restricted?
+			if ((new MembershipStatus)->getCanRenew($model->status)) {									// Is badge active / not restricted?
 				$mem_renew = backend\models\MembershipType::findOne(['id'=>$model->mem_type])->renew_yearly;
-				if ($mem_renew) {													// Does Membership type need to renew?	
-					$hide_Renew=false; 
+				if ($mem_renew) {													// Does Membership type need to renew?
+					$hide_Renew=false;
 				} else { $hide_Renew=true; }
 			} else { $hide_Renew=true; }
 		} else { $hide_Renew=true; }
@@ -60,7 +61,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 
 	// Show Certifications?
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }
-	if ($model->canRenew($model->status)) {} else { $hide_Cert=true; }
+	if ((new MembershipStatus)->getCanRenew($model->status)) {} else { $hide_Cert=true; }
 	if ($isExpired) { $hide_Cert=true; }
 
 	$Discounts = (new Discount)->getDiscounts('renew');
@@ -175,7 +176,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 			<?php $model->incep = date('M d, Y h:i:s A',strtotime($model->incep)); ?>
             <?= $form->field($model, 'incep')->textInput(['disabled' => true,'value'=>date('M d, Y',strtotime($model->incep))]).PHP_EOL; ?>
             </div>
- 
+
              <div class="col-xs-6 col-sm-4">
         <?php   $WTDate = strtotime($model->wt_date);
                 $startDate = date('1999-01-01 12:00:00');
@@ -224,7 +225,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<?php if ($restrict) {
                 echo $form->field($model, 'status')->textInput(['readonly' => true]).PHP_EOL;
 			} else {
-				echo $form->field($model, 'status')->dropdownList((new Badges)->getMemberStatus()).PHP_EOL;
+				echo $form->field($model, 'status')->dropdownList((new MembershipStatus)->getMemberStatus()).PHP_EOL;
 			}?>
             </div>
             <div class="col-xs-12 col-sm-12">
@@ -293,7 +294,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<?php echo Html::hiddenInput("sell_date",$confParams['sell_date'],['id'=>'badges-sell_date']), PHP_EOL; ?>
 
 		<?php $badge_year_minus = $badge_year_chk -1;
-		$BadgeYearList = json_decode(str_replace('}{',',',json_encode([$badge_year_minus=>$badge_year_minus,$badge_year_chk=>$badge_year_chk]) )); 
+		$BadgeYearList = json_decode(str_replace('}{',',',json_encode([$badge_year_minus=>$badge_year_minus,$badge_year_chk=>$badge_year_chk]) ));
 		echo $form1->field($badgeSubscriptions, 'badge_year')->dropDownList($BadgeYearList,['value'=>$badge_year_chk]).PHP_EOL; ?>
 
 		<?= $form1->field($badgeSubscriptions, 'badge_fee')->textInput(['readOnly'=>true]).PHP_EOL; ?>
@@ -301,7 +302,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		<?= $form1->field($badgeSubscriptions, 'discount')->dropDownList($Discounts,['value'=>$Discounts_def,'multiple'=>true,'size'=>2]).PHP_EOL; ?>
 		<div  class="col-xs-6" >
 			<div id="discount_amt_div"  style="display:none" > </div>
-		</div>		
+		</div>
 		<div class="col-xs-6">
 			<p class="pull-right"><a href="" class="badge_store_div" > Extras </a></p>
 		</div>
@@ -494,6 +495,15 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		if($('#extras_store_div').is(':visible')) {
 			$("#extras_store_div").hide();
         } else  {$("#extras_store_div").show();}
+	});
+
+	$("#badges-status").change(function(e) {
+		var act_Status = document.getElementById('badges-status');
+		const getPrefill = <?=(new MembershipStatus)::getPrefill(); ?> ;
+		if (getPrefill.includes(act_Status.value)) {
+			const dropdown = document.getElementById("badgesubscriptions-sticker");
+			dropdown.selectedIndex = dropdown.options.length - 1;
+		}
 	});
 
 	$("#badgesubscriptions-amount_override").change(function(e) {

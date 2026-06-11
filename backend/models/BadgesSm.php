@@ -22,14 +22,13 @@ class BadgesSm extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['first_name','last_name','address','city','club_id','email','email_verify','state','zip','gender','ice_phone','phone','ice_contact','incep','mem_type','wt_date','wt_instru'], 'required'],
+			[['first_name','last_name','address','city','club_id','email','email_verify','state','zip','gender','ice_phone','phone','ice_contact','incep','mem_type','wt_date'], 'required'],
 			[['address', 'gender', 'qrcode','status'], 'string'],
 			[['incep', 'expires', 'wt_date','prefix','suffix','ice_phone','ice_contact','remarks','remarks_temp','created_at','updated_at','status', 'club_id'], 'safe'],
 			[['badge_number','zip','club_id', 'mem_type','yob'], 'integer'],
 			[['prefix', 'suffix'], 'string', 'max' => 15],
 			['email','filter','filter' => 'trim'],
 			['email','email'],
-			//['email','unique','targetClass' => '\backend\models\BadgesSm','message'=>'Email already exist. Please use another one.'],
 			[['email'],'uniqueEmail'],
 			['email_verify', 'compare', 'compareAttribute'=>'email', 'message'=>"Emails don't match"],
 			[['first_name','last_name'], 'string', 'max' => 35],
@@ -88,27 +87,4 @@ class BadgesSm extends \yii\db\ActiveRecord {
 		}
 		return ArrayHelper::map($memberShip,'id','type');
 	}
-
-	public function getMemberStatus($status=false) {
-		if($status) {
-			switch ($status) {
-				case 'approved': return 'Approved'; break;
-				case 'pending': return 'Pending'; break;
-				case 'prob': return 'Probation'; break;
-				case 'suspended': return 'Suspended'; break;
-				case 'revoked': return 'Revoked'; break;
-				case 'retired': return 'Retired'; break;
-			}
-		} else {
-			return ['approved'=>'Approved','pending'=>'Pending','prob'=>'Probation','suspended'=>'Suspended','revoked'=>'Revoked','retired'=>'Retired'];
-		}
-	}
-
-	public function canRenew($status) {
-		if ($status=='approved' || $status=='pending' || $status=='prob' || $status=='self') {
-			return true; }
-		else { return false; }
-
-	}
-
 }

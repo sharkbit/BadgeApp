@@ -5,6 +5,7 @@ use yii\grid\GridView;
 use kartik\widgets\ActiveForm;
 use backend\models\Badges;
 use backend\models\clubs;
+use backend\models\MembershipStatus;
 
 $badgesModel = new Badges();
 
@@ -94,9 +95,9 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			],
 			[
 				'attribute' => 'status',
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new Badges)->getMemberStatus(),['class'=>'form-control','prompt' => 'All']),
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new MembershipStatus)::getMemberStatus(),['class'=>'form-control','prompt' => 'All']),
 				'value'=>function($model,$attribute) {
-					return (new Badges)->getMemberStatus($model->status);}
+					return (new MembershipStatus)->GetMemStatus($model->status);}
 			],
 			[	'header' => 'Badge Year',
 				'attribute' => 'badgeyear',

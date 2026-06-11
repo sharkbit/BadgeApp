@@ -3,6 +3,7 @@
 use backend\models\Badges;
 use backend\models\clubs;
 use backend\models\BadgeCertification;
+use backend\models\MembershipStatus;
 use backend\models\User;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -99,7 +100,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 						[
 							'attribute'=>'status',
 							'value'=>function($model,$attribute) {
-								return (new Badges)->getMemberStatus($model->status);}
+								return (new MembershipStatus)->GetMemStatus($model->status);}
 						],
                         'prefix',
                         'first_name',

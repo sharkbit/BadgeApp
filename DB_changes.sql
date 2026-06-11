@@ -844,7 +844,7 @@ UPDATE `BadgeDB`.`mass_email` SET `mass_to_users` = '["1"]' WHERE (`id` = '1');
 -- Add Discount into DB
 -- for #276
 CREATE TABLE `BadgeDB`.`discount` (
-  `dis_id` INT NOT NULL AUTO_INCREMENT ;
+  `dis_id` INT NOT NULL AUTO_INCREMENT,
   `dis_name` VARCHAR(45) NULL,
   `dis_amount` INT NULL DEFAULT 0,
   `dis_short` VARCHAR(1) NULL,
@@ -855,6 +855,45 @@ CREATE TABLE `BadgeDB`.`discount` (
   UNIQUE INDEX `dis_short_UNIQUE` (`dis_short` ASC) VISIBLE,
   UNIQUE INDEX `dis_name_UNIQUE` (`dis_name` ASC) VISIBLE);
 
-INSERT INTO `BadgeDB`.`discount` (`dis_id`, `dis_name`, `dis_amount`, `dis_short`, `dis_allowed`, `dis_def`) VALUES (0, 'None', 0, 'n', 'new,renew', 1);
-INSERT INTO `BadgeDB`.`discount` (`dis_id`, `dis_name`, `dis_amount`, `dis_short`, `dis_allowed`) VALUES (1, 'Open House', 50, 'o', 'new,renew');
-INSERT INTO `BadgeDB`.`discount` (`dis_id`, `dis_name`, `dis_amount`, `dis_short`, `dis_allowed`) VALUES (2, 'Student', 10, 's', 'new');
+INSERT INTO `BadgeDB`.`discount` (`dis_name`, `dis_amount`, `dis_short`, `dis_allowed`, `dis_def`) VALUES ('None', 0, 'n', 'new,renew', 1);
+INSERT INTO `BadgeDB`.`discount` (`dis_name`, `dis_amount`, `dis_short`, `dis_allowed`, `dis_active`) VALUES ('Open House', 50, 'o', 'new,renew',0);
+INSERT INTO `BadgeDB`.`discount` (`dis_name`, `dis_amount`, `dis_short`, `dis_allowed`) VALUES ('Student', 10, 's', 'new');
+
+
+-- added table for statsu of bember badge and description
+--for #27
+CREATE TABLE `BadgeDB`.`account_status` (
+  `act_id` int NOT NULL AUTO_INCREMENT,
+  `act_short` varchar(3) DEFAULT NULL,
+  `act_name` varchar(45) DEFAULT NULL,
+  `act_login` int DEFAULT '0',
+  `act_prefill` int DEFAULT '0',
+  `act_order` int DEFAULT '50',
+  `act_desc` MEDIUMTEXT NULL DEFAULT NULL,
+  `act_color` varchar(20) DEFAULT 'green',
+  `act_active` int DEFAULT '1',
+  `act_renew` int DEFAULT '0',
+  UNIQUE KEY `act_id_UNIQUE` (`act_id`),
+  UNIQUE KEY `act_short_name_UNIQUE` (`act_short`),
+  UNIQUE KEY `act_name_UNIQUE` (`act_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `BadgeDB`.`account_status` (`act_id`,`act_short`,`act_name`,`act_login`,`act_prefill`,`act_order`,`act_color`,`act_active`,`act_renew`,`act_desc`) VALUES (1,'sel','Self-Regester',0,1,10,'green',1,1,'BH has entered basic info to help speed up regestration');
+INSERT INTO `BadgeDB`.`account_status` (`act_id`,`act_short`,`act_name`,`act_login`,`act_prefill`,`act_order`,`act_color`,`act_active`,`act_renew`,`act_desc`) VALUES (3,'app','Approved',1,0,20,'green',1,1,'BH is in good standing with the AGC');
+INSERT INTO `BadgeDB`.`account_status` (`act_id`,`act_short`,`act_name`,`act_login`,`act_prefill`,`act_order`,`act_color`,`act_active`,`act_renew`,`act_desc`) VALUES (4,'oph','Open House',0,1,30,'green',0,1,'BH regestered durring open house; Needs walkthrough and sticker');
+INSERT INTO `BadgeDB`.`account_status` (`act_id`,`act_short`,`act_name`,`act_login`,`act_prefill`,`act_order`,`act_color`,`act_active`,`act_renew`,`act_desc`) VALUES (5,'pen','Pending',0,0,40,'green',1,1,'BH is in the database but needs to provide more info to get a badge');
+INSERT INTO `BadgeDB`.`account_status` (`act_id`,`act_short`,`act_name`,`act_login`,`act_prefill`,`act_order`,`act_color`,`act_active`,`act_renew`,`act_desc`) VALUES (6,'pro','Probation',1,0,50,'green',1,1,'BH had badge returned after RSSOP dispensation putting the BH in probationary status following a RR Violation');
+INSERT INTO `BadgeDB`.`account_status` (`act_id`,`act_short`,`act_name`,`act_login`,`act_prefill`,`act_order`,`act_color`,`act_active`,`act_renew`,`act_desc`) VALUES (7,'sus','Suspended',0,0,60,'red',1,0,'BH has had badge suspended pending RSSOP investigation into RR Violation');
+INSERT INTO `BadgeDB`.`account_status` (`act_id`,`act_short`,`act_name`,`act_login`,`act_prefill`,`act_order`,`act_color`,`act_active`,`act_renew`,`act_desc`) VALUES (8,'ret','Retired',0,0,70,'black',1,0,'BH is deceased (policy update needed to determine when BH is removed from database)');
+INSERT INTO `BadgeDB`.`account_status` (`act_id`,`act_short`,`act_name`,`act_login`,`act_prefill`,`act_order`,`act_color`,`act_active`,`act_renew`,`act_desc`) VALUES (9,'rev','Revoked',0,0,80,'red',1,0,'BH Account Status of "Revoked" now has two meanings,
+ ** 1 - BHs who get their badge revoked meaning they did something really wrong and cannot become a BH again, and
+ ** 2 - AGC Staff who are not members of a Club who leave employment. The Club remains Associated Gun Clubs Staff and their Badge Type remains N.C.M. These two indications would allow the former staff member to join a Club and use the range.');
+
+update BadgeDB.badges set `status`= 'app' where `status`= 'approved';
+update BadgeDB.badges set `status`= 'ret' where `status`= 'retired';
+update BadgeDB.badges set `status`= 'sus' where `status`= 'suspended';
+update BadgeDB.badges set `status`= 'rev' where `status`= 'revoked';
+update BadgeDB.badges set `status`= 'pen' where `status`= 'pending';
+update BadgeDB.badges set `status`= 'pro' where `status`= 'prob';
+update BadgeDB.badges set `status`= 'sel' where `status`= 'self';
+

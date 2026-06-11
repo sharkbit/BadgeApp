@@ -136,21 +136,6 @@ class Badges extends \yii\db\ActiveRecord {
 		return ArrayHelper::map($memberShip,'id','type');
 	}
 
-	public function getMemberStatus($status=false) {
-		if($status) {
-			switch ($status) {
-				case 'approved': return 'Approved'; break;
-				case 'pending': return 'Pending'; break;
-				case 'prob': return 'Probation'; break;
-				case 'suspended': return 'Suspended'; break;
-				case 'revoked': return 'Revoked'; break;
-				case 'retired': return 'Retired'; break;
-			}
-		} else {
-			return ['approved'=>'Approved','pending'=>'Pending','prob'=>'Probation','suspended'=>'Suspended','revoked'=>'Revoked','retired'=>'Retired'];
-		}
-	}
-
 	public function gtActiveSubscriptionModel() {
 		return $this->hasOne(BadgeSubscriptions::className(),['id'=>'badge_subscription_id']);
 	}

@@ -14,7 +14,7 @@ class DiscountSearch extends Discount {
 
 	public function rules() {
 		return [
-			[['dis_name'],'safe'],
+			[['dis_active','dis_allowed','dis_name','dis_def'],'safe'],
 		];
 	}
 
@@ -46,7 +46,7 @@ class DiscountSearch extends Discount {
 		if(isset($this->dis_id)) { $query->andFilterWhere(['dis_id' => $this->role_id]); }
 		if(isset($this->dis_name)) { $query->andFilterWhere(['like','dis_name', $this->dis_name]); }
 		if(isset($this->dis_active)) { $query->andFilterWhere(['dis_active' => $this->dis_active]); }
-		if(isset($this->dis_allowed)) { $query->andFilterWhere(['dis_allowed' => $this->dis_allowed]); }
+		if(isset($this->dis_allowed)) { $query->andFilterWhere(['like','dis_allowed', $this->dis_allowed]); }
 		if(isset($this->dis_def)) { $query->andFilterWhere(['like','dis_def', $this->dis_def]); }
 
 		return $dataProvider;

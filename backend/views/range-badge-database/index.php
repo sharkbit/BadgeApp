@@ -69,7 +69,6 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'attribute'=>'zip',
 				'contentOptions' =>['style' => 'width:80px'],
 			],
-            //'gender',
             [
 				'attribute'=>'yob',
 				'contentOptions' =>['style' => 'width:20px'],
@@ -86,11 +85,6 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					return $myPhone;
 				},
 			],
-            // 'phone_op',
-            // 'ice_contact',
-            // 'ice_phone',
-            // 'club_name',
-            // 'club_id',
 			[	'attribute' => 'club_id',
 				'format' => 'raw',
 				'contentOptions' =>['style' => 'width:100px; overflow: auto; word-wrap: break-word; white-space: normal;'],
@@ -104,25 +98,14 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
 				
 			],
-            // 'mem_type',
-            // 'primary',
-            // 'incep',
-            // 'expires',
-            // 'qrcode:ntext',
-            // 'wt_date',
-            // 'wt_instru',
-            // 'remarks:ntext',
 			[
 				'header'=>'Status',
 				'attribute' => 'status',
 				'contentOptions' =>['style' => 'width:90px'],
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new Badges)->getMemberStatus(),['class'=>'form-control','prompt' => 'All']),
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new MembershipStatus)->getMemberStatus(),['class'=>'form-control','prompt' => 'All']),
 				'value'=>function($model,$attribute) {
-					return (new Badges)->getMemberStatus($model->status);}
+					return (new MembershipStatus)->GetMemStatus($model->status);}
 			],
-            // 'soft_delete',
-            // 'created_at',
-            // 'updated_at',
             [   'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
 				'contentOptions' =>['style' => 'width:60px'],

@@ -15,6 +15,7 @@ use backend\models\BadgesSm;
 use backend\models\clubs;
 use backend\models\Guest;
 use backend\models\LoginAccess;
+use backend\models\MembershipStatus;
 use backend\models\Params;
 use backend\models\Privileges;
 
@@ -84,9 +85,11 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 
 			if($badgeArray){
 				// Is Badge Suspended - Revoked - Retired
-				if ($badgeArray->status=='suspended' || $badgeArray->status =='revoked' || $badgeArray->status == 'retired') {
-					Yii::$app->getSession()->setFlash('error', 'Badge '.$badgeArray->status.', Please See Staff.',false);
-					yii::$app->controller->createLog(true, 'Site_Login '.$badgeArray->status.':',$badgeArray->badge_number.' - '.$badgeArray->expires);
+				$CanLogin = (new MembershipStatus)->getCanLogin();
+				if ( !in_array($badgeArray->status,$CanLogin) ) {
+					$MemStatus = (new MembershipStatus)->GetMemStatus($badgeArray->status);
+					Yii::$app->getSession()->setFlash('error', 'Badge '.$MemStatus.', Please See Staff.',false);
+					yii::$app->controller->createLog(true, 'Site_Login '.$MemStatus.':',$badgeArray->badge_number.' - '.$badgeArray->expires);
 					return false;
 				}
 				// does member have privileges?
@@ -113,7 +116,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 						if(array_intersect([3,6],$_SESSION['privilege'])) { // do nothing
 						} else {
 							unset($_SESSION);
-							yii::$app->controller->createLog(true, 'Site_Login Expired 1:',$badgeArray->badge_number.' - '.$badge_year);
+							yii::$app->controller->createLog(true, 'Site_Login Expired 120:',$badgeArray->badge_number.' - '.$badge_year);
 							Yii::$app->getSession()->setFlash('warning', 'Badge needs to be Renewed! Please See Staff.',false);
 							return false;
 						}
@@ -126,7 +129,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 					if(strtotime($compnow) <= strtotime(date('Y').'-01-31')) { $badge_year++; }
 					if(isset($badge_year) && ((int)$badge_year < date('Y'))) {
 						unset($_SESSION);
-						yii::$app->controller->createLog(true, 'Site_Login member Needs to renew badge:',$badgeArray->badge_number);
+						yii::$app->controller->createLog(true, 'Site_Login 133 member Needs to renew badge:',$badgeArray->badge_number);
 						Yii::$app->getSession()->setFlash('warning', 'Badge needs to be Renewed! Please See Staff.',false);
 						return false;
 					}
