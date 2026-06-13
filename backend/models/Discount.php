@@ -70,7 +70,7 @@ class Discount extends \yii\db\ActiveRecord {
         }
     }
 
-    public function getDiscounts($page='new') {
+    public function getDiscounts($page='NewBG') {
 		$DiscountArray = Discount::find()
 			->where( ['dis_active'=>'1'] )
 			->andFilterWhere(['like', 'dis_allowed', $page])

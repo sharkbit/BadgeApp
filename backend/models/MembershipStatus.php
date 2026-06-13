@@ -23,7 +23,7 @@ class MembershipStatus extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['act_id','act_login','act_prefill','act_order','act_active','act_renew','act_signup'],'number'],
+            [['act_id','act_login','act_prefill','act_order','act_active','act_new','act_renew','act_signup'],'number'],
             [['act_color'], 'string', 'max' => 20],
 			[['act_name'], 'string', 'max' => 45],
             [['act_short'], 'string', 'max' => 3],
@@ -46,6 +46,7 @@ class MembershipStatus extends \yii\db\ActiveRecord {
 			'act_desc' => 'Description',
 			'act_order'=>'Order',
 			'act_renew'=>'can Renew',
+			'act_new'=>'Use for New',
 			'act_signup'=>'Self Regester',
         ];
     }
@@ -62,11 +63,15 @@ class MembershipStatus extends \yii\db\ActiveRecord {
 		} else { return false; }
 	}
 
+	static public function getIssueMemStatus() {
+		$IssueMemStatus = (New MembershipStatus)->find('act_short')->where(['act_active' =>1,'act_new'=>1])->all();
+		return ArrayHelper::map($IssueMemStatus,'act_short','act_name');
+	}
+
 	static public function GetMemStatus($eStatus) {
 		$memStatus = (New MembershipStatus)->find('act_name')->where(['act_short' => $eStatus ])->one();
 		if ($memStatus) { return $memStatus->act_name; } else {return ' Account Status Error '; }
 	}
-
 
 	static public function getMemberStatus($all=false,$current=false) {
 		if ($all) {
@@ -82,13 +87,11 @@ class MembershipStatus extends \yii\db\ActiveRecord {
 	static public function getPrefill() {
 		$preFill = (New MembershipStatus)->find()->where(['act_prefill' => 1 ])->all();
 		$mydata= json_encode( ArrayHelper::getColumn($preFill,'act_short') );
-		//yii::$app->controller->createLog(true, 'trex--mydata', var_export($mydata,true));
 		return $mydata;
 	}
 
 	static public function getSignup() {
 		$SignupName = (New MembershipStatus)->find('act_short')->where(['act_active' =>1,'act_signup'=>1])->one();
-		yii::$app->controller->createLog(true, 'trexsb', var_export($SignupName,true));
 		if ($SignupName) { return $SignupName->act_short; } else {return false; }
 	}
 }

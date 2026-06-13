@@ -512,7 +512,6 @@ class BadgesController extends AdminController {
 		elseif ($model->load(Yii::$app->request->post())) {
 			$model->created_at = $this->getNowTime();
 
-			$model->status ='approved';
 			$model = $model->cleanBadgeData($model,true,true);
 
 			$bg_num =(New Badges)->find()->where(['badge_number'=>$model->badge_number])->count();
@@ -1083,7 +1082,6 @@ class BadgesController extends AdminController {
 				$badgeRecords->sticker = $model->sticker;
 				$badgeRecords->wt_date = $wt_date_reIssue !=null ? $wt_date_reIssue : $badgeRecords->wt_date;
 				$badgeRecords->wt_instru = $wt_date_reIssue !=null ? $wt_instru_reIssue : $badgeRecords->wt_instru;
-				$badgeRecords->status = 'approved';
 				$badgeRecords->updated_at = $this->getNowTime();
 				if($model->redeemable_credit>0) {
 					$workCredit = new WorkCredits();
@@ -1490,8 +1488,7 @@ class BadgesController extends AdminController {
 			}
 
 			$model->qrcode = str_pad($clubs[0], 2, '0', STR_PAD_LEFT)." ".$model->mem_type." ".str_pad($_GET['badge_number'], 5, '0', STR_PAD_LEFT)." ".$randomString;
-			$model->status = "approved";
-			if ($model->save(false)) {Yii::$app->getSession()->setFlash('success', 'Badge QR code Update!  Account set to Approved!');}
+			if ($model->save(false)) {Yii::$app->getSession()->setFlash('success', 'Badge QR code Update! ');}
 		}
 	}
 

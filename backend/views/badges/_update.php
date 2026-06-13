@@ -48,23 +48,28 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 
 	$isExpired = Badges::isExpired($model->badge_number,$confParams);
 	// mem_type needs to renew? Test:
+	$hide_Renew_message='';
 	if ((int)$DateExpires < (int)$badge_year_chk) {									// Is BadgeSubscription Current?
 		if (yii::$app->controller->hasPermission('badges/renew-membership')) {		// Can User Process & Renew Badges?
+			yii::$app->controller->createLog(true, 'trex_bbb', var_export('bbb',true));
 			if ((new MembershipStatus)->getCanRenew($model->status)) {									// Is badge active / not restricted?
+				yii::$app->controller->createLog(true, 'trex_ccc', var_export('ccc',true));
 				$mem_renew = backend\models\MembershipType::findOne(['id'=>$model->mem_type])->renew_yearly;
-				if ($mem_renew) {													// Does Membership type need to renew?
+				if ($mem_renew) {	
+				yii::$app->controller->createLog(true, 'trex_ddd', var_export('ddd',true));	
+				// Does Membership type need to renew?
 					$hide_Renew=false;
-				} else { $hide_Renew=true; }
-			} else { $hide_Renew=true; }
+				} else { $hide_Renew_message= "Membership Type dosn't need to Renew."; $hide_Renew=true; }
+			} else { $hide_Renew_message= 'Account Status not allowed to Renew.'; $hide_Renew=true; }
 		} else { $hide_Renew=true; }
-	} else { $hide_Renew=true; }
+	} else { $hide_Renew_message= 'Badge Subscription is current.'; $hide_Renew=true; }
 
 	// Show Certifications?
 	if (yii::$app->controller->hasPermission('badges/add-certification')) { $hide_Cert=false; } else { $hide_Cert=true; }
 	if ((new MembershipStatus)->getCanRenew($model->status)) {} else { $hide_Cert=true; }
 	if ($isExpired) { $hide_Cert=true; }
 
-	$Discounts = (new Discount)->getDiscounts('renew');
+	$Discounts = (new Discount)->getDiscounts('RenBG');
 	$Discounts_def = (new Discount)->getDiscountDefault();
 
 	$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
@@ -189,7 +194,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
                 echo $form->field($model, 'wt_date')->widget(DatePicker::classname(), [
 					'options' => ['placeholder' => 'WT Date'],
 					'type' => DatePicker::TYPE_INPUT,
-					'disabled' => yii::$app->controller->hasPermission('badges/delete') ? false : true,
+					'disabled' => yii::$app->controller->hasPermission('badges/barcode') ? false : true,
 					'pluginOptions' => [
 						'format' => 'M dd, yyyy',
 						'endDate' => date('M d, Y', strtotime("+90 days")),
@@ -199,7 +204,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				]); ?>
                 </div>
              <div class="col-xs-6 col-sm-4">
-                <?= $form->field($model, 'wt_instru')->textInput(['disabled' => yii::$app->controller->hasPermission('badges/delete') ? false : true,]).PHP_EOL; ?>
+                <?= $form->field($model, 'wt_instru')->textInput(['disabled' => yii::$app->controller->hasPermission('badges/barcode') ? false : true,]).PHP_EOL; ?>
             </div>
 			<?php if(yii::$app->controller->hasPermission('badges/barcode')) {
 			 echo '<div class="col-xs-6 col-sm-4">'.
@@ -269,6 +274,11 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 </div>
 
 <?php } ?>
+	<?php if ($hide_Renew) { ?>
+	<div class="row"> 
+	<h4><?=$hide_Renew_message ?></h4>
+	</div>
+	<?php } ?>
 <div class="row" id="purchases_block" <?php if(!yii::$app->controller->hasPermission('badges/update')) {echo 'style="display:none"';} ?> >
 
 	<div class="box" id="badge_renual_form" <?php if($hide_Renew) {echo 'style="display:none"';} ?> >

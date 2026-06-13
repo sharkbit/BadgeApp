@@ -861,7 +861,7 @@ INSERT INTO `BadgeDB`.`discount` (`dis_name`, `dis_amount`, `dis_short`, `dis_al
 
 
 -- added table for statsu of bember badge and description
---for #27
+--for #276
 CREATE TABLE `BadgeDB`.`account_status` (
   `act_id` int NOT NULL AUTO_INCREMENT,
   `act_short` varchar(3) DEFAULT NULL,
@@ -901,3 +901,22 @@ update BadgeDB.badges set `status`= 'sel' where `status`= 'self';
 -- added Account Signup Checks
 ALTER TABLE `BadgeDB`.`account_status` 
 ADD COLUMN `act_signup` INT NULL DEFAULT 0 AFTER `act_renew`;
+
+-- oopse nore quick fixes
+-- for #276
+ALTER TABLE `BadgeDB`.`badge_subscriptions` 
+CHANGE COLUMN `payment_type` `payment_type` VARCHAR(6) NOT NULL ;
+
+ALTER TABLE `BadgeDB`.`account_status` 
+ADD COLUMN `act_new` INT NULL DEFAULT 0 AFTER `act_active`;
+
+ALTER TABLE `BadgeDB`.`discount`
+DROP INDEX `dis_name_UNIQUE` ,
+DROP INDEX `dis_short_UNIQUE` ;
+
+INSERT INTO `BadgeDB`.`discount` (`dis_name`, `dis_amount`, `dis_short`, `dis_allowed`, `dis_active`) VALUES ('Open House', 50, 'o', 'RenBG',0);
+UPDATE `BadgeDB`.`discount` SET `dis_allowed` = 'NewBG,RenBG', `dis_amount`=150  WHERE (`dis_id` = '0');
+UPDATE `BadgeDB`.`discount` SET `dis_allowed` = 'NewBG' WHERE (`dis_id` = '1');
+UPDATE `BadgeDB`.`discount` SET `dis_allowed` = 'NewBG' WHERE (`dis_id` = '2');
+
+

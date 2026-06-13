@@ -1,6 +1,7 @@
 <?php
 use backend\models\clubs;
 use backend\models\Discount;
+use backend\models\MembershipStatus;
 use backend\models\Params;
 use backend\models\StoreItems;
 use kartik\money\MaskMoney;
@@ -30,7 +31,7 @@ if(empty($Club_List)) {
 	Yii::$app->response->redirect(['clubs/index'])->send(); return;
 }
 
-$Discounts = (new Discount)->getDiscounts('new');
+$Discounts = (new Discount)->getDiscounts('NewBG');
 $Discounts_def = (new Discount)->getDiscountDefault();
 
 $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
@@ -159,6 +160,19 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
              <div class="col-xs-6 col-sm-4">
                 <?= $form->field($model, 'wt_instru')->textInput(['placeholder'=>'Required']) ?>
             </div>
+<?php $memstatus = (new MembershipStatus)::getIssueMemStatus($confParams);
+	yii::$app->controller->createLog(true, 'trex-gt3', var_export($memstatus,true));
+	if (count($memstatus)>1) { 
+		?>	
+			<div class="col-xs-6 col-sm-2">
+                <?= $form->field($model, 'status')->dropDownList($memstatus) ?>
+            </div>	
+<?php } else {  
+yii::$app->controller->createLog(true, 'trex7474', var_export(key($memstatus),true));
+ ?>
+			
+			<?= $form->field($model, 'status')->hiddenInput(['value'=>key($memstatus)])->label(false).PHP_EOL;?>
+<?php } ?>	
              <div class="col-xs-6 col-sm-4">
                 <?= $form->field($model, 'qrcode')->textInput(['readOnly'=>true])->label('Barcode') ?>
             </div>
@@ -296,6 +310,15 @@ $myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 		if($('#extras_store_div').is(':visible')) {
 			$("#extras_store_div").hide();
         } else  {$("#extras_store_div").show();}
+	});
+
+	$("#badges-status").change(function(e) {
+		var act_Status = document.getElementById('badges-status');
+		const getPrefill = <?=(new MembershipStatus)::getPrefill(); ?> ;
+		if (getPrefill.includes(act_Status.value)) {
+			const dropdown = document.getElementById("badges-sticker");
+			dropdown.selectedIndex = dropdown.options.length - 1;
+		}
 	});
 
 	function CheckOnline() {

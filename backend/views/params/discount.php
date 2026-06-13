@@ -47,7 +47,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					'dis_amount',
 					[   'attribute' => 'dis_allowed',
 						'value' => function($model) { return implode(", ", $model->dis_allowed); },
-						'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'dis_allowed', ['new' => 'New', 'renew' => 'Renew'],['class'=>'form-control','prompt' => 'All']),
+						'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'dis_allowed', ['NewBG' => 'New', 'RenBG' => 'Renew'],['class'=>'form-control','prompt' => 'All']),
 						'headerOptions' => ['style' => 'width:15%'],
 					],
 					[   'attribute' => 'dis_def',
@@ -61,8 +61,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			'template'=>'{update} {delete}',
 			'buttons'=> [
 				'update' => function ($url, $model) {
-					if ((in_array(1, json_decode(yii::$app->user->identity->privilege))) ||
-					((yii::$app->controller->hasPermission('params/discountupdate')) && (!array_intersect([1,2],json_decode(yii::$app->user->identity->privilege))))) {
+					if (yii::$app->controller->hasPermission('params/discountupdate'))  {
 					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/params/discountupdate','id'=>$model->dis_id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',

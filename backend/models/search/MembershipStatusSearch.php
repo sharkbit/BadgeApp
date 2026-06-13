@@ -14,7 +14,7 @@ class MembershipStatusSearch extends MembershipStatus {
 
 	public function rules() {
 		return [
-			[['act_active','act_login','act_name','act_prefill','act_renew','act_short','act_signup'],'safe'],
+			[['act_active','act_login','act_name','act_new','act_prefill','act_renew','act_short','act_signup'],'safe'],
 		];
 	}
 
@@ -48,6 +48,7 @@ class MembershipStatusSearch extends MembershipStatus {
 		if(isset($this->act_name)) { $query->andFilterWhere(['like','act_name', $this->act_name]); }
 		if(isset($this->act_short)) { $query->andFilterWhere(['like','act_short', $this->act_short]); }
 		if(isset($this->act_login)) { $query->andFilterWhere(['act_login' => $this->act_login]); }
+		if(isset($this->act_new)) { $query->andFilterWhere(['act_new' => $this->act_new]); }
 		if(isset($this->act_order)) { $query->andFilterWhere(['act_order' => $this->act_order]); }
 		if(isset($this->act_renew)) { $query->andFilterWhere(['act_renew' => $this->act_renew]); }
 		if(isset($this->act_prefill)) { $query->andFilterWhere(['act_prefill' => $this->act_prefill]); }
