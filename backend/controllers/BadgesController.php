@@ -606,7 +606,7 @@ class BadgesController extends AdminController {
 				$badgeSubscriptionsModel->created_at = $this->getNowTime();
 				$badgeSubscriptionsModel->badge_fee = $model->badge_fee;
 				$badgeSubscriptionsModel->paid_amount = $model->amt_due;
-				$badgeSubscriptionsModel->discount = $model->discounts;
+				$badgeSubscriptionsModel->discount = $model->badge_fee - $model->amt_due;
 				$badgeSubscriptionsModel->sticker = $model->sticker;
 				$badgeSubscriptionsModel->transaction_type ='NEW';
 				$badgeSubscriptionsModel->club_id = $model->club_id;

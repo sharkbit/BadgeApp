@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = 'Update';
 				<?= $form->field($model, 'dis_def')->DropDownList(['0'=>'No','1'=>'Yes']).PHP_EOL ?>
 			</div>
 			<div class="col-xs-12 col-sm-6">
-				<?= $form->field($model, 'dis_allowed')->DropDownList(['NewGB'=>'New','RenBG'=>'Renew'],['multiple' => true]).PHP_EOL ?>
+				<?= $form->field($model, 'dis_allowed')->DropDownList(['NewBG'=>'New','RenBG'=>'Renew'],['multiple' => true]).PHP_EOL ?>
 			</div>
 		</div>
 	</div>

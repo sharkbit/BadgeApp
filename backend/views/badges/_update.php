@@ -51,12 +51,9 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	$hide_Renew_message='';
 	if ((int)$DateExpires < (int)$badge_year_chk) {									// Is BadgeSubscription Current?
 		if (yii::$app->controller->hasPermission('badges/renew-membership')) {		// Can User Process & Renew Badges?
-			yii::$app->controller->createLog(true, 'trex_bbb', var_export('bbb',true));
 			if ((new MembershipStatus)->getCanRenew($model->status)) {									// Is badge active / not restricted?
-				yii::$app->controller->createLog(true, 'trex_ccc', var_export('ccc',true));
 				$mem_renew = backend\models\MembershipType::findOne(['id'=>$model->mem_type])->renew_yearly;
 				if ($mem_renew) {	
-				yii::$app->controller->createLog(true, 'trex_ddd', var_export('ddd',true));	
 				// Does Membership type need to renew?
 					$hide_Renew=false;
 				} else { $hide_Renew_message= "Membership Type dosn't need to Renew."; $hide_Renew=true; }

@@ -14,6 +14,8 @@ $years = [];
 for ($year = $startYear; $year >= $endYear; $year--) {
     $years[$year] = $year;
 }
+$confParams  = backend\models\Params::findOne('1');
+$PaymentTypes = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
 
 <div class="row">
@@ -26,8 +28,7 @@ for ($year = $startYear; $year >= $endYear; $year--) {
 			<li> <?=Html::label($model->getLabel('transaction_type'))?> <span class="pull-right"> <?=$model->transaction_type?>  </span> </li>
 			<li> <?php if($model->is_migrated) { 
 				echo Html::label($model->getLabel('payment_type'))?> <span class="pull-right"> <?=$model->payment_type?>  </span>
-			<?php } else { echo $form->field($model, 'payment_type')->dropdownList(['cash'=>'Cash','check'=>'Check',
-						'credit'=>'Credit Card','online'=>'Online','other'=>'Other'],['prompt'=>'Payment Type']); } ?> </li>
+			<?php } else { echo $form->field($model, 'payment_type')->dropdownList($PaymentTypes,['prompt'=>'Payment Type']); } ?> </li>
 			<li> <?=Html::label($model->getLabel('badge_fee'))?> <span class="pull-right"> <?=$model->badge_fee?>  </span> </li>
 			<li> <?=Html::label($model->getLabel('paid_amount'))?> <span class="pull-right"> <?=$model->paid_amount?>  </span> </li>
 			<li> <?=Html::label($model->getLabel('discount'))?> <span class="pull-right"> <?=$model->discount?>  </span> </li>
