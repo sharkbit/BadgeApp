@@ -14,7 +14,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=8.2.0",
+        "php": ">=8.3.0",
 		"ext-intl": "*",
 		"ext-mbstring": "*",
         "yiisoft/yii2": ">2.0.15",

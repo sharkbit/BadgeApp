@@ -1,14 +1,15 @@
 BadgeApp
 ========
 
-Running on CentOs with PHP 7.4
- - Don't forget to enable the PHP repo, a good resource is [remirepo.net](https://blog.remirepo.net/post/2019/12/03/Install-PHP-7.4-on-CentOS-RHEL-or-Fedora)
+Running on Ubuntu with PHP 8.3
+ - Don't forget to enable the PHP repo
  
 Steps to install:
 
 1. Install proper php modules:
-   - yum install php74 php74-php-fpm php74-php-gd php74-php-json php74-php-mbstring php74-php-mysqlnd php74-php-xml php74-php-xmlrpc php74-php-opcache php-pdo php-mbst* php-intl* php-dom* php-mysq* --skip-broken
-   - yum install composer
+   - apt install php8.3 php8.3-fpm libapache2-mod-fcgid php8.3-cli php8.3-common php8.3-curl php8.3-dev php8.3-fpm php8.3-gd php8.3-igbinary php8.3-imagick php8.3-imap php8.3-intl php8.3-mbstring php8.3-mysql php8.3-opcache php8.3-phpdbg php8.3-readline php8.3-redis php8.3-soap php8.3-xml php8.3-xmlrpc php8.3-zip php8.3-zmq
+
+   - apt install composer
 2. Clone Repo:
    - cd /var/www/
    - git clone https://github.com/sharkbit/BadgeApp.git
