@@ -4,6 +4,7 @@ namespace backend\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use backend\models\BadgeToClubs;
 
 /**
  * This is the model class for table "clubs".
@@ -52,6 +53,10 @@ class Clubs extends \yii\db\ActiveRecord {
         ];
     }
 
+	public function getBadgeToClubs() {
+		return $this->hasMany(BadgeToClubs::class, ['club_id' => 'club_id']);
+	}
+
     public function getClubList($use_short=false,$restrict=false,$allow_members=false,$add_CIO=false) {
 		if($use_short) {$field='short_name';} else {$field='club_name';}
 
@@ -93,6 +98,17 @@ class Clubs extends \yii\db\ActiveRecord {
 
 		return $ClubList;
     }
+
+	public function getClubsWithMembers() {
+		$dropdownData = Clubs::find()
+			->innerJoinWith('badgeToClubs')
+			->select(['clubs.club_id', 'clubs.club_name'])
+			->orderBy(['clubs.club_name' => SORT_ASC])
+			->asArray()
+			->all();
+
+		return ArrayHelper::map($dropdownData, 'club_id', 'club_name');
+	}
 
     public function getAvoid($restrict=false) {
 		$clubArray = Clubs::find()
