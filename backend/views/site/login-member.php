@@ -14,7 +14,6 @@ use backend\models\Params;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 
-try {
 $param = Params::find()->one();
 $urlStatus = yii::$app->controller->getCurrentUrl();
 ?>
@@ -39,7 +38,7 @@ foreach($agc_event as $an_event){
 } ?>
 			</div>
 		<p> </p> <br />
-<?php } } ?>
+<?php } } else { $agc_event=false; } ?>
 		</div>
         <div class="col-xs-12 col-md-4" >
             <div class="login-box">
@@ -375,7 +374,3 @@ foreach($agc_event as $an_event){
 <?php } ?>
 </script>
 
-<?php }
-catch (Exception $e) {
-	echo '<br><br><h3>Database is Down Please notify Staff</h3>';
-} ?>
