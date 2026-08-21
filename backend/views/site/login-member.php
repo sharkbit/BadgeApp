@@ -15,14 +15,16 @@ $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 
 try {
-$agc_event = Events::find()->where(['e_date' => date('Y-m-d',strtotime(yii::$app->controller->getNowTime())),'e_status'=>'0'])->andWhere(['!=', 'e_type', 'cio'])->all();
 $param = Params::find()->one();
 $urlStatus = yii::$app->controller->getCurrentUrl();
 ?>
 <div class="site-login">
     <div class="row ">
 		<div class="col-xs-12 col-md-4" >
-<?php if($agc_event) { ?>
+<?php
+if (! Yii::$app->params['env']=='cal' ) {
+$agc_event = Events::find()->where(['e_date' => date('Y-m-d',strtotime(yii::$app->controller->getNowTime())),'e_status'=>'0'])->andWhere(['!=', 'e_type', 'cio'])->all();
+if($agc_event) { ?>
 			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<h3>Todays Events:</h3><hr /><ul>
 <?php
@@ -37,7 +39,7 @@ foreach($agc_event as $an_event){
 } ?>
 			</div>
 		<p> </p> <br />
-<?php } ?>
+<?php } } ?>
 		</div>
         <div class="col-xs-12 col-md-4" >
             <div class="login-box">
@@ -66,7 +68,7 @@ foreach($agc_event as $an_event){
             </div>
         </div>
         <div class="col-xs-12 col-md-4" >
-<?php if( ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge") ) || (Yii::$app->params['env'] == 'dev') ) { 
+<?php if( ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge") ) || (Yii::$app->params['env'] == 'dev') ) {
 		$SignupName = (New MembershipStatus)->getSignup();
 		if ($SignupName) { ?>
 			<div style=" padding: 20px;"><p> <br /> </p>
@@ -211,16 +213,16 @@ foreach($agc_event as $an_event){
 	});
 
 	$('#event_att-ea_f_name').on('input', function() {
-		$("#badge_name").html(''); 
+		$("#badge_name").html('');
 		document.getElementById("event_att-ea_badge").value='';
 	});
 
 	$('#event_att-ea_l_name').on('input', function() {
-		$("#badge_name").html(''); 
+		$("#badge_name").html('');
 		document.getElementById("event_att-ea_badge").value='';
 	});
 	$('#event_att-ea_wb_serial').on('input', function() {
-		$("#badge_name").html(''); 
+		$("#badge_name").html('');
 		document.getElementById("event_att-ea_badge").value='';
 	});
 
@@ -373,7 +375,7 @@ foreach($agc_event as $an_event){
 <?php } ?>
 </script>
 
-<?php } 
+<?php }
 catch (Exception $e) {
 	echo '<br><br><h3>Database is Down Please notify Staff</h3>';
 } ?>

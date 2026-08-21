@@ -46,7 +46,7 @@ class Menu extends Widget{
 		],
 		[
 			'label'=>'Calender',
-			'loc'=>['cal','prod'],
+			'loc'=>['cal','prod','dev'],
 			'url' => '/calendar/index',
 			'allow' => 'calendar/index',
 			'color' => 'btn-danger',
