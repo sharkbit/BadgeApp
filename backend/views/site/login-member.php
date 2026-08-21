@@ -21,7 +21,7 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
     <div class="row ">
 		<div class="col-xs-12 col-md-4" >
 <?php
-if (! Yii::$app->params['env']=='cal' ) {
+if ( Yii::$app->params['env'] != 'cal' ) {
 $agc_event = Events::find()->where(['e_date' => date('Y-m-d',strtotime(yii::$app->controller->getNowTime())),'e_status'=>'0'])->andWhere(['!=', 'e_type', 'cio'])->all();
 if($agc_event) { ?>
 			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
@@ -38,7 +38,7 @@ foreach($agc_event as $an_event){
 } ?>
 			</div>
 		<p> </p> <br />
-<?php } } else { $agc_event=false; } ?>
+<?php } } else { $agc_event = false; } ?>
 		</div>
         <div class="col-xs-12 col-md-4" >
             <div class="login-box">
@@ -67,7 +67,7 @@ foreach($agc_event as $an_event){
             </div>
         </div>
         <div class="col-xs-12 col-md-4" >
-<?php if( ( strpos( strtolower(" ".$_SERVER['SERVER_NAME']), "badge") ) || (Yii::$app->params['env'] == 'dev') ) {
+<?php if( Yii::$app->params['env'] != 'cal' ) {
 		$SignupName = (New MembershipStatus)->getSignup();
 		if ($SignupName) { ?>
 			<div style=" padding: 20px;"><p> <br /> </p>
