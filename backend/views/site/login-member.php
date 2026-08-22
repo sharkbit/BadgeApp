@@ -109,6 +109,12 @@ foreach($agc_event as $an_event){
 		</div>
 	</div>
 	<div class="col-xs-12"> <?php yii::$app->controller->getWaver();  ?> </div>
+	<div class="row" name='iagree' id='iagree' style="display:none;" ><div class="col-xs-12">
+		<input type="checkbox" id="terms" name="terms"  onclick="toggleSubmit()">
+			<label for="terms">
+			I understand the above Conditions and agree to the <a href="'. yii::$app->params['wp_site'].'/waiver" target="_blank">Waiver of Liability</a>.
+			</label>
+	</div></div>
 	<div class="row"><div id='reg_notes'> </div>
 		<div class="col-xs-2">
 		<button id="reg_button" type="submit" class="btn btn-success" onclick="jsReg();" >Register <i class="fa fa-child"> </i></button>
@@ -211,19 +217,33 @@ foreach($agc_event as $an_event){
 		}
 	});
 
+	const submitButton = document.getElementById('reg_button');
+	const iagree = document.getElementById('iagree');
 	$('#event_att-ea_f_name').on('input', function() {
 		$("#badge_name").html('');
 		document.getElementById("event_att-ea_badge").value='';
+		document.getElementById('iagree').style.display = 'block';
+		const isChecked = document.querySelector('#terms').checked;
+		if(!isChecked) {submitButton.disabled = true; }
 	});
 
 	$('#event_att-ea_l_name').on('input', function() {
 		$("#badge_name").html('');
 		document.getElementById("event_att-ea_badge").value='';
+		iagree.style.display = 'block';
+		const isChecked = document.querySelector('#terms').checked;
+		if(!isChecked) {submitButton.disabled = true; }
 	});
 	$('#event_att-ea_wb_serial').on('input', function() {
 		$("#badge_name").html('');
 		document.getElementById("event_att-ea_badge").value='';
 	});
+
+	function toggleSubmit(){
+		const checkbox = document.getElementById('terms');
+		const button = document.getElementById('reg_button');
+		button.disabled = !checkbox.checked;
+	}
 
 	var modal = document.getElementById('myModal');
 	var span = document.getElementsByClassName("close")[0];
