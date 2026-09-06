@@ -77,8 +77,11 @@ $this->beginBody() ?>
 
     <div class="container">
         <?php if((yii::$app->controller->id.'/'.yii::$app->controller->action->id!='site/index') || ((yii::$app->controller->id.'/'.yii::$app->controller->action->id='site/index') && count($_SESSION['back'])>1)) {
-			echo Html::a( '<i class="fa fa-arrow-left" aria-hidden="true"></i> Go Back', '?goBack=true', ['class' => 'btn btn-sm btn-primary pull-right', 'style' => 'margin-top:3px']);}  ?>
+			if (!isset($this->params['hideBackButton']) || !$this->params['hideBackButton']) {
+				echo Html::a( '<i class="fa fa-arrow-left" aria-hidden="true"></i> Go Back', '?goBack=true', ['class' => 'btn btn-sm btn-primary pull-right', 'style' => 'margin-top:3px']);} 
+		} ?>
         <?= Breadcrumbs::widget([
+			'homeLink' => (!empty($this->params['hideHomeLink'])) ? false : null,
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?= skinka\widgets\gritter\AlertGritterWidget::widget() ?>

@@ -219,6 +219,40 @@ class CalendarController extends AdminController {
 			'dataProvider' => $dataProvider ]);
 	}
 
+	public function actionList() {
+
+
+yii::$app->controller->createLog(true, 'trexRequest', var_export($_REQUEST,true));
+		$searchModel = new AgcCalSearch();
+		$searchModel->deleted = 0;
+		if (($_REQUEST['form_action'] ?? '') !== 'reset') {
+			$this->RestoreSession($searchModel, 'AgcCal', $this->myFilters);
+		}
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		$this->view->params['hideBackButton'] = true;
+		
+		if (!empty($searchModel->pagesize)) {$dataProvider->pagination->pageSize = $searchModel->pagesize;}
+		
+		$models = $dataProvider->getModels();	
+		$groupedModels = ArrayHelper::index($models, null, function ($models) {
+			// Returns '2026-08-27' or similar to use as the array key
+			return Yii::$app->formatter->asDate($models->event_date, 'yyyy-MM-dd');
+		});
+
+$rowCount = count($models);
+yii::$app->controller->createLog(true, 'trexrowCount', var_export($rowCount,true));
+$pageCount = 0;
+if ($dataProvider->getPagination() !== false) {
+    $pageCount = $dataProvider->getPagination()->getPageCount();
+}
+yii::$app->controller->createLog(true, 'trexpageCount', var_export($pageCount,true));
+
+		return $this->render('list', [
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+			'groupedModels' => $groupedModels]);
+	} 
+
 	public function actionIndex() {
 		$searchModel = new AgcCalSearch();
 		$searchModel->deleted = 0;
@@ -238,20 +272,20 @@ if($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:293 found',
 		$stop = date('H:i',strtotime($stop)-60);
 		$where_fac='';
 		foreach(json_decode($facility) as $f_id) {
-			$where_fac .="JSON_CONTAINS(associat_agcnew.agc_calendar.facility_id,'$f_id') or ";
+			$where_fac .="JSON_CONTAINS(associat_agcnew.cal_calendar.facility_id,'$f_id') or ";
 		}
 		$where_fac =rtrim ($where_fac," or ");
 
 		$model = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus']) //->joinWith(['getAgcFacility'])
-			->leftJoin('associat_agcnew.facilities',"JSON_CONTAINS(associat_agcnew.agc_calendar.facility_id, concat('\"',associat_agcnew.facilities.facility_id,'\"'))")
-			->where("($where_fac) AND event_date='$eDate' AND deleted=0 AND `associat_agcnew`.`agc_calendar`.active=1 and approved=1 AND `associat_agcnew`.`agc_calendar`.`event_status_id` <> 19 AND (".
+			->leftJoin('associat_agcnew.cal_facilities',"JSON_CONTAINS(associat_agcnew.cal_calendar.facility_id, concat('\"',associat_agcnew.cal_facilities.facility_id,'\"'))")
+			->where("($where_fac) AND event_date='$eDate' AND deleted=0 AND `associat_agcnew`.`cal_calendar`.active=1 and approved=1 AND `associat_agcnew`.`cal_calendar`.`event_status_id` <> 19 AND (".
 				"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
 				"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
 			->all();
 if($tst) {
 		$model_sql = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
-			->leftJoin('associat_agcnew.facilities',"JSON_CONTAINS(associat_agcnew.agc_calendar.facility_id, concat('\"',associat_agcnew.facilities.facility_id,'\"'))")
-			->where("($where_fac) AND event_date='$eDate' AND deleted=0 AND `associat_agcnew`.`agc_calendar`.active=1 and approved=1 AND `associat_agcnew`.`agc_calendar`.`event_status_id` <> 19 AND (".
+			->leftJoin('associat_agcnew.cal_facilities',"JSON_CONTAINS(associat_agcnew.cal_calendar.facility_id, concat('\"',associat_agcnew.cal_facilities.facility_id,'\"'))")
+			->where("($where_fac) AND event_date='$eDate' AND deleted=0 AND `associat_agcnew`.`cal_calendar`.active=1 and approved=1 AND `associat_agcnew`.`cal_calendar`.`event_status_id` <> 19 AND (".
 				"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
 				"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
 			->createCommand()->sql; // echo $model_sql->sql; // exit;
@@ -476,7 +510,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 					} else {
 						$nowTime = yii::$app->controller->getNowTime();
 					}
-					$sql = "DELETE from associat_agcnew.agc_calendar where recurrent_calendar_id = ".$id." and  event_date >= '".$nowTime."'";
+					$sql = "DELETE from associat_agcnew.cal_calendar where recurrent_calendar_id = ".$id." and  event_date >= '".$nowTime."'";
 					$command = Yii::$app->db->createCommand($sql);
 					$saveOut = $command->execute();
 
@@ -594,6 +628,18 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 		}
 	//} else { Yii::$app->getSession()->setFlash('error', 'Record Moved.');return $this->redirect(['/calendar/index']); }
 	}
+
+	public function actionViewitem($calendar_id) {
+		//$model = Badges::find()->where(['badge_number'=>$badge_number])->one();
+		$model = $this->findModel($calendar_id);
+		if ($model) {
+			return $this->render('viewitem', [
+				'model' => $model,
+			]);
+		} else {
+			return $this->redirect(['list']);
+		}
+	} //this->renderPartial('_badge-print-view',['model'=>$badgeModel,
 
 	public function loadDirtyFilds($model) {
 		$model->active	= (int)$model->active;

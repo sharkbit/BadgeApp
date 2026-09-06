@@ -5,7 +5,7 @@ namespace backend\models;
 use Yii;
 use yii\helpers\ArrayHelper;
 /**
- * This is the model class for table "AGC.range_status".
+ * This is the model class for table "AGC.cal_range_status".
  */
 class agcRangeStatus extends \yii\db\ActiveRecord {
     /**
@@ -13,7 +13,7 @@ class agcRangeStatus extends \yii\db\ActiveRecord {
      */
 
     public static function tableName() {
-        return 'associat_agcnew.range_status';
+        return 'associat_agcnew.cal_range_status';
     }
 
     /**

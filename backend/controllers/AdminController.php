@@ -145,6 +145,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $AllPermission = [
 		'Badges'=>['badges/api-zip','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
+		'Calendar' => ['calendar/list','calendar/viewitem'],
 		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'membershiptype'=>['membership-type/fees-by-type'],
 		'help'=>['badges/help','sales/help','rso-rpt/help'],
@@ -155,6 +156,11 @@ class AdminController extends \yii\web\Controller {
 		'Work Credits'=>['work-credits/create','work-credits/index','work-credits/sticky-form','work-credits/credit-transfer','work-credits/transfer-confirm','work-credits/transfer-form','work-credits/transfer-view','work-credits/view'],
 	];
 
+	public $noLogin = [
+		'Calendar' => ['calendar/list','calendar/viewitem'],
+		
+	];
+	
 	// Used for Importing CVS data
 	public $creditArray = ['badgenum','workdate','workhours','project','auth','status','last_update','procdate','who'];
 
@@ -183,6 +189,8 @@ class AdminController extends \yii\web\Controller {
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login-member') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/get-badge-name') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/verify-email') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='calendar/list') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='calendar/viewitem') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='clubs/badge-rosters') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='payment/charge') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='membership-type/fees-by-type') ||

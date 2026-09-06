@@ -14,7 +14,7 @@ class agcEventStatus extends \yii\db\ActiveRecord {
      */
 
     public static function tableName() {
-        return 'associat_agcnew.event_status';
+        return 'associat_agcnew.cal_event_status';
     }
 
     /**

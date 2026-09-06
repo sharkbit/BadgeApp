@@ -9,7 +9,7 @@ use backend\models\agcFacility;
 use backend\models\agcRangeStatus;
 
 /**
- * This is the model class for table "AGC.agc_calendar".
+ * This is the model class for table "AGC.cal_calendar".
  */
 class AgcCal extends \yii\db\ActiveRecord {
     /**
@@ -20,7 +20,7 @@ class AgcCal extends \yii\db\ActiveRecord {
 //	public $del_sel;
 
     public static function tableName() {
-        return 'associat_agcnew.agc_calendar';
+        return 'associat_agcnew.cal_calendar';
     }
 
     /**
@@ -89,8 +89,8 @@ class AgcCal extends \yii\db\ActiveRecord {
 					$where = " club_id in (".ltrim(rtrim(Yii::$app->user->identity->clubs,']'),'[').") AND ";
 				} else { $where = ''; }
 
-				$sql = "SELECT distinct recurrent_calendar_id FROM associat_agcnew.agc_calendar ".
-					" WHERE ".$where."  calendar_id not in (SELECT distinct recurrent_calendar_id FROM associat_agcnew.agc_calendar where calendar_id=recurrent_calendar_id AND recurrent_calendar_id >0 AND deleted=0 AND event_date > '".date('Y')."-12-31 23:59:00') AND ".
+				$sql = "SELECT distinct recurrent_calendar_id FROM associat_agcnew.cal_calendar ".
+					" WHERE ".$where."  calendar_id not in (SELECT distinct recurrent_calendar_id FROM associat_agcnew.cal_calendar where calendar_id=recurrent_calendar_id AND recurrent_calendar_id >0 AND deleted=0 AND event_date > '".date('Y')."-12-31 23:59:00') AND ".
 					" calendar_id=recurrent_calendar_id AND recurrent_calendar_id >0 AND deleted=0;";
 				$sum =  Yii::$app->db->createCommand($sql)->queryScalar();
 				if ($sum >0) { return false; } else { return true; }

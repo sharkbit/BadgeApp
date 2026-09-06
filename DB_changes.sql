@@ -920,3 +920,10 @@ UPDATE `BadgeDB`.`discount` SET `dis_allowed` = 'NewBG' WHERE (`dis_id` = '1');
 UPDATE `BadgeDB`.`discount` SET `dis_allowed` = 'NewBG' WHERE (`dis_id` = '2');
 
 
+-- Calendar Move Prep
+ALTER TABLE `associat_agcnew`.`agc_calendar` RENAME TO  `associat_agcnew`.`cal_calendar` ;
+ALTER TABLE `associat_agcnew`.`range_status` RENAME TO  `associat_agcnew`.`cal_range_status` ;
+ALTER TABLE `associat_agcnew`.`facilities` RENAME TO  `associat_agcnew`.`cal_facilities` ;
+ALTER TABLE `associat_agcnew`.`event_status` RENAME TO  `associat_agcnew`.`cal_event_status` ;
+
+

@@ -34,7 +34,7 @@ if (isset($_REQUEST['AgcCal']['pagesize'])) {
 $dataProvider->pagination = ['pageSize' => $pagesize];
 
 if (yii::$app->controller->hasPermission('calendar/shoot')) {
-	$sql="SELECT facility_id FROM associat_agcnew.facilities WHERE name like '%shoot%'";
+	$sql="SELECT facility_id FROM associat_agcnew.cal_facilities WHERE name like '%shoot%'";
 	$result = Yii::$app->getDb()->createCommand($sql)->queryAll();
 	$shoot = json_encode(ArrayHelper::getColumn($result, 'facility_id'));
 	$shoot = json_decode(str_replace('"','',$shoot));
