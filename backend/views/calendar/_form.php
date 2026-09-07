@@ -65,8 +65,8 @@ if ($model->recur_every && $model->recurrent_calendar_id != 0 ) {
         $say='';
         $recur_disab=true;
     }
-    $sql = "select (select count(*) from associat_agcnew.cal_calendar where recurrent_calendar_id=".$sqlSearch." and event_date <'".date('y-m-d', strtotime($getNowTime))."') as past,".
-        " (select count(*) from associat_agcnew.cal_calendar where recurrent_calendar_id=".$sqlSearch." and event_date >='".date('y-m-d', strtotime($getNowTime))."') as  fut;";
+    $sql = "select (select count(*) from cal_calendar where recurrent_calendar_id=".$sqlSearch." and event_date <'".date('y-m-d', strtotime($getNowTime))."') as past,".
+        " (select count(*) from cal_calendar where recurrent_calendar_id=".$sqlSearch." and event_date >='".date('y-m-d', strtotime($getNowTime))."') as  fut;";
 
     $data = Yii::$app->getDb()->createCommand($sql)->queryAll();
     echo " (Past: <B>".$data[0]['past']."</b> Future: <B>".$data[0]['fut'].")</b><hr />";

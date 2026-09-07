@@ -921,9 +921,9 @@ UPDATE `BadgeDB`.`discount` SET `dis_allowed` = 'NewBG' WHERE (`dis_id` = '2');
 
 
 -- Calendar Move Prep
-ALTER TABLE `associat_agcnew`.`agc_calendar` RENAME TO  `associat_agcnew`.`cal_calendar` ;
-ALTER TABLE `associat_agcnew`.`range_status` RENAME TO  `associat_agcnew`.`cal_range_status` ;
-ALTER TABLE `associat_agcnew`.`facilities` RENAME TO  `associat_agcnew`.`cal_facilities` ;
-ALTER TABLE `associat_agcnew`.`event_status` RENAME TO  `associat_agcnew`.`cal_event_status` ;
-
+-- for v2.2.0
+RENAME TABLE `associat_agcnew`.`agc_calendar` TO BadgeDB.cal_calendar;
+RENAME TABLE `associat_agcnew`.`range_status` TO BadgeDB.cal_range_status;
+RENAME TABLE `associat_agcnew`.`facilities` TO BadgeDB.cal_facilities;
+RENAME TABLE `associat_agcnew`.`event_status` TO BadgeDB.cal_event_status;
 

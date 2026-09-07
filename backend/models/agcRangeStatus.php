@@ -13,7 +13,7 @@ class agcRangeStatus extends \yii\db\ActiveRecord {
      */
 
     public static function tableName() {
-        return 'associat_agcnew.cal_range_status';
+        return 'cal_range_status';
     }
 
     /**

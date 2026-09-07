@@ -413,7 +413,7 @@ class BadgesController extends AdminController {
 		}
 		elseif(isset($_GET['unpub'])) {    //	./badges/api-check?unpub
 			if($unpub) {$where='club_id='.$unpub.' AND';} else {$where='';}
-			$sql = "SELECT distinct calendar_id FROM associat_agcnew.cal_calendar where $where calendar_id = recurrent_calendar_id and event_date>='".date('Y-01-01',strtotime("+1 year"))."'";
+			$sql = "SELECT distinct calendar_id FROM cal_calendar where $where calendar_id = recurrent_calendar_id and event_date>='".date('Y-01-01',strtotime("+1 year"))."'";
 			$FixRecs = Yii::$app->getDb()->createCommand($sql)->queryAll();
 			AgcCal::UpdateAll(['conflict'=>0,'approved'=>1,'active'=>1]); //,'deleted'=>0]);
 			foreach ($FixRecs as $bad_recu) {

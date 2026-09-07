@@ -20,7 +20,7 @@ class AgcCalSearch extends AgcCal {
 
     public function rules() {
         return [
-            [['event_name','club_id','active','approved','recur_every','recur_week_days','facility_id','event_status_id','range_status_id'], 'safe']
+            [['active','approved','club_id','event_name','event_status_id','facility_id','keywords','range_status_id','recur_every','recur_week_days'], 'safe']
         ];
     }
 
@@ -41,7 +41,7 @@ class AgcCalSearch extends AgcCal {
             'query' => $query,
         ]);
 		if (!empty($this->pagesize)) {$dataProvider->pagination->pageSize = $this->pagesize;}
-		
+
         $this->load($params);
 
 		if(!isset($params['sort'])) {
@@ -61,11 +61,35 @@ class AgcCalSearch extends AgcCal {
         }
 
     // grid filtering conditions
-//	yii::$app->controller->createLog(true, 'trex-this', var_export($this,true));
-		if(!empty($this->club_id)) {	$query->andFilterWhere(['like','clubs.club_name',$this->club_id])->orFilterWhere(['like','clubs.short_name',$this->club_id]); }
-		if(!empty($this->facility_id))	 { $query->andWhere("JSON_CONTAINS(cal_calendar.facility_id,'".$this->facility_id."')"); }
+	yii::$app->controller->createLog(true, 'trex-this', var_export($_REQUEST,true));
+
 		if((!yii::$app->controller->hasPermission('calendar/all')) && (isset(Yii::$app->user->identity->clubs))) {
 			$query->andFilterWhere(['in','cal_calendar.club_id',json_decode(Yii::$app->user->identity->clubs)]);
+		}
+
+	yii::$app->controller->createLog(true, 'trexKeyWords','yesss');
+		if(isset($this->keywords)) {
+			$query->andFilterWhere(['ilike', 'event_name', $this->keywords]);
+			//$query->orFilterWhere(['ilike', 'club_name', $this->keywords]);
+		}
+		if(!empty($this->club_id)) {
+			if (is_numeric($this->club_id)) {
+				$query->andFilterWhere(['cal_calendar.club_id'=>$this->club_id]);
+			} else {
+				$query->andFilterWhere(['like','clubs.club_name',$this->club_id])->orFilterWhere(['like','clubs.short_name',$this->club_id]);
+			}
+		}
+		if(!empty($this->facility_id))	 {
+			if (is_array($this->facility_id)) {
+				$sql = "(";
+				foreach ($this->facility_id as $facilid){
+					$sql .= "JSON_CONTAINS(cal_calendar.facility_id,'".$facilid."') OR ";
+				}
+
+				$query->andWhere(substr($sql, 0, -4).")");
+			} else {
+				$query->andWhere("JSON_CONTAINS(cal_calendar.facility_id,'".$this->facility_id."')");
+			}
 		}
 
 		if(isset($this->conflict) && $this->conflict==1) {
@@ -112,7 +136,7 @@ class AgcCalSearch extends AgcCal {
 		if(isset($this->range_status_id)) { $query->andFilterWhere(['cal_range_status.range_status_id'=>$this->range_status_id]); }
 		if(isset($this->showed_up)) { $query->andFilterWhere(['showed_up'=>$this->showed_up]); }
 
-	//yii::$app->controller->createLog(false, 'trex-B_M_S_AgcCAl Query OK: ', var_export($query->createCommand()->getRawSql(),true));
+	yii::$app->controller->createLog(false, 'trex-B_M_S_AgcCAl Query OK: ', var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }
 }

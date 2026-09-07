@@ -15,7 +15,7 @@ class agcFacility extends \yii\db\ActiveRecord {
 	public $pagesize;
 
     public static function tableName() {
-        return 'associat_agcnew.cal_facilities';
+        return 'cal_facilities';
     }
 
     /**

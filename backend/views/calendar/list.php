@@ -26,7 +26,7 @@ function table_page_navigation($start, $number_displayed, $total, $extra_get_par
 	  else
 		$result .= '<span class="dissabled_link">'.$first.'</span>';
 	  $result .= '</td><td style="padding-right:5px" align=center>';
-	  
+
 	  // Prev $number_displayed
 		   $temp_start = $start - $number_displayed;
 	  if ($temp_start < 0) $temp_start = 0;
@@ -66,203 +66,15 @@ function table_page_navigation($start, $number_displayed, $total, $extra_get_par
 	  if ($start + $number_displayed < $total)
 		$result .= '<a href="?' . $name_var . '=' . ($total-($total%$number_displayed)) . $extra_get_params.'" class="small_link">'.$last.'</a>';
 	  else $result .= '<span class="dissabled_link">'.$last.'</span>';
-	  
 
-//	  $result .= '</td></tr></table>';
 	  $result .= '</tr></table>';
 	}
 	else $result = '';
 	return $result;
 }
 
-
-	/*		   
-
-date_default_timezone_set('America/New_York');
-$url="/"; $range=false;
-$active_fields = new stdClass();
-$active_fields->start_time=1;
-$active_fields->end_time=1;
-$active_fields->event_name = 1;
-$active_fields->range_status_id=1;
-
-$username = Yii::$app->db->username;
-$password = Yii::$app->db->password;
-$dbname = 'associat_agcnew';
-$conn = mysqli_connect('localhost', $username, $password, $dbname);
-
-$display_month_date = '';
-$pagesize = 100;
-$start=0;
-$search_club_id='';
-$search_end_date='';
-$search_event_category_id='';
-$search_event_date = '';
-$search_facility_id ='';
-$search_keywords = '';
-$search_range_status_id='';
-$search_start_date='';
-$start_month_date=date('Y-m');
-$search_string='';
-
-if (isset($_REQUEST['reset_search'])) {
-	echo "Destroy!<br>\n";
-	//session_destroy(); session_start();
-	unset($_SESSION['pagesize']);
-	unset($_SESSION['search_club_id']);
-	unset($_SESSION['search_event_category_id']);
-	unset($_SESSION['search_event_date']);
-	unset($_SESSION['search_facility_id']);
-	unset($_SESSION['search_keywords']);
-	unset($_SESSION['search_range_status_id']);
-	unset($_SESSION['search_start_date']);
-	unset($_SESSION['start_month_date']);
-	
-	$range = " WHERE start_time >= '".date('Y-m-d 00:00',strtotime(date('Y-m-d'))).
-		"' AND start_time < '".	date('Y-m-d 00:00',strtotime(date('Y-m-d')." +1 month"))."'";
-	$search_start_date = date('Y-m-d',strtotime(date('Y-m-d')));
-	$search_end_date = 	date('Y-m-d',strtotime(date('Y-m-d')." +1 month"));
-	
-} else {
-	if (isset($_REQUEST['pagesize'])) {
-		$pagesize = (INT)$_REQUEST['pagesize'];
-//$search_string .= "&pagesize=".$pagesize;
-		$_SESSION['pagesize'] = $_REQUEST['pagesize'];
-	} elseif (isset($_SESSION['pagesize'])) {
-		$pagesize = (INT)$_SESSION['pagesize'];
-	//	$search_string .= "&pagesize=".$pagesize;
-	}
-
-	if (isset($_REQUEST['start'])) { $start =(int)mysqli_real_escape_string($conn,$_REQUEST['start']); } else { $start=0; }
-
-	if (isset($_REQUEST['search_event_date']) && $_REQUEST['search_event_date'] != '' ) {
-//echo "Date a<br>\n";
-		$search_event_date = mysqli_real_escape_string($conn,$_REQUEST['search_event_date']);
-		$_SESSION['search_event_date'] = $search_event_date;
-		$range = " WHERE event_date like '".date('Y-m-d',strtotime(date($search_event_date)))."%'";		
-	} elseif (isset($_REQUEST['search_start_date']) && $_REQUEST['search_start_date'] != '' && 	isset($_REQUEST['search_end_date']) && $_REQUEST['search_end_date'] != '') {
-//echo "Date b<br>\n";
-		$search_start_date = mysqli_real_escape_string($conn,$_REQUEST['search_start_date']);
-		$search_end_date = mysqli_real_escape_string($conn,$_REQUEST['search_end_date']);
-		$_SESSION['search_start_date'] = $search_start_date;
-		$_SESSION['search_end_date'] = $search_end_date;
-		$display_month_date = date('d, F, Y',strtotime(date($search_start_date))). ' to '.date('d, F, Y',strtotime(date($search_end_date)));		
-		$range = " WHERE event_date >= '".date('Y-m-d 00:00',strtotime(date($search_start_date)))."'".
-			" AND event_date <= '".date('Y-m-d 00:00',strtotime(date($search_end_date)))."'";		
-	} elseif (isset($_REQUEST['start_month_date'])) {
-//echo "Date c<br>\n";
-		$start_month_date = mysqli_real_escape_string($conn,$_REQUEST['start_month_date']);
-		//$search_string .= "&start_month_date=".$start_month_date;
-		$_SESSION['start_month_date'] = $start_month_date;
-		$display_month_date = date('F, Y',strtotime(date($start_month_date)));
-		$search_start_date = date('Y-m-d',strtotime(date($start_month_date)));
-		$search_end_date = date('Y-m-d',strtotime(date($start_month_date)." +1 month"));
-		$range = " WHERE event_date >= '".date('Y-m-d 00:00',strtotime(date($start_month_date)))."'".
-			" AND event_date <= '".date('Y-m-d 00:00',strtotime(date($start_month_date)." +1 month"))."'";		
-	} elseif (isset($_SESSION['search_event_date'])) {
-//echo "Date d<br>\n";
-		$search_event_date = $_SESSION['search_event_date'];
-		$search_start_date = date('Y-m-d',strtotime(date($start_month_date)));
-		$search_end_date = date('Y-m-d',strtotime(date($start_month_date)." +1 month"));
-		$range = " WHERE event_date like '".date('Y-m-d',strtotime(date($search_event_date)))."%'";		
-	} elseif (isset($_SESSION['start_month_date'])) {
-//echo "Date e<br>\n";
-		$start_month_date = $_SESSION['start_month_date'];
-		$display_month_date = date('F, Y',strtotime(date($start_month_date)));
-		$search_start_date = date('Y-m-d',strtotime(date($start_month_date)));
-		$search_end_date = date('Y-m-d',strtotime(date($start_month_date)." +1 month"));
-		$range = " WHERE event_date >= '".date('Y-m-d 00:00',strtotime(date($start_month_date)))."'".
-			" AND event_date <= '".date('Y-m-d 00:00',strtotime(date($start_month_date)." +1 month"))."'";		
-	} else {
-//echo "Date f<br>\n";
-		$range = " WHERE event_date >= '".date('Y-m-d 00:00',strtotime(date('Y-m-d'))).
-			"' AND event_date <= '".	date('Y-m-d 00:00',strtotime(date('Y-m-d')." +1 month"))."'";
-		$search_start_date = date('Y-m-d',strtotime(date('Y-m-d')));
-		$search_end_date = 	date('Y-m-d',strtotime(date('Y-m-d')." +1 month"));
-	}
-
-	if (isset($_REQUEST['search_club_id']) && $_REQUEST['search_club_id'] !=0) {
-		$search_club_id = mysqli_real_escape_string($conn,$_REQUEST['search_club_id']);
-		$_SESSION['search_club_id'] = $search_club_id;
-		$range .= " AND ac.club_id =".$search_club_id ;
-	} elseif (isset($_SESSION['search_club_id'])) {
-		$search_club_id = $_SESSION['search_club_id'];
-		$range .= " AND ac.club_id =".$search_club_id ;
-	} 
-	
-	if (isset($_REQUEST['search_facility_id']) && $_REQUEST['search_facility_id'] !=0) {
-		$search_facility_id = mysqli_real_escape_string($conn,$_REQUEST['search_facility_id']);
-		$_SESSION['search_facility_id'] = $search_facility_id;
-		$range .= " AND JSON_CONTAINS(ac.facility_id,'".$search_facility_id."')" ;
-	} elseif (isset($_SESSION['search_facility_id'])) {
-		$search_facility_id = $_SESSION['search_facility_id'];
-		$range .= " AND JSON_CONTAINS(ac.facility_id,'".$search_facility_id."')" ;
-	}
-	
-	if (isset($_REQUEST['search_event_category_id']) && $_REQUEST['search_event_category_id'] !=0) {
-		$search_event_category_id = mysqli_real_escape_string($conn,$_REQUEST['search_event_category_id']);
-		$_SESSION['search_event_category_id'] = $search_event_category_id;
-		$range .= " AND ac.event_status_id =".$search_event_category_id ;
-	} elseif (isset($_SESSION['search_event_category_id'])) {
-		$search_event_category_id = $_SESSION['search_event_category_id'];
-		$range .= " AND ac.event_status_id =".$search_event_category_id ;
-	}
-	
-	if (isset($_REQUEST['search_range_status_id']) && $_REQUEST['search_range_status_id'] !=0) {
-		$search_range_status_id = mysqli_real_escape_string($conn,$_REQUEST['search_range_status_id']);
-		$_SESSION['search_range_status_id'] = $search_range_status_id;
-		$range .= " AND ac.range_status_id =".$search_range_status_id ;
-	} elseif (isset($_SESSION['search_range_status_id'])) {
-		$search_range_status_id = $_SESSION['search_range_status_id'];
-		$range .= " AND ac.range_status_id =".$search_range_status_id ;
-	}
-
-	if (isset($_REQUEST['search_keywords']) && $_REQUEST['search_keywords'] !='') {
-		$req = htmlspecialchars($_REQUEST['search_keywords'], ENT_QUOTES, 'UTF-8');
-		$search_keywords = mysqli_real_escape_string($conn,$req);
-		$_SESSION['search_keywords'] = $search_keywords;
-		$range .= " AND (keywords like '%".$search_keywords."%' OR event_name like '%".$search_keywords."%' OR club_name like '%".$search_keywords."%')";
-	} elseif (isset($_SESSION['search_keywords'])) {
-		$search_keywords = $_SESSION['search_keywords'];
-		$range .= " AND (keywords like '%".$search_keywords."%' OR event_name like '%".$search_keywords."%' OR club_name like '%".$search_keywords."%')";
-	} 
-}
-
-$start_prev_month_date = date('Y-m',strtotime(date($search_start_date)." -1 month"));
-$start_curr_month_date = date('Y-m');
-$start_next_month_date = date('Y-m',strtotime(date($search_start_date)." +1 month"));
-
-if ($start > 0) {
-	$limit = " Limit ".$start.", ".$pagesize;
-} else {
-	$limit = " Limit ".$pagesize;
-}
-
-
-$tick=0;  // Colors for Rows
-
-$sql_a = "SELECT ac.*, club_name, es.name AS event_status, rs.name AS range_status";
-$sql_b = "SELECT count(*) as cnt";
-$sql_x = " FROM cal_calendar ac".
-	" LEFT OUTER JOIN BadgeDB.clubs c ON c.club_id = ac.club_id".
-	" LEFT OUTER JOIN cal_event_status es ON es.event_status_id = ac.event_status_id".
-	" LEFT OUTER JOIN cal_range_status rs ON rs.range_status_id = ac.range_status_id";
-$order = " ORDER BY event_date,hour(start_time) ";
-$range.=" AND approved=1 AND ac.active=1 AND deleted=0";
-
-//echo  $sql_a.$sql_x.$range.$order.$limit."<hr>\n";
-//echo  $range."<hr>\n";
-$result = mysqli_query($conn, $sql_a.$sql_x.$range.$order.$limit);
-if($result) {
-	$res_count = mysqli_query($conn, $sql_b.$sql_x.$range);
-	$total_rows = mysqli_fetch_array($res_count)['cnt'];
-
-	$table_navigation = table_page_navigation($start, $pagesize, $total_rows, substr($search_string,1));
-} else {$table_navigation='';}
-*/
 $this->title = "AGC Calendar Events";
 ?>
-
 
 <div class="work-credits-form" ng-controller="CalendarListFrom">
 	<?php $form = ActiveForm::begin([ 'id'=>'CalendarListFrom' ]); ?>
@@ -273,12 +85,12 @@ $this->title = "AGC Calendar Events";
 	</div>
 <details>
 	<summary> -- Search Filter -- </summary>
-	
+
 	<section>
 
 	<div class="row">
 		<div class="col-sm-6 col-md-3">
-			<?= $form->field($searchModel, 'keywords')->textInput(['maxlength'=>true]) ?>
+			<?= $form->field($searchModel, 'keywords')->textInput(['value'=>$searchModel->keywords]).PHP_EOL; ?>
 		</div>
 		<div class="col-sm-6 col-md-3">
 			<?= $form->field($searchModel, 'club_id')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'Any','value'=> $searchModel->club_id]).PHP_EOL; ?>
@@ -292,7 +104,7 @@ $this->title = "AGC Calendar Events";
 		<div class="col-xs-6 col-sm-3">
 			<?= $form->field($searchModel, 'range_status_id')->DropDownList((new agcRangeStatus)->getStatusList(),['prompt'=>'Any','value'=> $searchModel->range_status_id]).PHP_EOL; ?>
 		</div>
-	
+
 		<div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2" >
 		<?=  $form->field($searchModel, 'SearchTime', [
 		'options'=>['class'=>'drp-container form-group']
@@ -310,18 +122,13 @@ $this->title = "AGC Calendar Events";
 		<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
 			<?= $form->field($searchModel, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$searchModel->pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
 		</div>
-		
-<? //$search_start_date?>
-<? //$search_end_date?>
-<? //$search_event_date?>
-		
 	</div>
 	<div class="row">
-		
+
 		<div class="col-sm-3 btn-group pull-right">
-		
+
 		<?= Html::submitButton('Search <i class="fa fa-arrow-right"> </i>',['class' => 'btn btn-primary next-Credit']) ?>
-		
+
 		<?= Html::submitButton('Reset <i class="fa fa-eraser"> </i>', ['name' => 'form_action','value' => 'reset','class' => 'btn btn-warning']) ?>
 		</div>
 	</div>
@@ -337,25 +144,25 @@ $this->title = "AGC Calendar Events";
   .darker { background-color: #d3d3d3; }
 </style>
 <?php foreach ($groupedModels as $dateKey => $models): ?>
-		
+
 	<!-- Date Breakout Header -->
 	<div class="row">
 		<div class="col-xs-12">
 			<h3><?= Html::encode(date('l, F j, Y',strtotime($dateKey))) ?></h3>
 		</div>
 	</div>
-		
+
 	<!-- Items under this date -->
 	<?php $xx=0;
 		foreach ($models as $model):
-			$xx++; 
+			$xx++;
 			if ($xx % 2 != 0) { $bgColor=' darker';} else {$bgColor='' ;} ?>
 	<div class="row<?=$bgColor?>">
 		<div class="col-xs-3">
 			<?php echo date('g:i a', strtotime($model->start_time))." - ".date('g:i a', strtotime($model->end_time));?>
 		</div>
 		<div class="col-xs-7">
-			<a style="text-decoration: none; font-size: 12px;" href="/calendar/viewitem?calendar_id=<?=$model->calendar_id ?>" target='Cal'><?=Html::encode($model->event_name) ?></a>  
+			<a style="text-decoration: none; font-size: 12px;" href="/calendar/viewitem?calendar_id=<?=$model->calendar_id ?>" target='Cal'><?=Html::encode($model->event_name) ?></a>
 			<br/><?=$model->clubs->club_name ?><br/><?=(New AgcFacility)->getFacilityNames($model->facility_id);?>
 		</div>
 		<div class="col-xs-2">
@@ -366,7 +173,7 @@ $this->title = "AGC Calendar Events";
 		if ( ($model->range_status_id ==2 ) and ( array_intersect(array(2,3,7,10,24,25,27,28,30,32),$fac_id) ) ) {
 			echo '<img src="/images/flag_closed.png" alt="Closed" title="Closed"/>';
 		}
-		if ($model->range_status_id == 5 ) { 
+		if ($model->range_status_id == 5 ) {
 			echo '<a style="text-decoration: none; font-weight: bold;font-size: 12px;" title="Event Details" href="/calendar/viewitem?calendar_id='.$model->calendar_id.'" target="Cal">Range Open<br>CLUB REGULATED </a>';
 			//<!--<img src="/images/flag_clubregulated.png" alt="Range Open-Club Regulated" title="Range Open-Club Regulated"/>-->
 		}
@@ -377,25 +184,25 @@ $this->title = "AGC Calendar Events";
 			<br />
 			<img src="/images/flag_caliber_restriction.png" alt="Caliber Restriction" title="Caliber Restriction"/><br />
 			<b>22LR ONLY<b/> </a></div>
-<?php 	} 
+<?php 	}
 	}
  	if($model->event_status_id == 21) {
 		echo '<img src="/images/flag_rescheduled.png" alt="Canceled" title="Reschuduled"/> ';
 	} elseif($model->event_status_id == 19 || $model->range_status_id == 4) {
 		echo '<img src="/images/flag_canceled_event.png" alt="Canceled" title="Canceled"/>';
-	} 
+	}
 ?>
-		
+
 		</div>
 	</div>
 	<?php endforeach; ?>
-	
+
 <?php endforeach; ?>
 </div>
 
 <?php } else { ?>
 
-No Records found! 
+No Records found!
 <script>
   const detailsElement = document.querySelector("details");
   detailsElement.open = true;
@@ -477,7 +284,7 @@ No Records found!
 
 		<?php if($active_fields->event_name == 1) { ?>
 		<td valign="middle" align="left" class="row_css" width="388"  style="font-size: 12px;">
-			<a style="text-decoration: none; font-size: 12px;" href="<?=$url?>calendar/viewitem?calendar_id=<?=$fetch_result['calendar_id']?>" target='Cal'><?=$fetch_result['event_name']?></a>  
+			<a style="text-decoration: none; font-size: 12px;" href="<?=$url?>calendar/viewitem?calendar_id=<?=$fetch_result['calendar_id']?>" target='Cal'><?=$fetch_result['event_name']?></a>
 			<br/><?=$fetch_result['club_name']?><br/><?=(New AgcFacility)->getFacilityNames($fetch_result['facility_id']);?>
 		</td>
 		<?php } ?>
@@ -485,7 +292,7 @@ No Records found!
 		<td valign="middle" align="center" class="row_css" width="120"  style="font-size: 12px;">
 
 <?php 	if ( ($active_fields->range_status_id) and ($fetch_result['event_status_id'] != 19) and ($fetch_result['event_status_id'] != 21) ) { ?>
-		
+
 <?php	 	$fac_id=json_decode($fetch_result['facility_id']);
 
 			if ( ($fetch_result['range_status_id'] ==2 ) and ( array_intersect(array(2,3,7,10,24,25,27,28,30,32),$fac_id) ) ) { ?>
@@ -503,9 +310,9 @@ No Records found!
 			<br>
 			<img src="<?=$url?>calendar/images/flag_caliber_restriction.png" alt="Caliber Restriction" title="Caliber Restriction"/><br />
 			<B>22LR ONLY<b/> </a></div>
-<?php 		} 
+<?php 		}
 		} ?>
-		
+
 <?php 	if($fetch_result['event_status_id'] == 21) {
 			echo '<img src="/calendar/images/flag_rescheduled.png" alt="Canceled" title="Reschuduled"/> ';
 		}
