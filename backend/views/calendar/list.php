@@ -90,7 +90,7 @@ $this->title = "AGC Calendar Events";
 
 	<div class="row">
 		<div class="col-sm-6 col-md-3">
-			<?= $form->field($searchModel, 'keywords')->textInput(['value'=>$searchModel->keywords]).PHP_EOL; ?>
+			<?= $form->field($searchModel, 'key_words')->textInput(['value'=>$searchModel->key_words]).PHP_EOL; ?>
 		</div>
 		<div class="col-sm-6 col-md-3">
 			<?= $form->field($searchModel, 'club_id')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'Any','value'=> $searchModel->club_id]).PHP_EOL; ?>
@@ -117,7 +117,7 @@ $this->title = "AGC Calendar Events";
 		</div>
 		<div class="col-xs-1 text-center"> <br /><b>OR</b> </div>
 		<div class="col-xs-5 col-sm-3 col-md-2 col-lg-2 col-xl-2">
-			<?= $form->field($searchModel,'event_date')->widget(DatePicker::classname(), ['options'=>['class'=>'form-control']]); ?>
+			<?= $form->field($searchModel,'event_date')->widget(DatePicker::classname(), ['options'=>['class'=>'form-control'],'pluginOptions' =>['todayHighlight' => true]]); ?>
 		</div>
 		<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
 			<?= $form->field($searchModel, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$searchModel->pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
@@ -172,21 +172,19 @@ $this->title = "AGC Calendar Events";
 
 		if ( ($model->range_status_id ==2 ) and ( array_intersect(array(2,3,7,10,24,25,27,28,30,32),$fac_id) ) ) {
 			echo '<img src="/images/flag_closed.png" alt="Closed" title="Closed"/>';
-		}
-		if ($model->range_status_id == 5 ) {
+		} elseif ($model->range_status_id == 5 ) {
 			echo '<a style="text-decoration: none; font-weight: bold;font-size: 12px;" title="Event Details" href="/calendar/viewitem?calendar_id='.$model->calendar_id.'" target="Cal">Range Open<br>CLUB REGULATED </a>';
 			//<!--<img src="/images/flag_clubregulated.png" alt="Range Open-Club Regulated" title="Range Open-Club Regulated"/>-->
-		}
-		if ($model->range_status_id == 6) { ?>
+		} elseif ($model->range_status_id == 6) { ?>
 			<div style="text-decoration: none; font-weight: bold;font-size: 14px;">
 			<a title="Event Details" href="/calendar/viewitem?calendar_id=<?=$model->calendar_id ?>" target='Cal'>
-			Range Open<br />CLUB REGULATED
-			<br />
+			Range Open<br />CLUB REGULATED<br />
 			<img src="/images/flag_caliber_restriction.png" alt="Caliber Restriction" title="Caliber Restriction"/><br />
 			<b>22LR ONLY<b/> </a></div>
-<?php 	}
-	}
- 	if($model->event_status_id == 21) {
+<?php 	} else {
+			echo $model->agcEventStatus->name;
+		}
+	} elseif($model->event_status_id == 21) {
 		echo '<img src="/images/flag_rescheduled.png" alt="Canceled" title="Reschuduled"/> ';
 	} elseif($model->event_status_id == 19 || $model->range_status_id == 4) {
 		echo '<img src="/images/flag_canceled_event.png" alt="Canceled" title="Canceled"/>';

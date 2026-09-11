@@ -927,3 +927,4 @@ RENAME TABLE `associat_agcnew`.`range_status` TO BadgeDB.cal_range_status;
 RENAME TABLE `associat_agcnew`.`facilities` TO BadgeDB.cal_facilities;
 RENAME TABLE `associat_agcnew`.`event_status` TO BadgeDB.cal_event_status;
 
+ALTER TABLE `BadgeDB`.`cal_calendar` CHANGE COLUMN `keywords` `key_words` TEXT NOT NULL ;

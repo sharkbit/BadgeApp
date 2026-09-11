@@ -224,11 +224,19 @@ class CalendarController extends AdminController {
 		$searchModel->deleted = 0;
 		if (($_REQUEST['form_action'] ?? '') !== 'reset') {
 			$this->RestoreSession($searchModel, 'AgcCal', $this->myFilters);
+			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		} else {
+			unset($_REQUEST['key_words']);
+			unset($_REQUEST['event_date']);
+			Yii::$app->session->remove('AgcCal');
+			//$searchModel->unsetAttributes();
+			$dataProvider = $searchModel->search([]);
+			yii::$app->controller->createLog(true, 'trexpageCount', var_export(Yii::$app->request->queryParams,true));
 		}
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		
 		$this->view->params['hideBackButton'] = true;
 
-		if (!empty($searchModel->pagesize)) {$dataProvider->pagination->pageSize = $searchModel->pagesize;}
+		//if (!empty($searchModel->pagesize)) {$dataProvider->pagination->pageSize = $searchModel->pagesize;}
 
 		$models = $dataProvider->getModels();
 		$groupedModels = ArrayHelper::index($models, null, function ($models) {
@@ -238,11 +246,11 @@ class CalendarController extends AdminController {
 
 		$rowCount = count($models);
 		//yii::$app->controller->createLog(true, 'trexrowCount', var_export($rowCount,true));
-		$pageCount = 0;
-		if ($dataProvider->getPagination() !== false) {
-			$pageCount = $dataProvider->getPagination()->getPageCount();
-		}
-		//yii::$app->controller->createLog(true, 'trexpageCount', var_export($pageCount,true));
+	//	$pageCount = 0;
+	//	if ($dataProvider->getPagination() !== false) {
+	//		$pageCount = $dataProvider->getPagination()->getPageCount();
+	//	}
+		
 
 		return $this->render('list', [
 			'searchModel' => $searchModel,
@@ -593,7 +601,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 				if(($model->recur_every) && ($model->recurrent_calendar_id == $model->calendar_id)) {
 					// Master Record!!
 
-					AgcCal::UpdateAll(['club_id'=>$model->club_id, 'event_name'=>$model->event_name, 'keywords'=>$model->keywords, 'recur_week_days'=>$model->recur_week_days], 'recurrent_calendar_id = '.$model->calendar_id);
+					AgcCal::UpdateAll(['club_id'=>$model->club_id, 'event_name'=>$model->event_name, 'key_words'=>$model->key_words, 'recur_week_days'=>$model->recur_week_days], 'recurrent_calendar_id = '.$model->calendar_id);
 
 					AgcCal::UpdateAll(['facility_id'=>$model->facility_id, 'lanes_requested'=>$model->lanes_requested, 'event_status_id'=>$model->event_status_id, 'range_status_id'=>$model->range_status_id,
 						'start_time'=>$model->start_time, 'end_time'=>$model->end_time, 'deleted'=>$model->deleted, 'poc_badge'=>$model->poc_badge],
@@ -659,7 +667,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 			'end_time' => 'End Time',
 			'event_status_id' => 'Event Status',
 			'facility_id' => 'Facility',
-			'keywords' => 'Key Words',
+			'key_words' => 'Key Words',
 			'lanes_requested' => 'lanes Requested',
 			'range_status_id' => 'Range Status',
 			'recur_every' => 'Recure every',
@@ -886,7 +894,7 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 			$model_event->club_id			= $model->club_id;
 			$model_event->facility_id 		= $model->facility_id;
 			$model_event->event_name 		= $model->event_name;
-			$model_event->keywords 			= $model->keywords;
+			$model_event->key_words 		= $model->key_words;
 			$model_event->start_time	 	= $model->start_time;
 			$model_event->end_time 			= $model->end_time;
 			$model_event->date_requested 	= $model->date_requested;

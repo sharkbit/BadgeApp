@@ -32,7 +32,7 @@ class AgcCal extends \yii\db\ActiveRecord {
 			[['date_requested','end_time','event_date','facility_id','recurrent_end_date','recurrent_start_date','start_time','remarks'], 'safe'],
 			[['active','approved','calendar_id','conflict','deleted','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
 			[['club_id','event_status_id','lanes_requested','poc_badge'], 'integer'],
-			[['event_name','keywords','recur_week_days'], 'string'],
+			[['event_name','key_words','recur_week_days'], 'string'],
 		];
     }
 
