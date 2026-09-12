@@ -51,8 +51,8 @@ class CalendarController extends AdminController {
 		if ($model->load(Yii::$app->request->post())) {
 			//yii::$app->controller->createLog(true, 'trex_B_C_CalC:50 post', var_export($_POST,true));
 			// Save
-			$model->start_time 	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->start_time")) ;
-			$model->end_time	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->end_time")) ;
+			$model->cal_start_time 	= date('H:i:s', strtotime($model->cal_start_time)) ;
+			$model->cal_end_time	= date('H:i:s', strtotime($model->cal_end_time)) ;
 			$model->event_date .= ' 00:00:00';
 			if(!$model->rollover) { $model->rollover = 0; } else { $model->rollover = $model->rollover; }
 			$model->facility_id = str_replace('"', '',json_encode($model->facility_id));
@@ -82,7 +82,7 @@ class CalendarController extends AdminController {
 					$model->save();
 					$model->recurrent_calendar_id = $model->calendar_id;
 					$model->event_date = $myEventDates[0];
-					if ($this->actionOpenRange($model->event_date,$model->start_time,$model->end_time,$model->facility_id,$model->lanes_requested,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true))
+					if ($this->actionOpenRange($model->event_date,$model->cal_start_time,$model->cal_end_time,$model->facility_id,$model->lanes_requested,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true))
 						{ $model->conflict = 0;  $model->approved=1; } else { $model->conflict = 1; $model->approved=1; }
 					$model->save();
 					$model = $this->createRecCalEvent($model,$myEventDates,false,true);
@@ -284,15 +284,15 @@ if($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:293 found',
 		$model = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus']) //->joinWith(['getAgcFacility'])
 			->leftJoin('cal_facilities',"JSON_CONTAINS(cal_calendar.facility_id, concat('\"',cal_facilities.facility_id,'\"'))")
 			->where("($where_fac) AND event_date='$eDate' AND deleted=0 AND `cal_calendar`.active=1 and approved=1 AND `cal_calendar`.`event_status_id` <> 19 AND (".
-				"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
-				"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
+				"( '$start' BETWEEN time(cal_start_time) AND time(cal_end_time) or '$stop' BETWEEN time(cal_start_time) AND time(cal_end_time) ) OR ".
+				"( time(cal_start_time) BETWEEN '$start' AND '$stop' or time(cal_end_time) BETWEEN '$start' AND '$stop'))")
 			->all();
 if($tst) {
 		$model_sql = AgcCal::find()->joinWith(['agcRangeStatus'])->joinWith(['agcEventStatus'])
 			->leftJoin('cal_facilities',"JSON_CONTAINS(cal_calendar.facility_id, concat('\"',cal_facilities.facility_id,'\"'))")
 			->where("($where_fac) AND event_date='$eDate' AND deleted=0 AND `cal_calendar`.active=1 and approved=1 AND `cal_calendar`.`event_status_id` <> 19 AND (".
-				"( '$start' BETWEEN time(start_time) AND time(end_time) or '$stop' BETWEEN time(start_time) AND time(end_time) ) OR ".
-				"( time(start_time) BETWEEN '$start' AND '$stop' or time(end_time) BETWEEN '$start' AND '$stop'))")
+				"( '$start' BETWEEN time(cal_start_time) AND time(5) or '$stop' BETWEEN time(cal_start_time) AND time(cal_end_time) ) OR ".
+				"( time(cal_start_time) BETWEEN '$start' AND '$stop' or time(cal_end_time) BETWEEN '$start' AND '$stop'))")
 			->createCommand()->sql; // echo $model_sql->sql; // exit;
 	yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:235', $model_sql); }
 		if ((int)$e_status==18) {$rng_pri=1; }
@@ -324,8 +324,8 @@ if($tst) {
 				$found[$i]->fac_name = (new AgcCal)->getAgcFacility_Names($item->facility_id);
 				$found[$i]->club = (isset($item->clubs->short_name) ? $item->clubs->short_name : $item->club_id);
 				$found[$i]->name = $item->event_name;
-				$found[$i]->start =  date('h:i A',strtotime($item->start_time));
-				$found[$i]->stop = date('h:i A',strtotime($item->end_time));
+				$found[$i]->start =  date('h:i A',strtotime($item->cal_start_time));
+				$found[$i]->stop = date('h:i A',strtotime($item->cal_end_time));
 				$found[$i]->event_status_id = $item->event_status_id;
 				$found[$i]->eve_status_name = $item->agcEventStatus->name;
 				$found[$i]->range_status_id = $item->range_status_id;
@@ -559,8 +559,8 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 
 		if ($model->load(Yii::$app->request->post())) {
 
-			$model->start_time 	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->start_time")) ;
-			$model->end_time	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->end_time")) ;
+			$model->cal_start_time 	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->cal_start_time")) ;
+			$model->cal_end_time	= date('Y-m-d H:i:s', strtotime("$model->event_date $model->cal_end_time")) ;
 
 			$model->club_id = (int)$model->club_id;
 			$model->event_status_id = (int)$model->event_status_id;
@@ -568,7 +568,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 			$model->lanes_requested = (int)$model->lanes_requested;
 			$model->range_status_id = (int)$model->range_status_id;
 
-			if ($this->actionOpenRange($model->event_date,$model->start_time,$model->end_time,$model->facility_id,$model->lanes_requested,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true)) {
+			if ($this->actionOpenRange($model->event_date,$model->cal_start_time,$model->cal_end_time,$model->facility_id,$model->lanes_requested,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true)) {
 				$model->conflict = 0;  $model->approved = 1; } else { $model->conflict = 1; }
 
 			if(isset($model->recurrent_start_date)) {
@@ -604,7 +604,7 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 					AgcCal::UpdateAll(['club_id'=>$model->club_id, 'event_name'=>$model->event_name, 'key_words'=>$model->key_words, 'recur_week_days'=>$model->recur_week_days], 'recurrent_calendar_id = '.$model->calendar_id);
 
 					AgcCal::UpdateAll(['facility_id'=>$model->facility_id, 'lanes_requested'=>$model->lanes_requested, 'event_status_id'=>$model->event_status_id, 'range_status_id'=>$model->range_status_id,
-						'start_time'=>$model->start_time, 'end_time'=>$model->end_time, 'deleted'=>$model->deleted, 'poc_badge'=>$model->poc_badge],
+						'cal_start_time'=>$model->cal_start_time, 'cal_end_time'=>$model->cal_end_time, 'deleted'=>$model->deleted, 'poc_badge'=>$model->poc_badge],
 						"recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
 
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');
@@ -663,8 +663,8 @@ if($tst) { yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:387 isAval'
 			'date_requested' => 'Date Requested',
 			'event_name' => 'Event Name',
 			'event_date' => 'Event Date',
-			'start_time' => 'Start Time',
-			'end_time' => 'End Time',
+			'cal_start_time' => 'Start Time',
+			'cal_end_time' => 'End Time',
 			'event_status_id' => 'Event Status',
 			'facility_id' => 'Facility',
 			'key_words' => 'Key Words',
@@ -895,8 +895,8 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 			$model_event->facility_id 		= $model->facility_id;
 			$model_event->event_name 		= $model->event_name;
 			$model_event->key_words 		= $model->key_words;
-			$model_event->start_time	 	= $model->start_time;
-			$model_event->end_time 			= $model->end_time;
+			$model_event->cal_start_time	 	= $model->cal_start_time;
+			$model_event->cal_end_time 			= $model->cal_end_time;
 			$model_event->date_requested 	= $model->date_requested;
 			$model_event->lanes_requested 	= $model->lanes_requested;
 			$model_event->recur_every 		= $model->recur_every;
@@ -905,7 +905,7 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 			$model_event->recurrent_end_date = $model->recurrent_end_date;
 			$model_event->event_status_id 	= $model->event_status_id;
 			$model_event->range_status_id 	= $model->range_status_id;
-			if ($this->actionOpenRange($eDate,$model_event->start_time,$model_event->end_time,$model_event->facility_id,$model_event->lanes_requested,0,$model->recur_week_days,$model->event_status_id,true,$force_order,$tst)) {
+			if ($this->actionOpenRange($eDate,$model_event->cal_start_time,$model_event->cal_end_time,$model_event->facility_id,$model_event->lanes_requested,0,$model->recur_week_days,$model->event_status_id,true,$force_order,$tst)) {
 				$model_event->conflict = 0; $model_event->approved =1;
 			} else {
 				$model_event->conflict = 1; $model_event->approved =0;

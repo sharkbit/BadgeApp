@@ -2,7 +2,7 @@
 //use yii;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use backend\models\Events;
+use backend\models\ViewCalEvent;
 use backend\models\Event_Att;
 use backend\models\MembershipStatus;
 use backend\models\Params;
@@ -22,19 +22,14 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 		<div class="col-xs-12 col-md-4" >
 <?php
 if ( Yii::$app->params['env'] != 'cal' ) {
-$agc_event = Events::find()->where(['e_date' => date('Y-m-d',strtotime(yii::$app->controller->getNowTime())),'e_status'=>'0'])->andWhere(['!=', 'e_type', 'cio'])->all();
+$agc_event = (new ViewCalEvent)->getActiveEventsQuery();
 if($agc_event) { ?>
 			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<h3>Todays Events:</h3><hr /><ul>
 <?php
 foreach($agc_event as $an_event){
-	switch ($an_event->e_type) {
-		case 'cio':  $e_type="CIO Sponsored"; break;
-		case 'club': $e_type="Club Sponsored"; break;
-		case 'vol':  $e_type="Volunteer"; break;
-	}
-	echo "<li style='margin: 20px 0;'><p>$an_event->e_name ($e_type) ";
-	echo "<a onclick='jsRegister(".$an_event->e_id.',"'.htmlentities($an_event->e_name, ENT_QUOTES).'","'.$an_event->e_type.'")'."' href='#'>[Register]</a></p></li>\n";
+	echo "<li style='margin: 20px 0;'><p>".date("h:i A", strtotime($an_event->cal_start_time))." - $an_event->event_name; <i>$an_event->club_name </i>";
+	echo "<a onclick='jsRegister(".$an_event->calendar_id.',"'.$an_event->club_name.'","'.htmlentities($an_event->event_name, ENT_QUOTES).'","'.$an_event->event_status_name.'",'.$an_event->allow_guests.','.$an_event->track_wristbands.','.$an_event->is_volunteer.')'."' href='#'>[Register]</a></p></li>\n";
 } ?>
 			</div>
 		<p> </p> <br />
@@ -102,10 +97,10 @@ foreach($agc_event as $an_event){
 		<div class="col-xs-6 col-sm-2"><p id="badge_name"> </p><br />
 		</div>
 		<div id="by_name" style="display:none;">
-		<div class="col-xs-12 col-sm-1"><h2>OR</h2></div>
-		<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_f_name')->textInput().PHP_EOL; ?></div>
-		<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_l_name')->textInput().PHP_EOL; ?></div>
-		<div class="col-xs-6 col-sm-2" id="e_serial" style="display:none;"><?= $formR->field($event_model, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
+			<div class="col-xs-12 col-sm-1"><h2>OR</h2></div>
+				<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_f_name')->textInput().PHP_EOL; ?></div>
+				<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_l_name')->textInput().PHP_EOL; ?></div>
+			<div class="col-xs-6 col-sm-2" id="e_serial" style="display:none;"><?= $formR->field($event_model, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
 		</div>
 	</div>
 	<div class="col-xs-12"> <?php yii::$app->controller->getWaver();  ?> </div>
@@ -249,7 +244,7 @@ foreach($agc_event as $an_event){
 	var span = document.getElementsByClassName("close")[0];
 	var reg_sub = document.getElementsByClassName("btn-success")[0];
 
-	function jsRegister(r_id,r_name,r_type) {
+	function jsRegister(r_id,r_ClubName,r_EventName,r_EventStatus,r_guest,r_wristbands,r_vol) {
 
 		modal.style.display = "block";
 		document.getElementById("event_att-ea_badge").value='';
@@ -260,28 +255,27 @@ foreach($agc_event as $an_event){
 		$("#badge_name").html(' ');
 
 		document.getElementById("event_id").value = r_id;
-
-		switch(r_type) {
-		case 'cio':
-			var event_type="(CIO Event)";
-			var reg_html="<ul><li>Enter Badger Number <b>Or</b> First and Last Name.</li><ul>";
-			$("#by_name").show();
-			$("#e_serial").show();
-			break;
-		case 'club':
-			var event_type="(Club Sponsored Event)";
-			var reg_html="<ul><li>Enter Badger Number <b>Or</b> First and Last Name.</li><ul>";
-			$("#by_name").show();
-			$("#e_serial").hide();
-			break;
-		case 'vol':
-			var event_type="(AGC Volunteer Event)";
+		
+		if(r_vol==1) {
 			var reg_html="<ul><li>AGC Volunteer Events are Range Members only.</li><ul>";
 			$("#by_name").hide();
 			$("#e_serial").hide();
-			break;
+		} else {
+			if(r_guest==1) {
+				var reg_html="<ul><li>Enter Badger Number <b>Or</b> First and Last Name.</li><ul>";
+				$("#by_name").show();
+				if(r_wristbands==1) {
+					$("#e_serial").show();
+				} else {
+					$("#e_serial").hide();
+				}
+			} else {
+				var reg_html="<ul><li>Enter Badger Number</li><ul>";
+				$("#by_name").hide();
+				$("#e_serial").hide();
+			}
 		}
-		$("p#event_name").html("Regester for: <b>"+r_name+"</b> "+event_type);
+		$("p#event_name").html("Regester for: <b>"+r_ClubName+"</b> "+r_EventName+" ("+r_EventStatus+")");
 		$("p#event_notes").html(reg_html);
 	}
 
@@ -295,7 +289,7 @@ foreach($agc_event as $an_event){
 	});
 
 	function jsReg() {
-		console.log('here 192');
+		console.log('here 288');
 		var reg_id = document.getElementById("event_id").value;
 		if(document.getElementById("event_att-ea_badge")) { var reg_badge = document.getElementById("event_att-ea_badge").value; }
 
@@ -314,7 +308,7 @@ foreach($agc_event as $an_event){
 					document.getElementById('myModal').style.display = 'none';
 				},
 				error: function (responseData, textStatus, errorThrown) {
-					console.log('login_member:207'); console.log(textStatus);
+					console.log('login_member:307'); console.log(textStatus);
 					$("div#reg_notes").html("<p>"+textStatus+"</p>");
 				},
 			});
@@ -340,7 +334,7 @@ foreach($agc_event as $an_event){
 						document.getElementById('myModal').style.display = 'none';
 					},
 					error: function (responseData, textStatus, errorThrown) {
-						console.log('login_member:226'); console.log(textStatus);
+						console.log('login_member:333'); console.log(textStatus);
 						$("div#reg_notes").html("<p>"+textStatus+"</p>");
 					},
 				});

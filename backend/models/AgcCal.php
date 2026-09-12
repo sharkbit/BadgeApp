@@ -29,7 +29,7 @@ class AgcCal extends \yii\db\ActiveRecord {
     public function rules() {
         return [
 			[['event_name','event_date','poc_badge'], 'required'],
-			[['date_requested','end_time','event_date','facility_id','recurrent_end_date','recurrent_start_date','start_time','remarks'], 'safe'],
+			[['date_requested','cal_end_time','event_date','facility_id','recurrent_end_date','recurrent_start_date','cal_start_time','remarks'], 'safe'],
 			[['active','approved','calendar_id','conflict','deleted','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
 			[['club_id','event_status_id','lanes_requested','poc_badge'], 'integer'],
 			[['event_name','key_words','recur_week_days'], 'string'],
@@ -42,6 +42,8 @@ class AgcCal extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'club_id'=>'Sponsor',
+			'cal_end_time'=>'End Time',
+			'cal_start_time'=>'Start Time',
 			'event_name' => 'Event Name',
 			'event_status_id'=>'Event Type',
 			'facility_id'=>'Facility',

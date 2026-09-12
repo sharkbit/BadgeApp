@@ -928,3 +928,40 @@ RENAME TABLE `associat_agcnew`.`facilities` TO BadgeDB.cal_facilities;
 RENAME TABLE `associat_agcnew`.`event_status` TO BadgeDB.cal_event_status;
 
 ALTER TABLE `BadgeDB`.`cal_calendar` CHANGE COLUMN `keywords` `key_words` TEXT NOT NULL ;
+
+ALTER TABLE cal_calendar CHANGE COLUMN start_time cal_start_time TIME AFTER event_date;
+ALTER TABLE cal_calendar CHANGE COLUMN end_time   cal_end_time   TIME AFTER cal_start_time;
+ALTER TABLE `BadgeDB`.`cal_calendar` ADD COLUMN `credit_hours` INT NULL DEFAULT 0 AFTER `range_status_id`;
+
+ALTER TABLE `BadgeDB`.`events` RENAME TO  `BadgeDB`.`events_old` ;
+ALTER TABLE `BadgeDB`.`events_old` ADD COLUMN `e_cal_id` INT NULL DEFAULT 0 AFTER `e_id`;
+
+ALTER TABLE `BadgeDB`.`cal_event_status` 
+	ADD COLUMN `allow_guests` TINYINT NOT NULL DEFAULT 0 AFTER `display_order`,
+	ADD COLUMN `is_volunteer` TINYINT NOT NULL DEFAULT 0 AFTER `allow_guests`,
+	ADD COLUMN `track_wristbands` TINYINT NOT NULL DEFAULT 0 AFTER `is_volunteer`;
+
+
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW view_cal_event AS
+SELECT 
+    cc.calendar_id,
+    cc.event_date,
+    cc.cal_start_time,
+    cc.cal_end_time,
+    cc.event_name,
+    ces.name AS event_status_name,
+    clubs.club_name,
+    clubs.short_name,
+    allow_guests,
+    track_wristbands,
+    is_volunteer
+FROM 
+    cal_calendar cc
+LEFT JOIN 
+    cal_event_status ces ON cc.event_status_id = ces.event_status_id
+left join
+    clubs on cc.club_id = clubs.club_id
+WHERE 
+    cc.deleted = 0
+    and cc.`active`=1
+    and cc.is_event=1;

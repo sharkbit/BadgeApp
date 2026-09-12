@@ -38,15 +38,23 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
 		'columns' => [
-			'event_status_id',
+			//'event_status_id',
 			'name',
 			[	'attribute'=>'active',
-				'value'=>function($model) {
-					if($model->active) {
-						return "True"; 
-					} else { return "False"; }
-				},
+				'value'=>function($model) { if($model->active) { return "True"; } else { return "False"; } },
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'active',['1'=>'True','0'=>'False'],['class'=>'form-control','prompt' => 'All']),
+			],
+			[	'attribute'=>'allow_guests',
+				'value'=>function($model) { if($model->allow_guests) { return "True"; } else { return "False"; } },
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'allow_guests',['1'=>'True','0'=>'False'],['class'=>'form-control','prompt' => 'All']),
+			],
+			[	'attribute'=>'track_wristbands',
+				'value'=>function($model) { if($model->track_wristbands) { return "True"; } else { return "False"; } },
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'track_wristbands',['1'=>'True','0'=>'False'],['class'=>'form-control','prompt' => 'All']),
+			],
+			[	'attribute'=>'is_volunteer',
+				'value'=>function($model) { if($model->is_volunteer) { return "True"; } else { return "False"; } },
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'is_volunteer',['1'=>'True','0'=>'False'],['class'=>'form-control','prompt' => 'All']),
 			],
 			'display_order',
 			[

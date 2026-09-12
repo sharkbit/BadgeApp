@@ -36,7 +36,7 @@ $this->params['hideHomeLink'] = true;
 							'value'=>function($model) { return (New AgcCal)->getAgcFacility_Names($model->facility_id); }
 						],
 						[	'attribute'=>'Time',
-							'value'=>function($model) { return $model->event_date . " (". date("h:i A",strtotime($model->start_time)) .' - '.date("h:i A",strtotime($model->end_time)).')' ; }
+							'value'=>function($model) { return $model->event_date . " (". date("h:i A",strtotime($model->cal_start_time)) .' - '.date("h:i A",strtotime($model->end_time)).')' ; }
 						],
 						[	'attribute'=>'event_status_id',
 							'value'=>function($model) { return $model->agcEventStatus->name; },

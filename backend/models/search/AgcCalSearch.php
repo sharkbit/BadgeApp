@@ -46,9 +46,9 @@ class AgcCalSearch extends AgcCal {
 
 		if(!isset($params['sort'])) {
 			if(isset($this->recur_every)) {
-				$query->orderBy('month(event_date),day(event_date),time(start_time)');
+				$query->orderBy('month(event_date),day(event_date),time(cal_start_time)');
 			} else {
-				$query->orderBy('event_date,hour(start_time)');
+				$query->orderBy('event_date,hour(cal_start_time)');
 			}
 		}
 
@@ -144,7 +144,7 @@ class AgcCalSearch extends AgcCal {
 		if(!empty($this->range_status_id)) { $query->andFilterWhere(['cal_range_status.range_status_id'=>$this->range_status_id]); }
 		if(!empty($this->showed_up)) { $query->andFilterWhere(['showed_up'=>$this->showed_up]); }
 
-	yii::$app->controller->createLog(false, 'trex-B_M_S_AgcCAl Query OK: ', var_export($query->createCommand()->getRawSql(),true));
+	//yii::$app->controller->createLog(false, 'trex-B_M_S_AgcCAl Query OK: ', var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }
 }

@@ -120,14 +120,14 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:10%'],
 			],
-			[	'attribute'=>'start_time',
+			[	'attribute'=>'cal_start_time',
 				'value'=>function($model) {
-					return substr(substr($model->start_time, -8),0,5);
+					return substr(substr($model->cal_start_time, -8),0,5);
 				},
 			],
-			[	'attribute'=>'end_time',
+			[	'attribute'=>'cal_end_time',
 				'value'=>function($model) {
-					return substr(substr($model->end_time, -8),0,5);
+					return substr(substr($model->cal_end_time, -8),0,5);
 				},
 			],
 			[	'attribute'=>'showed_up',

@@ -24,7 +24,7 @@ class agcEventStatus extends \yii\db\ActiveRecord {
         return [
 			[['name'], 'required'],
 			//[[''], 'safe'],
-			[['active','display_order','event_status_id'], 'integer'],
+			[['active','allow_guests','display_order','event_status_id','is_volunteer','track_wristbands'], 'integer'],
 			[['name'], 'string'],
 			];
     }

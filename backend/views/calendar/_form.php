@@ -18,12 +18,12 @@ use kartik\widgets\TimePicker;
 
 $getNowTime = yii::$app->controller->getNowTime();
 if($model->isNewRecord) {
-    $model->start_time=date('h:00 A', strtotime($getNowTime));
-    $model->end_time=date('h:00 A', strtotime($getNowTime) + 60*60*2);
+    $model->cal_start_time=date('h:00 A', strtotime($getNowTime));
+    $model->cal_end_time=date('h:00 A', strtotime($getNowTime) + 60*60*2);
     $model->date_requested =$getNowTime;
 } else {
-    $model->start_time=date('h:i A', strtotime($model->start_time));
-    $model->end_time=date('h:i A', strtotime($model->end_time));
+    $model->cal_start_time=date('h:i A', strtotime($model->cal_start_time));
+    $model->cal_end_time=date('h:i A', strtotime($model->cal_end_time));
 }
 $Req_Lanes = ArrayHelper::index(agcFacility::find('facility_id')->where(['active'=>1])
                 ->andwhere('available_lanes>0')->orderBy(['name'=>SORT_ASC])->asArray()->all(),'facility_id');
@@ -148,14 +148,14 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
         <?= $form->field($model, 'event_name')->textInput(['maxlength'=>true]) ?>
     </div>
     <div class="col-xs-6 col-sm-3 col-md-2 col-lg-2 col-xl-2">
-        <?= $form->field($model, 'keywords')->textInput(['maxlength'=>true]) ?>
+        <?= $form->field($model, 'key_words')->textInput(['maxlength'=>true]) ?>
     </div>
     <div class="col-xs-6 col-sm-3 col-md-2 col-lg-2 col-xl-2">
-        <?= $form->field($model, 'start_time')->widget(TimePicker::classname(),['options'=>['class'=>'form-control'],
+        <?= $form->field($model, 'cal_start_time')->widget(TimePicker::classname(),['options'=>['class'=>'form-control'],
             'pluginEvents' => [ "change" => "function(e){ OpenRange(); }", ]]); ?>
     </div>
     <div class="col-xs-6 col-sm-3 col-md-2 col-lg-2 col-xl-2">
-        <?= $form->field($model, 'end_time'  )->widget(TimePicker::classname(), ['options'=>['class'=>'form-control'],
+        <?= $form->field($model, 'cal_end_time'  )->widget(TimePicker::classname(), ['options'=>['class'=>'form-control'],
           'pluginEvents' => [ "change" => "function(e){ OpenRange(); }", ]]); ?>
     </div>
     <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-xl-2">
@@ -657,8 +657,8 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		}
 	console.log('found: '+OnlyOneLane+' - '+fa_name+', Lanes: '+available_lanes+', Requested: '+reqLanes);
 
-        var reqStart = convertTime12to24($("#agccal-start_time").val());
-        var reqStop  = convertTime12to24($("#agccal-end_time").val());
+        var reqStart = convertTime12to24($("#agccal-cal_start_time").val());
+        var reqStop  = convertTime12to24($("#agccal-cal_end_time").val());
         //console.log('checking start Time:' + reqStart +' - ' + reqStop);
         if (reqStart >= reqStop) {
             document.getElementById("cal_update_item").disabled = true;
@@ -674,8 +674,8 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
             var reqFacl = $("#agccal-facility_id").val();
             var reqDate = $("#agccal-event_date").val();
             if (!reqDate) {$("#error_msg").html('<center><p style="color:red;"><b>Please verify Date.</b></p></center>');return;}
-            var reqStart = $("#agccal-start_time").val();
-            var reqStop = $("#agccal-end_time").val();
+            var reqStart = $("#agccal-cal_start_time").val();
+            var reqStop = $("#agccal-cal_end_time").val();
 
 			var req_pat = '';
 			var pat_type = document.getElementsByName("pat_type");
