@@ -12,34 +12,27 @@ use backend\models\clubs;
 
 class Events extends \yii\db\ActiveRecord{
 	public $pagesize;
-	public $poc_name;
 	
     public static function tableName() {
-        return 'events';
+        return 'view_events';
     }
 
     public function rules() {
         return [
-           [['e_name','e_date','e_poc','e_status','e_type','sponsor'], 'required'],
-           [['e_id','e_hours','e_poc','sponsor'], 'number'],
-		   [['e_inst','e_rso'], 'string'],
+           [['event_date','cal_start_time','cal_end_time'], 'safe'],
+           [['ea_calendar_id','allow_guests','track_wristbands','is_volunteer'], 'number'],
+		   [['event_name','event_status_name','club_name','short_name'], 'string'],
        ];
     }
 
     public function attributeLabels() {
         return [
-			'e_id' => 'ID',
-			'e_date' => 'Date',
-			'e_inst' => 'Instructor Name(s)',
-			'e_name' => 'Event Name',
-			'e_poc' => 'POC',
-			'e_rso' => 'RSO',
-			'e_status' => 'Status',
-			'e_type' => 'Event Type',
-			'e_hours' => 'Hours'
+			'cal_start_time' => 'Start Time',
+			'cal_end_time' => 'End Time',
+			'event_status_name'=>'Event Status'
        ];
     }
-
+/*
 	public function getBadges() {
 		return $this->hasOne(\backend\models\Badges::classname(),['badge_number'=>'e_poc']);
 	}
@@ -49,12 +42,12 @@ class Events extends \yii\db\ActiveRecord{
 	}
 
 	public function getEvent_Att() {
-		return (New Event_Att)->find()->where(['ea_event_id'=>$this->e_id,'ea_wb_out'=>1])->andwhere(['>','ea_wb_serial',0])->count();
+		return (New Event_Att)->find()->where(['ea_calendar_id'=>$this->e_id,'ea_wb_out'=>1])->andwhere(['>','ea_wb_serial',0])->count();
     }
 	
 	public function getEventdata ($event_id) {
-		$sql="select (select count(*) FROM BadgeDB.event_attendee where ea_badge > 0 and ea_event_id=$event_id) as badge, ".
-			"(select count(*) FROM BadgeDB.event_attendee where ea_badge is null and ea_event_id=$event_id) as student ";
+		$sql="select (select count(*) FROM BadgeDB.event_attendee where ea_badge > 0 and ea_calendar_id=$event_id) as badge, ".
+			"(select count(*) FROM BadgeDB.event_attendee where ea_badge is null and ea_calendar_id=$event_id) as student ";
 	   	$command = Yii::$app->db->createCommand($sql);
 		$event_attend = $command->queryAll();
 		if(isset($event_attend[0]['badge'])) {
@@ -63,4 +56,5 @@ class Events extends \yii\db\ActiveRecord{
 			return 'no data';
 		}
 	}
+	*/
 }

@@ -23,7 +23,6 @@ class agcEventStatus extends \yii\db\ActiveRecord {
     public function rules() {
         return [
 			[['name'], 'required'],
-			//[[''], 'safe'],
 			[['active','allow_guests','display_order','event_status_id','is_volunteer','track_wristbands'], 'integer'],
 			[['name'], 'string'],
 			];

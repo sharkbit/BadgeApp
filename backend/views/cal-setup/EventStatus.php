@@ -38,7 +38,6 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
 		'columns' => [
-			//'event_status_id',
 			'name',
 			[	'attribute'=>'active',
 				'value'=>function($model) { if($model->active) { return "True"; } else { return "False"; } },

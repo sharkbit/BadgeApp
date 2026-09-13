@@ -44,7 +44,7 @@ class EventsController extends AdminController {
 	}
 
 	public function actionReturn($id,$wb) {
-		$event_attendee = Event_Att::find()->where(['ea_event_id'=>$id,'ea_wb_serial'=>$wb])->one();
+		$event_attendee = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_wb_serial'=>$wb])->one();
 		if($event_attendee){
 			$event_attendee->ea_wb_out = false;
 			$event_attendee->save();
@@ -60,7 +60,7 @@ class EventsController extends AdminController {
 			} else { $c_user=$_SESSION['user']; $c_badge=$_SESSION['badge_number']; }
 
 			if($event_close->e_type=='vol'){
-				$event_attendee = Event_Att::find()->where(['ea_event_id'=>$id])->all();
+				$event_attendee = Event_Att::find()->where(['ea_calendar_id'=>$id])->all();
 				if(count($event_attendee)>0) {
 					foreach ($event_attendee as $person) {
 						if($person->ea_wc_logged<>1) {
@@ -131,7 +131,7 @@ class EventsController extends AdminController {
     }
 
 	public function actionDelete($id) {
-		$att_chk = Event_Att::find()->where(['ea_event_id'=>$id])->all();
+		$att_chk = Event_Att::find()->where(['ea_calendar_id'=>$id])->all();
 		if($att_chk) {
 			Yii::$app->getSession()->setFlash('error', "Can not delete Event with Attendees.");
 		} else {
@@ -144,19 +144,19 @@ class EventsController extends AdminController {
 	}
 
 	public function actionIndex() {
-		$Close_Events=Events::find('e_id','e_name')->where(['<','e_date',date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))])->andwhere(['e_status'=>0])->all();
-		if($Close_Events) {
-			yii::$app->controller->createLog(true, 'System', "Closing ".count($Close_Events)." Events");
-			foreach ($Close_Events as $c_event) {
-				$this->actionClose($c_event->e_id,true);
-			}
-		}
+	//	$Close_Events=Events::find('e_id','e_name')->where(['<','e_date',date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))])->andwhere(['e_status'=>0])->all();
+	//	if($Close_Events) {
+	//		yii::$app->controller->createLog(true, 'System', "Closing ".count($Close_Events)." Events");
+	//		foreach ($Close_Events as $c_event) {
+	//			$this->actionClose($c_event->e_id,true);
+	//		}
+	//	}
 
 		$searchModel = new EventsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		if(!yii::$app->controller->hasPermission('events/approve')) {
-			$dataProvider->query->andWhere("e_poc=".$_SESSION["badge_number"]);
+		//	$dataProvider->query->andWhere("e_poc=".$_SESSION["badge_number"]);
 		}
 
         return $this->render('index', [
@@ -166,17 +166,17 @@ class EventsController extends AdminController {
 
     public function actionReg($id,$badge=null,$f_name=null,$l_name=null,$e_wb=null) {
 		if($badge>0){
-			yii::$app->controller->createLog(false, 'trex_C_EC reg', 'badge ');
+//			yii::$app->controller->createLog(false, 'trex_C_EC_reg', 'badge ');
 			$params = Params::findOne('1');
 			$isExpired = Badges::isExpired($badge,$params);
 			if(!$isExpired) {
 
-				$event_chk = Event_Att::find()->where(['ea_event_id'=>$id,'ea_badge'=>$badge])->one();
+				$event_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_badge'=>$badge])->one();
 				if($event_chk) {
 					return json_encode(['success'=>true,'msg'=>'Badge already at Event.'],true);
 				} else {
 					$event_attendee = new Event_Att;
-					$event_attendee->ea_event_id=$id;
+					$event_attendee->ea_calendar_id=$id;
 					$event_attendee->ea_badge=$badge;
 					$event_attendee->save();
 					return json_encode(['success'=>true,'msg'=>'Added Badge to Event.'],true);
@@ -185,15 +185,15 @@ class EventsController extends AdminController {
 				return json_encode(['success'=>true,'msg'=>'Not an Active Member.'],true);
 			}
 		} else {
-			yii::$app->controller->createLog(false, 'trex_C_EC reg', 'name ');
+//			yii::$app->controller->createLog(false, 'trex_C_EC_reg', 'name ');
 			$f_name = ucfirst(trim($f_name));
 			$l_name = ucfirst(trim($l_name));
-			$event_chk = Event_Att::find()->where(['ea_event_id'=>$id,'ea_f_name'=>$f_name,'ea_l_name'=>$l_name,])->one();
+			$event_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_f_name'=>$f_name,'ea_l_name'=>$l_name,])->one();
 			if($event_chk) {
 				return json_encode(['success'=>true,'msg'=>$f_name.' already at Event.'],true);
 			} else {
 				$event_attendee = new Event_Att;
-				$event_attendee->ea_event_id=$id;
+				$event_attendee->ea_calendar_id=$id;
 				if($e_wb) { $event_attendee->ea_wb_serial = $e_wb; }
 				$event_attendee->ea_f_name=$f_name;
 				$event_attendee->ea_l_name=$l_name;
@@ -205,17 +205,17 @@ class EventsController extends AdminController {
 	}
 
 	public function actionRemoveAtt($id,$ea_id) {
-		Event_Att::deleteall(['ea_event_id'=>$id,'ea_id'=>$ea_id]);
+		Event_Att::deleteall(['ea_calendar_id'=>$id,'ea_id'=>$ea_id]);
 		Yii::$app->response->data = json_encode(['success'=>true]);
 	}
 
     public function actionUpdate($id=0) {
-        $model = Events::find()->where(['e_id'=>$id])->one();
+        $model = $this->findModel($id);
 
 		$gotoClosed=false;
-		$Status_old=$model->e_status;
+	//	$Status_old=$model->e_status;
         if ($model->load(Yii::$app->request->post())) {
-			$model->e_date = date('Y-m-d',strtotime($model->e_date));
+	/*		$model->e_date = date('Y-m-d',strtotime($model->e_date));
 			$model->e_name = trim($model->e_name);
 
 			if($Status_old <> $model->e_status) {
@@ -224,14 +224,14 @@ class EventsController extends AdminController {
 				} elseif($model->e_status==1){ //is now closed
 					$gotoClosed=true;
 				}
-			}
+			} */
 
         	$model->save();
-			if($gotoClosed) {
-				$this->actionClose($model->e_id);
-			} else {
-				return $this->redirect(['update', 'id' => $model->e_id]);
-			}
+		//	if($gotoClosed) {
+		//		$this->actionClose($model->e_id);
+		//	} else {
+				return $this->redirect(['update', 'id' => $id]);
+		//	}
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -248,7 +248,7 @@ class EventsController extends AdminController {
 				//check
 				$badge_chk = Badges::find()->where(['>','expires',date('Y-02-01',time())])->andwhere(['badge_number'=>$model_ea->ea_badge])->one();
 				if($badge_chk){
-					$model_chk = Event_Att::find()->where(['ea_event_id'=>$id,'ea_badge'=>$model_ea->ea_badge])->one();
+					$model_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_badge'=>$model_ea->ea_badge])->one();
 					if($model_chk) {
 						Yii::$app->getSession()->setFlash('error', 'Member Already at Event');
 					} else {
@@ -266,7 +266,7 @@ class EventsController extends AdminController {
     }
 
     protected function findModel($id) {
-        if (($model = Events::findOne($id)) !== null) {
+        if (($model = Events::findOne(['ea_calendar_id'=>$id])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
