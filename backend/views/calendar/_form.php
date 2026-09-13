@@ -34,6 +34,8 @@ if (array_intersect(json_decode($model->facility_id),array_column($Req_Lanes,'fa
     $model->lanes_requested = 0;
 }
 $is_club = ArrayHelper::getColumn(clubs::find()->where(['status'=>0,'is_club'=>1])->orderBy(['club_name'=>SORT_ASC])->asArray()->all(), 'club_id');
+$CanVolunteer = agcEventStatus::getCanVolunteer();
+$TrackWristbands = agcEventStatus::getTrackWristbands();
 
 $chkMon = $chkTue = $chkWed = $chkThu = $chkFri = $chkSat = $chkSun = '';
 if(isset($model->recur_week_days)) {
@@ -114,6 +116,8 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
  <input type='hidden' id='bad_words' value='<?=htmlspecialchars(json_encode($dirty),ENT_QUOTES)?>' />
  <input type="hidden" id="Req_Lanes" name="Req_Lanes" value='<?=json_encode($Req_Lanes )?>' />
  <input type="hidden" id="is_club" name="is_club" value='<?=json_encode($is_club )?>' />
+ <input type="hidden" id="CanVolunteer" name="CanVolunteer" value='<?=json_encode($CanVolunteer )?>' />
+ <input type="hidden" id="TrackWristbands" name="TrackWristbands" value='<?=json_encode($TrackWristbands )?>' />
 
 <div class="calendar-form">
 <?php $form = ActiveForm::begin(['id' => 'calendar-form']); ?>
@@ -159,7 +163,10 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
           'pluginEvents' => [ "change" => "function(e){ OpenRange(); }", ]]); ?>
     </div>
     <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-xl-2">
-    <?= $form->field($model, 'event_status_id')->DropDownList($model->isNewRecord ? [0=>'']: yii::$app->controller->actionGetEventTypes($model->club_id,true));     ?>
+    <?= $form->field($model, 'event_status_id')->DropDownList($model->isNewRecord ? [0=>'']: yii::$app->controller->actionGetEventTypes($model->club_id,true)); ?>
+    </div>
+    <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2" id="div_canVolunteer" <?php echo (in_array($model->event_status_id,$CanVolunteer)) ? "" : 'style="display:none;"'; ?> >
+        <?= $form->field($model, 'credit_hours')->textInput(['maxlength'=>true]) ?>
     </div>
     <?php
 	if (yii::$app->controller->hasPermission('calendar/close')) {
@@ -188,6 +195,9 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
     </div>
     <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'poc_badge')->textInput(['maxlength'=>true,'readonly'=>yii::$app->controller->hasPermission('calendar/all')? false : true]) ?>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2 col-lg-2 col-xl-2" id="div_trackWristband" <?php echo (in_array($model->event_status_id,$TrackWristbands)) ? "" : 'style="display:none;"'; ?> >
+        <?= $form->field($model, 'cal_inst')->textInput(['maxlength'=>true]) ?>
     </div>
     <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-xl-2">
         <?= $form->field($model, 'date_requested')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
@@ -461,6 +471,24 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
     $("#pat_day_e").change(function(e) {
         document.getElementById("pat_daily_n").disabled=true;
     });
+
+	$("#agccal-event_status_id").change(function(e) {
+		var evnType = $(this).val();
+		var trkwristbands = $("#TrackWristbands").val() || "";
+		var canVolunteer  = $("#CanVolunteer").val() || "";
+		if (trkwristbands.includes(evnType)) {
+			$("#div_trackWristband").show();
+		} else {
+			$("#agccal-cal_inst").val("");
+			$("#div_trackWristband").hide();
+		}
+		if (canVolunteer.includes(evnType)) {
+			$("#div_canVolunteer").show();
+		} else {
+			$("#agccal-credit_hours").val("");
+			$("#div_canVolunteer").hide();
+		}
+	});
 
     $("#agccal-club_id").change(function(e) { runClub(); });
 

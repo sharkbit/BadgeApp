@@ -37,6 +37,13 @@ class agcEventStatus extends \yii\db\ActiveRecord {
         ];
     }
 
+	public static function getCanVolunteer() {
+		return agcEventStatus::find()
+			->select(['event_status_id'])
+			->where(['is_volunteer' => 1])
+			->column();
+	}
+
     public function getStatusList() {
 		$statusArray = $this->find()
 			->where(['active'=>'1'])
@@ -44,5 +51,12 @@ class agcEventStatus extends \yii\db\ActiveRecord {
 			->all();
 		return ArrayHelper::map($statusArray,'event_status_id','name');
     }
+
+	public static function getTrackWristbands() {
+		return agcEventStatus::find()
+			->select(['event_status_id'])
+			->where(['track_wristbands' => 1])
+			->column();
+	}
 }
 

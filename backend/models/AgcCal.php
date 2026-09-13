@@ -30,9 +30,9 @@ class AgcCal extends \yii\db\ActiveRecord {
         return [
 			[['event_name','event_date','poc_badge'], 'required'],
 			[['date_requested','cal_end_time','event_date','facility_id','recurrent_end_date','recurrent_start_date','cal_start_time','remarks'], 'safe'],
-			[['active','approved','calendar_id','conflict','deleted','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
+			[['active','approved','calendar_id','credit_hours','conflict','deleted','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
 			[['club_id','event_status_id','lanes_requested','poc_badge'], 'integer'],
-			[['event_name','key_words','recur_week_days'], 'string'],
+			[['event_name','key_words','recur_week_days','cal_inst'], 'string'],
 		];
     }
 
@@ -43,6 +43,7 @@ class AgcCal extends \yii\db\ActiveRecord {
         return [
             'club_id'=>'Sponsor',
 			'cal_end_time'=>'End Time',
+			'cal_inst' => 'Instructor',
 			'cal_start_time'=>'Start Time',
 			'event_name' => 'Event Name',
 			'event_status_id'=>'Event Type',
