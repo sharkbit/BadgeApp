@@ -103,7 +103,7 @@ foreach($agc_event as $an_event){
 			<div class="col-xs-6 col-sm-2" id="e_serial" style="display:none;"><?= $formR->field($event_model, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
 		</div>
 	</div>
-	<div class="col-xs-12"> <?php yii::$app->controller->getWaver();  ?> </div>
+	<div class="col-xs-12" id="waver" style="display:none;"> <?php yii::$app->controller->getWaver();  ?> </div>
 	<div class="row" name='iagree' id='iagree' style="display:none;" ><div class="col-xs-12">
 		<input type="checkbox" id="terms" name="terms"  onclick="toggleSubmit()">
 			<label for="terms">
@@ -260,10 +260,12 @@ foreach($agc_event as $an_event){
 			var reg_html="<ul><li>AGC Volunteer Events are Range Members only.</li><ul>";
 			$("#by_name").hide();
 			$("#e_serial").hide();
+			$("#waver").hide();
 		} else {
 			if(r_guest==1) {
 				var reg_html="<ul><li>Enter Badger Number <b>Or</b> First and Last Name.</li><ul>";
 				$("#by_name").show();
+				$("#waver").show();
 				if(r_wristbands==1) {
 					$("#e_serial").show();
 				} else {
@@ -273,6 +275,7 @@ foreach($agc_event as $an_event){
 				var reg_html="<ul><li>Enter Badger Number</li><ul>";
 				$("#by_name").hide();
 				$("#e_serial").hide();
+				$("#waver").hide();
 			}
 		}
 		$("p#event_name").html("Regester for: <b>"+r_ClubName+"</b> "+r_EventName+" ("+r_EventStatus+")");

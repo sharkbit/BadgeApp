@@ -18,6 +18,51 @@ $this->params['breadcrumbs'][] = ['label' => 'Event List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title. " - ".$model->event_date. " - " .$model->event_name, 'url' => ['view','id'=>$model->ea_calendar_id ]];
 $div_closed=false;
 ?>
+<style>
+.addPeeps-container {
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 12px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.addPeeps-header h2 {
+  font-size: 16px;
+  color: #202124;
+  margin: 0 0 4px 0;
+}
+
+.addPeeps-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ad-item {
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e8eaed;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #1a0dab;
+  font-size: 14px;
+  cursor: pointer;
+   width: 100%;
+  text-align: left;
+}
+
+/* Hidden state class */
+.addPeeps-container.collapsed .addPeeps-content,
+.addPeeps-container.collapsed .addPeeps-header {
+  display: none;
+}
+</style>
+
 <div class="events-view">
     <h2><?= Html::encode($model->event_date. " - " .$model->event_name) ?></h2>
 <div class="row">
@@ -64,10 +109,15 @@ $div_closed=false;
 <?php } ?>
 </div>
 <?php if (($model->event_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) && (yii::$app->controller->hasPermission('events/add-att'))) { ?>
-<hr /><details> <summary><b> - - Add Attendees - - </b></summary> <section>
-<div class="row">
-<div class="col-xs-12">
-<div class="events-attendees-form">
+
+<section class="addPeeps-container" id="addPeepsSection">
+  
+  <button class="toggle-btn" id="hideToggleBtn" onclick="toggleaddPeeps()">
+    Hide New Event Participant
+  </button>
+	<div class="row addPeeps-content">
+	<div class="col-xs-12">
+	<div class="events-attendees-form">
 
 <?php $form = ActiveForm::begin(['id'=>'event_att']); ?>
 	<?= Html::input('hidden',Yii::$app->request->csrfParam,Yii::$app->request->csrfToken)?>
@@ -88,11 +138,12 @@ $div_closed=false;
 	<button type="submit" id="reg_button" class="btn btn-success" onclick="jsReg();" >Register <i class="fa fa-child"> </i></button><div class="help-block" ></div></div></div>
 <div class="col-xs-3 col-sm-2" ><div class="form-group" >
 <button class="btn btn-primary" onclick="window.location='/events'" >Done <i class="fa fa-arrow-up"> </i></button><div class="help-block" ></div></div></div>
-<hr />
 </div>
 <?php ActiveForm::end(); ?>
 </div></div></div>
-</section></details>
+
+</section>
+
 <div id="reg_notes"> </div>
 
 <?php } ?>
@@ -172,6 +223,19 @@ if($att_count>0) {
 </style>
 <script>
 <?php //if($div_closed) { echo "document.getElementById('div_closed').style.visibility='hidden';"; } ?>
+
+	function toggleaddPeeps() {
+	  const section = document.getElementById('addPeepsSection');
+	  const btn = document.getElementById('hideToggleBtn');
+	  
+	  section.classList.toggle('collapsed');
+	  
+	  if (section.classList.contains('collapsed')) {
+		btn.textContent = 'Add Event Participant';
+	  } else {
+		btn.textContent = 'Hide New Event Participant';
+	  }
+	}
 
 	$('#event_att-ea_badge').on('input', function() {
 		document.getElementById("event_att-ea_f_name").value='';

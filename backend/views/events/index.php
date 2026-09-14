@@ -28,10 +28,10 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 <div class="col-xs-12">
 	<h2><?= Html::encode($this->title) ?></h2>
 
-	<?php if (yii::$app->controller->hasPermission('events/create')) { ?>
+	<?php /* if (yii::$app->controller->hasPermission('events/create')) { ?>
 	<div class="btn btn-group pull-right">
 		<?= Html::a('Create Event', ['create'], ['class' => 'btn btn-success']) ?>
-	</div > <?php } ?>
+	</div > <?php } */ ?>
 
 	<?php Pjax::begin(); ?>
 	<?php
