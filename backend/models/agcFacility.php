@@ -43,7 +43,7 @@ class agcFacility extends \yii\db\ActiveRecord {
 			->where(['active'=>1])
 			->orderBy(['name'=>SORT_ASC])
 			->asArray()
-			->all();	
+			->all();
 		return ArrayHelper::map($FacilityList, 'facility_id', 'name');
 	}
 
@@ -61,7 +61,7 @@ class agcFacility extends \yii\db\ActiveRecord {
 
 	public function getFacilRequiresLanes() {
 		return ArrayHelper::index(agcFacility::find('facility_id')
-			->where(['active'=>1])->andwhere('available_lanes>0')
+			->where('available_lanes>0')
 			->orderBy(['name'=>SORT_ASC])->asArray()->all(),'facility_id');
 	}
 }

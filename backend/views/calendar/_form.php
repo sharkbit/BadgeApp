@@ -113,15 +113,15 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 ?>
 
  <input type='hidden' id='bad_words' value='<?=htmlspecialchars(json_encode($dirty),ENT_QUOTES)?>' />
- <input type="hidden" id="Req_Lanes" name="Req_Lanes" value='<?=json_encode($Req_Lanes )?>' />
- <input type="hidden" id="is_club" name="is_club" value='<?=json_encode($is_club )?>' />
- <input type="hidden" id="CanVolunteer" name="CanVolunteer" value='<?=json_encode($CanVolunteer )?>' />
- <input type="hidden" id="TrackWristbands" name="TrackWristbands" value='<?=json_encode($TrackWristbands )?>' />
+ <input type="hidden" id="Req_Lanes" name="Req_Lanes" value='<?=Html::encode(json_encode($Req_Lanes, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
+ <input type="hidden" id="is_club" name="is_club" value='<?=Html::encode(json_encode($is_club, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
+ <input type="hidden" id="CanVolunteer" name="CanVolunteer" value='<?=Html::encode(json_encode($CanVolunteer, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
+ <input type="hidden" id="TrackWristbands" name="TrackWristbands" value='<?=Html::encode(json_encode($TrackWristbands, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
 
 <div class="calendar-form">
 <?php $form = ActiveForm::begin(['id' => 'calendar-form']); ?>
     <div class="col-xs-6 col-sm-2 col-md-3 col-lg-2" <?php if($model->isNewRecord) {echo 'style="display:none"';} ?>>
-        <?php //= $form->field($model, 'calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]) ?>
+        <?=$form->field($model, 'calendar_id')->textInput(['readonly'=>true,'maxlength'=>true]) ?>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-2">
     <?php   echo $form->field($model, 'event_date')->widget(DatePicker::classname(), [
@@ -349,7 +349,6 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
     <div class="col-xs-4 col-sm-1" style="background-color: pink<?php if(((isset($model->conflict)) && ($model->conflict==0)) || ($model->isNewRecord)) {echo '; display:none';} ?>" >
         <?= $form->field($model, 'conflict')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
     </div>
-</div>
 
 <?php if($model->isNewRecord) {
 		echo $form->field($model, 'deleted')->hiddenInput(['value'=>0])->label(false).PHP_EOL;
@@ -364,7 +363,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			if ($model->deleted=='1') { echo "<p style='color:red;'><b>Event is Deleted</b></p>"; }
 	}	echo '</div>';
 	} ?>
-
+</div>
 <div class="row"><div class="col-xs-12" id="inpatt_msg"></div></div>
 <div class="row"><div class="col-xs-12" id="error_msg"></div></div>
 <div class="row">
@@ -414,8 +413,16 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
   td { word-wrap: break-word word-break: break-all;  }
 </style>
 <script>
-    const convertTime12to24 = (time12h) => {
-      const [time, modifier] = time12h.split(' ');
+    function safeText(value) {
+        return $('<div>').text(String(value == null ? '' : value)).html();
+    }
+
+    function convertTime12to24(time12h) {
+      if (!time12h) {
+        return '';
+      }
+
+      const [time, modifier] = String(time12h).trim().split(/\s+/);
       let [hours, minutes] = time.split(':');
       if (hours === '12') { hours = '00'; }
       if (modifier === 'PM') {
@@ -423,7 +430,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
       }
 
       return `${hours}:${minutes}`;
-    };
+    }
 
 	Recure(true);
 	runClub();
@@ -550,22 +557,26 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 	};
 
     function delMe() {
-		var formData = $("#agccal").serializeArray();
-		jQuery.ajax({
+	   var formData = $("#calendar-form").serializeArray();
+
+		$.ajax({
 			method: 'POST',
-			crossDomain: false,
 			data: formData,
 			dataType: 'json',
-			url: '<?=yii::$app->params['rootUrl']?>/calendar/delete?id='+document.getElementById("agccal-calendar_id").value<?php if(isset($_SERVER['HTTP_REFERER'])) { if($isMaster) { ?>+'&type=m' <?php }
+			url: '<?=yii::$app->params['rootUrl']?>/calendar/delete?id='+encodeURIComponent(document.getElementById("agccal-calendar_id").value)<?php if(isset($_SERVER['HTTP_REFERER'])) { if($isMaster) { ?>+'&type=m' <?php }
 			if(strpos($_SERVER['HTTP_REFERER'],'recur')) { ?>+'&redir=recur' <?php } elseif(strpos($_SERVER['HTTP_REFERER'],'conflict')) { ?>+'&redir=conflict' <?php }  } ?>,
-			success: function(responseData, textStatus, jqXHR) {
-				console.log("success ");
+			success: function () {
+				window.location.reload();
 			},
-			error: function (responseData, textStatus, errorThrown) {
-				console.log("error ");
-			},
+			error: function (xhr) {
+				$("#error_msg").html(
+					"<center><p style=\"color:red\"><b>" +
+					safeText(xhr.responseText) +
+					"</b></p></center>"
+				);
+			}
 		});
-	};
+	}
 
     function Recure(load=true) {
         console.log("Loading Pattert");
@@ -642,8 +653,8 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
         if ( thirtyone.indexOf(mon) != -1 ) { cnt=31; }
         else if (thirty.indexOf(mon) != -1 ) { cnt=30 ;}
         else { cnt=29; }
-        for (i = 1; i < (cnt+1); i++) {
-            str += "<option value="+i+">"+i+"</option>";
+        for (let i = 1; i < (cnt + 1); i++) {
+            str += "<option value=" + i + ">" + i + "</option>";
         }
         document.getElementById("pat_yr_mon_d").innerHTML = str;
     });
@@ -656,13 +667,13 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
         OpenRange();
     });
 
-    function OpenRange() {
+    window.OpenRange = function() {
 		$("#div_hideRepub").hide();
 		$("#error_msg").html('');
 
 		var is_dirty=false; var dirty_word='';
-		var dirty = JSON.parse($('#bad_words').val());
-		var chk_event_name = $("#agccal-event_name").val().toUpperCase().split(" ");
+		var dirty = JSON.parse($('#bad_words').val() || '[]');
+		var chk_event_name = ($("#agccal-event_name").val() || "").toUpperCase().split(" ");
 		chk_event_name.forEach(function(name) {
 			if(dirty.indexOf(name) >= 0) {
 				dirty_word +=name+', ';
@@ -671,13 +682,13 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		});
 		if (is_dirty){
 			document.getElementById("cal_update_item").disabled=true;
-			$("#error_msg").html('<center><p style="color:red;">Do not to use Club Names or Acronyms in the Event Name. &nbsp;Found: '+dirty_word.slice(0,-2)+'</p></center>');
+			$("#error_msg").html('<center><p style="color:red;">Do not to use Club Names or Acronyms in the Event Name. &nbsp;Found: ' + safeText(dirty_word.slice(0,-2)) + '</p></center>');
 			return;
 		}
 
         var available_lanes=0; var fa_name=''; var reqLanes ='';
-		var facil_ids = $("#agccal-facility_id").val();
-		var Req_Lanes = JSON.parse($("#Req_Lanes").val());
+		var facil_ids = $("#agccal-facility_id").val() || [];
+		var Req_Lanes = JSON.parse($("#Req_Lanes").val() || '{}');
 
 		if(facil_ids.length < 1) {
 			document.getElementById("cal_update_item").disabled=true;
@@ -689,29 +700,27 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		let Req_Lan_array = {};
         facil_ids.forEach(function(facil_id) {
 			if ((Req_Lanes[facil_id]) && (Req_Lanes[facil_id].available_lanes > 0)) {
-				available_lanes =  Number.parseInt(JSON.parse($("#Req_Lanes").val())[facil_id].available_lanes);
-				requested_lanes =  Number.parseInt($("#agccal-lanes_"+facil_id).val());
-				// if lanes over assigned	
+				available_lanes = Number.parseInt(Req_Lanes[facil_id].available_lanes, 10);
+				var requested_lanes = Number.parseInt($("#agccal-lanes_"+facil_id).val(), 10);
 				if (requested_lanes > available_lanes) {
-					fa_name = JSON.parse($("#Req_Lanes").val())[facil_id]['name'];
+					fa_name = Req_Lanes[facil_id].name;
 					document.getElementById("cal_update_item").disabled = true;
-					$("#error_msg").html('<center><p style="color:red;"><b>'+fa_name+' is over limit of '+available_lanes+' lanes.</b></p></center>');
+					$("#error_msg").html('<center><p style="color:red;"><b>' + safeText(fa_name) + ' is over limit of ' + safeText(available_lanes) + ' lanes.</b></p></center>');
 					return false;
-				//if null
 				} else if (Number.isNaN(requested_lanes) || requested_lanes === 0 || requested_lanes === null || requested_lanes === '') {
-					fa_name = JSON.parse($("#Req_Lanes").val())[facil_id]['name'];
+					fa_name = Req_Lanes[facil_id].name;
 					document.getElementById("cal_update_item").disabled = true;
-					$("#error_msg").html('<center><p style="color:red;"><b>Please select # of lanes for '+fa_name+'.</b></p></center>');
+					$("#error_msg").html('<center><p style="color:red;"><b>Please select # of lanes for ' + safeText(fa_name) + '.</b></p></center>');
 					return false;
 				}
 				Req_Lan_array[facil_id]=requested_lanes;
-				if (fa_name !== '') { return false; }				
+				if (fa_name !== '') { return false; }
 			}
 			if (fa_name !== '') { return false; }
 		});
 		if (fa_name !== '') { return false; }
 
-console.log(Req_Lan_array);
+//console.log(Req_Lan_array);
         var reqStart = convertTime12to24($("#agccal-cal_start_time").val());
         var reqStop  = convertTime12to24($("#agccal-cal_end_time").val());
         //console.log('checking start Time:' + reqStart +' - ' + reqStop);
@@ -742,7 +751,7 @@ console.log(Req_Lan_array);
             $("#searchng_cal_animation").show(500);
 
 	var myUrl = "<?=yii::$app->params['rootUrl']?>/calendar/open-range?eDate="+reqDate+"&start="+reqStart+"&stop="+reqStop+"&facility=["+reqFacl+"]&r_lanes="+JSON.stringify(Req_Lan_array)+"&id="+req_cal_id+"&pattern="+req_pat+"&e_status="+req_stat;
-	console.log(myUrl+"&tst=1");
+	//console.log(myUrl+"&tst=1");
 			var calendarFormData = $("#calendar-form").serializeArray();
             jQuery.ajax({
                 method: 'POST',
@@ -750,85 +759,74 @@ console.log(Req_Lan_array);
 				data: calendarFormData,
                 url: myUrl,
                 success: function(responseData, textStatus, jqXHR) {
-                    console.log('success:776');
-			      console.log(responseData);
+                    //console.log('success:776');
+					//console.log(responseData);
                     $("#searchng_cal_animation").hide(500);
 
-					if(responseData.chkpat=='error') {
-						 $("#inpatt_msg").html('<center><p style="color:red;"><b>'+responseData.inPattern+'</b></p></center>');
-						 document.getElementById("cal_update_item").disabled=false;
-					} else {
-						if(responseData.inPattern){
-							if(reqDate >= '<?=date("Y-m-d",strtotime($getNowTime))?>')  { var msg_never=''; } else { var msg_never='<br>(Dates in the past will never be in scope)'; }
-							$("#inpatt_msg").html('<center><p><b style="color:orange;">'+responseData.inPattern+'</b>'+msg_never+'</p></center>');
+						if(responseData.chkpat=='error') {
+							 $("#inpatt_msg").html('<center><p style="color:red;"><b>' + (responseData.inPattern || '') + '</b></p></center>');
+							 document.getElementById("cal_update_item").disabled=false;
 						} else {
-							$("#inpatt_msg").html('');
-						}
-
-						if((responseData.status=='success')&& (responseData.chkpat=='success')) {
-							console.log('success:769');
-							$("#error_msg").html('<center>'+responseData.msg+'</center>');
-							document.getElementById("cal_update_item").disabled=false;
-		<?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=false; <?php } ?>
-							if ( document.getElementById("cal_update_item").classList.contains('btn-secondary') ){
-								document.getElementById("cal_update_item").classList.add('btn-success');
-								document.getElementById("cal_update_item").classList.remove('btn-secondary');
+							if(responseData.inPattern){
+								if(reqDate >= '<?=date("Y-m-d",strtotime($getNowTime))?>')  { var msg_never=''; } else { var msg_never='<br>(Dates in the past will never be in scope)'; }
+								$("#inpatt_msg").html('<center><p><b style="color:orange;">' + (responseData.inPattern || '') + '</b>' + msg_never + '</p></center>');
+							} else {
+								$("#inpatt_msg").html('');
 							}
 
-						} else {
-							console.log('Error:779');
-						   // console.log(responseData);
-							$("#error_msg").html('<center>'+responseData.msg+'</center>');
+							if((responseData.status=='success')&& (responseData.chkpat=='success')) {
+								$("#error_msg").html('<center>' + (responseData.msg || '') + '</center>');
+								document.getElementById("cal_update_item").disabled=false;
+		<?php if (($isMaster) && (!$model->isNewRecord)) { ?>   document.getElementById("re_pub").disabled=false; <?php } ?>
+								if ( document.getElementById("cal_update_item").classList.contains('btn-secondary') ){
+									document.getElementById("cal_update_item").classList.add('btn-success');
+									document.getElementById("cal_update_item").classList.remove('btn-secondary');
+								}
 
-							if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
-								document.getElementById("cal_update_item").classList.add('btn-secondary');
-								document.getElementById("cal_update_item").classList.remove('btn-success');}
-						}
+							} else {
+								$("#error_msg").html('<center>' + (responseData.msg || '') + '</center>');
+
+								if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
+									document.getElementById("cal_update_item").classList.add('btn-secondary');
+									document.getElementById("cal_update_item").classList.remove('btn-success');}
+							}
 
 						if (responseData.data) {
 							$("#error_msg").html($("#error_msg").html() + '<br><center><table id="cal_items" width=100% border=1><thead><tr><th>ID</th><th>Range</th><th>Club</th><th>Name</th><th>Start</th><th>Stop</th><th>Event Status</th><th>Range Status</th><th>Type</th><th>Lanes</th></tr></thead></table></center>');
 							var table = document.getElementById("cal_items");
-							console.log(responseData.data);
-
-							// 1. Use Object.values to loop over the keys "[32]" and "[3]"
 							Object.values(responseData.data).forEach((rangeData) => {
-								console.log(rangeData);
-
-								// 2. Normalize the inner items into an array (handles array for [32] and object for)
 								var events = Array.isArray(rangeData) ? rangeData : Object.values(rangeData);
-
-								// 3. Loop through the normalized events array
 								events.forEach((eventItem) => {
 									var row = table.insertRow();
-									var cell1 = row.insertCell(0); 
-									var cell2 = row.insertCell(1); 
-									var cell3 = row.insertCell(2); 
-									var cell4 = row.insertCell(3); 
+									var cell1 = row.insertCell(0);
+									var cell2 = row.insertCell(1);
+									var cell3 = row.insertCell(2);
+									var cell4 = row.insertCell(3);
 									var cell5 = row.insertCell(4);
 									var cell6 = row.insertCell(5);
 									var cell7 = row.insertCell(6);
 									var cell8 = row.insertCell(7);
 									var cell9 = row.insertCell(8);
-									
-									// Check if cell10 variable needs declaration context
-									var cell10;
+									var cell10 = null;
 									if (typeof available_lanes !== 'undefined' && available_lanes != 0) {
 										cell10 = row.insertCell(9);
 									}
 
-									// Add text to the new cells using eventItem instead of range[j]
-									cell1.innerHTML = '<a href="/calendar/update?id=' + eventItem.cal_id + '" target="_blank">' + eventItem.cal_id + '</a>';
-									cell2.innerHTML = eventItem.fac_name;
-									cell3.innerHTML = eventItem.club;
-									cell4.innerHTML = eventItem.name;
-									cell5.innerHTML = eventItem.start;
-									cell6.innerHTML = eventItem.stop;
-									cell7.innerHTML = eventItem.eve_status_name;
-									cell8.innerHTML = eventItem.rng_status_name;
-									cell9.innerHTML = eventItem.type_n;
-									
-									if (typeof available_lanes !== 'undefined' && available_lanes != 0) {
-										cell10.innerHTML = eventItem.lanes;
+									var link = document.createElement('a');
+									link.href = '/calendar/update?id=' + encodeURIComponent(eventItem.cal_id);
+									link.target = '_blank';
+									link.textContent = eventItem.cal_id;
+									cell1.appendChild(link);
+									cell2.textContent = eventItem.fac_name || '';
+									cell3.textContent = eventItem.club || '';
+									cell4.textContent = eventItem.name || '';
+									cell5.textContent = eventItem.start || '';
+									cell6.textContent = eventItem.stop || '';
+									cell7.textContent = eventItem.eve_status_name || '';
+									cell8.textContent = eventItem.rng_status_name || '';
+									cell9.textContent = eventItem.type_n || '';
+									if (cell10) {
+										cell10.textContent = eventItem.lanes || '';
 									}
 								});
 							});
@@ -837,8 +835,8 @@ console.log(Req_Lan_array);
                 },
                 error: function (responseData, textStatus, errorThrown) {
                     $("#searchng_cal_animation").hide(500);
-                    console.log('Error:816');
-					$("#error_msg").html('<center><p style="color:red;"><b>'+responseData.responseText+'</b></p></center>');
+                    //console.log('Error:816');
+					$("#error_msg").html('<center><p style="color:red;"><b>' + safeText(responseData.responseText || '') + '</b></p></center>');
                   //  console.log(responseData);
                     if ( document.getElementById("cal_update_item").classList.contains('btn-success') ){
                         document.getElementById("cal_update_item").classList.add('btn-secondary');
@@ -853,6 +851,6 @@ console.log(Req_Lan_array);
                 document.getElementById("cal_update_item").classList.remove('btn-secondary');
             }
         }
-    }
+    };
 
 </script>
