@@ -932,7 +932,8 @@ ALTER TABLE `BadgeDB`.`cal_calendar`
 	CHANGE COLUMN start_time cal_start_time TIME AFTER event_date,
 	CHANGE COLUMN end_time   cal_end_time   TIME AFTER cal_start_time,
 	ADD COLUMN `credit_hours` INT NULL DEFAULT 0 AFTER `range_status_id`,
-	ADD COLUMN `cal_inst` VARCHAR(60) NULL DEFAULT NULL AFTER `poc_badge`;
+	ADD COLUMN `cal_inst` VARCHAR(60) NULL DEFAULT NULL AFTER `poc_badge`,
+	ADD COLUMN `lanes_req` JSON NULL DEFAULT NULL AFTER `lanes_requested`;
 
 ALTER TABLE `BadgeDB`.`events` RENAME TO  `BadgeDB`.`events_old` ;
 ALTER TABLE `BadgeDB`.`events_old` ADD COLUMN `e_cal_id` INT NULL DEFAULT 0 AFTER `e_id`;
@@ -956,3 +957,16 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DE
 CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_events` AS
     SELECT vea.ea_calendar_id, vea.attended_badges, vea.attended_guests, vce.event_date, vce.cal_start_time, vce.cal_end_time, vce.event_name, vce.event_status_name, vce.club_name, vce.short_name, vce.poc_badge, vce.allow_guests, vce.track_wristbands, vce.cal_inst, vce.is_volunteer, vce.credit_hours
     FROM `view_event_att` vea LEFT JOIN view_cal_event vce ON vea.ea_calendar_id = vce.calendar_id order by ea_calendar_id desc;
+
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( REPLACE(REPLACE(facility_id, '[', ''), ']', ''), lanes_requested ) WHERE lanes_requested > 0;
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 2, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '[2%';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 2, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%2]';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 3, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '[3%';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 3, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%3]';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 3, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%,3,%';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 21, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%21]';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 28, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%28]';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 30, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%30]';
+
+-- Validate all good in lanes_req
+SELECT calendar_id,facility_id,lanes_requested,lanes_req FROM BadgeDB.cal_calendar WHERE lanes_requested > 0 and lanes_req like '%,%';
