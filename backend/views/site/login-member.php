@@ -1,11 +1,10 @@
 <?php
-//use yii;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\bootstrap\ActiveForm;
 use backend\models\ViewCalEvent;
 use backend\models\Event_Att;
 use backend\models\MembershipStatus;
-use backend\models\Params;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -14,8 +13,6 @@ use backend\models\Params;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 
-$param = Params::find()->one();
-$urlStatus = yii::$app->controller->getCurrentUrl();
 ?>
 <div class="site-login">
     <div class="row ">
@@ -28,8 +25,17 @@ if($agc_event) { ?>
 				<h3>Todays Events:</h3><hr /><ul>
 <?php
 foreach($agc_event as $an_event){
-	echo "<li style='margin: 20px 0;'><p>".date("h:i A", strtotime($an_event->cal_start_time))." - $an_event->event_name; <i>$an_event->club_name </i>";
-	echo "<a onclick='jsRegister(".$an_event->calendar_id.',"'.$an_event->club_name.'","'.htmlentities($an_event->event_name, ENT_QUOTES).'","'.$an_event->event_status_name.'",'.$an_event->allow_guests.','.$an_event->track_wristbands.','.$an_event->is_volunteer.')'."' href='#'>[Register]</a></p></li>\n";
+	$registerArgs = implode(',', [
+		(int) $an_event->calendar_id,
+		Json::htmlEncode((string) $an_event->club_name),
+		Json::htmlEncode((string) $an_event->event_name),
+		Json::htmlEncode((string) $an_event->event_status_name),
+		(int) $an_event->allow_guests,
+		(int) $an_event->track_wristbands,
+		(int) $an_event->is_volunteer,
+	]);
+	echo "<li style='margin: 20px 0;'><p>".Html::encode(date("h:i A", strtotime($an_event->cal_start_time))." - ".$an_event->event_name."; ")."<i>".Html::encode($an_event->club_name)." </i>";
+	echo "<a onclick='jsRegister(".$registerArgs.")' href='#'>[Register]</a></p></li>\n";
 } ?>
 			</div>
 		<p> </p> <br />
@@ -107,7 +113,7 @@ foreach($agc_event as $an_event){
 	<div class="row" name='iagree' id='iagree' style="display:none;" ><div class="col-xs-12">
 		<input type="checkbox" id="terms" name="terms"  onclick="toggleSubmit()">
 			<label for="terms">
-			I understand the above Conditions and agree to the <a href="'. yii::$app->params['wp_site'].'/waiver" target="_blank">Waiver of Liability</a>.
+			I understand the above Conditions and agree to the <a href="<?= Html::encode(yii::$app->params['wp_site'].'/waiver') ?>" target="_blank" rel="noopener">Waiver of Liability</a>.
 			</label>
 	</div></div>
 	<div class="row"><div id='reg_notes'> </div>
@@ -242,11 +248,13 @@ foreach($agc_event as $an_event){
 
 	var modal = document.getElementById('myModal');
 	var span = document.getElementsByClassName("close")[0];
-	var reg_sub = document.getElementsByClassName("btn-success")[0];
 
 	function jsRegister(r_id,r_ClubName,r_EventName,r_EventStatus,r_guest,r_wristbands,r_vol) {
 
 		modal.style.display = "block";
+		document.getElementById('terms').checked = false;
+		submitButton.disabled = false;
+		iagree.style.display = 'none';
 		document.getElementById("event_att-ea_badge").value='';
 		document.getElementById("event_att-ea_f_name").value='';
 		document.getElementById("event_att-ea_l_name").value='';
@@ -355,6 +363,9 @@ foreach($agc_event as $an_event){
 	}
 
 	$('#event_att-ea_badge').on('input', function() {
+		document.getElementById("event_att-ea_f_name").value='';
+		document.getElementById("event_att-ea_l_name").value='';
+		document.getElementById("event_att-ea_wb_serial").value='';
 		var badgeNumber = $(this).val();
 		if((badgeNumber!='') && (badgeNumber!=0)) {
             changeBadgeNam(badgeNumber);
@@ -367,22 +378,26 @@ foreach($agc_event as $an_event){
 		$("#badge_name").html('Searching');
 		jQuery.ajax({
 			method: 'GET',
-			url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-name?badge_number='+badgeNumber,
+			url: <?= Json::encode(yii::$app->params['rootUrl'].'/badges/get-badge-name') ?>,
+			dataType: 'json',
+			data: {
+				badge_number: badgeNumber,
+				'_csrf-backend': <?= Json::encode(Yii::$app->request->getCsrfToken()) ?>
+			},
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
-				responseData =  JSON.parse(responseData);
 				if(responseData.success==true) {
-					var resExpTimestamp = Math.floor(Date.now() / 1000);
-
-					if(responseData.isExpired) {
+					if (responseData.isExpired ) {
 						$("#badge_name").html('No Active Member Found');
 					} else {
-						$("#badge_name").html(responseData.first_name+' '+responseData.last_name);
+						$("#badge_name").text(responseData.first_name+' '+responseData.last_name);
 					}
-				} else {$("#badge_name").html('Valid Badge holder not found');}
+				} else {
+					$("#badge_name").text('Valid Badge holder not found');
+				}
 			},
 			error: function (responseData, textStatus, errorThrown) {
-				$("#badge_name").html('Valid Badge holder not found');
+				$("#badge_name").text('Valid Badge holder not found');
 				console.log("fail "+responseData);
 			},
 		});
@@ -390,4 +405,3 @@ foreach($agc_event as $an_event){
 
 <?php } ?>
 </script>
-

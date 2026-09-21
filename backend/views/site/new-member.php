@@ -51,7 +51,7 @@ input[type='checkbox'] {
 	<table id="AckTbl">
 		<tr>
 			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
-			<td>1. You agree to the AGC <a href="<?=yii::$app->params['wp_site']?>/waiver" target="waver">Waiver of Liability</a>.</td>
+			<td>1. You agree to the AGC <a href="<?= Html::encode(yii::$app->params['wp_site'].'/waiver') ?>" target="waver" rel="noopener">Waiver of Liability</a>.</td>
 		</tr>
 		<tr>
 			<td style="width:4%; text-align:center"> <input type=checkbox name='agreed' onClick="ChkAgreed()"></td>
@@ -211,7 +211,7 @@ input[type='checkbox'] {
 
 	$('#NewMembers').on('beforeSubmit', function (e) {
 		document.getElementById("self_save").disabled=true;
-		$("run_animation").show();
+		$("#run_animation").show();
 		console.log('submitting...');
 	});
 
@@ -282,31 +282,32 @@ input[type='checkbox'] {
 
     $("#badgessm-primary").change(function() {
         var primaryRequest = $("#badgessm-primary").val();
-        if(primaryRequest!=null || primaryRequest !=0) {
+        if(primaryRequest != null && primaryRequest != 0) {
             getPrimaryBadger(primaryRequest,'self');
         }
         else {
             //alert("error reporting");
         }
-        if(primaryRequest==0 || primaryRequest ==null) {
+        if(primaryRequest == 0 || primaryRequest == null) {
  //           $("#primary-badge-summary").hide(500);
         }
     });
 
     $('#badgessm-zip').keyup(function(e) {
-        zipcode = $("#badgessm-zip").val();
-        if(zipcode.length==5) {
+        var zipcode = $("#badgessm-zip").val();
+        if(zipcode && zipcode.length === 5 && /^\d{5}$/.test(zipcode)) {
             console.log('Using '+zipcode);
             jQuery.ajax({
                 method: 'GET',
-                url: '<?=yii::$app->params['rootUrl']?>/badges/api-zip?zip='+zipcode,
+                url: <?= json_encode(yii::$app->params['rootUrl'].'/badges/api-zip') ?>,
+                data: { zip: zipcode },
                 crossDomain: false,
                 async: true,
                 success: function(responseData, textStatus, jqXHR) {
                     responseData = JSON.parse(responseData);
                     if(responseData.City) {
-					$mycity=responseData.City.toProperCase()
-                    $("#badgessm-city").val($mycity);
+					var mycity = responseData.City.toProperCase();
+                    $("#badgessm-city").val(mycity);
                     $("#badgessm-state").val(responseData.State);
 					}
                 },

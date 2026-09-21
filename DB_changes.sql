@@ -922,6 +922,7 @@ UPDATE `BadgeDB`.`discount` SET `dis_allowed` = 'NewBG' WHERE (`dis_id` = '2');
 
 -- Calendar Move Prep
 -- for v2.2.0
+use BadgeDB;
 RENAME TABLE `associat_agcnew`.`agc_calendar` TO BadgeDB.cal_calendar;
 RENAME TABLE `associat_agcnew`.`range_status` TO BadgeDB.cal_range_status;
 RENAME TABLE `associat_agcnew`.`facilities` TO BadgeDB.cal_facilities;
@@ -933,10 +934,11 @@ ALTER TABLE `BadgeDB`.`cal_calendar`
 	CHANGE COLUMN end_time   cal_end_time   TIME AFTER cal_start_time,
 	ADD COLUMN `credit_hours` INT NULL DEFAULT 0 AFTER `range_status_id`,
 	ADD COLUMN `cal_inst` VARCHAR(60) NULL DEFAULT NULL AFTER `poc_badge`,
-	ADD COLUMN `lanes_req` JSON NULL DEFAULT NULL AFTER `lanes_requested`;
+	ADD COLUMN `lanes_req` JSON NULL DEFAULT NULL AFTER `lanes_requested`,
+	ADD COLUMN `is_event` TINYINT NULL DEFAULT 1 AFTER `cal_inst`;
 
 ALTER TABLE `BadgeDB`.`events` RENAME TO  `BadgeDB`.`events_old` ;
-ALTER TABLE `BadgeDB`.`events_old` ADD COLUMN `e_cal_id` INT NULL DEFAULT 0 AFTER `e_id`;
+ALTER TABLE `BadgeDB`.`events_old` ADD COLUMN `calendar_id` INT NULL DEFAULT 0 AFTER `e_id`;
 
 ALTER TABLE `BadgeDB`.`cal_event_status` 
 	ADD COLUMN `allow_guests` TINYINT NOT NULL DEFAULT 0 AFTER `display_order`,
@@ -944,7 +946,7 @@ ALTER TABLE `BadgeDB`.`cal_event_status`
 	ADD COLUMN `track_wristbands` TINYINT NOT NULL DEFAULT 0 AFTER `is_volunteer`;
 
 ALTER TABLE `BadgeDB`.`event_attendee` 
-CHANGE COLUMN `ea_event_id` `ea_calendar_id` INT NOT NULL ;
+	CHANGE COLUMN `ea_event_id` `ea_calendar_id` INT NOT NULL ;
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_cal_event` AS
 	SELECT cc.calendar_id, cc.event_date, cc.cal_start_time, cc.cal_end_time, cc.event_name, cc.cal_inst, cc.credit_hours, cc.poc_badge, ces.name AS event_status_name, clubs.club_name, clubs.short_name, allow_guests, track_wristbands, is_volunteer

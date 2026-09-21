@@ -273,4 +273,3 @@ class EventsController extends AdminController {
         }
     }
 }
-

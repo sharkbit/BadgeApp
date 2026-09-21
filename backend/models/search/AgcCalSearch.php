@@ -6,7 +6,6 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\AgcCal;
-use backend\models\clubs;
 
 /**
  * ParamsSearch represents the model behind the search form about `backend\models\AgcCal`.
@@ -20,7 +19,7 @@ class AgcCalSearch extends AgcCal {
 
     public function rules() {
         return [
-            [['active','approved','club_id','event_name','event_status_id','facility_id','key_words','range_status_id','recur_every','recur_week_days'], 'safe']
+            [['active','approved','club_id','dateEnd','dateStart','event_date','event_name','event_date','event_status_id','facility_id','key_words','range_status_id','recur_every','recur_week_days','SearchTime','showed_up'], 'safe']
         ];
     }
 
