@@ -159,7 +159,7 @@ $this->title = "AGC Calendar Events";
 			if ($xx % 2 != 0) { $bgColor=' darker';} else {$bgColor='' ;} ?>
 	<div class="row<?=$bgColor?>">
 		<div class="col-xs-3">
-			<?php echo date('g:i a', strtotime($model->start_time))." - ".date('g:i a', strtotime($model->end_time));?>
+			<?php echo date('g:i a', strtotime($model->cal_start_time))." - ".date('g:i a', strtotime($model->cal_end_time));?>
 		</div>
 		<div class="col-xs-7">
 			<a style="text-decoration: none; font-size: 12px;" href="/calendar/viewitem?calendar_id=<?=$model->calendar_id ?>" target='Cal'><?=Html::encode($model->event_name) ?></a>
@@ -206,135 +206,6 @@ No Records found!
   detailsElement.open = true;
 </script>
 <?php } ?>
-
-<?php /*
-<hr />
-
-
-<table align="left" cellpadding="0" cellspacing="0" class="list" width="100%" border="0">
-	<tr>
-		<td colspan="20" align="left" valign="top" class="actions">
-			<table cellpadding="0" cellspacing="0" width="100%" border="0">
-				<tr>
-					<td width="50%" align="left">
-						<a style="font-size: 14px; font-weight: bold;" href="<?=$_SERVER['SCRIPT_NAME']?>">Next 30 Days</a>
-					</td>
-					<td width="50%" align="right">
-						<a href="?start_month_date=<?=$start_prev_month_date.$search_string?>">Previous month</a> &nbsp; | &nbsp;
-						<a href="?start_month_date=<?=$start_curr_month_date.$search_string?>">Current month</a> &nbsp; | &nbsp;
-						<a href="?start_month_date=<?=$start_next_month_date.$search_string?>">Next month</a>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="20" align="left">
-			<table cellpadding="0" cellspacing="0" border="0" width="100%">
-				<tr>
-					<td width="40%" align="left">
-						<?php if ($display_month_date != '') { echo "Results for: ".$display_month_date; } ?>
-					</td>
-					<td align="right"><?php if($result) { ?> Show
-						<select name="pagesize" onchange="this.form.submit();">
-							<option value="25"<?php if ($pagesize == 25) {echo " selected";} ?>>25</option>
-							<option value="50"<?php if ($pagesize == 50) {echo " selected";} ?>>50</option>
-							<option value="100"<?php if ($pagesize == 100) {echo " selected";} ?>>100</option>
-							<option value="250"<?php if ($pagesize == 250) {echo " selected";} ?>>250</option>
-							<option value="500"<?php if ($pagesize == 500) {echo " selected";} ?>>500</option>
-
-					</select> Results on one page<?php } ?></td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr class="hidden"><td colspan="20"></td></tr>
-<?php if (($result) and ($table_navigation)) { ?>
-	<tr>
-		<td align="right" colspan="20"><?=$table_navigation?></td>
-	</tr>
-<?php }
-	$event_date_value ='0000-00-00';
-	if($result) {
-		while ($fetch_result = mysqli_fetch_array($result)) {
-			//echo var_export($fetch_result)."<hr>";
-
-			if ($event_date_value != $fetch_result['event_date']) {
-?>
-			<!--  <tr><td colspan="3"> &nbsp; </td></tr> -->
-			<tr>
-			<td valign="middle" align="left" class="table_header" colspan="3"><b><?php echo date('l, F j, Y',strtotime($fetch_result['event_date'])); ?></b></td>
-			</tr>
-		<?php 	$event_date_value = $fetch_result['event_date'];
-			}
-			$tick++;
-			if ($tick==2) {$cycle='dark'; $tick=0;} else {$cycle='light';}
-			?>
-
-	<tr onmouseover='this.className="highlight"' onmouseout='this.className="<?=$cycle?>"' class="<?=$cycle?>">
-
-		<td valign="middle" align="left" class="row_css" width="150" style="font-size: 12px;">
-		<?php
-		if($active_fields->start_time == 1) { echo date('g:i a', strtotime($fetch_result['start_time'])); }
-		if($active_fields->end_time == 1)   { echo " - ".date('g:i a', strtotime($fetch_result['end_time'])); }
-		?>
-		</td>
-
-		<?php if($active_fields->event_name == 1) { ?>
-		<td valign="middle" align="left" class="row_css" width="388"  style="font-size: 12px;">
-			<a style="text-decoration: none; font-size: 12px;" href="<?=$url?>calendar/viewitem?calendar_id=<?=$fetch_result['calendar_id']?>" target='Cal'><?=$fetch_result['event_name']?></a>
-			<br/><?=$fetch_result['club_name']?><br/><?=(New AgcFacility)->getFacilityNames($fetch_result['facility_id']);?>
-		</td>
-		<?php } ?>
-
-		<td valign="middle" align="center" class="row_css" width="120"  style="font-size: 12px;">
-
-<?php 	if ( ($active_fields->range_status_id) and ($fetch_result['event_status_id'] != 19) and ($fetch_result['event_status_id'] != 21) ) { ?>
-
-<?php	 	$fac_id=json_decode($fetch_result['facility_id']);
-
-			if ( ($fetch_result['range_status_id'] ==2 ) and ( array_intersect(array(2,3,7,10,24,25,27,28,30,32),$fac_id) ) ) { ?>
-			<img src="/calendar/images/flag_closed.png" alt="Closed" title="Closed"/>
-<?php		}
-			if ($fetch_result['range_status_id'] == 5 ) { ?>
-			<a style="text-decoration: none; font-weight: bold;font-size: 12px;" title="Event Details" href="<?=$url?>calendar/viewitem.php?calendar_id=<?=$fetch_result['calendar_id']?>" target='Cal'>
-			Range Open<br>CLUB REGULATED </a>
-			<!--<img src="{$url}images/flags/flag_clubregulated.png" alt="Range Open-Club Regulated" title="Range Open-Club Regulated"/>-->
-<?php 		}
-			if ($fetch_result['range_status_id'] == 6) { ?>
-			<div style="text-decoration: none; font-weight: bold;font-size: 14px;">
-			<a title="Event Details" href="<?=$url?>calendar/viewitem.php?calendar_id=<?=$fetch_result['calendar_id']?>" target='Cal'>
-			Range Open<br>CLUB REGULATED
-			<br>
-			<img src="<?=$url?>calendar/images/flag_caliber_restriction.png" alt="Caliber Restriction" title="Caliber Restriction"/><br />
-			<B>22LR ONLY<b/> </a></div>
-<?php 		}
-		} ?>
-
-<?php 	if($fetch_result['event_status_id'] == 21) {
-			echo '<img src="/calendar/images/flag_rescheduled.png" alt="Canceled" title="Reschuduled"/> ';
-		}
-		elseif($fetch_result['event_status_id'] == 19 || $fetch_result['range_status_id'] == 4) {
-			echo '<img src="/calendar/images/flag_canceled_event.png" alt="Canceled" title="Canceled"/>';
-	 	} ?>
-		</td>
-	</tr>
-<?php } } else { ?>
-	<tr>
-		<td align="left" colspan="20" class="info_attention"><h2>No Records Found.</h2></td>
-	</tr>
-<?php } ?>
-	<tr class="hidden"><td colspan="20"> </td></tr>
-<?php if (($result) and ($table_navigation)) { ?>
-	<tr>
-		<td align="right" colspan="20"><?=$table_navigation?></td>
-	</tr>
-<?php } ?>
-	<tr ><td colspan="20"> &nbsp; </td></tr>
-</table>
-</form>
-*/ ?>
-
 
 <link rel="stylesheet" href="js/cal_jquery-ui.css" />
 <link rel="stylesheet" href="js/cal_style.css" />

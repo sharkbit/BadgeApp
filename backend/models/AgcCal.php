@@ -17,7 +17,7 @@ class AgcCal extends \yii\db\ActiveRecord {
      */
 	public $pagesize;
 	public $rec_pat;
-//	public $del_sel;
+	public $lanes_requested;
 
     public static function tableName() {
         return 'cal_calendar';

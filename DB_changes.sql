@@ -972,3 +972,32 @@ UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 30, lanes_requested ) W
 
 -- Validate all good in lanes_req
 SELECT calendar_id,facility_id,lanes_requested,lanes_req FROM BadgeDB.cal_calendar WHERE lanes_requested > 0 and lanes_req like '%,%';
+
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `track_wristbands` = '1' WHERE (`event_status_id` = '4');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1' WHERE (`event_status_id` = '6');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `is_volunteer` = '1' WHERE (`event_status_id` = '15');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1' WHERE (`event_status_id` = '9');
+UPDATE `BadgeDB`.`cal_event_status` SET `is_volunteer` = '1' WHERE (`event_status_id` = '10');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `track_wristbands` = '0' WHERE (`event_status_id` = '8');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `track_wristbands` = '1' WHERE (`event_status_id` = '20');
+
+
+
+-- ################################
+-- ## Run very carfully
+CREATE OR REPLACE VIEW view_new_event_ids AS 
+SELECT BadgeDB.events_old.e_id, e_name, e_date,sponsor, cal_calendar.calendar_id
+FROM BadgeDB.events_old
+ join BadgeDB.cal_calendar ON ( ( BadgeDB.events_old.e_date = BadgeDB.cal_calendar.event_date ) and (  BadgeDB.events_old.sponsor = BadgeDB.cal_calendar.club_id ) )
+where BadgeDB.events_old.e_id > 0
+order by calendar_id desc;
+
+UPDATE BadgeDB.event_attendee ea
+INNER JOIN (
+    SELECT DISTINCT e_id, calendar_id 
+    FROM BadgeDB.view_new_event_ids
+) v ON ea.ea_calendar_id = v.e_id
+SET ea.ea_calendar_id = v.calendar_id;
+
+drop view view_new_event_ids;
+-- ################################
