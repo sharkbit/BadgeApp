@@ -934,7 +934,7 @@ ALTER TABLE `BadgeDB`.`cal_calendar`
 	CHANGE COLUMN end_time   cal_end_time   TIME AFTER cal_start_time,
 	ADD COLUMN `credit_hours` INT NULL DEFAULT 0 AFTER `range_status_id`,
 	ADD COLUMN `cal_inst` VARCHAR(60) NULL DEFAULT NULL AFTER `poc_badge`,
-	ADD COLUMN `lanes_req` JSON NULL DEFAULT NULL AFTER `lanes_requested`,
+	ADD COLUMN `lanes_req` TEXT NULL DEFAULT NULL AFTER `lanes_requested`,
 	ADD COLUMN `is_event` TINYINT NULL DEFAULT 1 AFTER `cal_inst`;
 
 ALTER TABLE `BadgeDB`.`events` RENAME TO  `BadgeDB`.`events_old` ;
