@@ -28,10 +28,10 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 <div class="col-xs-12">
 	<h2><?= Html::encode($this->title) ?></h2>
 
-	<?php /* if (yii::$app->controller->hasPermission('events/create')) { ?>
+	<?php if (yii::$app->controller->hasPermission('calendar/create')) { ?>
 	<div class="btn btn-group pull-right">
-		<?= Html::a('Create Event', ['create'], ['class' => 'btn btn-success']) ?>
-	</div > <?php } */ ?>
+		<?= Html::a('Create Event', ['/calendar/create'], ['class' => 'btn btn-success']) ?>
+	</div > <?php } ?>
 
 	<?php Pjax::begin(); ?>
 	<?php
@@ -48,17 +48,12 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 			}
 		],
 		'cal_start_time',
-		'club_name',
-/*		[ 
+		[ 
 			'attribute' => 'club_name',
 			'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
-			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_name',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
-			//'format' => 'raw',
-			'value'=>function($club_name) {
-				if(isset($model->club_name)) { return $model->club_name; } else { return ''; }
-			},
+			//'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_name',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
 			'headerOptions' => ['style' => 'width:25%']
-		],*/
+		],
 		[	'attribute'=>'event_name',
 			'format'=>'raw',
 			'value'=>function($model) {
@@ -76,12 +71,6 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 			'value'=>function($model) { return $model->badges?->first_name.' '.$model->badges?->last_name; },
 			'headerOptions' => ['style' => 'width:10%']
 		],
-		[
-			'attribute'=>'e_type',
-			'value'=>function($model) { return strtoupper($model->e_type); },
-			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'e_type',[ 'cio'=>'CIO', 'club'=>'Club', 'vol'=>'Volunteer' ],['class'=>'form-control','prompt' => 'All']),
-			'headerOptions' => ['style' => 'width:10%']
-		],
 		[	'attribute'=>'wbOut',
 			'label'=>'WB Out',
 			'value'=>function($model) { return $model->event_Att; },
@@ -90,7 +79,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 		[
 			'header'=>'Action',
 			'class' => 'yii\grid\ActionColumn',
-			'template'=>' {view} {update} {delete} ',
+			'template'=>' {view} {Calendar}  ',
 			'headerOptions' => ['style' => 'width:5%'],
 			'buttons'=>[
 				'view' => function($url,$model) {
@@ -101,14 +90,13 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/events/in
 						'title'=>'View',
 					]);}
 				},
-				'update' => function($url,$model) {
+				'Calendar' => function($url,$model) {
 					if (yii::$app->controller->hasPermission('calendar/update')) {
-					if ($model->event_date < date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) { } else {
-					return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/calendar/update','id'=>$model->ea_calendar_id], [
+					return  Html::a(' <span class="glyphicon glyphicon-calendar"></span> ', ['/calendar/update','id'=>$model->ea_calendar_id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',
-						'title'=>'Update',
-					]);}}
+						'title'=>'Calendar',
+					]);}
 				},
 				'delete' => function($url,$model) {
 					if(yii::$app->controller->hasPermission('events/delete')) {

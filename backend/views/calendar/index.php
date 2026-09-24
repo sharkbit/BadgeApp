@@ -77,9 +77,6 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'headerOptions' => ['style' => 'width:15%'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'facility_id', ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name'),['class'=>'form-control','prompt' => 'All']),
 			],
-			[	'attribute'=>'lanes_requested',
-				'value'=>function($model) { if($model->lanes_requested ==0) { return '';} else { return $model->lanes_requested; } },
-			],
 			[	'attribute'=>'event_date',
 				'visible' => ($searchModel->recur_every) ? false : true,
 				'value'=>function($model) {
@@ -159,31 +156,8 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'headerOptions' => ['style' => 'width:10%'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'range_status_id',(new agcRangeStatus)->getStatusList(),['class'=>'form-control','prompt' => 'Any']),
 			],
-			[	'attribute'=>'active',
-				'value'=>function($model) { if($model->active) {return "Yes";} else  {return "No";} },
-				'headerOptions' => ['style' => 'width:5%'],
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'active',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All']),
-			],
-			[	'attribute'=>'approved',
-				'format'=>'raw',
-				'contentOptions' => ['style' => 'white-space:pre-line;'],
-				'headerOptions' => ['style' => 'width:5%'],
-				'value'=>function($model) {
-					if($model->approved) {
-						return "True";
-					} else {
-						if (yii::$app->controller->hasPermission('calendar/approve')) {
-							return  Html::a(' <span class="glyphicon glyphicon-ok"> </span> Approve Event', ['/calendar/approve','id'=>$model->calendar_id,'redir'=>yii::$app->controller->getCurrentUrl()['actionId']], [
-							'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'Approve',	]);
-						} else { return "False"; }
-					}
-				},
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'approved',['1'=>'True','0'=>'False'],['class'=>'form-control','prompt' => 'All']),
-			],
 			[	'attribute'=>'deleted',
-				'value'=>function($model) { if($model->active) {return "Yes";} else  {return "No";} },
+				'value'=>function($model) { if($model->deleted) {return "Yes";} else  {return "No";} },
 				'visible' => ($urlStatus['actionId']=='inactive') ? true : false,
 			],
 			[	'attribute' => 'Continue Event',
@@ -335,6 +309,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 <script>
 //$("#w0-cols").hide();
 
+<?php if ($urlStatus['actionId']=='conflict') { ?>
 document.getElementById("del_sel_all").addEventListener("click", function(event){
   event.preventDefault();
   
@@ -345,4 +320,5 @@ document.getElementById("del_sel_all").addEventListener("click", function(event)
     }
 });
 
+<?php } ?>
 </script>

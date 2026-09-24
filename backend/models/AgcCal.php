@@ -17,7 +17,6 @@ class AgcCal extends \yii\db\ActiveRecord {
      */
 	public $pagesize;
 	public $rec_pat;
-	public $lanes_requested;
 
     public static function tableName() {
         return 'cal_calendar';
@@ -29,9 +28,9 @@ class AgcCal extends \yii\db\ActiveRecord {
     public function rules() {
         return [
 			[['event_name','event_date','poc_badge'], 'required'],
-			[['date_requested','cal_end_time','event_date','facility_id','recurrent_end_date','recurrent_start_date','cal_start_time','remarks'], 'safe'],
-			[['active','approved','calendar_id','credit_hours','conflict','deleted','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
-			[['club_id','event_status_id','lanes_requested','poc_badge'], 'integer'],
+			[['date_requested','cal_end_time','event_date','facility_id','lanes_req','recurrent_end_date','recurrent_start_date','cal_start_time','remarks'], 'safe'],
+			[['calendar_id','credit_hours','conflict','deleted','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
+			[['club_id','event_status_id','poc_badge'], 'integer'],
 			[['event_name','key_words','recur_week_days','cal_inst'], 'string'],
 		];
     }

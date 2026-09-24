@@ -19,7 +19,7 @@ class AgcCalSearch extends AgcCal {
 
     public function rules() {
         return [
-            [['active','approved','club_id','dateEnd','dateStart','event_date','event_name','event_date','event_status_id','facility_id','key_words','range_status_id','recur_every','recur_week_days','SearchTime','showed_up'], 'safe']
+            [['club_id','dateEnd','dateStart','event_date','event_name','event_date','event_status_id','facility_id','key_words','range_status_id','recur_every','recur_week_days','SearchTime','showed_up'], 'safe']
         ];
     }
 
@@ -136,8 +136,6 @@ class AgcCalSearch extends AgcCal {
 		}
 
 		if(!empty($this->event_name)) { $query->andFilterWhere(['like','event_name',$this->event_name]); }
-		if(!empty($this->active)) { $query->andFilterWhere(['cal_calendar.active'=>$this->active]); }
-		if(!empty($this->approved)) { $query->andFilterWhere(['approved'=>$this->approved]); }
 		if(!empty($this->deleted) && $this->deleted==1) { $query->andFilterWhere(['deleted'=>1]); } else	{$query->andFilterWhere(['deleted'=>0]);}
 		if(!empty($this->event_status_id)) { $query->andFilterWhere(['cal_event_status.event_status_id'=>$this->event_status_id]); }
 		if(!empty($this->range_status_id)) { $query->andFilterWhere(['cal_range_status.range_status_id'=>$this->range_status_id]); }

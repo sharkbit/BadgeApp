@@ -22,7 +22,7 @@ class CalendarController extends AdminController {
 	  * @inheritdoc
 	 */
 
-	public $myFilters = ['SearchTime','club_id','event_name','approved','active','event_status_id','range_status_id','facility_id','recur_week_days'];
+	public $myFilters = ['SearchTime','club_id','event_name','event_status_id','range_status_id','facility_id','recur_week_days'];
 
 	public function behaviors() {
 		return [
@@ -83,8 +83,8 @@ class CalendarController extends AdminController {
 					$model->save();
 					$model->recurrent_calendar_id = $model->calendar_id;
 					$model->event_date = $myEventDates[0];
-					if ($this->actionOpenRange($model->event_date,$model->cal_start_time,$model->cal_end_time,$model->facility_id,$model->lanes_requested,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true))
-						{ $model->conflict = 0;  $model->approved=1; } else { $model->conflict = 1; $model->approved=1; }
+					if ($this->actionOpenRange($model->event_date,$model->cal_start_time,$model->cal_end_time,$model->facility_id,$model->lanes_req,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true))
+						{ $model->conflict = 0; } else { $model->conflict = 1; }
 					$model->save();
 					$model = $this->createRecCalEvent($model,$myEventDates,false,true);
 				} else {
@@ -94,7 +94,6 @@ class CalendarController extends AdminController {
 			} else {
 				$model->recurrent_start_date = $model->recurrent_end_date = null;
 
-				$model->approved=1;
 				$model->recur_every=0;
 				$model->save();
 			}
@@ -102,8 +101,6 @@ class CalendarController extends AdminController {
 			yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Created New Calendar item: ','".$model->calendar_id.'->'.$model->event_name);
 			return $this->redirect(['update', 'id' => $model->calendar_id]);
 		} else {
-			$model->approved = 0;
-			$model->active = 0;
 			$model->deleted = 0;
 
 			$model->event_status_id=2;
@@ -274,7 +271,7 @@ class CalendarController extends AdminController {
 		if ($tst) {
 			Yii::$app->controller->createCalLog(
 				true,
-				'trex_B_C_CalC:273 found',
+				'trex_B_C_CalC:273 OpenRange',
 				'eDate: ' . $eDate
 					. ', start: ' . $start
 					. ', stop: ' . $stop
@@ -324,16 +321,16 @@ class CalendarController extends AdminController {
 		$start_m = date('H:i', strtotime($start) + 60);
 		$stop_m = date('H:i', strtotime($stop) - 60);
 
-	// Build one parameterized JSON predicate. Keeping the parameters on the
-	// query avoids Yii treating nested Expression params as a separate where.
-	$whereParts = [];
-	$whereParams = [];
-	foreach ($facilityArray as $index => $f_id) {
-		$parameter = ':facility_id_' . $index;
-		$whereParts[] = "JSON_CONTAINS(cal_calendar.facility_id, {$parameter})";
-		$whereParams[$parameter] = json_encode($f_id);
+		// Build one parameterized JSON predicate. Keeping the parameters on the
+		// query avoids Yii treating nested Expression params as a separate where.
+		$whereParts = [];
+		$whereParams = [];
+		foreach ($facilityArray as $index => $f_id) {
+			$parameter = ':facility_id_' . $index;
+			$whereParts[] = "JSON_CONTAINS(cal_calendar.facility_id, {$parameter})";
+			$whereParams[$parameter] = json_encode($f_id);
 		}
-	$where_fac = '(' . implode(' OR ', $whereParts) . ')';
+		$where_fac = '(' . implode(' OR ', $whereParts) . ')';
 
 		// Primary ActiveQuery setup using safe arrays
 		$query = AgcCal::find()
@@ -344,8 +341,6 @@ class CalendarController extends AdminController {
 			->andWhere([
 				'event_date' => $eDate,
 				'deleted' => 0,
-				'cal_calendar.active' => 1,
-				'approved' => 1
 			])
 			->andWhere(['<>', 'cal_calendar.event_status_id', 19])
 			->andWhere([
@@ -421,7 +416,7 @@ class CalendarController extends AdminController {
 				$obj->eve_status_name = $item->agcEventStatus->name ?? '';
 				$obj->range_status_id = $item->range_status_id;
 				$obj->rng_status_name = $item->agcRangeStatus->name ?? '';
-				$obj->req_lanes = $item->lanes_requested;
+				$obj->lanes_req = $item->lanes_req;
 
 				$type_i = match(true) {
 					$obj->event_status_id == 18 => 1,
@@ -439,8 +434,8 @@ class CalendarController extends AdminController {
 				if ($force_order && ((int)$rng_pri < (int)$type_i)) {
 					$obj->lanes = 0;
 				} else {
-					$lanes_used[$f_id] = ($lanes_used[$f_id] ?? 0) + $item->lanes_requested;
-					$obj->lanes = $item->lanes_requested;
+					$lanes_used[$f_id] = ($lanes_used[$f_id] ?? 0) + ($item->lanes_req[$f_id] ?? 0);
+					$obj->lanes = ($item->lanes_req[$f_id] ?? 0);
 				}
 
 				$found[$f_id][] = $obj;
@@ -489,7 +484,7 @@ class CalendarController extends AdminController {
 						$msg = '<b style="color:green;">' . Html::encode($fas->name) . ' is open</b>';
 					}
 				} else {
-					$lanes = json_decode($r_lanes, true) ?: [];
+					$lanes = is_array($r_lanes ?? null) ? $r_lanes : (json_decode($r_lanes, true) ?? []);
 					$Facl_Lanes_Req = $lanes[$fas->facility_id] ?? 0;
 					$Facl_Lanes_Used = $lanes_used[$fas->facility_id] ?? 0;
 
@@ -497,7 +492,9 @@ class CalendarController extends AdminController {
 						$isAval = false;
 						$msg = '<b style="color:red;">Please Provide Requested lanes (Up to ' . $Range_available_lanes . ')</b>';
 					} else if ($Facl_Lanes_Req + $Facl_Lanes_Used > $Range_available_lanes) {
-						$HeavyCheckResult = $this->HeavyCheck($start_m, $stop_m, $found[$fas->facility_id] ?? [], $Facl_Lanes_Req, $Range_available_lanes);
+if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:361 lanes', "$Facl_Lanes_Req + $Facl_Lanes_Used > $Range_available_lanes"); }
+
+						$HeavyCheckResult = $this->HeavyCheck($start_m, $stop_m, $fas->facility_id, $found[$fas->facility_id] ?? [], $Facl_Lanes_Req, $Range_available_lanes);
 						if ($HeavyCheckResult['status'] == 'Full') {
 							if ($force_order) {
 								$opened_lanes = 0;
@@ -505,7 +502,7 @@ class CalendarController extends AdminController {
 								foreach ($found[$fas->facility_id] as $overwrite) {
 									if ((int)$rng_pri < (int)$overwrite->type_i) {
 										AgcCal::updateAll(['conflict' => 1], ['calendar_id' => $overwrite->cal_id]);
-										$opened_lanes += $overwrite->req_lanes;
+										$opened_lanes += $overwrite->lanes_req;
 									}
 									if ($Facl_Lanes_Req + $Facl_Lanes_Used - $opened_lanes <= $Range_available_lanes) {
 										break;
@@ -519,7 +516,7 @@ class CalendarController extends AdminController {
 								}
 							} else {
 								$isAval = false;
-								$msg = '' . Html::encode($fas->name) . ' Full, (' . $HeavyCheckResult['msg'] . ')';
+								$msg = '<b style="color:red;">' . Html::encode($fas->name) . ' Full, (' . $HeavyCheckResult['msg'] . ')</b>';
 							}
 						} else {
 							$msg = '' . Html::encode($fas->name) . ' has space left (' . $HeavyCheckResult['msg'] . ' Lanes free)';
@@ -545,7 +542,7 @@ class CalendarController extends AdminController {
 		}
 	}
 
-	private function HeavyCheck($start_m, $stop_m, $ChkRng, $rng_requ, $rng_limit) {  // True = full! (bad)
+	private function HeavyCheck($start_m, $stop_m, $facil_id, $ChkRng, $rng_requ, $rng_limit) {  // True = full! (bad)
 		// Extract start and stop hours as clean integers for the loop control
 		$start_hour = (int)substr($start_m, 0, 2);
 		$stop_hour  = (int)substr($stop_m, 0, 2);
@@ -555,7 +552,6 @@ class CalendarController extends AdminController {
 		$stop_ts  = strtotime($stop_m);
 
 		$max_used = $rng_requ;
-
 		// Loop using integer arithmetic to completely avoid string comparison bugs
 		for ($hr = $start_hour; $hr <= $stop_hour; $hr++) {
 			// Guarantee a perfect 2-digit string format (e.g., 08, 09, 10)
@@ -583,8 +579,7 @@ class CalendarController extends AdminController {
 					$tst_stop  = strtotime($recheck->stop);
 
 					if (($tst_start < $checking_ts) && ($checking_ts < $tst_stop)) {
-						$chk_lns_used += (int)$recheck->req_lanes;
-						//Yii::$app->controller->createCalLog(false, 'trex-Heavy_Req:518 ', $recheck->req_lanes);
+						$chk_lns_used += (int)$recheck->lanes_req[$facil_id];
 					}
 				}
 	//Yii::$app->controller->createCalLog(false, 'trex-Heavy_Req:522 ', $checking . " - " . $chk_lns_used);
@@ -686,11 +681,19 @@ class CalendarController extends AdminController {
 			$model->club_id = (int)$model->club_id;
 			$model->event_status_id = (int)$model->event_status_id;
 			$model->facility_id = str_replace('"', '',json_encode($model->facility_id));
-			$model->lanes_requested = (int)$model->lanes_requested;
 			$model->range_status_id = (int)$model->range_status_id;
 
-			if ($this->actionOpenRange($model->event_date,$model->cal_start_time,$model->cal_end_time,$model->facility_id,$model->lanes_requested,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true)) {
-				$model->conflict = 0;  $model->approved = 1; } else { $model->conflict = 1; }
+			$Req_Lanes = (new agcFacility)->getFacilRequiresLanes();
+			foreach ($Req_Lanes as $chk_rng) {
+				if (!empty($_POST['agccal-lanes_' . $chk_rng['facility_id']])) {
+					$req_num = (int)($_POST['agccal-lanes_' . $chk_rng['facility_id']]);
+					if($req_num > 0) { $reqLanesArray[$chk_rng['facility_id']] = $req_num; }
+				}
+			}
+			if (!empty($reqLanesArray)) {$model->lanes_req = stripslashes(json_encode($reqLanesArray, JSON_UNESCAPED_SLASHES));}
+
+			if ($this->actionOpenRange($model->event_date,$model->cal_start_time,$model->cal_end_time,$model->facility_id,$model->lanes_req,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true)) {
+				$model->conflict = 0; } else { $model->conflict = 1; }
 
 			if(isset($model->recurrent_start_date)) {
 				$model->recurrent_start_date = date('Y-m-d H:i:s',strtotime('2000 '.$model->recurrent_start_date));
@@ -724,7 +727,7 @@ class CalendarController extends AdminController {
 
 					AgcCal::UpdateAll(['club_id'=>$model->club_id, 'event_name'=>$model->event_name, 'key_words'=>$model->key_words, 'recur_week_days'=>$model->recur_week_days], 'recurrent_calendar_id = '.$model->calendar_id);
 
-					AgcCal::UpdateAll(['facility_id'=>$model->facility_id, 'lanes_requested'=>$model->lanes_requested, 'event_status_id'=>$model->event_status_id, 'range_status_id'=>$model->range_status_id,
+					AgcCal::UpdateAll(['facility_id'=>$model->facility_id, 'lanes_req'=>$model->lanes_req, 'event_status_id'=>$model->event_status_id, 'range_status_id'=>$model->range_status_id,
 						'cal_start_time'=>$model->cal_start_time, 'cal_end_time'=>$model->cal_end_time, 'deleted'=>$model->deleted, 'poc_badge'=>$model->poc_badge],
 						"recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
 
@@ -755,8 +758,18 @@ class CalendarController extends AdminController {
 	//} else { Yii::$app->getSession()->setFlash('error', 'Record Moved.');return $this->redirect(['/calendar/index']); }
 	}
 
+	public function actionView($id) {
+		$model = $this->findModel($id);
+		if ($model) {
+			return $this->render('view', [
+				'model' => $model,
+			]);
+		} else {
+			return $this->redirect(['index']);
+		}
+	}
+
 	public function actionViewitem($calendar_id) {
-		//$model = Badges::find()->where(['badge_number'=>$badge_number])->one();
 		$model = $this->findModel($calendar_id);
 		if ($model) {
 			return $this->render('viewitem', [
@@ -765,19 +778,16 @@ class CalendarController extends AdminController {
 		} else {
 			return $this->redirect(['list']);
 		}
-	} //this->renderPartial('_badge-print-view',['model'=>$badgeModel,
+	}
 
 	public function loadDirtyFilds($model) {
-		$model->active	= (int)$model->active;
-		$model->approved= (int)$model->approved;
 		$model->deleted = (int)$model->deleted;
 		$model->recur_every = (int)$model->recur_every;
 		$model->recurrent_calendar_id = (int)$model->recurrent_calendar_id;
-		$model->lanes_requested= (int)$model->lanes_requested;
+		$clean_json = trim($model->facility_id, "'");
+		$model->facility_id = preg_replace('/\[\s*,/', '[', $clean_json);
 		$items=$model->getDirtyAttributes();
 		$obejectWithkeys = [
-			'active' => 'Active',
-			'approved' => 'Approved',
 			'club_id' => 'Club',
 			'conflict' => 'Conflict',
 			'deleted' => 'Deleted',
@@ -789,7 +799,7 @@ class CalendarController extends AdminController {
 			'event_status_id' => 'Event Status',
 			'facility_id' => 'Facility',
 			'key_words' => 'Key Words',
-			'lanes_requested' => 'lanes Requested',
+			'lanes_req' => 'lanes Requested',
 			'range_status_id' => 'Range Status',
 			'recur_every' => 'Recure every',
 			'recurrent_calendar_id' => 'Recurrent Parrent ID',
@@ -1019,21 +1029,19 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 			$model_event->cal_start_time	 	= $model->cal_start_time;
 			$model_event->cal_end_time 			= $model->cal_end_time;
 			$model_event->date_requested 	= $model->date_requested;
-			$model_event->lanes_requested 	= $model->lanes_requested;
+			$model_event->lanes_req		 	= $model->lanes_req;
 			$model_event->recur_every 		= $model->recur_every;
 			$model_event->recur_week_days 	= $model->recur_week_days;
 			$model_event->recurrent_start_date = $model->recurrent_start_date;
 			$model_event->recurrent_end_date = $model->recurrent_end_date;
 			$model_event->event_status_id 	= $model->event_status_id;
 			$model_event->range_status_id 	= $model->range_status_id;
-			if ($this->actionOpenRange($eDate,$model_event->cal_start_time,$model_event->cal_end_time,$model_event->facility_id,$model_event->lanes_requested,0,$model->recur_week_days,$model->event_status_id,true,$force_order,$tst)) {
-				$model_event->conflict = 0; $model_event->approved =1;
+			if ($this->actionOpenRange($eDate,$model_event->cal_start_time,$model_event->cal_end_time,$model_event->facility_id,$model_event->lanes_req,0,$model->recur_week_days,$model->event_status_id,true,$force_order,$tst)) {
+				$model_event->conflict = 0;
 			} else {
-				$model_event->conflict = 1; $model_event->approved =0;
+				$model_event->conflict = 1;
 			}
-			//$model_event->approved 			= $model->approved;
 			$model_event->deleted 			= $model->deleted;
-			$model_event->active 			= $model->active;
 			if(!$model->rollover) { $model_event->rollover = 0; } else { $model_event->rollover = $model->rollover; }
 			$model_event->time_format 		= 1;
 			$model_event->poc_badge 		= $model->poc_badge;

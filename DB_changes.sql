@@ -950,11 +950,11 @@ ALTER TABLE `BadgeDB`.`event_attendee`
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_cal_event` AS
 	SELECT cc.calendar_id, cc.event_date, cc.cal_start_time, cc.cal_end_time, cc.event_name, cc.cal_inst, cc.credit_hours, cc.poc_badge, ces.name AS event_status_name, clubs.club_name, clubs.short_name, allow_guests, track_wristbands, is_volunteer
-	FROM cal_calendar cc LEFT JOIN cal_event_status ces ON cc.event_status_id = ces.event_status_id Left join clubs on cc.club_id = clubs.club_id WHERE cc.deleted = 0 and cc.`active`=1 and cc.is_event=1 order by event_date desc;
+	FROM cal_calendar cc LEFT JOIN cal_event_status ces ON cc.event_status_id = ces.event_status_id Left join clubs on cc.club_id = clubs.club_id WHERE cc.deleted = 0 and cc.is_event=1 order by event_date desc;
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_event_att` AS
-	SELECT ea_calendar_id, COUNT(ea_badge) AS attended_badges,count(ea_f_name) AS attended_guests
-	FROM event_attendee GROUP BY ea_calendar_id;
+	SELECT ea_calendar_id, COUNT(ea_badge) AS attended_badges, COUNT(ea_f_name) AS attended_guests, SUM(CASE WHEN ea_wb_out = 0 THEN 1 ELSE 0 END) AS wb_out_zero
+	FROM event_attendee GROUP BY ea_calendar_id ORDER BY ea_calendar_id DESC;
 
 CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_events` AS
     SELECT vea.ea_calendar_id, vea.attended_badges, vea.attended_guests, vce.event_date, vce.cal_start_time, vce.cal_end_time, vce.event_name, vce.event_status_name, vce.club_name, vce.short_name, vce.poc_badge, vce.allow_guests, vce.track_wristbands, vce.cal_inst, vce.is_volunteer, vce.credit_hours
@@ -981,8 +981,6 @@ UPDATE `BadgeDB`.`cal_event_status` SET `is_volunteer` = '1' WHERE (`event_statu
 UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `track_wristbands` = '0' WHERE (`event_status_id` = '8');
 UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `track_wristbands` = '1' WHERE (`event_status_id` = '20');
 
-
-
 -- ################################
 -- ## Run very carfully
 CREATE OR REPLACE VIEW view_new_event_ids AS 
@@ -1001,3 +999,8 @@ SET ea.ea_calendar_id = v.calendar_id;
 
 drop view view_new_event_ids;
 -- ################################
+
+ALTER TABLE `BadgeDB`.`cal_calendar` 
+	DROP COLUMN `lanes_requested`,
+	DROP COLUMN `approved`,
+	DROP COLUMN `active`;

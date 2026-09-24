@@ -30,7 +30,6 @@ if (array_intersect(json_decode($model->facility_id),array_column($Req_Lanes,'fa
     $allowLanes = true;
 } else {
     $allowLanes = false;
-    $model->lanes_requested = 0;
 }
 $is_club = ArrayHelper::getColumn(clubs::find()->where(['status'=>0,'is_club'=>1])->orderBy(['club_name'=>SORT_ASC])->asArray()->all(), 'club_id');
 $CanVolunteer = agcEventStatus::getCanVolunteer();
@@ -146,10 +145,18 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		echo $form->field($model, 'facility_id')->dropDownList($ary_fac,['value'=>json_decode($model->facility_id),'prompt'=>'Select', 'id'=>'agccal-facility_id','multiple'=>true]).PHP_EOL;
 	?>
     </div>
-<?php foreach ($Req_Lanes as $aLane) {
-	if (strstr($aLane['name'], '(') ) { $lane_name= trim(strstr($aLane['name'], '(', true)); } else { $lane_name = $aLane['name']; }
-	if (in_array($aLane['facility_id'], json_decode($model->facility_id))) { $lnShow = ""; } else { $lnShow = ' style="display:none"'; }
-	if (!empty($model->lanes_req[$aLane['facility_id']])) { $LnValue = $model->lanes_req[$aLane['facility_id']] ; } else { $LnValue = '' ; }
+<?php 
+	$Lanes_Requested=json_decode($model->lanes_req);
+	foreach ($Req_Lanes as $aLane) {
+		$require_ln_id = $aLane['facility_id'];
+		if (strstr($aLane['name'], '(') ) { $lane_name= trim(strstr($aLane['name'], '(', true)); } else { $lane_name = $aLane['name']; }
+		if (in_array($aLane['facility_id'], json_decode($model->facility_id))) {
+			$lnShow = "";
+			$LnValue = $Lanes_Requested->$require_ln_id;
+		} else {
+			$LnValue = '' ;
+			$lnShow = ' style="display:none"';
+		}
 ?>	<div class="col-xs-6 col-sm-3 col-md-3 col-lg-2" id="div_agccal_lane<?=$aLane['facility_id']?>" <?=$lnShow?>>
 		<?php echo Html::label($lane_name." Lanes"), PHP_EOL; ?>
 		<?php echo Html::textinput("agccal-lanes_".$aLane['facility_id'] ,$LnValue,['class'=>"form-control",'id'=>'agccal-lanes_'.$aLane['facility_id']]), PHP_EOL; ?>
@@ -192,12 +199,6 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 	<div class="col-xs-6 col-sm-2">
 		<?= $form->field($model, 'range_status_id')->DropDownList($ary_range,['value'=> $model->range_status_id]).PHP_EOL; ?>
 	</div>
-	<div class="col-xs-6 col-sm-2 col-md-2 col-lg-2">
-        <?= $form->field($model, 'active')->DropDownList(['1'=>'Yes','0'=>'No'],['value'=> $model->isNewRecord ? 1 : $model->active ]) ?>
-    </div>
-    <div class="col-xs-6 col-sm-2 col-md-2 col-lg-2" <?php if(!yii::$app->controller->hasPermission('calendar/approve')) {echo 'style="display:none"';} ?> >
-        <?= $form->field($model, 'approved')->DropDownList(['1'=>'Yes','0'=>'No']) ?>
-    </div>
     <div class="col-xs-6 col-sm-2 col-md-2 col-lg-2">
         <?= $form->field($model, 'poc_badge')->textInput(['maxlength'=>true,'readonly'=>yii::$app->controller->hasPermission('calendar/all')? false : true]) ?>
     </div>
@@ -659,9 +660,11 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
         document.getElementById("pat_yr_mon_d").innerHTML = str;
     });
 
-    $("#agccal-lanes_requested").change(function(e) {
+<?php  foreach ($Req_Lanes as $aLane) { ?>
+    $("#agccal-lanes_<?=$aLane['facility_id']?>").change(function(e) {
         OpenRange();
     });
+<?php } ?>
 
     $("#agccal-event_date").change(function(e) {
         OpenRange();
@@ -818,6 +821,8 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 									link.textContent = eventItem.cal_id;
 									cell1.appendChild(link);
 									cell2.textContent = eventItem.fac_name || '';
+									cell2.style.whiteSpace = "normal";
+									cell2.style.wordBreak = "break-word";
 									cell3.textContent = eventItem.club || '';
 									cell4.textContent = eventItem.name || '';
 									cell5.textContent = eventItem.start || '';
