@@ -152,7 +152,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		if (strstr($aLane['name'], '(') ) { $lane_name= trim(strstr($aLane['name'], '(', true)); } else { $lane_name = $aLane['name']; }
 		if (in_array($aLane['facility_id'], json_decode($model->facility_id))) {
 			$lnShow = "";
-			$LnValue = $Lanes_Requested->$require_ln_id;
+			$LnValue = ($Lanes_Requested->$require_ln_id ?? 0);
 		} else {
 			$LnValue = '' ;
 			$lnShow = ' style="display:none"';

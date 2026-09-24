@@ -416,7 +416,10 @@ class CalendarController extends AdminController {
 				$obj->eve_status_name = $item->agcEventStatus->name ?? '';
 				$obj->range_status_id = $item->range_status_id;
 				$obj->rng_status_name = $item->agcRangeStatus->name ?? '';
-				$obj->lanes_req = $item->lanes_req;
+				$item_lanes_req = is_array($item->lanes_req)
+					? $item->lanes_req
+					: (json_decode((string)$item->lanes_req, true) ?? []);
+				$obj->lanes_req = $item_lanes_req;
 
 				$type_i = match(true) {
 					$obj->event_status_id == 18 => 1,
@@ -434,8 +437,9 @@ class CalendarController extends AdminController {
 				if ($force_order && ((int)$rng_pri < (int)$type_i)) {
 					$obj->lanes = 0;
 				} else {
-					$lanes_used[$f_id] = ($lanes_used[$f_id] ?? 0) + ($item->lanes_req[$f_id] ?? 0);
-					$obj->lanes = ($item->lanes_req[$f_id] ?? 0);
+					$lanes_requested = (int)($item_lanes_req[$f_id] ?? 0);
+					$lanes_used[$f_id] = (int)($lanes_used[$f_id] ?? 0) + $lanes_requested;
+					$obj->lanes = $lanes_requested;
 				}
 
 				$found[$f_id][] = $obj;
@@ -502,7 +506,7 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:361 lanes',
 								foreach ($found[$fas->facility_id] as $overwrite) {
 									if ((int)$rng_pri < (int)$overwrite->type_i) {
 										AgcCal::updateAll(['conflict' => 1], ['calendar_id' => $overwrite->cal_id]);
-										$opened_lanes += $overwrite->lanes_req;
+										$opened_lanes += (int)$overwrite->lanes;
 									}
 									if ($Facl_Lanes_Req + $Facl_Lanes_Used - $opened_lanes <= $Range_available_lanes) {
 										break;
