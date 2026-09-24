@@ -272,7 +272,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	</div>
 
 	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2 pull-right">
-		<?php if (yii::$app->controller->hasPermission('calendar/create')) { ?>
+		<?php if ((yii::$app->controller->hasPermission('calendar/create')) && ($urlStatus['actionId'] == 'index' || $urlStatus['actionId'] == 'recur')) { ?>
 		<div class="btn btn-group pull-right">
 		<?php if($urlStatus['actionId']=='recur') {$extra='?recur=1';} else {$extra='';} ?>
 			<?= Html::a('Create Event', ['create'.$extra], ['class' => 'btn btn-success']) ?>

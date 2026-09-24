@@ -66,6 +66,15 @@ class CalendarController extends AdminController {
 			];
 			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 
+			$Req_Lanes = (new agcFacility)->getFacilRequiresLanes();
+			foreach ($Req_Lanes as $chk_rng) {
+				if (!empty($_POST['agccal-lanes_' . $chk_rng['facility_id']])) {
+					$req_num = (int)($_POST['agccal-lanes_' . $chk_rng['facility_id']]);
+					if($req_num > 0) { $reqLanesArray[$chk_rng['facility_id']] = $req_num; }
+				}
+			}
+			if (!empty($reqLanesArray)) {$model->lanes_req = stripslashes(json_encode($reqLanesArray, JSON_UNESCAPED_SLASHES));}
+
 			if($model->recur_every) {
 				if(isset($model->recurrent_start_date)) {
 					$model->recurrent_start_date = date('Y-m-d H:i:s',strtotime(date('Y')." ".$model->recurrent_start_date));
