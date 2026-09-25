@@ -243,8 +243,6 @@ class CalendarController extends AdminController {
 
 		$this->view->params['hideBackButton'] = true;
 
-		//if (!empty($searchModel->pagesize)) {$dataProvider->pagination->pageSize = $searchModel->pagesize;}
-
 		$models = $dataProvider->getModels();
 		$groupedModels = ArrayHelper::index($models, null, function ($models) {
 			// Returns '2026-08-27' or similar to use as the array key
@@ -252,12 +250,6 @@ class CalendarController extends AdminController {
 		});
 
 		$rowCount = count($models);
-		//yii::$app->controller->createLog(true, 'trexrowCount', var_export($rowCount,true));
-	//	$pageCount = 0;
-	//	if ($dataProvider->getPagination() !== false) {
-	//		$pageCount = $dataProvider->getPagination()->getPageCount();
-	//	}
-
 
 		return $this->render('list', [
 			'searchModel' => $searchModel,
@@ -280,7 +272,7 @@ class CalendarController extends AdminController {
 		if ($tst) {
 			Yii::$app->controller->createCalLog(
 				true,
-				'trex_B_C_CalC:273 OpenRange',
+				'trex_B_C_CalC:275 OpenRange',
 				'eDate: ' . $eDate
 					. ', start: ' . $start
 					. ', stop: ' . $stop
@@ -368,7 +360,7 @@ class CalendarController extends AdminController {
 		$model = $query->all();
 
 		if ($tst) {
-			Yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:301', $query->createCommand()->rawSql);
+			Yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:363', $query->createCommand()->rawSql);
 		}
 
 		// Determine current booking priority level
@@ -399,7 +391,7 @@ class CalendarController extends AdminController {
 
 		if ($model) {
 			if ($tst) {
-				Yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:467 isAval', var_export($model, true));
+				Yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:394 isAval', var_export($model, true));
 			}
 
 			$i = 0;
@@ -456,8 +448,8 @@ class CalendarController extends AdminController {
 			}
 
 			if ($tst && !empty($found)) {
-				yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:361 found', var_export($found,true));
-				Yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:362 lanes_used', var_export($lanes_used, true));
+				yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:451 found', var_export($found,true));
+				Yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:452 lanes_used', var_export($lanes_used, true));
 			}
 
 			$full_msg = '';
@@ -505,7 +497,7 @@ class CalendarController extends AdminController {
 						$isAval = false;
 						$msg = '<b style="color:red;">Please Provide Requested lanes (Up to ' . $Range_available_lanes . ')</b>';
 					} else if ($Facl_Lanes_Req + $Facl_Lanes_Used > $Range_available_lanes) {
-if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:361 lanes', "$Facl_Lanes_Req + $Facl_Lanes_Used > $Range_available_lanes"); }
+if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes', "$Facl_Lanes_Req + $Facl_Lanes_Used > $Range_available_lanes"); }
 
 						$HeavyCheckResult = $this->HeavyCheck($start_m, $stop_m, $fas->facility_id, $found[$fas->facility_id] ?? [], $Facl_Lanes_Req, $Range_available_lanes);
 						if ($HeavyCheckResult['status'] == 'Full') {
@@ -570,7 +562,7 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:361 lanes',
 			// Guarantee a perfect 2-digit string format (e.g., 08, 09, 10)
 			$chk_time = sprintf('%02d', $hr);
 
-	//Yii::$app->controller->createCalLog(false, 'trex-Heavy_Req:494 ', $chk_time);
+	//Yii::$app->controller->createCalLog(false, 'trex-Heavy_Req:565 ', $chk_time);
 			foreach ([':01', ':16', ':31', ':46'] as $min) {
 				$chk_lns_used = $rng_requ;
 				$checking = $chk_time . $min;
@@ -595,7 +587,7 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:361 lanes',
 						$chk_lns_used += (int)$recheck->lanes_req[$facil_id];
 					}
 				}
-	//Yii::$app->controller->createCalLog(false, 'trex-Heavy_Req:522 ', $checking . " - " . $chk_lns_used);
+	//Yii::$app->controller->createCalLog(false, 'trex-Heavy_Req:590 ', $checking . " - " . $chk_lns_used);
 
 				if ($max_used < $chk_lns_used) {
 					$max_used = $chk_lns_used;
@@ -611,7 +603,7 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:361 lanes',
 				}
 			}
 		}
-	//Yii::$app->controller->createCalLog(false, 'trex-Heavy_Req:539 ', 'Space! ' . $max_used);
+	//Yii::$app->controller->createCalLog(false, 'trex-Heavy_Req:606 ', 'Space! ' . $max_used);
 		return ['status' => 'Open', 'msg' => ($rng_limit - $max_used) . ' Lanes'];
 	}
 
@@ -754,10 +746,10 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:361 lanes',
 					if ((int)$model->event_status_id==19) { $model->range_status_id = 1; $model->save(); }
 				}
 			} else {
-				yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:674', 'save error');
+				yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:749', 'save error');
 				Yii::$app->getSession()->setFlash('error', 'Something Went Wrong');
 			}
-			yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:677', 'updated');
+			yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:752', 'updated');
 			return $this->redirect(['update','id' => $id,'hideRepub'=>"no"]);
 
 
@@ -908,7 +900,7 @@ $eco=false;
 				$datesFound = $this->getEventDates($eStart,$eEnd,$ePat,date('Y'),$eco);
 			}
 		}
-		if($eco) {yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:821', var_export($datesFound,true));}
+		if($eco) {yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:903', var_export($datesFound,true));}
 		return $datesFound;
 	}
 
@@ -925,7 +917,7 @@ if($eco) { echo "<hr />GetEventDates: Start: $eStart, End: $eEnd, Pat: $ePat, yr
 if($eco) {
 	echo "Yr: $whatYear <br> Start: ". date('Y-m-d',$Date_Start)." = $Date_Start,<br> Stop: ".date('Y-m-d',$Date_Stop)." = $Date_Stop, <br>Direction: $dayCnt. <hr> Pattern: $ePat <br />";
 	print_r( $myPat);
-	yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:838', var_export($myPat,true));
+	yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:920', var_export($myPat,true));
 	echo " <hr> <br>"; }
 
 		if (isset($myPat->daily)) {
@@ -1026,7 +1018,7 @@ if($eco) { echo "using $myYear<br/>"; }
 
 	private function createRecCalEvent($model,$myEventDates,$force_order=false,$is_new=false,$tst=false) {
 		$NewID = false; $first_id=false;
-if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:939','forcing_Order RecCalEvent');} }
+if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:1021','forcing_Order RecCalEvent');} }
 		$model_event = new AgcCal();
 		foreach($myEventDates as $eDate) {
 			if (((strtotime(yii::$app->controller->getNowTime()) > strtotime($model->event_date)) && ($eDate == $model->event_date)) ||
