@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * CalendarController implements the CRUD actions for Calendar model.
@@ -29,7 +30,8 @@ class CalendarController extends AdminController {
 			'verbs' => [
 				'class' => VerbFilter::className(),
 				'actions' => [
-				//	'delete' => ['POST'],
+					'delete' => ['POST'],
+				//	'recheck-future-conflicts' => ['POST'],
 				],
 			],
 		];
@@ -537,11 +539,11 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 			$returnMsg = ['status' => 'success', 'msg' => 'Facility is Available', 'ln' => 447];
 		}
 		$returnMsg = array_merge($returnMsg, $inPattern);
-		if (Yii::$app->request->isAjax) {
+		if ($internal) {
+			return $isAval;
+		} elseif (Yii::$app->request->isAjax) {
 			Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 			return $returnMsg;
-		} elseif ($internal) {
-			return $isAval;
 		} else {
 			return $this->render('test', ['pattern' => $pattern, 'returnMsg' => $returnMsg, 'rng_pri' => $rng_pri]);
 		}
@@ -605,6 +607,76 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 		}
 	//Yii::$app->controller->createCalLog(false, 'trex-Heavy_Req:606 ', 'Space! ' . $max_used);
 		return ['status' => 'Open', 'msg' => ($rng_limit - $max_used) . ' Lanes'];
+	}
+
+	public function actionRecheckFutureConflicts() {  //  use with  /calendar/recheck-future-conflicts?year=2026&month=11
+		Yii::$app->response->format = Response::FORMAT_JSON;
+
+		$params = array_merge(Yii::$app->request->getQueryParams(), Yii::$app->request->getBodyParams());
+		$year = filter_var($params['year'] ?? null, FILTER_VALIDATE_INT);
+		$month = filter_var($params['month'] ?? null, FILTER_VALIDATE_INT);
+		if ($year === false || $year < 1 || $year > 9999 || $month === false || !checkdate($month, 1, $year)) {
+			Yii::$app->response->statusCode = 400;
+			return [
+				'success' => false,
+				'msg' => 'Provide a valid year and month (1-12).',
+			];
+		}
+
+		$monthStart = sprintf('%04d-%02d-01', $year, $month);
+		$nextMonthStart = (new \DateTimeImmutable($monthStart))->modify('+3 month')->format('Y-m-d');
+		$checked = 0;
+		$newConflicts = 0;
+		$clearedConflicts = 0;
+		$conflictIds = [];
+
+		$events = AgcCal::find()
+			->where(['deleted' => 0])
+			->andWhere(['<>', 'event_status_id', 19])
+			->andWhere(['>=', 'event_date', $monthStart])
+			->andWhere(['<', 'event_date', $nextMonthStart])
+			->orderBy(['event_date' => SORT_ASC, 'cal_start_time' => SORT_ASC]);
+
+		foreach ($events->each() as $event) {
+			$hasConflict = !$this->actionOpenRange(
+				$event->event_date,
+				$event->cal_start_time,
+				$event->cal_end_time,
+				$event->facility_id,
+				$event->lanes_req ?: '{}',
+				$event->calendar_id,
+				$event->recur_week_days ?: '',
+				$event->event_status_id,
+				true
+			);
+			$checked++;
+
+			$newConflictValue = $hasConflict ? 1 : 0;
+			if ((int)$event->conflict !== $newConflictValue) {
+				$event->updateAttributes(['conflict' => $newConflictValue]);
+				if ($hasConflict) {
+					$newConflicts++;
+				} else {
+					$clearedConflicts++;
+				}
+			}
+
+			if ($hasConflict) {
+				$conflictIds[] = (int)$event->calendar_id;
+			}
+		}
+
+		AgcCal::markConflicts($conflictIds);
+
+		return [
+			'success' => true,
+			'year' => $year,
+			'month' => $month,
+			'checked' => $checked,
+			'newConflicts' => $newConflicts,
+			'clearedConflicts' => $clearedConflicts,
+			'conflictIds' => $conflictIds,
+		];
 	}
 
 	public function actionRecur() {

@@ -22,6 +22,21 @@ class AgcCal extends \yii\db\ActiveRecord {
         return 'cal_calendar';
     }
 
+	public static function markConflicts(array $calendarIds) {
+		$calendarIds = array_values(array_unique(array_filter(
+			array_map('intval', $calendarIds),
+			static function ($calendarId) {
+				return $calendarId > 0;
+			}
+		)));
+
+		if (empty($calendarIds)) {
+			return 0;
+		}
+
+		return static::updateAll(['conflict' => 1], ['calendar_id' => $calendarIds]);
+	}
+
     /**
      * @inheritdoc
      */
@@ -100,4 +115,3 @@ class AgcCal extends \yii\db\ActiveRecord {
 		}
 	}
 }
-
