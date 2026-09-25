@@ -609,22 +609,23 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 		return ['status' => 'Open', 'msg' => ($rng_limit - $max_used) . ' Lanes'];
 	}
 
-	public function actionRecheckFutureConflicts() {  //  use with  /calendar/recheck-future-conflicts?year=2026&month=11
+	public function actionRecheckFutureConflicts() {  //  use with  /calendar/recheck-future-conflicts?year=2027&month=1&span=3
 		Yii::$app->response->format = Response::FORMAT_JSON;
 
 		$params = array_merge(Yii::$app->request->getQueryParams(), Yii::$app->request->getBodyParams());
 		$year = filter_var($params['year'] ?? null, FILTER_VALIDATE_INT);
 		$month = filter_var($params['month'] ?? null, FILTER_VALIDATE_INT);
-		if ($year === false || $year < 1 || $year > 9999 || $month === false || !checkdate($month, 1, $year)) {
+		$span = filter_var($params['span'] ?? 1, FILTER_VALIDATE_INT);
+		if ($year === false || $year < 1 || $year > 9999 || $month === false || !checkdate($month, 1, $year) || $span === false || $span < 1) {
 			Yii::$app->response->statusCode = 400;
 			return [
 				'success' => false,
-				'msg' => 'Provide a valid year and month (1-12).',
+				'msg' => 'Provide a valid year, month (1-12), and positive span.',
 			];
 		}
 
 		$monthStart = sprintf('%04d-%02d-01', $year, $month);
-		$nextMonthStart = (new \DateTimeImmutable($monthStart))->modify('+3 month')->format('Y-m-d');
+		$nextMonthStart = (new \DateTimeImmutable($monthStart))->modify("+{$span} months")->format('Y-m-d');
 		$checked = 0;
 		$newConflicts = 0;
 		$clearedConflicts = 0;
@@ -670,8 +671,9 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 
 		return [
 			'success' => true,
-			'year' => $year,
-			'month' => $month,
+			'Search Start' => $monthStart,
+			'Search End' => $nextMonthStart,
+			'span' => $span,
 			'checked' => $checked,
 			'newConflicts' => $newConflicts,
 			'clearedConflicts' => $clearedConflicts,
