@@ -131,6 +131,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $calendarPermission = [
 		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update'],
+		'Events' => ['events/index','events/add-att','events/create','events/reg','events/view'],
 		'Guest' => ['guest/update'],
 	];
 
@@ -142,6 +143,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $shootPermission = [
 		'Calendar' => ['calendar/all','calendar/shoot'],
+		'Events' => ['events/index','events/add-att','events/create','events/reg','events/view'],
 	];
 
 	public $AllPermission = [

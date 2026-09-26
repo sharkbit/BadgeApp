@@ -59,10 +59,10 @@ class BadgesSearch extends Badges {
 
         $this->load($params);
 //yii::$app->controller->createLog(false, 'trex_M_S_BS params', var_export($params,true));
-		if(!isset($params['sort'])) { 
-			$query->orderBy( ['updated_at' => SORT_DESC] ); 
+		if(!isset($params['sort'])) {
+			$query->orderBy( ['updated_at' => SORT_DESC] );
 		}
-		
+
         $this->nowDateplus2 = date('Y', strtotime("+2 years",strtotime(yii::$app->controller->getNowTime())));
         $this->nowDateMin2 = date('Y', strtotime("-2 years",strtotime(yii::$app->controller->getNowTime())));
         $this->nowDate = date('Y',strtotime(yii::$app->controller->getNowTime()));
@@ -103,7 +103,7 @@ class BadgesSearch extends Badges {
             $expireDateRange[0] = date('Y-m-d',strtotime($tempexpireDateRange[0]));
             $expireDateRange[1] = date('Y-m-d',strtotime($tempexpireDateRange[1]));
         }
-        
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -120,15 +120,15 @@ class BadgesSearch extends Badges {
         if(isset($this->club_id) && ($this->club_id <>'')) {
 			$query->andWhere("badges.badge_number IN (SELECT badge_number FROM badge_to_club WHERE club_id=".$this->club_id.")"); }
 
-		if(isset($this->badge_number)) { 
+		if(isset($this->badge_number)) {
 			$this->badge_number=ltrim($this->badge_number, '0');
-			$query->andFilterWhere(['badges.badge_number'=>$this->badge_number]);  
+			$query->andFilterWhere(['badges.badge_number'=>$this->badge_number]);
 		}
 		if(isset($this->first_name)) { $query->andFilterWhere(['like', 'first_name', $this->first_name]); }
 		if(isset($this->last_name)) { $query->andFilterWhere(['like', 'last_name', $this->last_name]); }
 		if(isset($this->suffix)) { $query->andFilterWhere(['like', 'suffix', $this->suffix]); }
 		if(isset($this->status)) { $query->andFilterWhere(['like', 'badges.status', $this->status]); }
-			
+
 //yii::$app->controller->createLog(true, 'trex-b-m-s-bs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
 		return $dataProvider;
     }
