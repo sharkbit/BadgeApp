@@ -34,7 +34,7 @@ class ViolationsController extends SiteController {
 		$model = new Violations();
 		
 		if ($model->load(Yii::$app->request->post())) {
-			$model->vi_rules = implode(", ",$model->vi_rules);
+			$model->vi_rules = implode(", ", $this->getSubmittedRules($model));
 			if(isset($model->badge_reporter)) {$model->badge_reporter = ltrim($model->badge_reporter, '0'); }
 			if(isset($model->badge_involved)) {$model->badge_involved = ltrim($model->badge_involved, '0'); }
 			if(isset($model->badge_witness)) {$model->badge_witness = ltrim($model->badge_witness, '0'); }
@@ -130,7 +130,7 @@ class ViolationsController extends SiteController {
 			$violations->vi_type = $model->vi_type;
 			$violations->vi_override = $model->vi_override;
 			$violations->vi_sum = trim($model->vi_sum);
-			$violations->vi_rules = implode(", ",$model->vi_rules);
+			$violations->vi_rules = implode(", ", $this->getSubmittedRules($model));
 			$violations->vi_report = trim($model->vi_report);
 			$violations->was_guest = $model->was_guest;
 			$violations->vi_action = trim($model->vi_action);
@@ -178,5 +178,18 @@ class ViolationsController extends SiteController {
 		} else {
 			throw new NotFoundHttpException('The requested page does not exist.');
 		}
+	}
+
+	private function getSubmittedRules($model) {
+		$attributes = Yii::$app->request->post($model->formName(), []);
+		$rules = isset($attributes['vi_rules']) ? $attributes['vi_rules'] : [];
+
+		if (!is_array($rules)) {
+			return [];
+		}
+
+		return array_values(array_filter($rules, function ($rule) {
+			return is_string($rule) && $rule !== '';
+		}));
 	}
 }
