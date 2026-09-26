@@ -30,6 +30,7 @@ class Events extends \yii\db\ActiveRecord{
         return [
 			'cal_start_time' => 'Start Time',
 			'cal_end_time' => 'End Time',
+			'club_id' => 'Club Name',
 			'event_status_name'=>'Event Status',
 			'wb_out_zero' => 'Wristbands Out'
        ];
