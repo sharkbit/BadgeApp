@@ -23,7 +23,7 @@ class CalendarController extends AdminController {
 	  * @inheritdoc
 	 */
 
-	public $myFilters = ['SearchTime','club_id','event_name','event_status_id','range_status_id','facility_id','recur_week_days'];
+	public $myFilters = ['SearchTime','club_id','event_name','event_date','event_status_id','range_status_id','facility_id','recur_week_days','key_words','showed_up'];
 
 	public function behaviors() {
 		return [

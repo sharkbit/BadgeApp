@@ -15,8 +15,8 @@ class EventsSearch extends Events {
 
     public function rules() {
         return [
-			//[['sponsor'], 'integer'],
-            [['event_name','event_status_name','club_name','short_name'], 'safe']
+			[['event_date', 'event_name',], 'safe'],
+            [['club_id','event_status_id'], 'integer'],
         ];
     }
 
@@ -27,7 +27,7 @@ class EventsSearch extends Events {
 
     public function search($params) {
         $query = Events::find();
-		
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -45,12 +45,12 @@ class EventsSearch extends Events {
         }
 
         // grid filtering conditions
-        if(isset($this->event_name)) { $query->andFilterWhere(['like','event_name',$this->event_name]); }
-	//	if(isset($this->e_poc)) {  $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->e_poc."%'"); }
-		if(isset($this->event_status_name)) { $query->andFilterWhere(['event_status_name'=>$this->event_status_name]); }
-		if(isset($this->club_name)) { $query->andFilterWhere(['club_name'=>$this->club_name]); }
-		if(isset($this->short_name)) { $query->andFilterWhere(['short_name'=>$this->short_name]); }
-
+		
+        if(!empty($this->event_date)) {			$query->andFilterWhere(['like', 'event_date', $this->event_date]); }
+		if(!empty($this->club_id)) {  			$query->andFilterWhere(['club_id' => $this->club_id]); }
+		if(!empty($this->event_status_id)) {	$query->andFilterWhere(['event_status_id' => $this->event_status_id]); }
+		if(!empty($this->event_name)) {			$query->andFilterWhere(['like', 'event_name', $this->event_name]); }
+		
 //yii::$app->controller->createLog(true, 'trex-b-m-s-es', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }

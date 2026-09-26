@@ -2,9 +2,10 @@
 
 namespace backend\models;
 
-use Yii;
-use backend\models\Event_Att;
+
+use yii\db\Expression;
 use backend\models\clubs;
+use backend\models\agcEventStatus;
 
 /**
  * This is the model class for table "Events".
@@ -12,7 +13,7 @@ use backend\models\clubs;
 
 class Events extends \yii\db\ActiveRecord{
 	public $pagesize;
-	
+
     public static function tableName() {
         return 'view_events';
     }
@@ -20,7 +21,7 @@ class Events extends \yii\db\ActiveRecord{
     public function rules() {
         return [
            [['event_date','cal_start_time','cal_end_time'], 'safe'],
-           [['ea_calendar_id','allow_guests','track_wristbands','is_volunteer'], 'number'],
+           [['attended_badges','attended_guests','club_id','ea_calendar_id','allow_guests','track_wristbands','is_volunteer','wb_out_zero'], 'number'],
 		   [['event_name','event_status_name','club_name','short_name'], 'string'],
        ];
     }
@@ -29,32 +30,33 @@ class Events extends \yii\db\ActiveRecord{
         return [
 			'cal_start_time' => 'Start Time',
 			'cal_end_time' => 'End Time',
-			'event_status_name'=>'Event Status'
+			'event_status_name'=>'Event Status',
+			'wb_out_zero' => 'Wristbands Out'
        ];
     }
-/*
-	public function getBadges() {
-		return $this->hasOne(\backend\models\Badges::classname(),['badge_number'=>'e_poc']);
-	}
 
-	public function getClubs() {
-		return $this->hasOne(clubs::classname(),['club_id'=>'sponsor']);
-	}
+	 public function getNewEvents() {
+		$eventsToday = Events::find()
+			->select('ea_calendar_id')
+			->where(['event_date' => new Expression('CURRENT_DATE')]);
 
-	public function getEvent_Att() {
-		return (New Event_Att)->find()->where(['ea_calendar_id'=>$this->e_id,'ea_wb_out'=>1])->andwhere(['>','ea_wb_serial',0])->count();
-    }
-	
-	public function getEventdata ($event_id) {
-		$sql="select (select count(*) FROM BadgeDB.event_attendee where ea_badge > 0 and ea_calendar_id=$event_id) as badge, ".
-			"(select count(*) FROM BadgeDB.event_attendee where ea_badge is null and ea_calendar_id=$event_id) as student ";
-	   	$command = Yii::$app->db->createCommand($sql);
-		$event_attend = $command->queryAll();
-		if(isset($event_attend[0]['badge'])) {
-			return "b: ".$event_attend[0]['badge'].", s: ".$event_attend[0]['student'];
-		} else {
-			return 'no data';
-		}
-	}
-	*/
+		$calendarsWithoutEventsToday = AgcCal::find()
+			->alias('cal')
+			->select([
+				'cal.calendar_id',
+				'cal.event_name',
+				'cal.club_id',
+				'cal.event_status_id',
+				'club_name' => 'club.club_name',
+				'allow_guests',
+				'is_volunteer',
+				'track_wristbands'
+			])
+			->leftJoin(['club' => clubs::tableName()], 'club.club_id = cal.club_id')
+			->leftJoin(['agcEventStatus' => agcEventStatus::tableName()], 'agcEventStatus.event_status_id = cal.event_status_id')
+			->where(['cal.event_date' => new Expression('CURRENT_DATE')])
+			->andWhere(['not in', 'cal.calendar_id', $eventsToday])
+			->all();
+		return $calendarsWithoutEventsToday;
+	 }
 }

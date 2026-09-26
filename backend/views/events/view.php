@@ -237,6 +237,8 @@ if($att_count>0) {
 	  }
 	}
 
+	toggleaddPeeps();
+
 	$('#event_att-ea_badge').on('input', function() {
 		document.getElementById("event_att-ea_f_name").value='';
 		document.getElementById("event_att-ea_l_name").value='';

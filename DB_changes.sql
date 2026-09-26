@@ -949,7 +949,7 @@ ALTER TABLE `BadgeDB`.`event_attendee`
 	CHANGE COLUMN `ea_event_id` `ea_calendar_id` INT NOT NULL ;
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_cal_event` AS
-	SELECT cc.calendar_id, cc.event_date, cc.cal_start_time, cc.cal_end_time, cc.event_name, cc.cal_inst, cc.credit_hours, cc.poc_badge, ces.name AS event_status_name, clubs.club_name, clubs.short_name, allow_guests, track_wristbands, is_volunteer
+	SELECT cc.calendar_id, cc.event_date, cc.cal_start_time, cc.cal_end_time, cc.event_name, cc.cal_inst, cc.credit_hours, cc.poc_badge, ces.name AS event_status_name, ces.event_status_id, clubs.club_name, clubs.short_name, clubs.club_id, allow_guests, track_wristbands, is_volunteer
 	FROM cal_calendar cc LEFT JOIN cal_event_status ces ON cc.event_status_id = ces.event_status_id Left join clubs on cc.club_id = clubs.club_id WHERE cc.deleted = 0 and cc.is_event=1 order by event_date desc;
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_event_att` AS
@@ -957,7 +957,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DE
 	FROM event_attendee GROUP BY ea_calendar_id ORDER BY ea_calendar_id DESC;
 
 CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_events` AS
-    SELECT vea.ea_calendar_id, vea.attended_badges, vea.attended_guests, vce.event_date, vce.cal_start_time, vce.cal_end_time, vce.event_name, vce.event_status_name, vce.club_name, vce.short_name, vce.poc_badge, vce.allow_guests, vce.track_wristbands, vce.cal_inst, vce.is_volunteer, vce.credit_hours
+    SELECT vea.ea_calendar_id, vea.attended_badges, vea.attended_guests, vea.wb_out_zero, vce.event_date, vce.cal_start_time, vce.cal_end_time, vce.event_name, vce.event_status_name, vce.event_status_id, vce.club_name, vce.short_name, vce.club_id, vce.poc_badge, vce.allow_guests, vce.track_wristbands, vce.cal_inst, vce.is_volunteer, vce.credit_hours
     FROM `view_event_att` vea LEFT JOIN view_cal_event vce ON vea.ea_calendar_id = vce.calendar_id order by ea_calendar_id desc;
 
 UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( REPLACE(REPLACE(facility_id, '[', ''), ']', ''), lanes_requested ) WHERE lanes_requested > 0;

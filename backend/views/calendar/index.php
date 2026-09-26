@@ -9,14 +9,13 @@ use kartik\daterange\DateRangePicker;
 use kartik\widgets\ActiveForm;
 use kartik\export\ExportMenu;
 use yii\helpers\Html;
-/*use yii\grid\GridView; */
 use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
 
 $model = new AgcCal();
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\search\EventsSearch */
+/* @var $searchModel backend\models\search\AgcCalSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Calendar List';
@@ -44,15 +43,14 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 
 	<h2><?= Html::encode($this->title) ?></h2>
 <div class="row">
+<?php Pjax::begin(); ?>
 <?php $form = ActiveForm::begin([
 	'action' => [$urlStatus['actionId']],
-	'method' => 'post',
+	'method' => $urlStatus['actionId'] === 'conflict' ? 'post' : 'get',
 	'id'=>'calendarFilter',
 ]); ?>
 	<div class="col-xs-12">
-	<?php Pjax::begin(); 
-
-	$gridColumns = [
+	<?php $gridColumns = [
 			[	'attribute'=>'club_id',
 				'format'=>'raw',
 				'value'=>function($model) {
@@ -225,7 +223,6 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 			],
 		];
 		?>
-	<?php Pjax::end(); ?>
 <div class="calendar-index">
 <!--<div class="row"> -->
 
@@ -245,6 +242,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
 		<?= $form->field($model, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
 	</div>
+
 	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-3 col-xl-3"><br />
 		<?= Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Search', ['class' => 'btn btn-primary']) ?>
 		<?= Html::a('<i class="fa fa-eraser" aria-hidden="true"></i> Reset',[$urlStatus['actionId'].'?reset=true'], ['class' => 'btn btn-danger']) ?>
@@ -302,6 +300,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 
 </div>	
 <?php ActiveForm::end(); ?>
+<?php Pjax::end(); ?>
 
 </div>
 <p>* is a Recurring Event</p>
