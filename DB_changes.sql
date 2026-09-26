@@ -1004,3 +1004,19 @@ ALTER TABLE `BadgeDB`.`cal_calendar`
 	DROP COLUMN `lanes_requested`,
 	DROP COLUMN `approved`,
 	DROP COLUMN `active`;
+
+update BadgeDB.badge_subscriptions set payment_type ='oth' where payment_type='other';
+update BadgeDB.badge_subscriptions set payment_type ='cas' where payment_type='cash';
+update BadgeDB.badge_subscriptions set payment_type ='che' where payment_type='check';
+update BadgeDB.badge_subscriptions set payment_type ='cre' where payment_type='credit';
+update BadgeDB.badge_subscriptions set payment_type ='onl' where payment_type='online';
+update BadgeDB.badge_subscriptions set payment_type ='oth' where payment_type='';
+
+update BadgeDB.cc_receipts set tx_type ='oth' where tx_type='other';
+update BadgeDB.cc_receipts set tx_type ='cas' where tx_type='cash';
+update BadgeDB.cc_receipts set tx_type ='che' where tx_type='check';
+update BadgeDB.cc_receipts set tx_type ='cre' where tx_type='creditnow';
+update BadgeDB.cc_receipts set tx_type ='cre' where tx_type='credit';
+update BadgeDB.cc_receipts set tx_type ='onl' where tx_type='online';
+update BadgeDB.cc_receipts set tx_type ='oth' where tx_type='';
+

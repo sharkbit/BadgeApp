@@ -20,6 +20,7 @@ if (isset($_REQUEST['SalesSummary']['pagesize'])) {
 	$pagesize=200;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
+$myPaymentList = backend\controllers\PaymentController::GetPaymentTypes(false, false, true);
 
 echo $this->render('_view-tab-menu').PHP_EOL;
 ?>
@@ -62,6 +63,11 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 			],
 			'cat',
 			[	'attribute' => 'tx_type',
+				'value' => function($searchModel) use ($myPaymentList) {
+					return isset($myPaymentList[$searchModel->tx_type])
+						? $myPaymentList[$searchModel->tx_type]
+						: 'Not Available';
+				},
 				'filter' => Html::dropDownList('tx_type', $searchModel->tx_type, backend\controllers\PaymentController::GetPaymentTypes(false,false,true), ['id'=>'txsle2','class'=>'select2', 'multiple'=>true]),
 			],
 			'csku',
