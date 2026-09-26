@@ -48,12 +48,13 @@ class Events extends \yii\db\ActiveRecord{
 				'cal.club_id',
 				'cal.event_status_id',
 				'club_name' => 'club.club_name',
-				'allow_guests',
-				'is_volunteer',
-				'track_wristbands'
+				'event_status_name' => 'eventStatus.name',
+				'allow_guests' => 'eventStatus.allow_guests',
+				'is_volunteer' => 'eventStatus.is_volunteer',
+				'track_wristbands' => 'eventStatus.track_wristbands',
 			])
 			->leftJoin(['club' => clubs::tableName()], 'club.club_id = cal.club_id')
-			->leftJoin(['agcEventStatus' => agcEventStatus::tableName()], 'agcEventStatus.event_status_id = cal.event_status_id')
+			->leftJoin(['eventStatus' => agcEventStatus::tableName()], 'eventStatus.event_status_id = cal.event_status_id')
 			->where(['cal.event_date' => new Expression('CURRENT_DATE')])
 			->andWhere(['not in', 'cal.calendar_id', $eventsToday])
 			->all();

@@ -97,16 +97,15 @@ foreach($agc_event as $an_event){
 		<p id='event_name'>Regester for: </p>
 
 		<div id='reg_form' ><p id="event_notes"> </p>
-			<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_badge')->textInput().PHP_EOL; ?></div>
-		</div>
-
-		<div class="col-xs-6 col-sm-2"><p id="badge_name"> </p><br />
+			<div class="col-xs-6 col-sm-3"><?= $formR->field($event_model, 'ea_badge')->textInput().PHP_EOL; ?>
+				<p id="badge_name"> </p>
+			</div>
 		</div>
 		<div id="by_name" style="display:none;">
 			<div class="col-xs-12 col-sm-1"><h2>OR</h2></div>
-				<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_f_name')->textInput().PHP_EOL; ?></div>
-				<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_l_name')->textInput().PHP_EOL; ?></div>
-			<div class="col-xs-6 col-sm-2" id="e_serial" style="display:none;"><?= $formR->field($event_model, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
+			<div class="col-xs-6 col-sm-3 col-md-2"><?= $formR->field($event_model, 'ea_f_name')->textInput().PHP_EOL; ?></div>
+			<div class="col-xs-6 col-sm-3 col-md-2"><?= $formR->field($event_model, 'ea_l_name')->textInput().PHP_EOL; ?></div>
+			<div class="col-xs-6 col-sm-3 col-md-2" id="e_serial" style="display:none;"><?= $formR->field($event_model, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
 		</div>
 	</div>
 	<div class="col-xs-12" id="waver" style="display:none;"> <?php yii::$app->controller->getWaver();  ?> </div>

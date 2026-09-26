@@ -18,6 +18,7 @@ class AgcCal extends \yii\db\ActiveRecord {
 	public $pagesize;
 	public $rec_pat;
 	public $club_name;
+	public $event_status_name;
 	public $allow_guests;
 	public $is_volunteer;
 	public $track_wristbands;

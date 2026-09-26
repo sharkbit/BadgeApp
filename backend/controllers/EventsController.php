@@ -165,43 +165,63 @@ class EventsController extends AdminController {
     }
 
     public function actionReg($id,$badge=null,$f_name=null,$l_name=null,$e_wb=null) {
+		$isFormPost = Yii::$app->request->isPost && !Yii::$app->request->isAjax;
+		$success = false;
+		$message = 'Registration failed.';
+
 		if($badge>0){
-//			yii::$app->controller->createLog(false, 'trex_C_EC_reg', 'badge ');
 			$params = Params::findOne('1');
 			$isExpired = Badges::isExpired($badge,$params);
 			if(!$isExpired) {
 
 				$event_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_badge'=>$badge])->one();
 				if($event_chk) {
-					return json_encode(['success'=>true,'msg'=>'Badge already at Event.'],true);
+					$message = 'Badge already at Event.';
 				} else {
 					$event_attendee = new Event_Att;
 					$event_attendee->ea_calendar_id=$id;
 					$event_attendee->ea_badge=$badge;
-					$event_attendee->save();
-					return json_encode(['success'=>true,'msg'=>'Added Badge to Event.'],true);
+					if ($event_attendee->save()) {
+						$success = true;
+						$message = 'Added Badge to Event.';
+					} else {
+						$message = 'Could not add badge to event.';
+					}
 				}
 			} else {
-				return json_encode(['success'=>true,'msg'=>'Not an Active Member.'],true);
+				$message = 'Not an Active Member.';
 			}
 		} else {
-//			yii::$app->controller->createLog(false, 'trex_C_EC_reg', 'name ');
-			$f_name = ucfirst(trim($f_name));
-			$l_name = ucfirst(trim($l_name));
-			$event_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_f_name'=>$f_name,'ea_l_name'=>$l_name,])->one();
-			if($event_chk) {
-				return json_encode(['success'=>true,'msg'=>$f_name.' already at Event.'],true);
+			if (trim((string) $f_name) === '' || trim((string) $l_name) === '') {
+				$message = 'Please provide both first and last name.';
 			} else {
-				$event_attendee = new Event_Att;
-				$event_attendee->ea_calendar_id=$id;
-				if($e_wb) { $event_attendee->ea_wb_serial = $e_wb; }
-				$event_attendee->ea_f_name=$f_name;
-				$event_attendee->ea_l_name=$l_name;
-				$event_attendee->save();
-
-				return json_encode(['success'=>true,'msg'=>$f_name.' added to Event.'],true);
+				$f_name = ucfirst(trim($f_name));
+				$l_name = ucfirst(trim($l_name));
+				$event_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_f_name'=>$f_name,'ea_l_name'=>$l_name,])->one();
+				if($event_chk) {
+					$message = $f_name.' already at Event.';
+				} else {
+					$event_attendee = new Event_Att;
+					$event_attendee->ea_calendar_id=$id;
+					if($e_wb) { $event_attendee->ea_wb_serial = $e_wb; }
+					$event_attendee->ea_f_name=$f_name;
+					$event_attendee->ea_l_name=$l_name;
+					if ($event_attendee->save()) {
+						$success = true;
+						$message = $f_name.' added to Event.';
+					} else {
+						$message = 'Could not add '.$f_name.' to event.';
+					}
+				}
 			}
 		}
+
+		if ($isFormPost) {
+			Yii::$app->getSession()->setFlash($success ? 'success' : 'error', $message);
+			return $this->redirect(['/events/index']);
+		}
+
+		return json_encode(['success' => $success, 'msg' => $message], true);
 	}
 
 	public function actionRemoveAtt($id,$ea_id) {
