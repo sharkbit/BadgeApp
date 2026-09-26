@@ -14,7 +14,8 @@ class BadgesSearch extends Badges {
     /**
      * @inheritdoc
      */
-    public $expire_date_range;
+    public $badge_year;
+	public $expire_date_range;
     public $expire_condition;
     public $nowDateplus2;
     public $nowDate;
@@ -23,7 +24,7 @@ class BadgesSearch extends Badges {
 
     public function rules() {
         return [
-            [['badge_number','club_id', 'mem_type', 'primary'], 'integer'],
+            [['badge_number','club_id', 'mem_type', 'primary','badge_year'], 'integer'],
             [['prefix', 'first_name', 'last_name', 'suffix', 'address', 'city', 'state', 'zip', 'gender', 'yob', 'email','email_vrfy', 'phone', 'phone_op', 'ice_contact', 'ice_phone', 'incep', 'wt_date', 'wt_instru', 'payment_method','status','expire_date_range','expire_condition'], 'safe'],
             [['badge_fee', 'discounts', 'amt_due'], 'number'],
         ];
@@ -62,30 +63,30 @@ class BadgesSearch extends Badges {
 			$query->orderBy( ['updated_at' => SORT_DESC] ); 
 		}
 		
-        $this->nowDateplus2 = date('Y-m-d', strtotime("+2 years",strtotime(yii::$app->controller->getNowTime())));
-        $this->nowDateMin2 = date('Y-m-d', strtotime("-2 years",strtotime(yii::$app->controller->getNowTime())));
-        $this->nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
-        $this->nowDateMin5 = date('Y-m-d', strtotime("-5 years",strtotime(yii::$app->controller->getNowTime())));
+        $this->nowDateplus2 = date('Y', strtotime("+2 years",strtotime(yii::$app->controller->getNowTime())));
+        $this->nowDateMin2 = date('Y', strtotime("-2 years",strtotime(yii::$app->controller->getNowTime())));
+        $this->nowDate = date('Y',strtotime(yii::$app->controller->getNowTime()));
+        $this->nowDateMin5 = date('Y', strtotime("-5 years",strtotime(yii::$app->controller->getNowTime())));
 
         if($this->expire_condition==null) {
             $this->expire_condition = 'all';
         }
 
         if($this->expire_condition=='active+2') {
-            $query->andFilterWhere(['>=','bn_to_by.badge_year',$this->nowDate]);
-            $query->orFilterWhere(['between','bn_to_by.badge_year',$this->nowDateMin2, $this->nowDate]);
+            $query->andFilterWhere(['>=','badge_year',$this->nowDate]);
+            $query->orFilterWhere(['between','badge_year',$this->nowDateMin2, $this->nowDate]);
         }
         else if($this->expire_condition=='active') {
-            $query->andFilterWhere(['>=','bn_to_by.badge_year',$this->nowDate]);
+            $query->andFilterWhere(['>=','badge_year',$this->nowDate]);
         }
         else if($this->expire_condition=='expired<2') {
-            $query->andFilterWhere(['between','bn_to_by.badge_year',$this->nowDateMin2,$this->nowDate]);
+            $query->andFilterWhere(['between','badge_year',$this->nowDateMin2,$this->nowDate-1]);
         }
         else if($this->expire_condition=='expired>2') {
-             $query->andFilterWhere(['<','bn_to_by.badge_year',$this->nowDateMin2]);
+             $query->andFilterWhere(['<','badge_year',$this->nowDateMin2]);
         }
         else if($this->expire_condition=='inactive') {
-             $query->andFilterWhere(['<','bn_to_by.badge_year',$this->nowDateMin5]);
+             $query->andFilterWhere(['<','badge_year',$this->nowDateMin5]);
         }
         else { /* no filter needed for all */ }
 
