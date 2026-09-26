@@ -6,6 +6,10 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
+/* @var $this yii\web\View */
+/* @var $dataProvider backend\models\SalesReport */
+/* @var $form yii\widgets\ActiveForm */
+
 $this->title = 'Club Sales Report';
 $this->params['breadcrumbs'][] = ['label' => 'store', 'url' => ['/sales']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/payment/inventory']];

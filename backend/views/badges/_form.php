@@ -34,7 +34,7 @@ if(empty($Club_List)) {
 $Discounts = (new Discount)->getDiscounts('NewBG');
 $Discounts_def = (new Discount)->getDiscountDefault();
 
-$myList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
+$myPaymentList = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
 
 <div class="badges-form">
@@ -268,7 +268,7 @@ yii::$app->controller->createLog(true, 'trex7474', var_export(key($memstatus),tr
                 </div>
                 <div class="col-xs-12 col-sm-12">
       <?php if($model->amt_due <=0) $model->payment_method='cash';
-			echo $form->field($model, 'payment_method')->dropDownList($myList,['prompt'=>'select']).PHP_EOL; ?>
+			echo $form->field($model, 'payment_method')->dropDownList($myPaymentList,['prompt'=>'select']).PHP_EOL; ?>
                 </div>
 
 				<div id="cc_form_div" style="display:none;">

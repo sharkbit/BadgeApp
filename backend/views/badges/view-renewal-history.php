@@ -13,6 +13,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['index']]
 $this->params['breadcrumbs'][] = $this->title;
 
 $urlStatus = yii::$app->controller->getCurrentUrl();
+$myPaymentList = backend\controllers\PaymentController::GetPaymentTypes(false, false, true);
 ?>
 <div class="badges-view">
     <div class="row" >
@@ -34,27 +35,10 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
             [
                 'header'=>'Payment Type',
                 'attribute'=>'payment_type',
-                'value'=> function($model) {
-                    switch ($model->payment_type) {
-                        case 'cash':
-                            return 'Cash';
-                            break;
-                        case 'check':
-                            return 'Check';
-                            break;
-                        case 'credit';
-                            return 'Credit Card';
-                            break;
-                        case 'online':
-                            return 'Online';
-                            break;
-                        case 'other':
-                            return 'Other';
-                            break;
-                        default:
-                            return 'Not Available';
-                            break;
-                    }
+                'value' => function($model) use ($myPaymentList) {
+                    return isset($myPaymentList[$model->payment_type])
+                        ? $myPaymentList[$model->payment_type]
+                        : 'Not Available';
                 },
 
             ],

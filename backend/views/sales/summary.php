@@ -62,7 +62,7 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 			],
 			'cat',
 			[	'attribute' => 'tx_type',
-				'filter' => Html::dropDownList('tx_type', $searchModel->tx_type, ['cash'=>'Cash','check'=>'Check','creditnow'=>'Credit','online'=>'Online','other'=>'Other'],['id'=>'txsle2','class'=>'select2', 'multiple'=>true]),
+				'filter' => Html::dropDownList('tx_type', $searchModel->tx_type, backend\controllers\PaymentController::GetPaymentTypes(false,false,true), ['id'=>'txsle2','class'=>'select2', 'multiple'=>true]),
 			],
 			'csku',
 			'citem',
