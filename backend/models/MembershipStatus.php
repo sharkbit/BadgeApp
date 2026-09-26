@@ -2,11 +2,10 @@
 
 namespace backend\models;
 
-use Yii;
 use yii\helpers\ArrayHelper;
 
 /**
- * This is the model class for table "bn_to_cl".
+ * This is the model class for table "account_status".
  */
 class MembershipStatus extends \yii\db\ActiveRecord {
     /**
@@ -52,24 +51,31 @@ class MembershipStatus extends \yii\db\ActiveRecord {
     }
 
 	static public function getCanLogin() {
-		$canLogin = (New MembershipStatus)->find()->where(['act_login' => 1 ])->all();
-		return ArrayHelper::getColumn($canLogin,'act_short');
+		return static::find()
+			->select(['act_short'])
+			->where(['act_login' => 1])
+			->column();
 	}
 
 	static public function getCanRenew($aStatus) {
-		$can_Renew = (New MembershipStatus)->find()->where(['act_short' => $aStatus ])->one();
-		if (($can_Renew) && ($can_Renew->act_renew=1)) {
-			return true;
-		} else { return false; }
+		$status = static::findOne(['act_short' => $aStatus]);
+
+		return $status !== null && (int) $status->act_renew === 1;
 	}
 
 	static public function getIssueMemStatus() {
-		$IssueMemStatus = (New MembershipStatus)->find('act_short')->where(['act_active' =>1,'act_new'=>1])->all();
-		return ArrayHelper::map($IssueMemStatus,'act_short','act_name');
+		$issueMemStatus = static::find()
+			->select(['act_short', 'act_name'])
+			->where(['act_active' => 1, 'act_new' => 1])
+			->all();
+		return ArrayHelper::map($issueMemStatus, 'act_short', 'act_name');
 	}
 
 	static public function GetMemStatus($eStatus) {
-		$memStatus = (New MembershipStatus)->find('act_name')->where(['act_short' => $eStatus ])->one();
+		$memStatus = static::find()
+			->select(['act_name'])
+			->where(['act_short' => $eStatus])
+			->one();
 		if ($memStatus) { return $memStatus->act_name; } else {return ' Account Status Error '; }
 	}
 
@@ -91,7 +97,10 @@ class MembershipStatus extends \yii\db\ActiveRecord {
 	}
 
 	static public function getSignup() {
-		$SignupName = (New MembershipStatus)->find('act_short')->where(['act_active' =>1,'act_signup'=>1])->one();
-		if ($SignupName) { return $SignupName->act_short; } else {return false; }
+		$signupStatus = static::find()
+			->select(['act_short'])
+			->where(['act_active' => 1, 'act_signup' => 1])
+			->one();
+		if ($signupStatus) { return $signupStatus->act_short; } else {return false; }
 	}
 }

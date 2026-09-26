@@ -15,26 +15,66 @@ $model_ea = new Event_Att();
 
 $this->title = 'View Event';
 $this->params['breadcrumbs'][] = ['label' => 'Event List', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $this->title. " - ".$model->e_date. " - " .$model->e_name, 'url' => ['view','id'=>$model->e_id ]];
+$this->params['breadcrumbs'][] = ['label' => $this->title. " - ".$model->event_date. " - " .$model->event_name, 'url' => ['view','id'=>$model->ea_calendar_id ]];
 $div_closed=false;
 ?>
+<style>
+.addPeeps-container {
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 12px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.addPeeps-header h2 {
+  font-size: 16px;
+  color: #202124;
+  margin: 0 0 4px 0;
+}
+
+.addPeeps-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ad-item {
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e8eaed;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #1a0dab;
+  font-size: 14px;
+  cursor: pointer;
+   width: 100%;
+  text-align: left;
+}
+
+/* Hidden state class */
+.addPeeps-container.collapsed .addPeeps-content,
+.addPeeps-container.collapsed .addPeeps-header {
+  display: none;
+}
+</style>
+
 <div class="events-view">
-    <h2><?= Html::encode($model->e_date. " - " .$model->e_name) ?></h2>
+    <h2><?= Html::encode($model->event_date. " - " .$model->event_name) ?></h2>
 <div class="row">
 	<div class="col-xs-6 col-sm-4">
-		<b>POC:</b> <?php echo "($model->e_poc) ".yii::$app->controller->decodeBadgeName((int)$model->e_poc).PHP_EOL; ?>
+		<b>POC:</b> <?php echo "($model->poc_badge) ".yii::$app->controller->decodeBadgeName((int)$model->poc_badge).PHP_EOL; ?>
 	</div>
 	<div class="col-xs-6 col-sm-4">
-
-<?php	switch ($model->e_type) {
-			case 'cio':
-				echo "<b>Sponsored by:</b> ".$model->clubs->club_name; break;
-				case 'club': echo "<b>Event:</b> Club Sponsored"; break;
-				case 'vol':  echo "<b>Event:</b> Volunteer  ($model->e_hours hours)"; break;
-} ?>
+		<b>Sponsored by:</b>  <?=$model->club_name ?>
+		<?php if ($model->is_volunteer) { echo " <b>Event:</b> Volunteer  ($model->ea_hours hours)"; } ?>
 	</div>
 	<div class="col-xs-6 col-sm-2"><?php
-		if ($model->e_type=='cio') {
+	/*	if ($model->track_wristbands) {
 			if (!$model->e_rso) {
 				if (yii::$app->controller->hasPermission('events/approve')) {
 				echo Html::button('RSO Approve <i class="fa fa-check "> </i>', ['class' => 'btn btn-success','id'=>'event_approve']).PHP_EOL;
@@ -47,64 +87,72 @@ $div_closed=false;
 				}
 				echo "Approved by ".yii::$app->controller->decodeBadgeName((int)$rso[0])." at ".date('Y-m-d H:i',strtotime($rso[1]));
 			}
-		} ?></div>
+		}*/ ?></div>
 	<div class="col-xs-6 col-sm-2" id='div_closed'>
-	<?php if ($model->e_status==0) { ?>
+	<?php /*if ($model->e_status==0) { ?>
 	<?php 	if (yii::$app->controller->hasPermission('events/close')) {
 			echo Html::button('Close <i class="fa fa-times-circle "> </i>', ['class' => 'btn btn-danger','id'=>'event_close']).PHP_EOL;
 			} else { echo "<b>Status:</b> Open"; }
 		} else {
 			$rso=explode('|',explode('+',$model->e_rso)[1]);
-		/*	if($rso[0]=='0') { 
+			if($rso[0]=='0') { 
 				yii::$app->controller->createLog(true, 'trex_rso', var_export($rso,true));
 				echo " it's really closed "; 
-			} else {*/
+			} else {
 				
 				echo "Closed by ".yii::$app->controller->decodeBadgeName((int)$rso[0])." at ".date('Y-m-d H:i',strtotime($rso[1]));
 			//}
-		} ?>
+		}*/ ?>
 	</div>
-<?php if ($model->e_type=='cio') { ?>
-	<div class="col-xs-8 col-sm-8"><b>Instructors:</b> <?=$model->e_inst?> </div>
+<?php if ($model->track_wristbands) { ?>
+	<div class="col-xs-8 col-sm-8"><b>Instructors:</b> <?=$model->cal_inst?> </div>
 <?php } ?>
-</div><hr />
-<?php if (($model->e_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) && ($model->e_status==0) && (yii::$app->controller->hasPermission('events/add-att'))) { ?>
-<div class="row">
-<div class="col-xs-12">
-<div class="events-attendees-form">
+</div>
+<?php if (($model->event_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) && (yii::$app->controller->hasPermission('events/add-att'))) { ?>
+
+<section class="addPeeps-container" id="addPeepsSection">
+  
+  <button class="toggle-btn" id="hideToggleBtn" onclick="toggleaddPeeps()">
+    Hide New Event Participant
+  </button>
+	<div class="row addPeeps-content">
+	<div class="col-xs-12">
+	<div class="events-attendees-form">
 
 <?php $form = ActiveForm::begin(['id'=>'event_att']); ?>
 	<?= Html::input('hidden',Yii::$app->request->csrfParam,Yii::$app->request->csrfToken)?>
-	<?= $form->field($model_ea, 'ea_event_id')->hiddenInput(['value'=>$model->e_id])->label(false).PHP_EOL ?>
-	<?= $form->field($model_ea, 'ea_type')->hiddenInput(['value'=>$model->e_type])->label(false).PHP_EOL ?>
+	<?= $form->field($model_ea, 'track_wristbands')->hiddenInput(['value'=>$model->track_wristbands])->label(false).PHP_EOL ?>
+	<?= $form->field($model_ea, 'ea_calendar_id')->hiddenInput(['value'=>$model->ea_calendar_id])->label(false).PHP_EOL ?>
 <div class="row" style="margin: auto;">
 	<div class="col-xs-4 col-sm-2" ><div id="badge_name"> </div> <?= $form->field($model_ea, 'ea_badge')->textInput().PHP_EOL ?> </div>
 
-<?php if(($model->e_type=='club') || ($model->e_type=='cio')) { ?>
+<?php if($model->allow_guests) { ?>
 	<div class="col-xs-12 col-sm-1"><h2>OR</h2></div>
 	<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_f_name')->textInput().PHP_EOL; ?></div>
 	<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_l_name')->textInput().PHP_EOL; ?></div>
 	<div class="col-xs-12"> <?php yii::$app->controller->getWaver();  ?> </div>
-<?php if($model->e_type=='cio') { ?>
+<?php if($model->track_wristbands) { ?>
 	<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
 <?php } } ?>
 <div class="col-xs-3 col-sm-2" ><div class="form-group" >
 	<button type="submit" id="reg_button" class="btn btn-success" onclick="jsReg();" >Register <i class="fa fa-child"> </i></button><div class="help-block" ></div></div></div>
 <div class="col-xs-3 col-sm-2" ><div class="form-group" >
 <button class="btn btn-primary" onclick="window.location='/events'" >Done <i class="fa fa-arrow-up"> </i></button><div class="help-block" ></div></div></div>
-
 </div>
 <?php ActiveForm::end(); ?>
 </div></div></div>
+
+</section>
+
 <div id="reg_notes"> </div>
-<hr />
+
 <?php } ?>
 
 <div class="row">
 <div class='col-xs-12'>
 
 <?php
-$Attendees = Event_Att::find()->where(['ea_event_id'=>$model->e_id])->orderby('ea_badge')->all();
+$Attendees = Event_Att::find()->where(['ea_calendar_id'=>$model->ea_calendar_id])->orderby('ea_badge')->all();
 $att_count = count($Attendees);
 if($att_count>0) {
 	echo "<p><b>Showing ".count($Attendees)." Attendees: </b></p>\n<div class='row'>\n";
@@ -137,15 +185,15 @@ if($att_count>0) {
 				if($person->ea_wb_out) {
 					if (yii::$app->controller->hasPermission('events/return')) {
 						$div_closed=true;
-						echo " <a href='/events/return?id=".$model->e_id."&wb=".$person->ea_wb_serial."'>[Return]</a>)\n";
+						echo " <a href='/events/return?id=".$model->ea_calendar_id."&wb=".$person->ea_wb_serial."'>[Return]</a>)\n";
 					} else { echo " Out)"; }
 				} else { echo " Returned)"; }
 			}
 		}
 
-		if ((yii::$app->controller->hasPermission('events/remove-att')) && $model->e_status==0) {  //Event is Open
+		if ((yii::$app->controller->hasPermission('events/remove-att')) ) { //&& $model->e_status==0) {  //Event is Open
 
-			echo " <a href onclick='jsRemoveAtt(".$model->e_id.",".$person->ea_id.',"'.$ba_name."\");' class='del'>&times;</a></p></div>\n";
+			echo " <a href onclick='jsRemoveAtt(".$model->ea_calendar_id.",".$person->ea_id.',"'.$ba_name."\");' class='del'>&times;</a></p></div>\n";
 		} else { echo "</p></div>\n"; }
 	}
 	echo "</div>\n";
@@ -175,6 +223,21 @@ if($att_count>0) {
 </style>
 <script>
 <?php //if($div_closed) { echo "document.getElementById('div_closed').style.visibility='hidden';"; } ?>
+
+	function toggleaddPeeps() {
+	  const section = document.getElementById('addPeepsSection');
+	  const btn = document.getElementById('hideToggleBtn');
+	  
+	  section.classList.toggle('collapsed');
+	  
+	  if (section.classList.contains('collapsed')) {
+		btn.textContent = 'Add Event Participant';
+	  } else {
+		btn.textContent = 'Hide New Event Participant';
+	  }
+	}
+
+	toggleaddPeeps();
 
 	$('#event_att-ea_badge').on('input', function() {
 		document.getElementById("event_att-ea_f_name").value='';
@@ -207,15 +270,15 @@ if($att_count>0) {
 		if (confirm('Are you sure you want to Approve Event?')) {
 		jQuery.ajax({
 			method: 'POST',
-			url: '<?=yii::$app->params['rootUrl']?>/events/approve?id='+<?=$model->e_id?>,
+			url: '<?=yii::$app->params['rootUrl']?>/events/approve?id='+<?=$model->ea_calendar_id?>,
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
 				responseData =  JSON.parse(responseData);
 				console.log(responseData);
-				window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->e_id?>";
+				window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
 			},
 			error: function (responseData, textStatus, errorThrown) {
-				console.log('e_view:171'); console.log(textStatus);
+				console.log('e_view:213'); console.log(textStatus);
 			},
 		});}
 	});
@@ -224,15 +287,15 @@ if($att_count>0) {
 		if (confirm('Are you sure you want to Permanently Close this Event?')) {
 		jQuery.ajax({
 			method: 'POST',
-			url: '<?=yii::$app->params['rootUrl']?>/events/close?id='+<?=$model->e_id?>,
+			url: '<?=yii::$app->params['rootUrl']?>/events/close?id='+<?=$model->ea_calendar_id?>,
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
 				responseData =  JSON.parse(responseData);
 				console.log(responseData);
-				window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->e_id?>";
+				window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
 			},
 			error: function (responseData, textStatus, errorThrown) {
-				console.log('e_view:188'); console.log(textStatus);
+				console.log('e_view:230'); console.log(textStatus);
 			},
 		});}
 	});
@@ -257,36 +320,36 @@ if($att_count>0) {
 			},
 			error: function (responseData, textStatus, errorThrown) {
 				$("#badge_name").html('Valid Badge Holder not found');
-				console.log("e_view:212"+responseData);
+				console.log("e_view:255"+responseData);
 			},
 		});
 	}
 
-	function jsRemoveAtt(e_id,ea_id,name) {
+	function jsRemoveAtt(ea_calendar_id,ea_id,name) {
 		if (confirm('Are you sure you want to remove '+name+' from the event?')) {
 			jQuery.ajax({
 				method: 'POST',
-				url: '<?=yii::$app->params['rootUrl']?>/events/remove-att?id='+e_id+'&ea_id='+ea_id,
+				url: '<?=yii::$app->params['rootUrl']?>/events/remove-att?id='+ea_calendar_id+'&ea_id='+ea_id,
 				crossDomain: false,
 				success: function(responseData, textStatus, jqXHR) {
 					responseData =  JSON.parse(responseData);
 					console.log(responseData);
-					window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->e_id?>";
+					window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
 				},
 				error: function (responseData, textStatus, errorThrown) {
-					console.log('e_view:229'); console.log(textStatus);
+					console.log('e_view:272'); console.log(textStatus);
 				},
 			});
 		}
 	}
 
 	function jsReg() {
-		console.log('e_view:236');
-		var reg_id = document.getElementById("event_att-ea_event_id").value;
+		console.log('e_view:278');
+		var reg_id = document.getElementById("event_att-ea_calendar_id").value;
 		if(document.getElementById("event_att-ea_badge")) { var reg_badge = document.getElementById("event_att-ea_badge").value; }
 
 		if (reg_badge >= 1 ) {
-			console.log('e_view:241');
+			console.log('e_view:283');
 			jQuery.ajax({
 				method: 'POST',
 				url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&badge='+reg_badge,
@@ -294,23 +357,23 @@ if($att_count>0) {
 				success: function(responseData, textStatus, jqXHR) {
 					responseData =  JSON.parse(responseData);
 					console.log(responseData);
-					window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->e_id?>";
+					window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
 				},
 				error: function (responseData, textStatus, errorThrown) {
-					console.log('e_view:252'); console.log(textStatus);
+					console.log('e_view:294'); console.log(textStatus);
 					$("#reg_notes").html("<p>"+textStatus+"</p>");
 				},
 			});
 		} else {
-			console.log('e_view:257');
+			console.log('e_view:300');
 			var f_name = document.getElementById("event_att-ea_f_name").value;
 			var l_name = document.getElementById("event_att-ea_l_name").value;
 			var ea_serial='';
 			if((f_name) && (l_name)) {
-				if(document.getElementById("event_att-ea_type").value=='cio') {
+				if(document.getElementById("event_att-track_wristbands").value==true) {
 					var ea_wb_serial = document.getElementById("event_att-ea_wb_serial").value;
 					if (!ea_wb_serial) {
-					console.log('yes yes:300');
+					console.log('yes yes:308');
 					alert("A Wrist Band is required for this individual.");
 					return;
 				}}
@@ -323,10 +386,10 @@ if($att_count>0) {
 					success: function(responseData, textStatus, jqXHR) {
 						responseData =  JSON.parse(responseData);
 						console.log(responseData);
-						//window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->e_id?>";
+						//window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
 					},
 					error: function (responseData, textStatus, errorThrown) {
-						console.log('e_view:275'); console.log(textStatus);
+						console.log('e_view:324'); console.log(textStatus);
 						$("#reg_notes").html("<p>"+textStatus+"</p>");
 					},
 				});

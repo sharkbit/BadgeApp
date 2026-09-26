@@ -19,14 +19,14 @@ class Event_Att extends \yii\db\ActiveRecord{
     public function rules() {
         return [
            [['ea_f_name','ea_l_name','ea_wb_serial','ea_wb_out'], 'safe'],
-           [['ea_badge','ea_event_id','ea_wc_logged'], 'number'],
-           //[['type'], 'string', 'max' => 25],
+           [['ea_id','ea_badge','ea_calendar_id','ea_wc_logged'], 'number'],
        ];
     }
 
     public function attributeLabels() {
         return [
 			'ea_id' => 'ID',
+			'ea_calendar_id' => 'Calendar ID',
 			'ea_badge' => 'Badge Number',
 			'ea_f_name' => 'First Name',
 			'ea_l_name' => 'Last Name',

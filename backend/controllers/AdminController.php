@@ -21,7 +21,7 @@ class AdminController extends \yii\web\Controller {
 		'Accounts' => ['accounts/temp','accounts/index','accounts/create','accounts/update','accounts/view','accounts/delete','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu','params/membershipstatus','params/membershipstatusupdate','params/membershipstatusview','params/membershipstatusdelete','params/discount','params/discountupdate','params/discountview','privileges/create','privileges/delete','privileges/index','privileges/update'],
 		'Badges'=>['badges/all','badges/add-certification','badges/api-check','badges/barcode','badges/create','badges/delete-certificate','badges/delete','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/overideprice','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log',],
-		'Calendar' =>['calendar/all','calendar/approve','calendar/bulkdelete','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/shoot','calendar/showed','calendar/update','calendar/view'],
+		'Calendar' =>['calendar/all','calendar/approve','calendar/bulkdelete','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recheck-future-conflicts','calendar/recur','calendar/republish','calendar/shoot','calendar/showed','calendar/update','calendar/view'],
 		'CalSetup' => ['cal-setup/index','cal-setup/clubs','cal-setup/updateclu','cal-setup/facility','cal-setup/updatefac','cal-setup/rangestatus','cal-setup/updateran','cal-setup/eventstatus','cal-setup/updateeven'],
 		'Clubs' => ['clubs/roles','clubs/role-create','clubs/role-delete','clubs/role-update','clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update','clubs/index','clubs/create','clubs/delete','clubs/update','clubs/view','clubs/badge-rosters'],
 		'MassEmail' => ['mass-email/create','mass-email/index','mass-email/update','mass-email/send','mass-email/process'],
@@ -42,7 +42,7 @@ class AdminController extends \yii\web\Controller {
 		'Accounts' => ['accounts/index','accounts/create','accounts/update','accounts/view','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu','params/discount','params/membershipstatus'],
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/overideprice','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
-		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/shoot','calendar/update'],
+		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recheck-future-conflicts','calendar/recur','calendar/republish','calendar/shoot','calendar/update'],
 		'MassEmail' => ['mass-email/create','mass-email/index','mass-email/update','mass-email/send','mass-email/process'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/roles','clubs/role-create','clubs/role-delete','clubs/role-update','clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update','clubs/index','clubs/create','clubs/update','clubs/view','clubs/badge-rosters'],
@@ -145,6 +145,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $AllPermission = [
 		'Badges'=>['badges/api-zip','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
+		'Calendar' => ['calendar/list','calendar/viewitem'],
 		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'membershiptype'=>['membership-type/fees-by-type'],
 		'help'=>['badges/help','sales/help','rso-rpt/help'],
@@ -155,6 +156,11 @@ class AdminController extends \yii\web\Controller {
 		'Work Credits'=>['work-credits/create','work-credits/index','work-credits/sticky-form','work-credits/credit-transfer','work-credits/transfer-confirm','work-credits/transfer-form','work-credits/transfer-view','work-credits/view'],
 	];
 
+	public $noLogin = [
+		'Calendar' => ['calendar/list','calendar/viewitem'],
+		
+	];
+	
 	// Used for Importing CVS data
 	public $creditArray = ['badgenum','workdate','workhours','project','auth','status','last_update','procdate','who'];
 
@@ -183,6 +189,8 @@ class AdminController extends \yii\web\Controller {
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/login-member') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/get-badge-name') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='badges/verify-email') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='calendar/list') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='calendar/viewitem') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='clubs/badge-rosters') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='payment/charge') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='membership-type/fees-by-type') ||

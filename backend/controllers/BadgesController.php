@@ -413,7 +413,7 @@ class BadgesController extends AdminController {
 		}
 		elseif(isset($_GET['unpub'])) {    //	./badges/api-check?unpub
 			if($unpub) {$where='club_id='.$unpub.' AND';} else {$where='';}
-			$sql = "SELECT distinct calendar_id FROM associat_agcnew.agc_calendar where $where calendar_id = recurrent_calendar_id and event_date>='".date('Y-01-01',strtotime("+1 year"))."'";
+			$sql = "SELECT distinct calendar_id FROM cal_calendar where $where calendar_id = recurrent_calendar_id and event_date>='".date('Y-01-01',strtotime("+1 year"))."'";
 			$FixRecs = Yii::$app->getDb()->createCommand($sql)->queryAll();
 			AgcCal::UpdateAll(['conflict'=>0,'approved'=>1,'active'=>1]); //,'deleted'=>0]);
 			foreach ($FixRecs as $bad_recu) {
@@ -792,15 +792,21 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionGetBadgeName($badge_number) {
+		Yii::$app->response->format = Response::FORMAT_JSON;
 		$badgeArray = Badges::find()->where(['badge_number'=>$badge_number])->one();
 		if($badgeArray) {
-			$responce = Json::encode([
+			$params = Params::findOne('1');
+			$isExpired = Badges::isExpired($badge_number,$params);
+
+			return [
 				'success'=>true,
 				'first_name'=>$badgeArray->first_name,
 				'last_name'=>$badgeArray->last_name,
-				'expires'=>$badgeArray->expires]);
-		} else {$responce=Json::encode(['success'=>false]);}
-		return $responce;
+				'isExpired'=>$isExpired,
+			];
+		}
+
+		return ['success'=>false];
 	}
 
 	public function actionGetFamilyBadges() {

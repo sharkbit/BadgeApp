@@ -15,8 +15,8 @@ class EventsSearch extends Events {
 
     public function rules() {
         return [
-			[['sponsor'], 'integer'],
-            [['e_name','e_inst','e_poc','e_status','e_type'], 'safe']
+			[['event_date', 'event_name',], 'safe'],
+            [['club_id','event_status_id'], 'integer'],
         ];
     }
 
@@ -26,11 +26,7 @@ class EventsSearch extends Events {
     }
 
     public function search($params) {
-        $query = Events::find()
-		->joinWith(['clubs'])
-		->joinWith(['badges']);
-		//->joinWith(['event_Att']);
-		//->rightJoin('event_attendee',"`events`.e_id=event_attendee.ea_event_id");
+        $query = Events::find();
 
         // add conditions that should always apply here
 
@@ -40,7 +36,7 @@ class EventsSearch extends Events {
 
         $this->load($params);
 
-		if(!isset($params['sort'])) { $query->orderBy( ['e_date' => SORT_DESC] ); }
+		if(!isset($params['sort'])) { $query->orderBy( ['event_date' => SORT_DESC] ); }
 		
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -49,12 +45,12 @@ class EventsSearch extends Events {
         }
 
         // grid filtering conditions
-        if(isset($this->e_name)) { $query->andFilterWhere(['like','e_name',$this->e_name]); }
-		if(isset($this->e_poc)) {  $query->andWhere(" CONCAT(badges.first_name,' ',badges.last_name) like '%". $this->e_poc."%'"); }
-		if(isset($this->e_status)) { $query->andFilterWhere(['e_status'=>$this->e_status]); }
-		if(isset($this->e_type)) { $query->andFilterWhere(['e_type'=>$this->e_type]); }
-		if(isset($this->sponsor)) { $query->andFilterWhere(['sponsor'=>$this->sponsor]); }
-
+		
+        if(!empty($this->event_date)) {			$query->andFilterWhere(['like', 'event_date', $this->event_date]); }
+		if(!empty($this->club_id)) {  			$query->andFilterWhere(['club_id' => $this->club_id]); }
+		if(!empty($this->event_status_id)) {	$query->andFilterWhere(['event_status_id' => $this->event_status_id]); }
+		if(!empty($this->event_name)) {			$query->andFilterWhere(['like', 'event_name', $this->event_name]); }
+		
 //yii::$app->controller->createLog(true, 'trex-b-m-s-es', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
         return $dataProvider;
     }

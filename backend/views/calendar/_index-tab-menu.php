@@ -16,7 +16,7 @@ if(yii::$app->controller->hasPermission('calendar/conflict')) {
 	} else {
 		$testConflict = (new AgcCal)::find()->where(['conflict' => 1])->andWhere(['deleted'=>0])
 		->andWhere(['>=','event_date' , date("Y-m-d 00:00",strtotime(yii::$app->controller->getNowTime())) ])
-		->andWhere(['in','agc_calendar.club_id',json_decode(Yii::$app->user->identity->clubs)])
+		->andWhere(['in','cal_calendar.club_id',json_decode(Yii::$app->user->identity->clubs)])
 		->count();
 	}
 } ?>

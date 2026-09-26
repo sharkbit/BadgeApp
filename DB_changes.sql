@@ -920,3 +920,87 @@ UPDATE `BadgeDB`.`discount` SET `dis_allowed` = 'NewBG' WHERE (`dis_id` = '1');
 UPDATE `BadgeDB`.`discount` SET `dis_allowed` = 'NewBG' WHERE (`dis_id` = '2');
 
 
+-- Calendar Move Prep
+-- for v2.2.0
+use BadgeDB;
+RENAME TABLE `associat_agcnew`.`agc_calendar` TO BadgeDB.cal_calendar;
+RENAME TABLE `associat_agcnew`.`range_status` TO BadgeDB.cal_range_status;
+RENAME TABLE `associat_agcnew`.`facilities` TO BadgeDB.cal_facilities;
+RENAME TABLE `associat_agcnew`.`event_status` TO BadgeDB.cal_event_status;
+
+ALTER TABLE `BadgeDB`.`cal_calendar` 
+	CHANGE COLUMN `keywords` `key_words` TEXT NOT NULL ,
+	CHANGE COLUMN start_time cal_start_time TIME AFTER event_date,
+	CHANGE COLUMN end_time   cal_end_time   TIME AFTER cal_start_time,
+	ADD COLUMN `credit_hours` INT NULL DEFAULT 0 AFTER `range_status_id`,
+	ADD COLUMN `cal_inst` VARCHAR(60) NULL DEFAULT NULL AFTER `poc_badge`,
+	ADD COLUMN `lanes_req` TEXT NULL DEFAULT NULL AFTER `lanes_requested`,
+	ADD COLUMN `is_event` TINYINT NULL DEFAULT 1 AFTER `cal_inst`;
+
+ALTER TABLE `BadgeDB`.`events` RENAME TO  `BadgeDB`.`events_old` ;
+ALTER TABLE `BadgeDB`.`events_old` ADD COLUMN `calendar_id` INT NULL DEFAULT 0 AFTER `e_id`;
+
+ALTER TABLE `BadgeDB`.`cal_event_status` 
+	ADD COLUMN `allow_guests` TINYINT NOT NULL DEFAULT 0 AFTER `display_order`,
+	ADD COLUMN `is_volunteer` TINYINT NOT NULL DEFAULT 0 AFTER `allow_guests`,
+	ADD COLUMN `track_wristbands` TINYINT NOT NULL DEFAULT 0 AFTER `is_volunteer`;
+
+ALTER TABLE `BadgeDB`.`event_attendee` 
+	CHANGE COLUMN `ea_event_id` `ea_calendar_id` INT NOT NULL ;
+
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_cal_event` AS
+	SELECT cc.calendar_id, cc.event_date, cc.cal_start_time, cc.cal_end_time, cc.event_name, cc.cal_inst, cc.credit_hours, cc.poc_badge, ces.name AS event_status_name, ces.event_status_id, clubs.club_name, clubs.short_name, clubs.club_id, allow_guests, track_wristbands, is_volunteer
+	FROM cal_calendar cc LEFT JOIN cal_event_status ces ON cc.event_status_id = ces.event_status_id Left join clubs on cc.club_id = clubs.club_id WHERE cc.deleted = 0 and cc.is_event=1 order by event_date desc;
+
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_event_att` AS
+	SELECT ea_calendar_id, COUNT(ea_badge) AS attended_badges, COUNT(ea_f_name) AS attended_guests, SUM(CASE WHEN ea_wb_out = 0 THEN 1 ELSE 0 END) AS wb_out_zero
+	FROM event_attendee GROUP BY ea_calendar_id ORDER BY ea_calendar_id DESC;
+
+CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_events` AS
+    SELECT vea.ea_calendar_id, vea.attended_badges, vea.attended_guests, vea.wb_out_zero, vce.event_date, vce.cal_start_time, vce.cal_end_time, vce.event_name, vce.event_status_name, vce.event_status_id, vce.club_name, vce.short_name, vce.club_id, vce.poc_badge, vce.allow_guests, vce.track_wristbands, vce.cal_inst, vce.is_volunteer, vce.credit_hours
+    FROM `view_event_att` vea LEFT JOIN view_cal_event vce ON vea.ea_calendar_id = vce.calendar_id order by ea_calendar_id desc;
+
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( REPLACE(REPLACE(facility_id, '[', ''), ']', ''), lanes_requested ) WHERE lanes_requested > 0;
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 2, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '[2%';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 2, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%2]';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 3, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '[3%';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 3, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%3]';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 3, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%,3,%';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 21, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%21]';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 28, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%28]';
+UPDATE BadgeDB.cal_calendar SET lanes_req = JSON_OBJECT( 30, lanes_requested ) WHERE lanes_req like '%,%' and facility_id like '%30]';
+
+-- Validate all good in lanes_req
+SELECT calendar_id,facility_id,lanes_requested,lanes_req FROM BadgeDB.cal_calendar WHERE lanes_requested > 0 and lanes_req like '%,%';
+
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `track_wristbands` = '1' WHERE (`event_status_id` = '4');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1' WHERE (`event_status_id` = '6');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `is_volunteer` = '1' WHERE (`event_status_id` = '15');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1' WHERE (`event_status_id` = '9');
+UPDATE `BadgeDB`.`cal_event_status` SET `is_volunteer` = '1' WHERE (`event_status_id` = '10');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `track_wristbands` = '0' WHERE (`event_status_id` = '8');
+UPDATE `BadgeDB`.`cal_event_status` SET `allow_guests` = '1', `track_wristbands` = '1' WHERE (`event_status_id` = '20');
+
+-- ################################
+-- ## Run very carfully
+CREATE OR REPLACE VIEW view_new_event_ids AS 
+SELECT BadgeDB.events_old.e_id, e_name, e_date,sponsor, cal_calendar.calendar_id
+FROM BadgeDB.events_old
+ join BadgeDB.cal_calendar ON ( ( BadgeDB.events_old.e_date = BadgeDB.cal_calendar.event_date ) and (  BadgeDB.events_old.sponsor = BadgeDB.cal_calendar.club_id ) )
+where BadgeDB.events_old.e_id > 0
+order by calendar_id desc;
+
+UPDATE BadgeDB.event_attendee ea
+INNER JOIN (
+    SELECT DISTINCT e_id, calendar_id 
+    FROM BadgeDB.view_new_event_ids
+) v ON ea.ea_calendar_id = v.e_id
+SET ea.ea_calendar_id = v.calendar_id;
+
+drop view view_new_event_ids;
+-- ################################
+
+ALTER TABLE `BadgeDB`.`cal_calendar` 
+	DROP COLUMN `lanes_requested`,
+	DROP COLUMN `approved`,
+	DROP COLUMN `active`;

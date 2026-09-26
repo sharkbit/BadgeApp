@@ -9,7 +9,7 @@ use backend\models\agcFacility;
 use backend\models\agcRangeStatus;
 
 /**
- * This is the model class for table "AGC.agc_calendar".
+ * This is the model class for table "AGC.cal_calendar".
  */
 class AgcCal extends \yii\db\ActiveRecord {
     /**
@@ -17,11 +17,30 @@ class AgcCal extends \yii\db\ActiveRecord {
      */
 	public $pagesize;
 	public $rec_pat;
-//	public $del_sel;
+	public $club_name;
+	public $event_status_name;
+	public $allow_guests;
+	public $is_volunteer;
+	public $track_wristbands;
 
     public static function tableName() {
-        return 'associat_agcnew.agc_calendar';
+        return 'cal_calendar';
     }
+
+	public static function markConflicts(array $calendarIds) {
+		$calendarIds = array_values(array_unique(array_filter(
+			array_map('intval', $calendarIds),
+			static function ($calendarId) {
+				return $calendarId > 0;
+			}
+		)));
+
+		if (empty($calendarIds)) {
+			return 0;
+		}
+
+		return static::updateAll(['conflict' => 1], ['calendar_id' => $calendarIds]);
+	}
 
     /**
      * @inheritdoc
@@ -29,10 +48,10 @@ class AgcCal extends \yii\db\ActiveRecord {
     public function rules() {
         return [
 			[['event_name','event_date','poc_badge'], 'required'],
-			[['date_requested','end_time','event_date','facility_id','recurrent_end_date','recurrent_start_date','start_time','remarks'], 'safe'],
-			[['active','approved','calendar_id','conflict','deleted','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
-			[['club_id','event_status_id','lanes_requested','poc_badge'], 'integer'],
-			[['event_name','keywords','recur_week_days'], 'string'],
+			[['date_requested','cal_end_time','event_date','facility_id','lanes_req','recurrent_end_date','recurrent_start_date','cal_start_time','remarks'], 'safe'],
+			[['calendar_id','credit_hours','conflict','deleted','range_status_id','recur_every','recurrent_calendar_id','rollover','showed_up'], 'integer'],
+			[['club_id','event_status_id','poc_badge'], 'integer'],
+			[['event_name','key_words','recur_week_days','cal_inst'], 'string'],
 		];
     }
 
@@ -42,6 +61,9 @@ class AgcCal extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'club_id'=>'Sponsor',
+			'cal_end_time'=>'End Time',
+			'cal_inst' => 'Instructor',
+			'cal_start_time'=>'Start Time',
 			'event_name' => 'Event Name',
 			'event_status_id'=>'Event Type',
 			'facility_id'=>'Facility',
@@ -89,8 +111,8 @@ class AgcCal extends \yii\db\ActiveRecord {
 					$where = " club_id in (".ltrim(rtrim(Yii::$app->user->identity->clubs,']'),'[').") AND ";
 				} else { $where = ''; }
 
-				$sql = "SELECT distinct recurrent_calendar_id FROM associat_agcnew.agc_calendar ".
-					" WHERE ".$where."  calendar_id not in (SELECT distinct recurrent_calendar_id FROM associat_agcnew.agc_calendar where calendar_id=recurrent_calendar_id AND recurrent_calendar_id >0 AND deleted=0 AND event_date > '".date('Y')."-12-31 23:59:00') AND ".
+				$sql = "SELECT distinct recurrent_calendar_id FROM cal_calendar ".
+					" WHERE ".$where."  calendar_id not in (SELECT distinct recurrent_calendar_id FROM cal_calendar where calendar_id=recurrent_calendar_id AND recurrent_calendar_id >0 AND deleted=0 AND event_date > '".date('Y')."-12-31 23:59:00') AND ".
 					" calendar_id=recurrent_calendar_id AND recurrent_calendar_id >0 AND deleted=0;";
 				$sum =  Yii::$app->db->createCommand($sql)->queryScalar();
 				if ($sum >0) { return false; } else { return true; }
@@ -98,4 +120,3 @@ class AgcCal extends \yii\db\ActiveRecord {
 		}
 	}
 }
-

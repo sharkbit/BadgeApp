@@ -17,7 +17,7 @@ class agcEventStatusSearch extends agcEventStatus {
 	 */
 	public function rules() {
 		return [
-			[['name','active'], 'safe'],
+			[['allow_guests','name','active','is_volunteer','track_wristbands'], 'safe'],
 		];
 	}
 
@@ -59,7 +59,10 @@ class agcEventStatusSearch extends agcEventStatus {
 		// grid filtering conditions
 		if(isset($this->active)) {$query->andFilterWhere(['active' => $this->active,]); }
 		if(isset($this->name)) { $query->andFilterWhere(['like', 'name', $this->name]); }
-
+		if(isset($this->allow_guests)) {$query->andFilterWhere(['allow_guests' => $this->allow_guests,]); }
+		if(isset($this->is_volunteer)) {$query->andFilterWhere(['is_volunteer' => $this->is_volunteer,]); }
+		if(isset($this->track_wristbands)) {$query->andFilterWhere(['track_wristbands' => $this->track_wristbands,]); }
+		
 		return $dataProvider;
 	}
 }

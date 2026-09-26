@@ -9,14 +9,13 @@ use kartik\daterange\DateRangePicker;
 use kartik\widgets\ActiveForm;
 use kartik\export\ExportMenu;
 use yii\helpers\Html;
-/*use yii\grid\GridView; */
 use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
 
 $model = new AgcCal();
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\search\EventsSearch */
+/* @var $searchModel backend\models\search\AgcCalSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Calendar List';
@@ -34,7 +33,7 @@ if (isset($_REQUEST['AgcCal']['pagesize'])) {
 $dataProvider->pagination = ['pageSize' => $pagesize];
 
 if (yii::$app->controller->hasPermission('calendar/shoot')) {
-	$sql="SELECT facility_id FROM associat_agcnew.facilities WHERE name like '%shoot%'";
+	$sql="SELECT facility_id FROM cal_facilities WHERE name like '%shoot%'";
 	$result = Yii::$app->getDb()->createCommand($sql)->queryAll();
 	$shoot = json_encode(ArrayHelper::getColumn($result, 'facility_id'));
 	$shoot = json_decode(str_replace('"','',$shoot));
@@ -44,15 +43,14 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 
 	<h2><?= Html::encode($this->title) ?></h2>
 <div class="row">
+<?php Pjax::begin(); ?>
 <?php $form = ActiveForm::begin([
 	'action' => [$urlStatus['actionId']],
-	'method' => 'post',
+	'method' => $urlStatus['actionId'] === 'conflict' ? 'post' : 'get',
 	'id'=>'calendarFilter',
 ]); ?>
 	<div class="col-xs-12">
-	<?php Pjax::begin(); 
-
-	$gridColumns = [
+	<?php $gridColumns = [
 			[	'attribute'=>'club_id',
 				'format'=>'raw',
 				'value'=>function($model) {
@@ -76,9 +74,6 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:15%'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'facility_id', ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name'),['class'=>'form-control','prompt' => 'All']),
-			],
-			[	'attribute'=>'lanes_requested',
-				'value'=>function($model) { if($model->lanes_requested ==0) { return '';} else { return $model->lanes_requested; } },
 			],
 			[	'attribute'=>'event_date',
 				'visible' => ($searchModel->recur_every) ? false : true,
@@ -120,14 +115,14 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:10%'],
 			],
-			[	'attribute'=>'start_time',
+			[	'attribute'=>'cal_start_time',
 				'value'=>function($model) {
-					return substr(substr($model->start_time, -8),0,5);
+					return substr(substr($model->cal_start_time, -8),0,5);
 				},
 			],
-			[	'attribute'=>'end_time',
+			[	'attribute'=>'cal_end_time',
 				'value'=>function($model) {
-					return substr(substr($model->end_time, -8),0,5);
+					return substr(substr($model->cal_end_time, -8),0,5);
 				},
 			],
 			[	'attribute'=>'showed_up',
@@ -159,31 +154,8 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'headerOptions' => ['style' => 'width:10%'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'range_status_id',(new agcRangeStatus)->getStatusList(),['class'=>'form-control','prompt' => 'Any']),
 			],
-			[	'attribute'=>'active',
-				'value'=>function($model) { if($model->active) {return "Yes";} else  {return "No";} },
-				'headerOptions' => ['style' => 'width:5%'],
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'active',['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All']),
-			],
-			[	'attribute'=>'approved',
-				'format'=>'raw',
-				'contentOptions' => ['style' => 'white-space:pre-line;'],
-				'headerOptions' => ['style' => 'width:5%'],
-				'value'=>function($model) {
-					if($model->approved) {
-						return "True";
-					} else {
-						if (yii::$app->controller->hasPermission('calendar/approve')) {
-							return  Html::a(' <span class="glyphicon glyphicon-ok"> </span> Approve Event', ['/calendar/approve','id'=>$model->calendar_id,'redir'=>yii::$app->controller->getCurrentUrl()['actionId']], [
-							'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'Approve',	]);
-						} else { return "False"; }
-					}
-				},
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'approved',['1'=>'True','0'=>'False'],['class'=>'form-control','prompt' => 'All']),
-			],
 			[	'attribute'=>'deleted',
-				'value'=>function($model) { if($model->active) {return "Yes";} else  {return "No";} },
+				'value'=>function($model) { if($model->deleted) {return "Yes";} else  {return "No";} },
 				'visible' => ($urlStatus['actionId']=='inactive') ? true : false,
 			],
 			[	'attribute' => 'Continue Event',
@@ -251,7 +223,6 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 			],
 		];
 		?>
-	<?php Pjax::end(); ?>
 <div class="calendar-index">
 <!--<div class="row"> -->
 
@@ -271,6 +242,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
 		<?= $form->field($model, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
 	</div>
+
 	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-3 col-xl-3"><br />
 		<?= Html::submitButton('<i class="fa fa-search" aria-hidden="true"></i> Search', ['class' => 'btn btn-primary']) ?>
 		<?= Html::a('<i class="fa fa-eraser" aria-hidden="true"></i> Reset',[$urlStatus['actionId'].'?reset=true'], ['class' => 'btn btn-danger']) ?>
@@ -298,7 +270,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	</div>
 
 	<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2 pull-right">
-		<?php if (yii::$app->controller->hasPermission('calendar/create')) { ?>
+		<?php if ((yii::$app->controller->hasPermission('calendar/create')) && ($urlStatus['actionId'] == 'index' || $urlStatus['actionId'] == 'recur')) { ?>
 		<div class="btn btn-group pull-right">
 		<?php if($urlStatus['actionId']=='recur') {$extra='?recur=1';} else {$extra='';} ?>
 			<?= Html::a('Create Event', ['create'.$extra], ['class' => 'btn btn-success']) ?>
@@ -328,6 +300,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 
 </div>	
 <?php ActiveForm::end(); ?>
+<?php Pjax::end(); ?>
 
 </div>
 <p>* is a Recurring Event</p>
@@ -335,6 +308,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 <script>
 //$("#w0-cols").hide();
 
+<?php if ($urlStatus['actionId']=='conflict') { ?>
 document.getElementById("del_sel_all").addEventListener("click", function(event){
   event.preventDefault();
   
@@ -345,4 +319,5 @@ document.getElementById("del_sel_all").addEventListener("click", function(event)
     }
 });
 
+<?php } ?>
 </script>

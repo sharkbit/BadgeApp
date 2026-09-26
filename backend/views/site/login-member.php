@@ -1,11 +1,10 @@
 <?php
-//use yii;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\bootstrap\ActiveForm;
-use backend\models\Events;
+use backend\models\ViewCalEvent;
 use backend\models\Event_Att;
 use backend\models\MembershipStatus;
-use backend\models\Params;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -14,27 +13,29 @@ use backend\models\Params;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 
-$param = Params::find()->one();
-$urlStatus = yii::$app->controller->getCurrentUrl();
 ?>
 <div class="site-login">
     <div class="row ">
 		<div class="col-xs-12 col-md-4" >
 <?php
 if ( Yii::$app->params['env'] != 'cal' ) {
-$agc_event = Events::find()->where(['e_date' => date('Y-m-d',strtotime(yii::$app->controller->getNowTime())),'e_status'=>'0'])->andWhere(['!=', 'e_type', 'cio'])->all();
+$agc_event = (new ViewCalEvent)->getActiveEventsQuery();
 if($agc_event) { ?>
 			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<h3>Todays Events:</h3><hr /><ul>
 <?php
 foreach($agc_event as $an_event){
-	switch ($an_event->e_type) {
-		case 'cio':  $e_type="CIO Sponsored"; break;
-		case 'club': $e_type="Club Sponsored"; break;
-		case 'vol':  $e_type="Volunteer"; break;
-	}
-	echo "<li style='margin: 20px 0;'><p>$an_event->e_name ($e_type) ";
-	echo "<a onclick='jsRegister(".$an_event->e_id.',"'.htmlentities($an_event->e_name, ENT_QUOTES).'","'.$an_event->e_type.'")'."' href='#'>[Register]</a></p></li>\n";
+	$registerArgs = implode(',', [
+		(int) $an_event->calendar_id,
+		Json::htmlEncode((string) $an_event->club_name),
+		Json::htmlEncode((string) $an_event->event_name),
+		Json::htmlEncode((string) $an_event->event_status_name),
+		(int) $an_event->allow_guests,
+		(int) $an_event->track_wristbands,
+		(int) $an_event->is_volunteer,
+	]);
+	echo "<li style='margin: 20px 0;'><p>".Html::encode(date("h:i A", strtotime($an_event->cal_start_time))." - ".$an_event->event_name."; ")."<i>".Html::encode($an_event->club_name)." </i>";
+	echo "<a onclick='jsRegister(".$registerArgs.")' href='#'>[Register]</a></p></li>\n";
 } ?>
 			</div>
 		<p> </p> <br />
@@ -96,23 +97,22 @@ foreach($agc_event as $an_event){
 		<p id='event_name'>Regester for: </p>
 
 		<div id='reg_form' ><p id="event_notes"> </p>
-			<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_badge')->textInput().PHP_EOL; ?></div>
-		</div>
-
-		<div class="col-xs-6 col-sm-2"><p id="badge_name"> </p><br />
+			<div class="col-xs-6 col-sm-3"><?= $formR->field($event_model, 'ea_badge')->textInput().PHP_EOL; ?>
+				<p id="badge_name"> </p>
+			</div>
 		</div>
 		<div id="by_name" style="display:none;">
-		<div class="col-xs-12 col-sm-1"><h2>OR</h2></div>
-		<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_f_name')->textInput().PHP_EOL; ?></div>
-		<div class="col-xs-6 col-sm-2"><?= $formR->field($event_model, 'ea_l_name')->textInput().PHP_EOL; ?></div>
-		<div class="col-xs-6 col-sm-2" id="e_serial" style="display:none;"><?= $formR->field($event_model, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
+			<div class="col-xs-12 col-sm-1"><h2>OR</h2></div>
+			<div class="col-xs-6 col-sm-3 col-md-2"><?= $formR->field($event_model, 'ea_f_name')->textInput().PHP_EOL; ?></div>
+			<div class="col-xs-6 col-sm-3 col-md-2"><?= $formR->field($event_model, 'ea_l_name')->textInput().PHP_EOL; ?></div>
+			<div class="col-xs-6 col-sm-3 col-md-2" id="e_serial" style="display:none;"><?= $formR->field($event_model, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
 		</div>
 	</div>
-	<div class="col-xs-12"> <?php yii::$app->controller->getWaver();  ?> </div>
+	<div class="col-xs-12" id="waver" style="display:none;"> <?php yii::$app->controller->getWaver();  ?> </div>
 	<div class="row" name='iagree' id='iagree' style="display:none;" ><div class="col-xs-12">
 		<input type="checkbox" id="terms" name="terms"  onclick="toggleSubmit()">
 			<label for="terms">
-			I understand the above Conditions and agree to the <a href="'. yii::$app->params['wp_site'].'/waiver" target="_blank">Waiver of Liability</a>.
+			I understand the above Conditions and agree to the <a href="<?= Html::encode(yii::$app->params['wp_site'].'/waiver') ?>" target="_blank" rel="noopener">Waiver of Liability</a>.
 			</label>
 	</div></div>
 	<div class="row"><div id='reg_notes'> </div>
@@ -247,11 +247,13 @@ foreach($agc_event as $an_event){
 
 	var modal = document.getElementById('myModal');
 	var span = document.getElementsByClassName("close")[0];
-	var reg_sub = document.getElementsByClassName("btn-success")[0];
 
-	function jsRegister(r_id,r_name,r_type) {
+	function jsRegister(r_id,r_ClubName,r_EventName,r_EventStatus,r_guest,r_wristbands,r_vol) {
 
 		modal.style.display = "block";
+		document.getElementById('terms').checked = false;
+		submitButton.disabled = false;
+		iagree.style.display = 'none';
 		document.getElementById("event_att-ea_badge").value='';
 		document.getElementById("event_att-ea_f_name").value='';
 		document.getElementById("event_att-ea_l_name").value='';
@@ -260,28 +262,30 @@ foreach($agc_event as $an_event){
 		$("#badge_name").html(' ');
 
 		document.getElementById("event_id").value = r_id;
-
-		switch(r_type) {
-		case 'cio':
-			var event_type="(CIO Event)";
-			var reg_html="<ul><li>Enter Badger Number <b>Or</b> First and Last Name.</li><ul>";
-			$("#by_name").show();
-			$("#e_serial").show();
-			break;
-		case 'club':
-			var event_type="(Club Sponsored Event)";
-			var reg_html="<ul><li>Enter Badger Number <b>Or</b> First and Last Name.</li><ul>";
-			$("#by_name").show();
-			$("#e_serial").hide();
-			break;
-		case 'vol':
-			var event_type="(AGC Volunteer Event)";
+		
+		if(r_vol==1) {
 			var reg_html="<ul><li>AGC Volunteer Events are Range Members only.</li><ul>";
 			$("#by_name").hide();
 			$("#e_serial").hide();
-			break;
+			$("#waver").hide();
+		} else {
+			if(r_guest==1) {
+				var reg_html="<ul><li>Enter Badger Number <b>Or</b> First and Last Name.</li><ul>";
+				$("#by_name").show();
+				$("#waver").show();
+				if(r_wristbands==1) {
+					$("#e_serial").show();
+				} else {
+					$("#e_serial").hide();
+				}
+			} else {
+				var reg_html="<ul><li>Enter Badger Number</li><ul>";
+				$("#by_name").hide();
+				$("#e_serial").hide();
+				$("#waver").hide();
+			}
 		}
-		$("p#event_name").html("Regester for: <b>"+r_name+"</b> "+event_type);
+		$("p#event_name").html("Regester for: <b>"+r_ClubName+"</b> "+r_EventName+" ("+r_EventStatus+")");
 		$("p#event_notes").html(reg_html);
 	}
 
@@ -295,7 +299,7 @@ foreach($agc_event as $an_event){
 	});
 
 	function jsReg() {
-		console.log('here 192');
+		console.log('here 288');
 		var reg_id = document.getElementById("event_id").value;
 		if(document.getElementById("event_att-ea_badge")) { var reg_badge = document.getElementById("event_att-ea_badge").value; }
 
@@ -314,7 +318,7 @@ foreach($agc_event as $an_event){
 					document.getElementById('myModal').style.display = 'none';
 				},
 				error: function (responseData, textStatus, errorThrown) {
-					console.log('login_member:207'); console.log(textStatus);
+					console.log('login_member:307'); console.log(textStatus);
 					$("div#reg_notes").html("<p>"+textStatus+"</p>");
 				},
 			});
@@ -340,7 +344,7 @@ foreach($agc_event as $an_event){
 						document.getElementById('myModal').style.display = 'none';
 					},
 					error: function (responseData, textStatus, errorThrown) {
-						console.log('login_member:226'); console.log(textStatus);
+						console.log('login_member:333'); console.log(textStatus);
 						$("div#reg_notes").html("<p>"+textStatus+"</p>");
 					},
 				});
@@ -358,6 +362,9 @@ foreach($agc_event as $an_event){
 	}
 
 	$('#event_att-ea_badge').on('input', function() {
+		document.getElementById("event_att-ea_f_name").value='';
+		document.getElementById("event_att-ea_l_name").value='';
+		document.getElementById("event_att-ea_wb_serial").value='';
 		var badgeNumber = $(this).val();
 		if((badgeNumber!='') && (badgeNumber!=0)) {
             changeBadgeNam(badgeNumber);
@@ -370,22 +377,26 @@ foreach($agc_event as $an_event){
 		$("#badge_name").html('Searching');
 		jQuery.ajax({
 			method: 'GET',
-			url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-name?badge_number='+badgeNumber,
+			url: <?= Json::encode(yii::$app->params['rootUrl'].'/badges/get-badge-name') ?>,
+			dataType: 'json',
+			data: {
+				badge_number: badgeNumber,
+				'_csrf-backend': <?= Json::encode(Yii::$app->request->getCsrfToken()) ?>
+			},
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
-				responseData =  JSON.parse(responseData);
 				if(responseData.success==true) {
-					var resExpTimestamp = Math.floor(Date.now() / 1000);
-
-					if(responseData.isExpired) {
+					if (responseData.isExpired ) {
 						$("#badge_name").html('No Active Member Found');
 					} else {
-						$("#badge_name").html(responseData.first_name+' '+responseData.last_name);
+						$("#badge_name").text(responseData.first_name+' '+responseData.last_name);
 					}
-				} else {$("#badge_name").html('Valid Badge holder not found');}
+				} else {
+					$("#badge_name").text('Valid Badge holder not found');
+				}
 			},
 			error: function (responseData, textStatus, errorThrown) {
-				$("#badge_name").html('Valid Badge holder not found');
+				$("#badge_name").text('Valid Badge holder not found');
 				console.log("fail "+responseData);
 			},
 		});
@@ -393,4 +404,3 @@ foreach($agc_event as $an_event){
 
 <?php } ?>
 </script>
-
