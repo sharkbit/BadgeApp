@@ -57,6 +57,7 @@ class Events extends \yii\db\ActiveRecord{
 			->leftJoin(['club' => clubs::tableName()], 'club.club_id = cal.club_id')
 			->leftJoin(['eventStatus' => agcEventStatus::tableName()], 'eventStatus.event_status_id = cal.event_status_id')
 			->where(['cal.event_date' => new Expression('CURRENT_DATE')])
+			->andWhere(['deleted'=>0])
 			->andWhere(['not in', 'cal.calendar_id', $eventsToday])
 			->all();
 		return $calendarsWithoutEventsToday;

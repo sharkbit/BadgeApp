@@ -237,7 +237,6 @@ $eventAttendee = new Event_Att();
 			'method' => 'post',
 			'options' => [
 				'onsubmit' => 'return jsReg()',
-				'data-pjax' => 0,
 			],
 		]); ?>
 		<?= Html::hiddenInput('event_id', '', ['id' => 'event_id']) ?>

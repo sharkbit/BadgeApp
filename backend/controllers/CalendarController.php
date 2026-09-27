@@ -759,18 +759,22 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 
 			$model->club_id = (int)$model->club_id;
 			$model->event_status_id = (int)$model->event_status_id;
-			$model->facility_id = str_replace('"', '',json_encode($model->facility_id));
 			$model->range_status_id = (int)$model->range_status_id;
 
 			$Req_Lanes = (new agcFacility)->getFacilRequiresLanes();
 			foreach ($Req_Lanes as $chk_rng) {
 				if (!empty($_POST['agccal-lanes_' . $chk_rng['facility_id']])) {
 					$req_num = (int)($_POST['agccal-lanes_' . $chk_rng['facility_id']]);
-					if($req_num > 0) { $reqLanesArray[$chk_rng['facility_id']] = $req_num; }
+					if($req_num > 0) { 
+						if(in_array($chk_rng['facility_id'],$model->facility_id)) {
+							$reqLanesArray[$chk_rng['facility_id']] = $req_num;
+						}
+					}
 				}
 			}
 			if (!empty($reqLanesArray)) {$model->lanes_req = stripslashes(json_encode($reqLanesArray, JSON_UNESCAPED_SLASHES));}
-
+			$model->facility_id = str_replace('"', '',json_encode($model->facility_id));
+			
 			if ($this->actionOpenRange($model->event_date,$model->cal_start_time,$model->cal_end_time,$model->facility_id,$model->lanes_req,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true)) {
 				$model->conflict = 0; } else { $model->conflict = 1; }
 
