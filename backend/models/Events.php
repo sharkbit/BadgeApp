@@ -2,7 +2,7 @@
 
 namespace backend\models;
 
-
+use yii;
 use yii\db\Expression;
 use backend\models\clubs;
 use backend\models\agcEventStatus;
@@ -41,6 +41,13 @@ class Events extends \yii\db\ActiveRecord{
 			->select('ea_calendar_id')
 			->where(['event_date' => new Expression('CURRENT_DATE')]);
 
+		if (yii::$app->controller->hasPermission('calendar/all')) { }									// Sees All Calendar
+		elseif ((in_array(9, $_SESSION['privilege'])) && isset(Yii::$app->user->identity->clubs)) {	// Have Calendar Cord and Clubs set
+			$eventsToday->andFilterWhere(['in', 'club_id', json_decode(Yii::$app->user->identity->clubs)]);
+		} else {																						// Is Range POC
+			$eventsToday->andFilterWhere(['cal_inst' => $_SESSION['badge_number']]);
+		}
+
 		$calendarsWithoutEventsToday = AgcCal::find()
 			->alias('cal')
 			->select([
@@ -58,8 +65,16 @@ class Events extends \yii\db\ActiveRecord{
 			->leftJoin(['eventStatus' => agcEventStatus::tableName()], 'eventStatus.event_status_id = cal.event_status_id')
 			->where(['cal.event_date' => new Expression('CURRENT_DATE')])
 			->andWhere(['deleted'=>0])
-			->andWhere(['not in', 'cal.calendar_id', $eventsToday])
-			->all();
+			->andWhere(['not in', 'cal.calendar_id', $eventsToday]);
+
+		if (yii::$app->controller->hasPermission('calendar/all')) { }									// Sees All Calendar
+		elseif ((in_array(9, $_SESSION['privilege'])) && isset(Yii::$app->user->identity->clubs)) {	// Have Calendar Cord and Clubs set
+			$calendarsWithoutEventsToday->andFilterWhere(['in', 'cal.club_id', json_decode(Yii::$app->user->identity->clubs)]);
+		} else {																						// Is Range POC
+			$calendarsWithoutEventsToday->andFilterWhere(['cal.cal_inst' => $_SESSION['badge_number']]);
+		}
+
+		$calendarsWithoutEventsToday = $calendarsWithoutEventsToday->all();
 		return $calendarsWithoutEventsToday;
 	 }
 }

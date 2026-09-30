@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
 
 class AdminController extends \yii\web\Controller {
 
-	public $activeUser;
+	public $activeUser;  //badges/get-badge-name
 
 	public $rootAdminPermission = [
 		'Accounts' => ['accounts/temp','accounts/index','accounts/create','accounts/update','accounts/view','accounts/delete','accounts/reset-password','accounts/request-password-reset'],
@@ -71,7 +71,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $cashierPermission = [
-		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/overideprice','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/get-badge-name','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/overideprice','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
 		'Events' => ['events/add-att'],
@@ -131,18 +131,21 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $calendarPermission = [
+		'Badges' => ['badges/get-badge-name'],
 		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update'],
 		'Events' => ['events/index','events/add-att','events/create','events/reg','events/view'],
 		'Guest' => ['guest/update'],
 	];
 
 	public $chairmanPermission = [
+		'Badges' => ['badges/get-badge-name'],
 		'Calendar' => ['calendar/close','calendar/recur'],
 		'Events' => ['events/add-att','events/index','events/create','events/reg','events/return','events/view'],
 		'Work Credits'=>['work-credits/add'],
 	];
 
 	public $shootPermission = [
+		'Badges' => ['badges/get-badge-name'],
 		'Calendar' => ['calendar/all','calendar/shoot'],
 		'Events' => ['events/index','events/add-att','events/create','events/reg','events/view'],
 	];
@@ -161,7 +164,7 @@ class AdminController extends \yii\web\Controller {
 	];
 	
 	public $eventDirector = [
-		'Events' => ['events/add-att','events/index','events/view'],
+		'Events' => ['events/add-att','events/index','events/view','badges/get-badge-name'],
 	];
 
 	public $noLogin = [

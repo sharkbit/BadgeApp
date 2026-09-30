@@ -174,7 +174,7 @@ $eventAttendee = new Event_Att();
 			]
 		]);?>
 		</div>
-<?php if (yii::$app->controller->hasPermission('events/add-att')) { ?>
+<?php if ((yii::$app->controller->hasPermission('events/add-att')) && (!empty($newEventOptions))){ ?>
 		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
 			<?= Html::label("Events missing from today's event list:", 'new_event_id', ['class' => 'control-label']) ?>
 			<?= Html::dropDownList(

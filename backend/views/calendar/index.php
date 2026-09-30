@@ -63,10 +63,11 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'format' => 'raw',
 				'headerOptions' => ['style' => 'width:20%'],
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
-				'value'=>function ($model) {
+				'value'=>function ($model) use ($shoot) {
 					if($model->recurrent_calendar_id>0) {$recurr=" *";} else {$recurr="";}
 					if($model->calendar_id==$model->recurrent_calendar_id) {$master=" m";} else {$master="";}
-					if ((yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) {
+					if ( ( (yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs)))) ) ||
+						( (yii::$app->controller->hasPermission('calendar/shoot')) && ( array_intersect($shoot, json_decode($model->facility_id)) ) ) ) {
 						return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id).$recurr.$master; }
 					else { return $model->event_name.$recurr.$master; }
 				},
