@@ -33,7 +33,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'dis_short',
 			'dis_amount',
 			[   'attribute' => 'dis_allowed',
-                'value' => function($model) { return implode(", ", $model->dis_allowed); },
+                'value' => function($model) {
+					$allowed = [];
+					foreach ($model->dis_allowed as $discountType) {
+						if ($discountType === 'NewBG') {
+							$allowed[] = 'New Badge';
+						} elseif ($discountType === 'RenBG') {
+							$allowed[] = 'Renew Badge';
+						}
+					}
+					return implode(', ', $allowed);
+				},
                 'headerOptions' => ['style' => 'width:5%'],
             ],
             [   'attribute' => 'dis_active',

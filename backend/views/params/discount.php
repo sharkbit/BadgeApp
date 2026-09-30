@@ -46,7 +46,17 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					],
 					'dis_amount',
 					[   'attribute' => 'dis_allowed',
-						'value' => function($model) { return implode(", ", $model->dis_allowed); },
+						'value' => function($model) { 
+							$allowed = [];
+							foreach ($model->dis_allowed as $discountType) {
+								if ($discountType === 'NewBG') {
+									$allowed[] = 'New Badge';
+								} elseif ($discountType === 'RenBG') {
+									$allowed[] = 'Renew Badge';
+								}
+							}
+							return implode(', ', $allowed);
+						},
 						'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'dis_allowed', ['NewBG' => 'New', 'RenBG' => 'Renew'],['class'=>'form-control','prompt' => 'All']),
 						'headerOptions' => ['style' => 'width:15%'],
 					],
