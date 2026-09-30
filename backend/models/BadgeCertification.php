@@ -73,7 +73,10 @@ class BadgeCertification extends \yii\db\ActiveRecord
         ];
     }
     public function getcertificationList() {
-		$ItemsList = StoreItems::find()->where(['>',"sku",0])->andWhere(['like', 'item', '%cert%', false])->all();
+		$ItemsList = StoreItems::find()->where(['>',"sku",0])
+			->andWhere(['active'=>1])
+			->andWhere(['like', 'item', '%cert%', false])
+			->all();
 		return ArrayHelper::map($ItemsList,
 			function($model) { return $model['sku'].'|'.$model['price']; },'item');
 	}
