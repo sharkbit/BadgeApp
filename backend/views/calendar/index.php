@@ -4,6 +4,7 @@ use backend\models\AgcCal;
 use backend\models\agcEventStatus;
 use backend\models\agcFacility;
 use backend\models\agcRangeStatus;
+use backend\models\clubs;
 use kartik\grid\GridView;
 use kartik\daterange\DateRangePicker;
 use kartik\widgets\ActiveForm;
@@ -52,6 +53,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	<div class="col-xs-12">
 	<?php $gridColumns = [
 			[	'attribute'=>'club_id',
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(false,json_encode((New clubs)->getMyClubs($_SESSION['badge_number']))),['class'=>'form-control','prompt' => 'All']),
 				'format'=>'raw',
 				'value'=>function($model) {
 					return @$model->clubs->short_name.' <img src="/images/note.png" title="'.@$model->clubs->club_name.'" style="width:18px" />'; },

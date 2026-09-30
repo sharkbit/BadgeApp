@@ -45,6 +45,12 @@ class EventsSearch extends Events {
         }
 
         // grid filtering conditions
+		if (yii::$app->controller->hasPermission('calendar/all')) { }									// Sees All Calendar
+		elseif ( (in_array(9,$_SESSION['privilege']))  && isset(Yii::$app->user->identity->clubs)) {	// Have Calendar Cord and Clubs set
+			$query->andFilterWhere(['in','club_id',json_decode(Yii::$app->user->identity->clubs)]); }
+		else {																							// Is Range POC
+			$query->andFilterWhere(['cal_inst' => $_SESSION['badge_number']]);
+		}
 		
         if(!empty($this->event_date)) {			$query->andFilterWhere(['like', 'event_date', $this->event_date]); }
 		if(!empty($this->club_id)) {  			$query->andFilterWhere(['club_id' => $this->club_id]); }

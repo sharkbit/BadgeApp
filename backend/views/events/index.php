@@ -80,7 +80,7 @@ $eventAttendee = new Event_Att();
 			'cal_start_time',
 			[	'attribute' => 'club_id',
 				//'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(false,json_encode((New clubs)->getMyClubs($_SESSION['badge_number']))),['class'=>'form-control','prompt' => 'All']),
 				'format' => 'raw',
 				'value'=> function($model) {
 					return $model['short_name'].' <img src="/images/note.png" title="'.$model['club_name'].'" style="width:18px" /> ';
@@ -95,14 +95,11 @@ $eventAttendee = new Event_Att();
 					return Html::a($model->event_name,"/events/$send_to?id=".$model->ea_calendar_id);},
 				'headerOptions' => ['style' => 'width:25%']
 			],
-			[	'attribute'=>'P O C',
+			[	'attribute'=>'Event Director',
 				'value'=>function($model) {
 					if(!empty($model->cal_inst)) {
-						if(is_integer($model->cal_inst)) {
-							return yii::$app->controller->decodeBadgeName((int)$model->$model->cal_inst);
-						} else {
-							return $model->cal_inst;
-						}
+						$poc_name = yii::$app->controller->decodeBadgeName((int)$model->cal_inst);
+						if (!empty($poc_name)) { return $poc_name; } else { return $model->cal_inst;}
 					} else {
 						return yii::$app->controller->decodeBadgeName((int)$model->poc_badge); 
 					}
@@ -121,12 +118,6 @@ $eventAttendee = new Event_Att();
 				'value'=>function($model) { return $model->event_status_name; },
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'event_status_id',(new agcEventStatus)->getStatusList(),['class'=>'form-control','prompt' => 'Any']),
 			],
-				
-	/*		[
-				'attribute'=>'e_poc',
-				'value'=>function($model) { return $model->badges?->first_name.' '.$model->badges?->last_name; },
-				'headerOptions' => ['style' => 'width:10%']
-			], */
 			[
 				'header'=>'Action',
 				'class' => 'yii\grid\ActionColumn',
@@ -183,6 +174,7 @@ $eventAttendee = new Event_Att();
 			]
 		]);?>
 		</div>
+<?php if (yii::$app->controller->hasPermission('events/add-att')) { ?>
 		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
 			<?= Html::label("Events missing from today's event list:", 'new_event_id', ['class' => 'control-label']) ?>
 			<?= Html::dropDownList(
@@ -199,7 +191,7 @@ $eventAttendee = new Event_Att();
 		<div class="col-xs-6 col-sm-2 col-md-2 col-lg-1 col-xl-1">
 			<br /><?= Html::button('<i class="fa fa-plus" aria-hidden="true"></i> Add', ['class' => 'btn btn-primary','id'=>'addEvent', 'disabled' => empty($newEventOptions)]) ?>
 		</div>
-
+<?php } ?>
 		<div class="col-xs-6 col-sm-2 col-md-2 col-lg-1 col-xl-1">
 			<?= $form->field($searchModel, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
 		</div>

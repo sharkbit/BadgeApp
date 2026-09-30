@@ -67,7 +67,7 @@ class Clubs extends \yii\db\ActiveRecord {
 			->orderBy(['is_club'=> SORT_DESC,$field => SORT_ASC ])
 			->all();
 
-		if($restrict) {
+		if((!yii::$app->controller->hasPermission('badges/all')) && ($restrict)) {
 			$myClubs='';
 			foreach ($clubArray as $key=>$value) {
 				if(in_array($value->club_id,json_decode($restrict))) {
