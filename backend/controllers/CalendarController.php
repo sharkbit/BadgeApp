@@ -811,7 +811,7 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 					AgcCal::UpdateAll(['club_id'=>$model->club_id, 'event_name'=>$model->event_name, 'key_words'=>$model->key_words, 'recur_week_days'=>$model->recur_week_days], 'recurrent_calendar_id = '.$model->calendar_id);
 
 					AgcCal::UpdateAll(['facility_id'=>$model->facility_id, 'lanes_req'=>$model->lanes_req, 'event_status_id'=>$model->event_status_id, 'range_status_id'=>$model->range_status_id,
-						'cal_start_time'=>$model->cal_start_time, 'cal_end_time'=>$model->cal_end_time, 'deleted'=>$model->deleted, 'poc_badge'=>$model->poc_badge],
+						'cal_inst'=>$model->cal_inst, 'cal_start_time'=>$model->cal_start_time, 'cal_end_time'=>$model->cal_end_time, 'deleted'=>$model->deleted, 'poc_badge'=>$model->poc_badge],
 						"recurrent_calendar_id = ".$model->calendar_id." AND event_date >= '".date('Y-m-d',strtotime($this->getNowTime()))."'");
 
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Updated Master Calendar item: ','".$model->event_name.'('.$model->calendar_id.')');

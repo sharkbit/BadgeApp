@@ -216,9 +216,11 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 							'data-toggle'=>'tooltip',
 							'data-placement'=>'top',
 							'title'=>'Delete',
+							'data-pjax' => '0',
 							'data' => [
 								'confirm' => 'Are you sure you want to delete '.$model->event_name.'?',
 								'method' => 'post',
+								'params' => [Yii::$app->request->csrfParam => Yii::$app->request->getCsrfToken()],
 							],
 						]); }
 					},
