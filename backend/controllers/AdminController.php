@@ -72,9 +72,9 @@ class AdminController extends \yii\web\Controller {
 
 	public $cashierPermission = [
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/get-badge-name','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/overideprice','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
-		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
-		'Events' => ['events/add-att','events/index','events/view'],
+		'Events' => ['events/all','events/add-att','events/index','events/view'],
+		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'sales' => ['sales/all','sales/index','sales/report','sales/stock','sales/summary'],
 		'Guest' => ['guest/all','guest/modify','guest/update'],
 	];
@@ -103,6 +103,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $viewPermission = [
 		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Calendar' =>['calendar/all','calendar/index','calendar/view'],
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all'],
 		'sales' => ['sales/all','sales/index','sales/stock','sales/report','sales/summary'],

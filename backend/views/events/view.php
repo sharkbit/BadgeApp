@@ -67,10 +67,13 @@ $div_closed=false;
     <h2><?= Html::encode($model->event_date. " - " .$model->event_name) ?></h2>
 <div class="row">
 	<div class="col-xs-6 col-sm-4">
-		<b>POC:</b> <?php echo "($model->poc_badge) ".yii::$app->controller->decodeBadgeName((int)$model->poc_badge).PHP_EOL; ?>
+		<b>Calendar POC:</b> <?= Html::encode("($model->poc_badge) ".yii::$app->controller->decodeBadgeName((int)$model->poc_badge)) ?><br />
+<?php if (!$model->track_wristbands) { ?>
+		<b>Event Director:</b> <?= Html::encode("($model->cal_inst) ".yii::$app->controller->decodeBadgeName((int)$model->cal_inst)) ?>
+<?php } ?>
 	</div>
 	<div class="col-xs-6 col-sm-4">
-		<b>Sponsored by:</b>  <?=$model->club_name ?>
+		<b>Sponsored by:</b>  <?= Html::encode($model->club_name) ?>
 		<?php if ($model->is_volunteer) { echo " <b>Event:</b> Volunteer  ($model->ea_hours hours)"; } ?>
 	</div>
 	<div class="col-xs-6 col-sm-2"><?php
@@ -105,7 +108,7 @@ $div_closed=false;
 		}*/ ?>
 	</div>
 <?php if ($model->track_wristbands) { ?>
-	<div class="col-xs-8 col-sm-8"><b>Instructors:</b> <?=$model->cal_inst?> </div>
+	<div class="col-xs-8 col-sm-8"><b>Instructors:</b> <?= Html::encode($model->cal_inst) ?> </div>
 <?php } ?>
 </div>
 <?php if (($model->event_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) && (yii::$app->controller->hasPermission('events/add-att'))) { ?>
@@ -159,16 +162,17 @@ if($att_count>0) {
 	//array_multisort($Attendees['ea_badge']);
 	foreach ($Attendees as $person) {
 		echo "<div class='col-xs-6 col-sm-4'><p>";
+		$ba_name = '';
 
 		if($person->ea_badge>0) {
 			$ba_name = yii::$app->controller->decodeBadgeName((int)$person->ea_badge);
-			echo str_pad($person->ea_badge, 5, '0', STR_PAD_LEFT)." - ".$ba_name;
+			echo Html::encode(str_pad($person->ea_badge, 5, '0', STR_PAD_LEFT)." - ".$ba_name);
 
 			if (yii::$app->controller->hasPermission('badges/barcode')) {
 				if(file_exists("files/badge_photos/".str_pad($person->ea_badge, 5, '0', STR_PAD_LEFT).".jpg")) {
 					//Photo Exists
 					$badge = Badges::find()->where(['badge_number'=>$person->ea_badge])->one();
-					if((substr($badge->qrcode, -2)==" 0") || (substr($badge->qrcode, -2)==" 1")) {
+					if($badge && ((substr($badge->qrcode, -2)==" 0") || (substr($badge->qrcode, -2)==" 1"))) {
 						echo " <b><a href='/badges/view?badge_number=".$person->ea_badge."'>[ <span class='glyphicon glyphicon-eye-open'></span> Update Badge ]</a></b>\n";
 					}
 				} else {
@@ -179,13 +183,13 @@ if($att_count>0) {
 			}
 		} else {
 			$ba_name = $person->ea_f_name." ".$person->ea_l_name;
-			echo $ba_name;
+			echo Html::encode($ba_name);
 			if ($person->ea_wb_serial) {
-				echo " (WB# $person->ea_wb_serial";
+				echo " (WB# ".Html::encode($person->ea_wb_serial);
 				if($person->ea_wb_out) {
 					if (yii::$app->controller->hasPermission('events/return')) {
 						$div_closed=true;
-						echo " <a href='/events/return?id=".$model->ea_calendar_id."&wb=".$person->ea_wb_serial."'>[Return]</a>)\n";
+						echo " ".Html::a('[Return]', ['/events/return', 'id' => $model->ea_calendar_id, 'wb' => $person->ea_wb_serial]).")\n";
 					} else { echo " Out)"; }
 				} else { echo " Returned)"; }
 			}
@@ -227,6 +231,9 @@ if($att_count>0) {
 	function toggleaddPeeps() {
 	  const section = document.getElementById('addPeepsSection');
 	  const btn = document.getElementById('hideToggleBtn');
+	  if (!section || !btn) {
+		return;
+	  }
 	  
 	  section.classList.toggle('collapsed');
 	  
@@ -237,7 +244,9 @@ if($att_count>0) {
 	  }
 	}
 
-	toggleaddPeeps();
+	if (document.getElementById('addPeepsSection')) {
+		toggleaddPeeps();
+	}
 
 	$('#event_att-ea_badge').on('input', function() {
 		document.getElementById("event_att-ea_f_name").value='';
@@ -315,7 +324,7 @@ if($att_count>0) {
 				if(responseData.isExpired) {
 					$("#badge_name").html('No Active Member Found');
 				} else {
-					$("#badge_name").html(responseData.first_name+' '+responseData.last_name);
+					$("#badge_name").text(responseData.first_name+' '+responseData.last_name);
 				}
 			},
 			error: function (responseData, textStatus, errorThrown) {

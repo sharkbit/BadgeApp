@@ -45,7 +45,7 @@ class EventsSearch extends Events {
         }
 
         // grid filtering conditions
-		if (yii::$app->controller->hasPermission('calendar/all')) { }									// Sees All Calendar
+		if ( (yii::$app->controller->hasPermission('calendar/all')) || (yii::$app->controller->hasPermission('events/all')) ) { }	// Sees All Events
 		elseif ( (array_intersect([8,9],$_SESSION['privilege']))  && isset(Yii::$app->user->identity->clubs)) {	// Have Calendar Cord and Clubs set
 			$query->andFilterWhere(['in','club_id',json_decode(Yii::$app->user->identity->clubs)]); }
 		else {																							// Is Range POC

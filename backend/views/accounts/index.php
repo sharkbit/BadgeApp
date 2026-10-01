@@ -47,7 +47,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 		[
 			'attribute' => 'clubs',
 			'contentOptions' => ['style' => 'white-space:pre-line;'],
-			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'clubs',(new clubs)->getClubList(true),['class'=>'form-control','prompt' => 'All']),
+			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'clubs',(new clubs)->getClubList(false),['class'=>'form-control','prompt' => 'All']),
 			'format' => 'raw',
 			'value'=> function($model) {
 				if(array_intersect([8,9],json_decode($model->privilege))) {
