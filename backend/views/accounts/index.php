@@ -50,6 +50,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'clubs',(new clubs)->getClubList(true),['class'=>'form-control','prompt' => 'All']),
 			'format' => 'raw',
 			'value'=> function($model) {
+				if(array_intersect([8,9],json_decode($model->privilege))) {
 				if(!is_null($model->clubs)) {
 					if(is_array(json_decode($model->clubs))) {
 						$clubList = (new clubs)->getClubList(true);	$clubStr='';
@@ -60,6 +61,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 						return rtrim($clubStr, ', ');
 					}
 				} else { return ''; }
+				} else {return 'n/a';}
 			}
 		],
 		[

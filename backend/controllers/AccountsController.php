@@ -97,7 +97,7 @@ class AccountsController extends SiteController {
 			$this->redirect('index'); }
         if ($model->load(Yii::$app->request->post()) ) {
 	
-			if ($model->privilege=='') {
+			if (empty($model->privilege)) {
 				if(intval($model->badge_number)>0) {
 					$this->RemoveClub($model->badge_number);
 				}
@@ -108,9 +108,12 @@ class AccountsController extends SiteController {
 				if(isset($model->r_user)) { $this->removeRemoteUser($model->r_user); }
                 return $this->redirect(['/accounts/index']);
 			} else {
+				if(!array_intersect([8,9],$model->privilege)) {
+					$model->clubs = '';
+				}
 				if ((!in_array(14,$model->privilege)) && (isset($old_r_user)) && (!is_null($old_r_user))){
 					$this->removeRemoteUser($old_r_user);
-					$model->r_user = null;
+					$model->r_user = '';
 				}
 				if (array_intersect([3,6],$old_priv)) {
 					if(!array_intersect([3,6],$model->privilege)) {

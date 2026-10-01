@@ -73,7 +73,7 @@ class UserSearch extends User {
 		if(!empty($this->privilege))		{ $query->andWhere("JSON_CONTAINS(privilege,'".$this->privilege."')"); }
 		if(!empty($this->password_hash))	{ $query->andFilterWhere(['like', 'password_hash', $this->password_hash]); }
 		if(!empty($this->password_reset_token))	{ $query->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token]); }
-		//if(!empty($this->clubs)) { $query->andWhere("JSON_CONTAINS(user.clubs,'" ,$this->clubs ); }
+		if(!empty($this->clubs)) 			{ $query->andWhere("JSON_CONTAINS(user.clubs,'" .$this->clubs."')"); }
 
 //yii::$app->controller->createLog(true, 'trex-b-m-s-us', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
 	return $dataProvider;

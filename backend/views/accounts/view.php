@@ -69,11 +69,15 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'attribute' => 'clubs',
 				'value'=> function($model) {
-					if(is_array(json_decode($model->clubs))) {
-					$clubList = (new clubs)->getClubList();	$clubStr='';
-					foreach(json_decode($model->clubs) as $club) { $clubStr.=$clubList[$club].', '; }
-					return rtrim($clubStr, ', ');
-				}}
+					if(array_intersect([8,9],json_decode($model->privilege))) {
+						if(is_array(json_decode($model->clubs))) {
+							$clubList = (new clubs)->getClubList();	$clubStr='';
+							foreach(json_decode($model->clubs) as $club) { $clubStr.=$clubList[$club].', '; }
+							return rtrim($clubStr, ', ');
+						}
+					}
+					return 'n/a';
+				}
 			],
             [
                 'attribute' =>'status',
