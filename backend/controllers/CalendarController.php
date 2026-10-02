@@ -859,6 +859,7 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 				'model' => $model,
 			]);
 		} else {
+			Yii::$app->getSession()->setFlash('error', 'Event not found');
 			return $this->redirect(['list']);
 		}
 	}

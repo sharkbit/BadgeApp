@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\AgcCal;
+use backend\models\Badges;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -23,18 +25,54 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
 
-            'event_name',
-            'event_date',
-            'poc_badge',
-			'date_requested',
-			'cal_start_time',
-            'cal_end_time',
-		/*	[	'attribute' => 'is_club',
-                'value' => function($model) { if($model->is_club==0) return'COI or Other'; else return 'Yes'; },
-                'headerOptions' => ['style' => 'width:5%'],
-			],*/
+			[	'attribute'=>'club_id',
+				'value'=>function($model) { return $model->clubs->club_name; }
+			],
+			'event_name',
+			[	'attribute'=>'facility_id',
+				'value'=>function($model) { return (New AgcCal)->getAgcFacility_Names($model->facility_id); }
+			],
+			[	'attribute'=>'Time',
+				'value'=>function($model) {
+					$startTime = !empty($model->cal_start_time) ? strtotime($model->cal_start_time) : false;
+					$endTime = !empty($model->cal_end_time) ? strtotime($model->cal_end_time) : false;
+					$timeRange = $startTime !== false && $endTime !== false
+						? date('h:i A', $startTime).' - '.date('h:i A', $endTime) : '';
+					return $model->event_date.($timeRange !== '' ? ' ('.$timeRange.')' : '');
+				}								],
+			[	'attribute' => 'poc_badge',
+				'label' => 'Calendar POC',
+				'value'=>function($model) {
+					if((!empty($model->poc_badge)) && (filter_var($model->poc_badge, FILTER_VALIDATE_INT))) {
+						$poc_badge_search = Badges::find()->where(['badge_number' => $model->poc_badge])->one();
+						if(!empty($poc_badge_search)) {
+							return $poc_badge_search->first_name . ' ' . $poc_badge_search->last_name;
+						}
+					}
+					return '';
+				}
+			],
+			[	'attribute' => 'cal_inst',
+				'label' => 'Event Director',
+				'value'=>function($model) {
+					if((!empty($model->cal_inst)) && (filter_var($model->cal_inst, FILTER_VALIDATE_INT))) {
+						$inst_badge_search = Badges::find()->where(['badge_number' => $model->cal_inst])->one();
+						if(!empty($inst_badge_search)) {
+							return $inst_badge_search->first_name . ' ' . $inst_badge_search->last_name;
+						}
+					}
+					return '';
+				}
+			],
+			[	'attribute'=>'event_status_id',
+				'value'=>function($model) { return $model->agcEventStatus->name; },
+			],
+			[	'attribute'=>'range_status_id',
+				'value'=>function($model) { return $model->agcRangeStatus->name; },
+			],
             [   'attribute' => 'deleted',
-                'value' => function($model) { if($model->deleted==0) return'Deleted'; else return 'Active'; },
+				'label' => 'Is Active',
+                'value' => function($model) { if($model->deleted==0) return'Yes'; else return 'Deleted'; },
                 'headerOptions' => ['style' => 'width:5%'],
             ],
 
