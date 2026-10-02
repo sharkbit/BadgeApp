@@ -1,6 +1,5 @@
 <?php
 use yii\helpers\Html;
-use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
@@ -8,70 +7,6 @@ use backend\models\clubs;
 use backend\models\agcFacility;
 use backend\models\agcEventStatus;
 use backend\models\agcRangeStatus;
-
-function table_page_navigation($start, $number_displayed, $total, $extra_get_params='', $name_var='start') {
-	$first = 'first';
-	$prev  = 'previous';
-	$next  = 'next';
-	$last  = 'last';
-
-	//$extra_get_params = remove_duplicates_in_get_params($extra_get_params, array($name_var));
-	if($extra_get_params != '') $extra_get_params = '&' . $extra_get_params;
-	if($total > $number_displayed){
-	  $result = '<table border="0" width="100%" ><tr><td style="padding-right:5px;" align="right" valign="top">';
-
-	  // First
-	  if ($start > 0)
-		$result .= '<a  href="?'.$name_var.'=0' . $extra_get_params .'" class="small_link">'.$first.'</a>';
-	  else
-		$result .= '<span class="dissabled_link">'.$first.'</span>';
-	  $result .= '</td><td style="padding-right:5px" align=center>';
-
-	  // Prev $number_displayed
-		   $temp_start = $start - $number_displayed;
-	  if ($temp_start < 0) $temp_start = 0;
-	  if ($start > 0) $result .= '<a href="?'.$name_var.'='.$temp_start . $extra_get_params . '" class="small_link">&#171; '.$prev.' <!--'.$number_displayed.'--></a>';
-	  else $result .= '<span class="dissabled_link">&#171; '.$prev.' <!--'.$number_displayed.'--></span>';
-
-	  //pages
-	  $result .= '</td><td style="padding-right:2px" align=center>';
-	  if($total/$number_displayed >= 21) {
-	  $first_number = $start/$number_displayed-9;
-	  $last_number = $start/$number_displayed+11;
-	  if($start/$number_displayed+1 <= 11){
-		  $first_number = 1;
-		  $last_number = 21;
-		  }
-
-	  if( $start/$number_displayed+11 > (int)($total/$number_displayed)){
-		  $first_number = (int)($total/$number_displayed)-20;
-		  $last_number = $total/$number_displayed;
-		  }
-	  }else{
-	  $first_number = 1;
-	  $last_number = $total/$number_displayed;
-	  }
-
-	  for($i=$first_number; $i-1 < $last_number; $i++)
-		if(($i-1)*$number_displayed == $start) $result .= '<span class="dissabled_link">'.$i.'</span>&nbsp;';
-		else $result .= '<a href="?' . $name_var . '=' . (($i-1) * $number_displayed) . $extra_get_params . '" class="small_link">'.$i.'</a>&nbsp;';
-	  $result .= '</td><td style="padding-right:5px" align=center>';
-
-	  // Next $number_displayed
-	  if ($start + $number_displayed < $total)
-		$result .= '<a href="?' . $name_var . '=' . ($start + $number_displayed) . $extra_get_params . '" class="small_link">'.$next.' &#187;<!--' . $number_displayed . '--></a>';
-	  else $result .= '<span class=dissabled_link>'.$next.' &#187;<!--' . $number_displayed . '--></span>';
-	  $result .= '</td><td style="padding-right:5px" align=center>';
-	  // Last
-	  if ($start + $number_displayed < $total)
-		$result .= '<a href="?' . $name_var . '=' . ($total-($total%$number_displayed)) . $extra_get_params.'" class="small_link">'.$last.'</a>';
-	  else $result .= '<span class="dissabled_link">'.$last.'</span>';
-
-	  $result .= '</tr></table>';
-	}
-	else $result = '';
-	return $result;
-}
 
 $this->title = "AGC Calendar Events";
 ?>
@@ -120,7 +55,7 @@ $this->title = "AGC Calendar Events";
 			<?= $form->field($searchModel,'event_date')->widget(DatePicker::classname(), ['options'=>['class'=>'form-control'],'pluginOptions' =>['todayHighlight' => true]]); ?>
 		</div>
 		<div class="col-xs-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
-			<?= $form->field($searchModel, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100, 200=>200 ],['value'=>$searchModel->pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
+			<?= $form->field($searchModel, 'pagesize')->dropDownlist([ 20 => 20, 50 => 50, 100 => 100],['value'=>$searchModel->pagesize ,'id' => 'pagesize'])->label('Page size: ') ?>
 		</div>
 	</div>
 	<div class="row">
@@ -162,7 +97,7 @@ $this->title = "AGC Calendar Events";
 			<?php echo date('g:i a', strtotime($model->cal_start_time))." - ".date('g:i a', strtotime($model->cal_end_time));?>
 		</div>
 		<div class="col-xs-7">
-			<a style="text-decoration: none; font-size: 12px;" href="/calendar/viewitem?calendar_id=<?=$model->calendar_id ?>" target='Cal'><?=Html::encode($model->event_name) ?></a>
+			<a style="text-decoration: none; font-weight: bold;" href="/calendar/viewitem?calendar_id=<?=$model->calendar_id ?>" target='Cal'><?=Html::encode($model->event_name) ?></a>
 			<br/><?=$model->clubs->club_name ?><br/><?=(New AgcFacility)->getFacilityNames($model->facility_id);?>
 		</div>
 		<div class="col-xs-2">

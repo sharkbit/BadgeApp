@@ -231,10 +231,30 @@ class CalendarController extends AdminController {
 	public function actionList() {
 		$searchModel = new AgcCalSearch();
 		$searchModel->deleted = 0;
+		$pageSizeOptions = [20, 50, 100];
+		$pageSizeSessionKey = 'CalendarListPageSize';
+		$postSearchParams = Yii::$app->request->post('AgcCalSearch', []);
+		$querySearchParams = Yii::$app->request->get('AgcCalSearch', []);
+		if (!is_array($postSearchParams)) {
+			$postSearchParams = [];
+		}
+		if (!is_array($querySearchParams)) {
+			$querySearchParams = [];
+		}
+
 		if (($_REQUEST['form_action'] ?? '') !== 'reset') {
 			$this->RestoreSession($searchModel, 'AgcCal', $this->myFilters);
+			$requestedPageSize = $postSearchParams['pagesize'] ?? $querySearchParams['pagesize'] ?? null;
+			$requestedPageSize = filter_var($requestedPageSize, FILTER_VALIDATE_INT);
+			if (in_array($requestedPageSize, $pageSizeOptions, true)) {
+				Yii::$app->session->set($pageSizeSessionKey, $requestedPageSize);
+			}
+			$savedPageSize = filter_var(Yii::$app->session->get($pageSizeSessionKey, 20), FILTER_VALIDATE_INT);
+			$searchModel->pagesize = in_array($savedPageSize, $pageSizeOptions, true) ? $savedPageSize : 20;
 			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 		} else {
+			Yii::$app->session->remove($pageSizeSessionKey);
+			$searchModel->pagesize = 20;
 			unset($_REQUEST['key_words']);
 			unset($_REQUEST['event_date']);
 			Yii::$app->session->remove('AgcCal');
@@ -242,6 +262,7 @@ class CalendarController extends AdminController {
 			$dataProvider = $searchModel->search([]);
 			yii::$app->controller->createLog(true, 'trexpageCount', var_export(Yii::$app->request->queryParams,true));
 		}
+		$dataProvider->pagination->pageSize = $searchModel->pagesize;
 
 		$this->view->params['hideBackButton'] = true;
 
