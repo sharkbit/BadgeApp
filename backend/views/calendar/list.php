@@ -7,8 +7,14 @@ use backend\models\clubs;
 use backend\models\agcFacility;
 use backend\models\agcEventStatus;
 use backend\models\agcRangeStatus;
+use yii\helpers\ArrayHelper;
 
 $this->title = "AGC Calendar Events";
+$facilityNamesById = ArrayHelper::map(
+	agcFacility::find()->select(['facility_id', 'name'])->asArray()->all(),
+	'facility_id',
+	'name'
+);
 ?>
 
 <div class="work-credits-form" ng-controller="CalendarListFrom">
@@ -98,7 +104,20 @@ $this->title = "AGC Calendar Events";
 		</div>
 		<div class="col-xs-7">
 			<a style="text-decoration: none; font-weight: bold;" href="/calendar/viewitem?calendar_id=<?=$model->calendar_id ?>" target='Cal'><?=Html::encode($model->event_name) ?></a>
-			<br/><?=$model->clubs->club_name ?><br/><?=(New AgcFacility)->getFacilityNames($model->facility_id);?>
+			<br/><?=$model->clubs->club_name ?><br/>
+			<?php
+				$facilityIds = json_decode($model->facility_id, true);
+				$facilityNames = [];
+				if (is_array($facilityIds)) {
+					foreach ($facilityIds as $facilityId) {
+						if (isset($facilityNamesById[$facilityId])) {
+							$facilityNames[] = $facilityNamesById[$facilityId];
+						}
+					}
+				}
+				sort($facilityNames);
+				echo Html::encode(implode(', ', $facilityNames));
+			?>
 		</div>
 		<div class="col-xs-2">
 <?php 	// ### Range Status Icons
