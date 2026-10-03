@@ -321,10 +321,6 @@ yii::$app->controller->createLog(true, 'trex7474', var_export(key($memstatus),tr
 		}
 	});
 
-	function CheckOnline() {
-		// Only For Renuals!
-	}
-
 	function doCheckField(e) {
 		e = e || window.event;
 		if(e.target.value=='0') e.target.value='';

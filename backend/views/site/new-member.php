@@ -247,10 +247,6 @@ input[type='checkbox'] {
 		else {document.getElementById("new-agree").disabled=true;}
 	}
 	
-	function CheckOnline() {
-		// Only For Renewals!console
-	}
-
     function fillQR() {
         var ranText="";
         var possible = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";

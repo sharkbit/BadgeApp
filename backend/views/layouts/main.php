@@ -742,7 +742,6 @@ app.controller('UpdateBadgeController', function($scope) {
             $("#renew_btn").hide();
             $("#online_search").hide();
         } else if(selectedVal=="online") {
-            CheckOnline();
             $("#cc_form_div").hide();
             $("#renew_btn").show();
             $("#online_search").show();

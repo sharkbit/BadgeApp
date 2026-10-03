@@ -729,55 +729,6 @@ $ccYear = range($curYr,$curYr+25);  ?>
 		document.getElementById("badgecertification-Process_CC").disabled=false;
 	});
 
-	function CheckOnline() {
-		document.getElementById("renew_btn").disabled = true;
-		var myBadge = $("#badgesubscriptions-badge_number").val();
-		var myLast = $("#badges-last_name").val();
-		if(myBadge) {
-			var myUrl = '<?=yii::$app->params['wp_site']?>/comms.php?online='+myBadge;
-			console.log('url: '+myUrl);
-			jQuery.ajax({
-				method: 'GET',
-				url: myUrl,
-				success: function(responseData, textStatus, jqXHR) {
-					console.log(responseData);
-					var obj = JSON.parse( responseData );
-					if(obj.status == 'success') {
-						var entry ="";
-						var myData ='<table border-width=1><tr><th>Date</th><th>Name Found</th><th>Total</th></tr>';
-						obj.data.forEach(function(entry) {
-							if (myLast.toUpperCase() === entry.l_name.toUpperCase()) {
-								myData += "<tr><td>"+ entry.tx_date.split(" ")[0] + "</td><td>" + entry.f_name +" "+ entry.l_name +  "</td><td>" +entry.total+"</td></tr>\n";
-							}
-						});
-						myData +="</table><p> </p>";
-						$("#online_search_results").html(myData);
-
-
-					} else {
-						var myData = 'No Results Found';
-		//				console.log('no data');
-					}
-		//			console.log(myData);
-					$("#online_search_results").html(myData);
-					$("#online_search").hide();
-					document.getElementById("renew_btn").disabled = false;
-				},
-				error: function (responseData, textStatus, errorThrown) {
-					$("#online_search_results").html("Error, Something went Wrong!");
-					console.log("error " + JSON.stringify(responseData));
-					$("#online_search").hide();
-					document.getElementById("renew_btn").disabled = false;
-				},
-				timeout: 10000
-			});
-		} else {
-			$("#online_search_results").html("Requires a Valid Email to Check Tests!");
-			$("#online_search").hide();
-			document.getElementById("renew_btn").disabled = false;
-		};
-	};
-
 	function ProcessSwipe(cleanUPC) {
 		if  ((cleanUPC.indexOf('ANSI 6360') > 0) || (cleanUPC.indexOf('AAMVA6360') > 0)) { // Matched Drivers Licence
 			console.log('Drivers Licence Scanned: ', cleanUPC);
