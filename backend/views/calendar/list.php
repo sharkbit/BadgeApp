@@ -8,8 +8,39 @@ use backend\models\agcFacility;
 use backend\models\agcEventStatus;
 use backend\models\agcRangeStatus;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 
 $this->title = "AGC Calendar Events";
+$feedFilters = [];
+foreach (['key_words', 'club_id', 'facility_id', 'event_status_id', 'range_status_id'] as $filterAttribute) {
+	$filterValue = $searchModel->$filterAttribute;
+	if (is_array($filterValue)) {
+		$filterValue = array_values(array_filter($filterValue, static function ($value) {
+			return is_scalar($value) && (string)$value !== '';
+		}));
+		if ($filterValue) {
+			$feedFilters[$filterAttribute] = $filterValue;
+		}
+	} elseif (is_scalar($filterValue) && trim((string)$filterValue) !== '') {
+		$feedFilters[$filterAttribute] = $filterValue;
+	}
+}
+$clubValues = $feedFilters['club_id'] ?? [];
+$clubValues = is_array($clubValues) ? $clubValues : [$clubValues];
+$clubIds = [];
+foreach ($clubValues as $clubValue) {
+	$clubId = is_scalar($clubValue) ? filter_var($clubValue, FILTER_VALIDATE_INT) : false;
+	if ($clubId !== false && $clubId > 0) {
+		$clubIds[] = $clubId;
+	}
+}
+$clubIds = array_values(array_unique($clubIds));
+$hasClubFilter = !empty($clubIds);
+if ($hasClubFilter) {
+	$feedFilters['club_id'] = $clubIds;
+	$feedUrl = Url::to(['/calendar/rss', 'AgcCalSearch' => $feedFilters], true);
+	$rssFeedUrl = Url::to(['/calendar/rss', 'format' => 'rss', 'AgcCalSearch' => $feedFilters], true);
+}
 $facilityNamesById = ArrayHelper::map(
 	agcFacility::find()->select(['facility_id', 'name'])->asArray()->all(),
 	'facility_id',
@@ -17,7 +48,8 @@ $facilityNamesById = ArrayHelper::map(
 );
 ?>
 
-<div class="work-credits-form" ng-controller="CalendarListFrom">
+<main>
+<div class="work-credits-form">
 	<?php $form = ActiveForm::begin([ 'id'=>'CalendarListFrom' ]); ?>
 	<div class="row">
 		<div class="col-xs-12">
@@ -33,17 +65,17 @@ $facilityNamesById = ArrayHelper::map(
 		<div class="col-sm-6 col-md-3">
 			<?= $form->field($searchModel, 'key_words')->textInput(['value'=>$searchModel->key_words]).PHP_EOL; ?>
 		</div>
-		<div class="col-sm-6 col-md-3">
-			<?= $form->field($searchModel, 'club_id')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'Any','value'=> $searchModel->club_id]).PHP_EOL; ?>
-		</div>
-		<div class="col-xs-12 col-sm-9 col-md-6">
-			<?= $form->field($searchModel, 'facility_id')->dropDownList((new agcFacility)->getFacilityList(),['prompt'=>'Any','multiple'=>true, 'size'=>false]).PHP_EOL; ?>
-		</div>
 		<div class="col-xs-6 col-sm-3">
 			 <?= $form->field($searchModel, 'event_status_id')->DropDownList((new agcEventStatus)->getStatusList(),['prompt'=>'Any','value'=> $searchModel->event_status_id]).PHP_EOL; ?>
 		</div>
 		<div class="col-xs-6 col-sm-3">
 			<?= $form->field($searchModel, 'range_status_id')->DropDownList((new agcRangeStatus)->getStatusList(),['prompt'=>'Any','value'=> $searchModel->range_status_id]).PHP_EOL; ?>
+		</div>
+		<div class="col-sm-12 col-md-6">
+			<?= $form->field($searchModel, 'club_id')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'Any','value'=> $searchModel->club_id,'multiple'=>true]).PHP_EOL; ?>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-6">
+			<?= $form->field($searchModel, 'facility_id')->dropDownList((new agcFacility)->getFacilityList(),['prompt'=>'Any','value'=> $searchModel->facility_id,'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 		</div>
 
 		<div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2" >
@@ -78,6 +110,18 @@ $facilityNamesById = ArrayHelper::map(
 </details>
 </div>
 <hr />
+<div class="row">
+	<div class="col-xs-12">
+		<?php if ($hasClubFilter) { ?>
+			Subscription URLs: &nbsp;
+			<?= Html::a('Open calendar import feed (.ics)', $feedUrl, ['target' => '_blank', 'rel' => 'noopener']) ?>
+			&nbsp;|&nbsp;
+			<?= Html::a('Open RSS 2.0 feed', $rssFeedUrl, ['target' => '_blank', 'rel' => 'noopener']) ?>
+		<?php } else { ?>
+			Club needed for subscription URLs.
+		<?php } ?>
+	</div>
+</div>
 
 <?php if($groupedModels) { ?>
 <div class="post-list">
@@ -161,15 +205,9 @@ No Records found!
 </script>
 <?php } ?>
 
-<link rel="stylesheet" href="js/cal_jquery-ui.css" />
-<link rel="stylesheet" href="js/cal_style.css" />
-<script src="js/cal_jquery-1.12.4.js"></script>
-<script src="js/cal_jquery-ui.js"></script>
 <script>
-  $("#agccalsearch-facility_id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
-  $( function() { $( "#datepicker_S" ).datepicker({dateFormat: "yy-mm-dd",changeMonth: true}); } );
-  $( function() { $( "#datepicker_E" ).datepicker({dateFormat: "yy-mm-dd",changeMonth: true}); } );
-  $( function() { $( "#datepicker_D" ).datepicker({dateFormat: "yy-mm-dd",changeMonth: true, changeYear: true}); } );
+  $("#agccalsearch-club_id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
+  $("#agccalsearch-facility_id").select2({placeholder_text_multiple:'Choose Facilitys',width: "100%"});
 </script>
 
-<?php // mysqli_close($conn); ?>
+</main>

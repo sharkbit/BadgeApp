@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\Controller;
+use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -278,6 +279,211 @@ class CalendarController extends AdminController {
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 			'groupedModels' => $groupedModels]);
+	}
+
+	public function actionRss() {
+		$params = Yii::$app->request->queryParams;
+		$feedFilters = $params['AgcCalSearch'] ?? [];
+		$clubValue = is_array($feedFilters) ? ($feedFilters['club_id'] ?? null) : null;
+		$clubValues = is_array($clubValue) ? $clubValue : [$clubValue];
+		$clubIds = [];
+		foreach ($clubValues as $value) {
+			$clubId = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
+			if ($clubId === false || $clubId < 1) {
+				throw new BadRequestHttpException('A valid club_id is required for calendar subscription feeds.');
+			}
+			$clubIds[] = $clubId;
+		}
+		$clubIds = array_values(array_unique($clubIds));
+		if (!$clubIds) {
+			throw new BadRequestHttpException('A valid club_id is required for calendar subscription feeds.');
+		}
+		$feedFilters['club_id'] = is_array($clubValue) ? $clubIds : $clubIds[0];
+		$params['AgcCalSearch'] = $feedFilters;
+		if (isset($params['AgcCalSearch']) && is_array($params['AgcCalSearch'])) {
+			unset($params['AgcCalSearch']['deleted']);
+		}
+
+		$searchModel = new AgcCalSearch();
+		$searchModel->deleted = 0;
+		$dataProvider = $searchModel->search($params);
+		$dataProvider->pagination->pageSize = 100;
+
+		$facilityNamesById = ArrayHelper::map(
+			agcFacility::find()->select(['facility_id', 'name'])->asArray()->all(),
+			'facility_id',
+			'name'
+		);
+		$events = $dataProvider->getModels();
+		if (Yii::$app->request->get('format') === 'rss') {
+			$localTimeZone = new \DateTimeZone(Yii::$app->params['timeZone']);
+			$rssItems = [];
+			foreach ($events as $event) {
+				$start = new \DateTimeImmutable($event->event_date.' '.$event->cal_start_time, $localTimeZone);
+				$facilityIds = json_decode($event->facility_id, true);
+				$facilityNames = [];
+				if (is_array($facilityIds)) {
+					foreach ($facilityIds as $facilityId) {
+						if (isset($facilityNamesById[$facilityId])) {
+							$facilityNames[] = $facilityNamesById[$facilityId];
+						}
+					}
+				}
+				sort($facilityNames);
+				$descriptionParts = [];
+				if ($event->clubs) {
+					$descriptionParts[] = $event->clubs->club_name;
+				}
+				if ($facilityNames) {
+					$descriptionParts[] = implode(', ', $facilityNames);
+				}
+				if ($event->event_status_id == 19 || $event->range_status_id == 4) {
+					$descriptionParts[] = 'Canceled';
+				}
+				$eventUrl = Yii::$app->urlManager->createAbsoluteUrl([
+					'/calendar/viewitem',
+					'calendar_id' => $event->calendar_id,
+				]);
+				$rssItems[] = sprintf(
+					'<item><title>%s</title><link>%s</link><guid isPermaLink="true">%s</guid><description>%s</description><pubDate>%s</pubDate></item>',
+					$this->escapeXml($event->event_name),
+					$this->escapeXml($eventUrl),
+					$this->escapeXml($eventUrl),
+					$this->escapeXml(implode(' - ', $descriptionParts)),
+					$start->format(DATE_RSS)
+				);
+			}
+
+			$channelFilters = [];
+			$searchFilters = $params['AgcCalSearch'] ?? [];
+			if (is_array($searchFilters)) {
+				foreach (['key_words', 'club_id', 'facility_id', 'event_status_id', 'range_status_id', 'SearchTime', 'event_date'] as $filterName) {
+					if (isset($searchFilters[$filterName]) && (is_scalar($searchFilters[$filterName]) || is_array($searchFilters[$filterName]))) {
+						$channelFilters[$filterName] = $searchFilters[$filterName];
+					}
+				}
+			}
+			$channelUrl = Yii::$app->urlManager->createAbsoluteUrl(
+				array_merge(['/calendar/list'], $channelFilters ? ['AgcCalSearch' => $channelFilters] : [])
+			);
+			$buildDate = new \DateTimeImmutable('now', $localTimeZone);
+			$rss = '<?xml version="1.0" encoding="UTF-8"?>'."\r\n"
+				.'<rss version="2.0">'."\r\n"
+				.'<channel>'."\r\n"
+				.'<title>'.$this->escapeXml('AGC Calendar Events').'</title>'."\r\n"
+				.'<link>'.$this->escapeXml($channelUrl).'</link>'."\r\n"
+				.'<description>'.$this->escapeXml('AGC calendar events matching the selected filters.').'</description>'."\r\n"
+				.'<language>en-us</language>'."\r\n"
+				.'<lastBuildDate>'.$buildDate->format(DATE_RSS).'</lastBuildDate>'."\r\n"
+				.'<generator>AGC BadgeApp</generator>'."\r\n"
+				.'<ttl>60</ttl>'."\r\n"
+				.implode('', $rssItems)
+				.'</channel>'."\r\n"
+				.'</rss>'."\r\n";
+
+			Yii::$app->response->format = Response::FORMAT_RAW;
+			Yii::$app->response->headers->set('Content-Type', 'application/rss+xml; charset=UTF-8');
+			Yii::$app->response->headers->set('Content-Disposition', 'inline; filename="agc-calendar.xml"');
+			Yii::$app->response->headers->set('Cache-Control', 'no-cache, must-revalidate');
+			Yii::$app->response->headers->set('X-Content-Type-Options', 'nosniff');
+			return $rss;
+		}
+
+		$now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+		$localTimeZone = new \DateTimeZone(Yii::$app->params['timeZone']);
+		$lines = [
+			'BEGIN:VCALENDAR',
+			'VERSION:2.0',
+			'PRODID:-//AGC//BadgeApp Calendar//EN',
+			'CALSCALE:GREGORIAN',
+			'METHOD:PUBLISH',
+		];
+
+		foreach ($events as $event) {
+			$start = new \DateTimeImmutable($event->event_date.' '.$event->cal_start_time, $localTimeZone);
+			$end = new \DateTimeImmutable($event->event_date.' '.$event->cal_end_time, $localTimeZone);
+			$startUtc = $start->setTimezone(new \DateTimeZone('UTC'));
+			$endUtc = $end->setTimezone(new \DateTimeZone('UTC'));
+			$facilityIds = json_decode($event->facility_id, true);
+			$facilityNames = [];
+			if (is_array($facilityIds)) {
+				foreach ($facilityIds as $facilityId) {
+					if (isset($facilityNamesById[$facilityId])) {
+						$facilityNames[] = $facilityNamesById[$facilityId];
+					}
+				}
+			}
+			sort($facilityNames);
+			$descriptionParts = [];
+			if ($event->clubs) {
+				$descriptionParts[] = $event->clubs->club_name;
+			}
+			if ($facilityNames) {
+				$descriptionParts[] = implode(', ', $facilityNames);
+			}
+
+			$lines = array_merge($lines, [
+				'BEGIN:VEVENT',
+				'UID:calendar-'.$event->calendar_id.'@badgeapp',
+				'DTSTAMP:'.$now->format('Ymd\THis\Z'),
+				'DTSTART:'.$startUtc->format('Ymd\THis\Z'),
+				'DTEND:'.$endUtc->format('Ymd\THis\Z'),
+				'SUMMARY:'.$this->escapeICalendarText($event->event_name),
+				'DESCRIPTION:'.$this->escapeICalendarText(implode("\n", $descriptionParts)),
+			]);
+			if ($event->event_status_id == 19 || $event->range_status_id == 4) {
+				$lines[] = 'STATUS:CANCELLED';
+			}
+			$lines[] = 'END:VEVENT';
+		}
+
+		$lines[] = 'END:VCALENDAR';
+		Yii::$app->response->format = Response::FORMAT_RAW;
+		Yii::$app->response->headers->set('Content-Type', 'text/calendar; charset=UTF-8');
+		Yii::$app->response->headers->set('Content-Disposition', 'inline; filename="agc-calendar.ics"');
+		Yii::$app->response->headers->set('Cache-Control', 'no-cache, must-revalidate');
+
+		return implode("\r\n", array_map([$this, 'foldICalendarLine'], $lines))."\r\n";
+	}
+
+	private function escapeXml($value) {
+		return htmlspecialchars((string)$value, ENT_XML1 | ENT_COMPAT, 'UTF-8');
+	}
+
+	private function escapeICalendarText($value) {
+		return strtr((string)$value, [
+			'\\' => '\\\\',
+			"\r\n" => '\\n',
+			"\r" => '\\n',
+			"\n" => '\\n',
+			',' => '\\,',
+			';' => '\\;',
+		]);
+	}
+
+	private function foldICalendarLine($line) {
+		$characters = preg_split('//u', $line, -1, PREG_SPLIT_NO_EMPTY);
+		if ($characters === false) {
+			$characters = str_split($line);
+		}
+
+		$foldedLines = [];
+		$currentLine = '';
+		$currentLength = 0;
+		foreach ($characters as $character) {
+			$characterLength = strlen($character);
+			if ($currentLength + $characterLength > 75) {
+				$foldedLines[] = $currentLine;
+				$currentLine = ' '.$character;
+				$currentLength = 1 + $characterLength;
+			} else {
+				$currentLine .= $character;
+				$currentLength += $characterLength;
+			}
+		}
+		$foldedLines[] = $currentLine;
+
+		return implode("\r\n", $foldedLines);
 	}
 
 	public function actionIndex() {

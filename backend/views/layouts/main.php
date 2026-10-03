@@ -929,11 +929,8 @@ app.controller('UpdateBadgeController', function($scope) {
 
     });
 });
-
-<?php
-}
-if(strpos($_SERVER['REQUEST_URI'], 'work-credits')) {
-?>
+<?php }
+if(strpos($_SERVER['REQUEST_URI'], 'work-credits')) { ?>
 
 app.controller('WorkCreditFrom', function($scope) {
     var badgeNumber;

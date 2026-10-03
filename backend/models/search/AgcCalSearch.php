@@ -62,7 +62,7 @@ class AgcCalSearch extends AgcCal {
     // grid filtering conditions
 
 		$urlStatus = yii::$app->controller->getCurrentUrl();
-		if ($urlStatus['requestUrl']=='/calendar/list') { }
+		if ($urlStatus['controllerId'] === 'calendar' && in_array($urlStatus['actionId'], ['list', 'rss'], true)) { }
 		elseif (yii::$app->controller->hasPermission('calendar/all')) { }									// Sees All Calendar
 		elseif ( (array_intersect([8,9],$_SESSION['privilege']))  && isset(Yii::$app->user->identity->clubs)) {	// Have Calendar Cord and Clubs set
 			$query->andFilterWhere(['in','cal_calendar.club_id',json_decode(Yii::$app->user->identity->clubs)]); 
@@ -80,7 +80,22 @@ class AgcCalSearch extends AgcCal {
 			]);
 		}
 
-		if (is_scalar($this->club_id) && !empty($this->club_id)) {
+		if (is_array($this->club_id)) {
+			$clubIds = [];
+			foreach ($this->club_id as $clubId) {
+				$clubId = is_scalar($clubId) ? filter_var($clubId, FILTER_VALIDATE_INT) : false;
+				if ($clubId !== false && $clubId > 0) {
+					$clubIds[] = $clubId;
+				}
+			}
+			if ($clubIds) {
+				$query->andFilterWhere(['in', 'cal_calendar.club_id', array_values(array_unique($clubIds))]);
+			} elseif (array_filter($this->club_id, static function ($value) {
+				return !is_scalar($value) || trim((string)$value) !== '';
+			})) {
+				$query->andWhere('0=1');
+			}
+		} elseif (is_scalar($this->club_id) && !empty($this->club_id)) {
 			if (is_numeric($this->club_id)) {
 				$query->andFilterWhere(['cal_calendar.club_id'=>$this->club_id]);
 			} else {
