@@ -25,6 +25,7 @@ if (isset($_REQUEST['BadgesSearch']['pagesize'])) {
 	$pagesize=20;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
+$membershipStatusNames = MembershipStatus::getMemberStatus(true);
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -96,8 +97,9 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			[
 				'attribute' => 'status',
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new MembershipStatus)::getMemberStatus(true),['class'=>'form-control','prompt' => 'All']),
-				'value'=>function($model,$attribute) {
-					return (new MembershipStatus)->GetMemStatus($model->status);}
+				'value'=>function($model,$attribute) use ($membershipStatusNames) {
+					return $membershipStatusNames[$model->status] ?? ' Account Status Error ';
+				}
 			],
 			[	'header' => 'Badge Year',
 				'attribute' => 'badgeyear',

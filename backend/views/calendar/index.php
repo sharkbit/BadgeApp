@@ -32,6 +32,11 @@ if (isset($_REQUEST['AgcCal']['pagesize'])) {
 	$pagesize=20;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
+$facilityNamesById = ArrayHelper::map(
+	agcFacility::find()->select(['facility_id', 'name'])->asArray()->all(),
+	'facility_id',
+	'name'
+);
 
 if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	$sql="SELECT facility_id FROM cal_facilities WHERE name like '%shoot%'";
@@ -73,7 +78,20 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				},
 			],
 			[	'attribute'=>'facility_id',
-				'value'=>function($model) { return (New AgcCal)->getAgcFacility_Names($model->facility_id); },
+				'value'=>function($model) use ($facilityNamesById) {
+					$facilityIds = json_decode($model->facility_id, true);
+					if (!is_array($facilityIds)) {
+						return '';
+					}
+					$facilityNames = [];
+					foreach ($facilityIds as $facilityId) {
+						if (isset($facilityNamesById[$facilityId])) {
+							$facilityNames[] = $facilityNamesById[$facilityId];
+						}
+					}
+					sort($facilityNames);
+					return implode(', ', $facilityNames);
+				},
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'headerOptions' => ['style' => 'width:15%'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'facility_id', ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name'),['class'=>'form-control','prompt' => 'All']),
