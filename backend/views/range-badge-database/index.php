@@ -2,8 +2,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use backend\models\Badges;
 use backend\models\clubs;
+use backend\models\MembershipStatus;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\BadgesDatabaseSearch */
@@ -22,6 +22,7 @@ if (isset($_REQUEST['BadgesDatabaseSearch']['pagesize'])) {
 	$pagesize=20;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
+$membershipStatusNames = MembershipStatus::getMemberStatus(true);
 ?>
 <div class="badges-database-index">
 
@@ -55,8 +56,6 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'attribute'=>'last_name',
 				'contentOptions' =>['style' => 'width:150px'],
 			],
-			//'suffix',
-            //'address:ntext',
             [
 				'attribute'=>'city',
 				'contentOptions' =>['style' => 'width:150px'],
@@ -96,15 +95,15 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					return rtrim($myClubsNames, ', ');
 				},
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'club_id',(new clubs)->getClubList(),['class'=>'form-control','prompt' => 'All']),
-				
 			],
 			[
 				'header'=>'Status',
 				'attribute' => 'status',
 				'contentOptions' =>['style' => 'width:90px'],
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'status',(new MembershipStatus)->getMemberStatus(),['class'=>'form-control','prompt' => 'All']),
-				'value'=>function($model,$attribute) {
-					return (new MembershipStatus)->GetMemStatus($model->status);}
+				'value'=>function($model,$attribute) use ($membershipStatusNames) {
+					return $membershipStatusNames[$model->status] ?? ' Account Status Error ';
+				}
 			],
             [   'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
