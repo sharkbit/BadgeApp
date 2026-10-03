@@ -13,6 +13,7 @@ use backend\models\CardReceipt;
 use backend\models\clubs;
 use backend\models\Event_Att;
 use backend\models\Guest;
+use backend\models\MembershipStatus;
 use backend\models\MembershipType;
 use backend\models\Params;
 use backend\models\PostPrintTransactions;
@@ -492,7 +493,7 @@ class BadgesController extends AdminController {
 			} else {
 				return json_encode('Error: '.$verify->getErrorMessage());
 			}
-		} else { 
+		} else {
 			return json_encode(['city'=>'','state'=>'']);
 		}
 		*/
@@ -1051,7 +1052,14 @@ class BadgesController extends AdminController {
 				}
 			} else { $model->discount=0; }
 
-			$model->transaction_type = 'RENEW';
+			$membershipStatusPrefill = json_decode(MembershipStatus::getPrefill());
+			if (in_array($badgeRecords->status,$membershipStatusPrefill)) {
+				$model->transaction_type = 'NEW';
+				$badgeRecords->status = 'app';
+			} else {
+				$model->transaction_type = 'RENEW';
+			}
+
 			$model->club_id = $badgeRecords->club_id;
 			if($model->cc_x_id =='') {$model->cc_x_id = 'x'.rand(100000000,1000000000); }
 

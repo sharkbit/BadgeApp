@@ -802,16 +802,10 @@ app.controller('UpdateBadgeController', function($scope) {
 
             var $form = $("#badgeUpdate"),
             data = $form.data("yiiActiveForm");
-            $.each(data.attributes, function () {
-                this.status = 3;
-            });
             $form.yiiActiveForm("validate");
 
             var $formR = $("#form_badge_renew"),
             dataR = $formR.data("yiiActiveForm");
-            $.each(dataR.attributes, function () {
-                this.status = 3;
-            });
             $formR.yiiActiveForm("validate");
 
             if ($("#badgeUpdate").find(".has-error").length || $("#form_badge_renew").find(".has-error").length) {
