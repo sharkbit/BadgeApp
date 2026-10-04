@@ -118,7 +118,7 @@ $facilityNamesById = ArrayHelper::map(
 			&nbsp;|&nbsp;
 			<?= Html::a('Open RSS 2.0 feed', $rssFeedUrl, ['target' => '_blank', 'rel' => 'noopener']) ?>
 		<?php } else { ?>
-			Club needed for subscription URLs.
+			Sponsor needed for subscription URLs.
 		<?php } ?>
 	</div>
 </div>
