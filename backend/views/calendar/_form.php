@@ -217,8 +217,11 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			}
 		}
 	} ?>
-		<div class="col-xs-6 col-sm-2">
+		<div class="col-xs-6 col-sm-4">
 			<?= $form->field($model, 'range_status_id')->DropDownList($ary_range,['value'=> $model->range_status_id]).PHP_EOL; ?>
+		</div>
+		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2">
+			<?= $form->field($model, 'is_event')->DropDownList(['1'=>'Yes','2'=>'No'],['value'=> $model->is_event]).PHP_EOL ?>
 		</div>
 		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<?= $form->field($model, 'date_requested')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
@@ -229,15 +232,21 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			<?= $form->field($model, 'poc_badge')->textInput(['maxlength'=>true,'readonly'=>yii::$app->controller->hasPermission('calendar/all')? false : true]) ?>
 		</div>
 		<div class="col-xs-8 col-sm-4 col-md-4 col-lg-4">
+			<div class="form-group field-agccal-poc_badge_name">
 			<?= Html::label('Calendar POC Name', 'POC_Name-input', ['class' => 'control-label']) ?>
 			<?= Html::textInput('POC_Name', $poc_badge_name, ['readonly'=>true,'id' => 'POC_Name-input','class' => 'form-control']); ?>
+			<div class="help-block"></div>
+			</div>
 		</div>
 		<div class="col-xs-3 col-sm-2 col-md-2 col-lg-2" id="div_trackWristband" >
 			<?= $form->field($model, 'cal_inst')->textInput(['maxlength'=>true])->label( (in_array($model->event_status_id,$TrackWristbands)) ? "" : 'Event Director' ) ?>
 		</div>
 		<div class="col-xs-8 col-sm-4 col-md-4 col-lg-4">
+			<div class="form-group field-agccal-poce_badge_name">
 			<?= Html::label('Event POC Name', 'POC_Name-input', ['class' => 'control-label']) ?>
 			<?= Html::textInput('POCe_Name', $poce_badge_name, ['readonly'=>true,'id' => 'POCe_Name-input','class' => 'form-control']); ?>
+			<div class="help-block"></div>
+			</div>
 		</div>
 	</div>
 

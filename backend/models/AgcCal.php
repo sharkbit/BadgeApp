@@ -67,6 +67,7 @@ class AgcCal extends \yii\db\ActiveRecord {
 			'event_name' => 'Event Name',
 			'event_status_id'=>'Event Type',
 			'facility_id'=>'Facility',
+			'is_event'=>'Event Signup',
 			'range_status_id'=>'Range Status',
 			'recurrent_calendar_id'=> 'Recur ID',
 			'pattern_type'=>'Pattern',

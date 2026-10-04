@@ -107,7 +107,7 @@ if(yii::$app->controller->hasPermission('guest/delete')) {
 				'template'=>'{update}{delete}',
 				'buttons'=>[
 					'update' => function ($url, $model) {
-						if (yii::$app->controller->hasPermission('guest/modify')) {
+						if (yii::$app->controller->hasPermission('guest/update')) {
 						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/guest/update','id'=>$model->id],
 						[	'data-toggle'=>'tooltip',
 							'data-placement'=>'top',

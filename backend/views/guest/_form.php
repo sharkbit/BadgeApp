@@ -14,7 +14,7 @@ if ( ($model->isNewRecord) && ($_SESSION["badge_number"]>0) ) { $model->badge_nu
 $model->time_in = yii::$app->controller->getNowTime();
 $Payment_block=''; $msg='Register';
 
-if(!yii::$app->controller->hasPermission('guest/modify')) {
+if(!yii::$app->controller->hasPermission('guest/update')) {
 	$isguest = true;
 } else {
 	if(!empty($stickyGuest)) {

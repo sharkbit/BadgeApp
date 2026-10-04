@@ -1020,3 +1020,5 @@ update BadgeDB.cc_receipts set tx_type ='cre' where tx_type='credit';
 update BadgeDB.cc_receipts set tx_type ='onl' where tx_type='online';
 update BadgeDB.cc_receipts set tx_type ='oth' where tx_type='';
 
+ALTER TABLE `BadgeDB`.`cal_calendar` 
+CHANGE COLUMN `cal_inst` `cal_inst` INT NULL DEFAULT 0 ;
