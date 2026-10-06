@@ -51,12 +51,33 @@ $facilityNamesById = ArrayHelper::map(
 <main>
 <div class="work-credits-form">
 	<?php $form = ActiveForm::begin([ 'id'=>'CalendarListFrom' ]); ?>
+	<style>
+		.calendar-search-details {
+			background-color: #e4eaef;
+			padding: 10px;
+			border-radius: 5px;
+		}
+		.calendar-search-details > summary {
+			background-color: #2196F3;
+			color: white;
+			padding: 10px;
+			cursor: pointer;
+		}
+		.calendar-search-details[open] > summary {
+			background-color: #1976D2;
+		}
+		.calendar-search-details > section {
+			background-color: #ffffff;
+			padding: 10px;
+			margin-top: 10px;
+		}
+	</style>
 	<div class="row">
 		<div class="col-xs-12">
 			<h2><?= Html::encode($this->title) ?></h2>
 		</div>
 	</div>
-<details>
+<details class="calendar-search-details">
 	<summary> -- Search Filter -- </summary>
 
 	<section>
