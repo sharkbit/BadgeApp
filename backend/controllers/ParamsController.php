@@ -84,6 +84,7 @@ class ParamsController extends AdminController {
 				Discount::updateAll(['dis_def' => 0], []);
 			}
 			$model->save();
+			yii::$app->controller->createLog(true, $_SESSION['user'], "Discount Status has been updated. ($id)");
 			Yii::$app->getSession()->setFlash('success', 'Discount has been updated.');
             return $this->redirect(['discountview', 'id'=>$model->dis_id]);
         } else {
@@ -124,6 +125,7 @@ class ParamsController extends AdminController {
 				MembershipStatus::updateAll(['act_signup' => 0], []);
 			}
 			$model->save();
+			yii::$app->controller->createLog(true, $_SESSION['user'], "Membership Status has been updated. ($id)");
 			Yii::$app->getSession()->setFlash('success', 'Membership Status has been updated.');
             return $this->redirect(['membershipstatusview', 'id'=>$model->act_id]);
         } else {
@@ -139,7 +141,8 @@ class ParamsController extends AdminController {
 			$model->whitelist = json_encode($model->whitelist);
 			$model->rso_email = json_encode($model->rso_email);
 			$model->save();
-            return $this->redirect(['update']);
+			yii::$app->controller->createLog(true, $_SESSION['user'], "Updated Settings!");
+			return $this->redirect(['update']);
         } else {
             return $this->render('update', [
                 'model' => $model,

@@ -53,9 +53,14 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 		if (yii::$app->controller->hasPermission('badges/renew-membership')) {		// Can User Process & Renew Badges?
 			if ((new MembershipStatus)->getCanRenew($model->status)) {									// Is badge active / not restricted?
 				$mem_renew = backend\models\MembershipType::findOne(['id'=>$model->mem_type])->renew_yearly;
-				if ($mem_renew) {	
-				// Does Membership type need to renew?
+				if ($mem_renew) { // Member needs to renew
 					$hide_Renew=false;
+					
+					$mem_prefill = json_decode(MembershipStatus::getPrefill());
+					if (in_array($model->status, $mem_prefill)) {
+						$badgeSubscriptions->wt_instru = $model->wt_instru;					
+					}
+					
 				} else { $hide_Renew_message= "Membership Type dosn't need to Renew."; $hide_Renew=true; }
 			} else { $hide_Renew_message= 'Account Status not allowed to Renew.'; $hide_Renew=true; }
 		} else { $hide_Renew=true; }
