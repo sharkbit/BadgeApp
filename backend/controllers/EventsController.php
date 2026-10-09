@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\controllers\AdminController;
 use backend\models\Badges;
+use backend\models\AgcCal;
 use backend\models\Events;
 use backend\models\Event_Att;
 use backend\models\Params;
@@ -27,6 +28,7 @@ class EventsController extends AdminController {
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'issue-credit' => ['POST'],
                 ],
             ],
         ];
@@ -52,14 +54,27 @@ class EventsController extends AdminController {
 		return $this->redirect(['view', 'id' => $id]);
 	}
 
-	public function actionClose($id,$auto=null) {
+	public function actionIssueCredit($id,$auto=null) {
 
-		$event_close = Events::find()->where(['e_id'=>$id])->one();
-		if($event_close){
-			If($auto) { $c_user="System"; $c_badge=0;
-			} else { $c_user=$_SESSION['user']; $c_badge=$_SESSION['badge_number']; }
+		$event_issue = Events::find()->where(['ea_calendar_id'=>$id])->one();
+		if($event_issue){
+			$eventDate = strtotime($event_issue->event_date);
+			$today = strtotime(date('Y-m-d', strtotime($this->getNowTime())));
+			if ($eventDate === false || $eventDate >= $today) {
+				Yii::$app->session->setFlash('error', 'Credit can only be issued after the event date.');
+				return $this->redirect(['view', 'id' => $event_issue->ea_calendar_id]);
+			}
+			$calendar = AgcCal::findOne(['calendar_id' => $id]);
+			if (!$calendar) {
+				Yii::$app->session->setFlash('error', 'Calendar event could not be found.');
+				return $this->redirect(['view', 'id' => $event_issue->ea_calendar_id]);
+			}
+			if ($calendar->issued_vol) {
+				Yii::$app->session->setFlash('warning', 'Credit has already been issued for this event.');
+				return $this->redirect(['view', 'id' => $event_issue->ea_calendar_id]);
+			}
 
-			if($event_close->e_type=='vol'){
+			if($event_issue->is_volunteer==true) {
 				$event_attendee = Event_Att::find()->where(['ea_calendar_id'=>$id])->all();
 				if(count($event_attendee)>0) {
 					foreach ($event_attendee as $person) {
@@ -68,15 +83,15 @@ class EventsController extends AdminController {
 
 							$att_wc = New WorkCredits;
 							$att_wc->badge_number 	= $person->ea_badge;
-							$att_wc->work_hours 	= $event_close->e_hours;
-							$att_wc->project_name	= $event_close->e_name;
-							$att_wc->supervisor		= yii::$app->controller->decodeBadgeName((int)$event_close->e_poc);
+							$att_wc->work_hours 	= $event_issue->credit_hours;
+							$att_wc->project_name	= $event_issue->event_name;
+							$att_wc->supervisor		= yii::$app->controller->decodeBadgeName((int)$event_issue->cal_inst);
 							$att_wc->remarks	= "Attended Event";
 							$att_wc->status		= 2;
-							$att_wc->work_date	= $event_close->e_date;
+							$att_wc->work_date	= $event_issue->event_date;
 							$att_wc->updated_at	= $time_now;
 							$att_wc->created_at = $time_now;
-							$att_wc->created_by	= $c_badge;
+							$att_wc->created_by	= $_SESSION['badge_number'];
 							$att_wc->save();
 
 							$app_per = Event_Att::find()->where(['ea_id'=>$person->ea_id])->one();
@@ -85,23 +100,27 @@ class EventsController extends AdminController {
 						}
 					}
 				}
-				$msg = "Event $event_close->e_name Closed, ".count($event_attendee)." attendees";
+				$msg = "Event $event_issue->event_name Closed, ".count($event_attendee)." attendees";
 			} else {
-				$msg = "Event $event_close->e_name Closed";
+				$msg = "Event $event_issue->event_name Closed";
 			}
-			if($event_close->e_rso) {
-				$event_close->e_rso .="+".$c_badge.'|'.date('Y-m-d H:i:s',strtotime(yii::$app->controller->getNowTime()));
-			} else {
-				$adm_close = $c_badge.'|'.date('Y-m-d H:i:s',strtotime(yii::$app->controller->getNowTime()));
-				$event_close->e_rso = $adm_close .'+'.$adm_close;
-			}
-			$event_close->e_status=1;
-			$event_close->save();
 
-			$this->createLog($this->getNowTime(), $c_user, $msg);
+			if ($event_issue->save()) {
+				$myRemarks = [
+					'created_at'=>yii::$app->controller->getNowTime(),
+					'changed'=> "Work Credits Issued",
+					'data'=> $_SESSION['user']. " issued $event_issue->credit_hours work credits for ".count($event_attendee)." Attendees."
+				];
+				$NewRemarks = yii::$app->controller->mergeRemarks($calendar->remarks, $myRemarks);
+				AgcCal::updateAll(['issued_vol' => 1,'remarks' => $NewRemarks], ['calendar_id' => $id]);
+			}
+
+			$this->createLog($this->getNowTime(), $_SESSION['user'], $msg);
+			Yii::$app->session->setFlash('success', $msg);
+			return $this->redirect(['view', 'id' => $event_issue->ea_calendar_id]);
 		}
-		If($auto) {} else {
-			return $this->redirect(['view', 'id' => $event_close->e_id]);}
+		Yii::$app->session->setFlash('error', "Event not found");
+		return $this->redirect(['index']);
 	}
 
     public function actionCreate() {
@@ -148,7 +167,7 @@ class EventsController extends AdminController {
 	//	if($Close_Events) {
 	//		yii::$app->controller->createLog(true, 'System', "Closing ".count($Close_Events)." Events");
 	//		foreach ($Close_Events as $c_event) {
-	//			$this->actionClose($c_event->e_id,true);
+	//			$this->actionIssueCredit($c_event->e_id,true);
 	//		}
 	//	}
 
@@ -232,27 +251,10 @@ class EventsController extends AdminController {
     public function actionUpdate($id=0) {
         $model = $this->findModel($id);
 
-		$gotoClosed=false;
-	//	$Status_old=$model->e_status;
         if ($model->load(Yii::$app->request->post())) {
-	/*		$model->e_date = date('Y-m-d',strtotime($model->e_date));
-			$model->e_name = trim($model->e_name);
-
-			if($Status_old <> $model->e_status) {
-				if(($model->e_status==0) && (strpos($model->e_rso,'+'))) { //is now open
-					$model->e_rso = substr($model->e_rso,0,strpos($model->e_rso,'+')-1);
-				} elseif($model->e_status==1){ //is now closed
-					$gotoClosed=true;
-				}
-			} */
-
         	$model->save();
-		//	if($gotoClosed) {
-		//		$this->actionClose($model->e_id);
-		//	} else {
-				return $this->redirect(['update', 'id' => $id]);
-		//	}
-        } else {
+			return $this->redirect(['update', 'id' => $id]);
+	    } else {
             return $this->render('update', [
                 'model' => $model,
             ]);

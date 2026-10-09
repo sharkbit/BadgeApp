@@ -21,7 +21,7 @@ class Events extends \yii\db\ActiveRecord{
     public function rules() {
         return [
            [['event_date','cal_start_time','cal_end_time'], 'safe'],
-           [['attended_badges','attended_guests','club_id','ea_calendar_id','allow_guests','track_wristbands','is_volunteer','wb_out_zero'], 'number'],
+           [['attended_badges','attended_guests','cal_inst','club_id','credit_hours','ea_calendar_id','allow_guests','track_wristbands','is_volunteer','wb_out_zero'], 'number'],
 		   [['event_name','event_status_name','club_name','short_name'], 'string'],
        ];
     }

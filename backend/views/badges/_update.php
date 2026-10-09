@@ -58,7 +58,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 					
 					$mem_prefill = json_decode(MembershipStatus::getPrefill());
 					if (in_array($model->status, $mem_prefill)) {
-						$badgeSubscriptions->wt_instru = $model->wt_instru;					
+						$badgeSubscriptions->wt_instru = $model->wt_instru;
 					}
 					
 				} else { $hide_Renew_message= "Membership Type dosn't need to Renew."; $hide_Renew=true; }

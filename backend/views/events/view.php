@@ -73,80 +73,77 @@ $div_closed=false;
 <?php } ?>
 	</div>
 	<div class="col-xs-6 col-sm-4">
-		<b>Sponsored by:</b>  <?= Html::encode($model->club_name) ?>
-		<?php if ($model->is_volunteer) { echo " <b>Event:</b> Volunteer  ($model->ea_hours hours)"; } ?>
+		<b>Sponsored by:</b>  <?= Html::encode($model->club_name) ?><br />
+		<?php if ($model->is_volunteer) { echo " <b>Event:</b> Volunteer  (".($model->credit_hours ?? 0)." hours)"; } ?>
 	</div>
-	<div class="col-xs-6 col-sm-2"><?php
-	/*	if ($model->track_wristbands) {
-			if (!$model->e_rso) {
-				if (yii::$app->controller->hasPermission('events/approve')) {
-				echo Html::button('RSO Approve <i class="fa fa-check "> </i>', ['class' => 'btn btn-success','id'=>'event_approve']).PHP_EOL;
-				}
-			} else {
-				if ($model->e_status==0) {
-					$rso=explode('|',$model->e_rso);
-				} else {
-					$rso=explode('|',explode('+',$model->e_rso)[0]);
-				}
-				echo "Approved by ".yii::$app->controller->decodeBadgeName((int)$rso[0])." at ".date('Y-m-d H:i',strtotime($rso[1]));
-			}
-		}*/ ?></div>
-	<div class="col-xs-6 col-sm-2" id='div_closed'>
-	<?php /*if ($model->e_status==0) { ?>
-	<?php 	if (yii::$app->controller->hasPermission('events/close')) {
-			echo Html::button('Close <i class="fa fa-times-circle "> </i>', ['class' => 'btn btn-danger','id'=>'event_close']).PHP_EOL;
-			} else { echo "<b>Status:</b> Open"; }
-		} else {
-			$rso=explode('|',explode('+',$model->e_rso)[1]);
-			if($rso[0]=='0') { 
-				yii::$app->controller->createLog(true, 'trex_rso', var_export($rso,true));
-				echo " it's really closed "; 
-			} else {
-				
-				echo "Closed by ".yii::$app->controller->decodeBadgeName((int)$rso[0])." at ".date('Y-m-d H:i',strtotime($rso[1]));
-			//}
-		}*/ ?>
+
+<?php if (yii::$app->controller->hasPermission('calendar/update')) { ?>
+	<div class="col-xs-6 col-sm-2">
+		<?= Html::a('Update Event', ['/calendar/update', 'id' => $model->ea_calendar_id], ['class' => 'btn btn-danger']) ?>
 	</div>
+<?php } ?>
+<?php
+$eventDateTimestamp = strtotime($model->event_date);
+$todayTimestamp = strtotime(date('Y-m-d', strtotime(yii::$app->controller->getNowTime())));
+$eventIsPast = $eventDateTimestamp !== false && $eventDateTimestamp < $todayTimestamp;
+if (yii::$app->controller->hasPermission('events/issue-credit')) {
+	echo '<div class="col-xs-6 col-sm-2">';
+	if($model->issued_vol) {
+		echo "<p>Credits have been issued</p>";
+	} else {
+		echo Html::beginForm(['/events/issue-credit', 'id' => $model->ea_calendar_id], 'post');
+		echo Html::submitButton('Issue Credit', [
+			'class' => $eventIsPast ? 'btn btn-primary' : 'btn btn-default',
+			'disabled' => !$eventIsPast,
+		]);
+		echo Html::endForm();
+	}
+	echo '</div>';
+}
+?>
+
 <?php if ($model->track_wristbands) { ?>
-	<div class="col-xs-8 col-sm-8"><b>Instructors:</b> <?= Html::encode($model->cal_inst) ?> </div>
+	<div class="col-xs-6 col-sm-8"><b>Instructors:</b> <?= Html::encode($model->cal_inst) ?> </div>
 <?php } ?>
 </div>
 <?php if (($model->event_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) && (yii::$app->controller->hasPermission('events/add-att'))) { ?>
-
-<section class="addPeeps-container" id="addPeepsSection">
-  
-  <button class="toggle-btn" id="hideToggleBtn" onclick="toggleaddPeeps()">
-    Hide New Event Participant
-  </button>
-	<div class="row addPeeps-content">
+<div class="row">
 	<div class="col-xs-12">
-	<div class="events-attendees-form">
+	<section class="addPeeps-container" id="addPeepsSection">
 
-<?php $form = ActiveForm::begin(['id'=>'event_att']); ?>
-	<?= Html::input('hidden',Yii::$app->request->csrfParam,Yii::$app->request->csrfToken)?>
-	<?= $form->field($model_ea, 'track_wristbands')->hiddenInput(['value'=>$model->track_wristbands])->label(false).PHP_EOL ?>
-	<?= $form->field($model_ea, 'ea_calendar_id')->hiddenInput(['value'=>$model->ea_calendar_id])->label(false).PHP_EOL ?>
-<div class="row" style="margin: auto;">
-	<div class="col-xs-4 col-sm-2" ><div id="badge_name"> </div> <?= $form->field($model_ea, 'ea_badge')->textInput().PHP_EOL ?> </div>
+	  <button class="toggle-btn" id="hideToggleBtn" onclick="toggleaddPeeps()">
+		Hide New Event Participant
+	  </button>
+		<div class="row addPeeps-content">
 
-<?php if($model->allow_guests) { ?>
-	<div class="col-xs-12 col-sm-1"><h2>OR</h2></div>
-	<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_f_name')->textInput().PHP_EOL; ?></div>
-	<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_l_name')->textInput().PHP_EOL; ?></div>
-	<div class="col-xs-12"> <?php yii::$app->controller->getWaver();  ?> </div>
-<?php if($model->track_wristbands) { ?>
-	<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
-<?php } } ?>
-<div class="col-xs-3 col-sm-2" ><div class="form-group" >
-	<button type="submit" id="reg_button" class="btn btn-success" onclick="jsReg();" >Register <i class="fa fa-child"> </i></button><div class="help-block" ></div></div></div>
-<div class="col-xs-3 col-sm-2" ><div class="form-group" >
-<button class="btn btn-primary" onclick="window.location='/events'" >Done <i class="fa fa-arrow-up"> </i></button><div class="help-block" ></div></div></div>
+		<div class="events-attendees-form">
+
+	<?php $form = ActiveForm::begin(['id'=>'event_att']); ?>
+		<?= Html::input('hidden',Yii::$app->request->csrfParam,Yii::$app->request->csrfToken)?>
+		<?= $form->field($model_ea, 'track_wristbands')->hiddenInput(['value'=>$model->track_wristbands])->label(false).PHP_EOL ?>
+		<?= $form->field($model_ea, 'ea_calendar_id')->hiddenInput(['value'=>$model->ea_calendar_id])->label(false).PHP_EOL ?>
+	<div class="row" style="margin: auto;">
+		<div class="col-xs-4 col-sm-2" ><div id="badge_name"> </div> <?= $form->field($model_ea, 'ea_badge')->textInput().PHP_EOL ?> </div>
+
+	<?php if($model->allow_guests) { ?>
+		<div class="col-xs-12 col-sm-1"><h2>OR</h2></div>
+		<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_f_name')->textInput().PHP_EOL; ?></div>
+		<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_l_name')->textInput().PHP_EOL; ?></div>
+		<div class="col-xs-12"> <?php yii::$app->controller->getWaver();  ?> </div>
+	<?php if($model->track_wristbands) { ?>
+		<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
+	<?php } } ?>
+	<div class="col-xs-3 col-sm-2" ><div class="form-group" >
+		<button type="submit" id="reg_button" class="btn btn-success" onclick="jsReg();" >Register <i class="fa fa-child"> </i></button><div class="help-block" ></div></div></div>
+	<div class="col-xs-3 col-sm-2" ><div class="form-group" >
+	<button class="btn btn-primary" onclick="window.location='/events'" >Done <i class="fa fa-arrow-up"> </i></button><div class="help-block" ></div></div></div>
+	</div>
+	<?php ActiveForm::end(); ?>
+	</div></div>
+
+	</section>
+	</div>
 </div>
-<?php ActiveForm::end(); ?>
-</div></div></div>
-
-</section>
-
 <div id="reg_notes"> </div>
 
 <?php } ?>
@@ -226,17 +223,15 @@ if($att_count>0) {
 }
 </style>
 <script>
-<?php //if($div_closed) { echo "document.getElementById('div_closed').style.visibility='hidden';"; } ?>
-
 	function toggleaddPeeps() {
 	  const section = document.getElementById('addPeepsSection');
 	  const btn = document.getElementById('hideToggleBtn');
 	  if (!section || !btn) {
 		return;
 	  }
-	  
+
 	  section.classList.toggle('collapsed');
-	  
+
 	  if (section.classList.contains('collapsed')) {
 		btn.textContent = 'Add Event Participant';
 	  } else {
@@ -296,7 +291,7 @@ if($att_count>0) {
 		if (confirm('Are you sure you want to Permanently Close this Event?')) {
 		jQuery.ajax({
 			method: 'POST',
-			url: '<?=yii::$app->params['rootUrl']?>/events/close?id='+<?=$model->ea_calendar_id?>,
+			url: '<?=yii::$app->params['rootUrl']?>/events/issue-credit?id='+<?=$model->ea_calendar_id?>,
 			crossDomain: false,
 			success: function(responseData, textStatus, jqXHR) {
 				responseData =  JSON.parse(responseData);

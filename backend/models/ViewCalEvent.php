@@ -24,7 +24,7 @@ class ViewCalEvent extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['club_name','cal_start_time','cal_end_time','event_date','event_name','event_status_name','short_name'],'safe'],
-			[['allow_guests','is_volunteer'],'number'],
+			[['allow_guests','calendar_id','is_volunteer','issued_vol'],'number'],
         ];
     }
 

@@ -11,7 +11,7 @@ use Yii;
 class Event_Att extends \yii\db\ActiveRecord{
 
 	public $ea_type;
-	
+
     public static function tableName() {
         return 'event_attendee';
     }

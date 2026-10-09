@@ -1022,3 +1022,18 @@ update BadgeDB.cc_receipts set tx_type ='oth' where tx_type='';
 
 ALTER TABLE `BadgeDB`.`cal_calendar` 
 CHANGE COLUMN `cal_inst` `cal_inst` INT NULL DEFAULT 0 ;
+
+-- for #296
+ALTER TABLE `BadgeDB`.`cal_calendar` 
+ADD COLUMN `issued_vol` INT NULL DEFAULT 0 AFTER `credit_hours`,
+CHANGE COLUMN `date_requested` `date_requested` DATE NULL DEFAULT NULL ,
+CHANGE COLUMN `recurrent_start_date` `recurrent_start_date` DATE NULL DEFAULT NULL ,
+CHANGE COLUMN `recurrent_end_date` `recurrent_end_date` DATE NULL DEFAULT NULL ;
+
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_cal_event` AS
+	SELECT cc.calendar_id, cc.event_date, cc.cal_start_time, cc.cal_end_time, cc.event_name, cc.cal_inst, cc.credit_hours, cc.issued_vol, cc.poc_badge, ces.name AS event_status_name, ces.event_status_id, clubs.club_name, clubs.short_name, clubs.club_id, allow_guests, track_wristbands, is_volunteer
+	FROM cal_calendar cc LEFT JOIN cal_event_status ces ON cc.event_status_id = ces.event_status_id Left join clubs on cc.club_id = clubs.club_id WHERE cc.deleted = 0 and cc.is_event=1 order by event_date desc;
+
+CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_events` AS
+    SELECT vea.ea_calendar_id, vea.attended_badges, vea.attended_guests, vea.wb_out_zero, vce.event_date, vce.cal_start_time, vce.cal_end_time, vce.event_name, vce.event_status_name, vce.event_status_id, vce.club_name, vce.short_name, vce.club_id, vce.poc_badge, vce.allow_guests, vce.track_wristbands, vce.cal_inst, vce.is_volunteer, vce.credit_hours, vce.issued_vol
+    FROM `view_event_att` vea LEFT JOIN view_cal_event vce ON vea.ea_calendar_id = vce.calendar_id order by ea_calendar_id desc;

@@ -84,7 +84,7 @@ $eventAttendee = new Event_Att();
 				'format' => 'raw',
 				'value'=> function($model) {
 					return $model['short_name'].' <img src="/images/note.png" title="'.$model['club_name'].'" style="width:18px" /> ';
-				},		
+				},
 			],
 			[	'attribute'=>'event_name',
 				'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
@@ -101,17 +101,17 @@ $eventAttendee = new Event_Att();
 						$poc_name = yii::$app->controller->decodeBadgeName((int)$model->cal_inst);
 						if (!empty($poc_name)) { return $poc_name; } else { return $model->cal_inst;}
 					} else {
-						return yii::$app->controller->decodeBadgeName((int)$model->poc_badge); 
+						return yii::$app->controller->decodeBadgeName((int)$model->poc_badge);
 					}
 				},
-			
+
 			],
 			'attended_badges',
 			'attended_guests',
 			[	'attribute'=>'wb_out_zero',
 				'value'=>function($model) {
 						if($model->track_wristbands==1) {return ($model->attended_guests-$model->wb_out_zero ?? 0 ); } else { return '-'; }
-				}		
+				}
 			],
 			[	'attribute'=>'event_status_id',
 				'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
@@ -121,7 +121,7 @@ $eventAttendee = new Event_Att();
 			[
 				'header'=>'Action',
 				'class' => 'yii\grid\ActionColumn',
-				'template'=>' {view} {Calendar}  ',
+				'template'=>' {view} {Calendar}  {credit}',
 				'headerOptions' => ['style' => 'width:5%'],
 				'buttons'=>[
 					'view' => function($url,$model) {
@@ -139,6 +139,14 @@ $eventAttendee = new Event_Att();
 							'data-placement'=>'top',
 							'title'=>'Calendar',
 						]);}
+					},
+					'credit' => function($url,$model) {
+						if ($model->is_volunteer) {
+							if ($model->event_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) {$color='';}
+							elseif ($model->issued_vol==0) {$color=' style="color: green;"';}
+							else {$color=' style="color: blue;"';}
+							return  " <span class='glyphicon glyphicon-gift'$color></span> ";
+						}
 					},
 					'delete' => function($url,$model) {
 						if(yii::$app->controller->hasPermission('events/delete')) {
@@ -202,7 +210,7 @@ $eventAttendee = new Event_Att();
 <?php if (yii::$app->controller->hasPermission('calendar/create')) { ?>
 			<?= Html::a('Create Event', ['/calendar/create'], ['class' => 'btn btn-success']) ?>
 <?php } ?>
-		</div > 
+		</div >
 	</div>
 
 	<div class="row">
@@ -216,7 +224,7 @@ $eventAttendee = new Event_Att();
 			?>
 		</div>
 	</div>
-	
+
 </div>
 <?php ActiveForm::end(); ?>
 
