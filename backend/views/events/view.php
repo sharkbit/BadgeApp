@@ -357,7 +357,6 @@ if($att_count>0) {
 		if(document.getElementById("event_att-ea_badge")) { var reg_badge = document.getElementById("event_att-ea_badge").value; }
 
 		if (reg_badge >= 1 ) {
-			console.log('e_view:283');
 			jQuery.ajax({
 				method: 'POST',
 				url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&badge='+reg_badge,
@@ -373,7 +372,6 @@ if($att_count>0) {
 				},
 			});
 		} else {
-			console.log('e_view:300');
 			var f_name = document.getElementById("event_att-ea_f_name").value;
 			var l_name = document.getElementById("event_att-ea_l_name").value;
 			var ea_serial='';
@@ -394,7 +392,11 @@ if($att_count>0) {
 					success: function(responseData, textStatus, jqXHR) {
 						responseData =  JSON.parse(responseData);
 						console.log(responseData);
-						//window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+						if (responseData.success) {
+							window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+						} else {
+							$("#reg_notes").text(responseData.msg);
+						}
 					},
 					error: function (responseData, textStatus, errorThrown) {
 						console.log('e_view:324'); console.log(textStatus);
