@@ -120,7 +120,7 @@ if ((yii::$app->controller->hasPermission('events/issue-credit')) && ($model->is
 
 		<div class="events-attendees-form">
 
-	<?php $form = ActiveForm::begin(['id'=>'event_att']); ?>
+	<?php $form = ActiveForm::begin(['id'=>'event_att', 'options'=>['onsubmit'=>'jsReg(); return false;']]); ?>
 		<?= Html::input('hidden',Yii::$app->request->csrfParam,Yii::$app->request->csrfToken)?>
 		<?= $form->field($model_ea, 'track_wristbands')->hiddenInput(['value'=>$model->track_wristbands])->label(false).PHP_EOL ?>
 		<?= $form->field($model_ea, 'ea_calendar_id')->hiddenInput(['value'=>$model->ea_calendar_id])->label(false).PHP_EOL ?>
@@ -136,9 +136,9 @@ if ((yii::$app->controller->hasPermission('events/issue-credit')) && ($model->is
 		<div class="col-xs-6 col-sm-2"><?= $form->field($model_ea, 'ea_wb_serial')->textInput().PHP_EOL; ?></div>
 	<?php } } ?>
 	<div class="col-xs-3 col-sm-2" ><div class="form-group" >
-		<button type="submit" id="reg_button" class="btn btn-success" onclick="jsReg();" >Register <i class="fa fa-child"> </i></button><div class="help-block" ></div></div></div>
+		<button type="button" id="reg_button" class="btn btn-success" onclick="jsReg();" >Register <i class="fa fa-child"> </i></button><div class="help-block" ></div></div></div>
 	<div class="col-xs-3 col-sm-2" ><div class="form-group" >
-	<button class="btn btn-primary" onclick="window.location='/events'" >Done <i class="fa fa-arrow-up"> </i></button><div class="help-block" ></div></div></div>
+	<button type="button" class="btn btn-primary" onclick="window.location='/events'" >Done <i class="fa fa-arrow-up"> </i></button><div class="help-block" ></div></div></div>
 	</div>
 	<?php ActiveForm::end(); ?>
 	</div></div>
@@ -246,10 +246,12 @@ if($att_count>0) {
 	}
 
 	$('#event_att-ea_badge').on('input', function() {
-		document.getElementById("event_att-ea_f_name").value='';
-		document.getElementById("event_att-ea_l_name").value='';
-		if (document.getElementById("event_att-ea_wb_serial") != null) {
-		    document.getElementById("event_att-ea_wb_serial").value=''; }
+		const firstName = document.getElementById("event_att-ea_f_name");
+		const lastName = document.getElementById("event_att-ea_l_name");
+		const wristbandSerial = document.getElementById("event_att-ea_wb_serial");
+		if (firstName) firstName.value = '';
+		if (lastName) lastName.value = '';
+		if (wristbandSerial) wristbandSerial.value = '';
 		var badgeNumber = $(this).val();
 		if((badgeNumber!='') && (badgeNumber!=0)) {
 			changeBadgeNam(badgeNumber);

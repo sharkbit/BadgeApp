@@ -262,26 +262,6 @@ class EventsController extends AdminController {
     }
 
     public function actionView($id) {
-
-		if (Yii::$app->request->post()) {
-			$model_ea = new Event_Att();
-			$model_ea->load(Yii::$app->request->post());
-			if($model_ea->ea_badge > 0) {
-				//check
-				$badge_chk = Badges::find()->where(['>','expires',date('Y-02-01',time())])->andwhere(['badge_number'=>$model_ea->ea_badge])->one();
-				if($badge_chk){
-					$model_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_badge'=>$model_ea->ea_badge])->one();
-					if($model_chk) {
-						Yii::$app->getSession()->setFlash('error', 'Member Already at Event');
-					} else {
-						$model_ea->save();
-						Yii::$app->getSession()->setFlash('success', 'Member Added to Event');
-					}
-				} else {
-					Yii::$app->getSession()->setFlash('error', 'Not an Active Member');
-				}
-			}
-		}
 		return $this->render('view', [
 			'model' => $this->findModel($id),
 		]);
