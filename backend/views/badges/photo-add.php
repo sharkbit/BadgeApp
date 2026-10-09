@@ -13,7 +13,6 @@ $this->params['breadcrumbs'][] = ['label' => $_GET['badge'], 'url' => ['/badges/
 $this->params['breadcrumbs'][] = $this->title;
 
 $csrfToken=Yii::$app->request->getCsrfToken();
-$agent = $_SERVER['HTTP_USER_AGENT'];
 ?>
 <div class="container">
 <ul>
@@ -21,22 +20,12 @@ $agent = $_SERVER['HTTP_USER_AGENT'];
 <li>Try to take a passport style photo.</li>
 </ul>
 
-<div class="row">
-  <div class="col-xs-12" id="uploadingInfoError" style="display: none;">
-      <div class="alert alert-danger alert-dismissable fade in" id="error_info">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		<br /> <br/ ><p> If you have a camera, <b>grant the webpadge access to you camera</b> and reload the page.</p>
-		<p>- or - <b>Please see associat.</b></p>
-      </div>
-    </div>
-</div>
-<?php if (str_contains($agent, 'Windows') || str_contains($agent, 'Android')) { ?>
 <div class="row" id="video_block">
 	<div class="col-md-12 text-center">
-		<video accept="image/*" capture="camera" id="my_photo" style="width:80%;"></video>
+		<video id="my_photo" autoplay playsinline muted style="width:80%;"></video>
 	</div>
 	<div class="col-md-12 text-center">
-		<button id="take_snapshots" class="btn btn-success btn-sm">Take Snapshots</button>
+		<button type="button" id="take_snapshots" class="btn btn-success btn-sm" disabled>Take Photo</button>
 	</div>
 </div>
 <div class="row" id="photo_block" style="display: none;">
@@ -44,98 +33,214 @@ $agent = $_SERVER['HTTP_USER_AGENT'];
 		<div id="new_badge_photo"> </div>
 	</div>
 	<div class="col-md-12 text-center">
-		<button id="retake_photo" class="btn btn-primary btn-sm">Re-Take Photo</button>
-		<button id="save_photo" class="btn btn-success btn-sm">Use Photo</button>
+		<button type="button" id="retake_photo" class="btn btn-primary btn-sm">Retake / Choose Another</button>
+		<button type="button" id="save_photo" class="btn btn-success btn-sm">Use Photo</button>
 	</div>
 </div>
-<br /> If you change your video source, hold picture to refresh...
-<?php } else {
-		echo "<p>Unsupported Device</p>".$agent.'<p><a href="/badges/view?badge_number='.$_GET['badge'].'">Back to User info</a></p>';
-} ?>
+<div class="row">
+	<div class="col-md-12 text-center">
+		<p id="camera_status" role="status">Starting camera...</p>
+		<button type="button" id="retry_camera" class="btn btn-primary btn-sm" style="display:none;">Retry Camera</button>
+		<br />
+		<label for="photo_file">Or choose a photo / use your device camera:</label>
+		<input type="file" id="photo_file" accept="image/*" capture="environment">
+	</div>
+</div>
 
 </div>
 
 <script>
   (function() {
 	"use strict";
-	var width = 600;
-	var height = 0;		// This will be computed based on the input stream
+	var video = document.getElementById('my_photo');
+	var preview = document.getElementById('new_badge_photo');
+	var status = document.getElementById('camera_status');
+	var stream = null;
+	var streamUrl = null;
+	var imageData = null;
 
-	var myimg
-	var video = document.querySelector("video"), canvas;
-	var photo = null;
-	var streaming = false;
+	function showStatus(message, isError) {
+		status.textContent = message;
+		status.className = isError ? 'text-danger' : '';
+	}
 
-<?php if (str_contains($agent, 'Windows') || str_contains($agent, 'Android')) { ?>
- function startup() {
-    video = document.getElementById('my_photo');
-    photo = document.getElementById('new_badge_photo');
-    navigator.mediaDevices.getUserMedia({video: true, audio: false})
-    .then((stream) => {
-      video.srcObject = stream;
-      video.play();
-    })
-    .catch((err) => {
-      console.log("An error occurred: " + err);
-    });
+	function stopCamera() {
+		if (stream) {
+			stream.getTracks().forEach(function(track) { track.stop(); });
+			stream = null;
+		}
+		if ('srcObject' in video) {
+			video.srcObject = null;
+		} else if ('mozSrcObject' in video) {
+			video.mozSrcObject = null;
+		} else {
+			video.removeAttribute('src');
+		}
+		if (streamUrl) {
+			URL.revokeObjectURL(streamUrl);
+			streamUrl = null;
+		}
+	}
 
-    video.addEventListener('canplay', (event) => {
-      if (!streaming) {
-        streaming = true;
-      }
-    }, false);
-  }
+	function captureSource(source, width, height) {
+		if (!width || !height) {
+			showStatus('The photo is not ready yet. Please try again.', true);
+			return;
+		}
+		var scale = Math.min(1, 1600 / width);
+		var canvas = document.createElement('canvas');
+		canvas.width = Math.round(width * scale);
+		canvas.height = Math.round(height * scale);
+		var context = canvas.getContext('2d');
+		if (!context) {
+			showStatus('Photo capture is not available in this browser.', true);
+			return;
+		}
+		context.drawImage(source, 0, 0, canvas.width, canvas.height);
+		try {
+			imageData = canvas.toDataURL('image/jpeg', 0.9);
+		} catch (error) {
+			showStatus('Could not read the selected photo. Please try another image.', true);
+			return;
+		}
+		preview.innerHTML = '';
+		preview.appendChild(canvas);
+		$('#video_block').hide();
+		$('#photo_block').show();
+		showStatus('Review the photo, then choose Use Photo or retake it.');
+	}
 
-    $("#take_snapshots").click(function(event) {
-      console.log("take photo clicked");
-      takeSnapshot();
-    });
-
-    $("#retake_photo").click(function(event) {
-	    $("#photo_block").hide();
-        $("#video_block").show();
-    });
-
-	$("#save_photo").click(function(event) {
-		console.log("saving...");
-console.log( "using: "+ JSON.stringify(myimg).length );
-		var csrf = $('meta[name="csrf-token"]').attr('content');
-		$.ajax({
-			type: "POST",
-			url: "/badges/photo-add?badge=<?=$_GET['badge']?>",
-			data: { imgBase64: myimg ,'_csrf-backend':csrf}
-		}).done(function(o) {
-			console.log("saved");
-			window.location.href = "/badges/photo-crop?badge=<?=$_GET['badge']?>";
+	function startCamera() {
+		stopCamera();
+		var getUserMedia = navigator.mediaDevices && navigator.mediaDevices.getUserMedia
+			? navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices)
+			: null;
+		if (!getUserMedia && (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia)) {
+			var legacyGetUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+			getUserMedia = function(constraints) {
+				return new Promise(function(resolve, reject) {
+					legacyGetUserMedia.call(navigator, constraints, resolve, reject);
+				});
+			};
+		}
+		if (!getUserMedia) {
+			showStatus('Live camera is not supported here. Use the photo chooser below instead.', true);
+			document.getElementById('retry_camera').style.display = 'none';
+			return Promise.resolve();
+		}
+		var cameraRequest = getUserMedia({
+			video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+			audio: false
 		});
-    });
+		return cameraRequest.catch(function(error) {
+				if (error && (
+					error.name === 'OverconstrainedError' ||
+					error.name === 'ConstraintNotSatisfiedError' ||
+					error.name === 'NotReadableError' ||
+					error.name === 'TypeError'
+				)) {
+					return getUserMedia({ video: true, audio: false });
+				}
+				throw error;
+		}).then(function(cameraStream) {
+			stream = cameraStream;
+			if ('srcObject' in video) {
+				video.srcObject = stream;
+			} else if ('mozSrcObject' in video) {
+				video.mozSrcObject = stream;
+			} else if (window.URL && URL.createObjectURL) {
+				streamUrl = URL.createObjectURL(stream);
+				video.src = streamUrl;
+			}
+			return video.play();
+		}).then(function() {
+			document.getElementById('take_snapshots').disabled = false;
+			document.getElementById('retry_camera').style.display = 'none';
+			showStatus('Camera ready.');
+		}).catch(function(error) {
+			console.info('Camera unavailable:', error.name);
+			var message = 'Could not start the camera. Allow camera access, use HTTPS, or choose a photo below.';
+			if (error && error.name === 'NotFoundError') {
+				message = 'No camera was found. Choose a photo below.';
+			} else if (error && (error.name === 'NotAllowedError' || error.name === 'SecurityError')) {
+				message = 'Camera access was denied or blocked. Allow access, use HTTPS, or choose a photo below.';
+			} else if (error && error.name === 'NotReadableError') {
+				message = 'The camera could not start. It may be in use by another app or browser tab. Close other camera apps, then retry, or choose a photo below.';
+			}
+			document.getElementById('take_snapshots').disabled = true;
+			document.getElementById('retry_camera').style.display = 'inline-block';
+			showStatus(message, true);
+		});
+	}
 
-    /**
-     *  generates a still frame image from the stream in the <video>
-     *  appends the image to the <body>
-     */
-    var takeSnapshot = function () {
-		myimg = document.querySelector("my_photo");
-		var context;
-		var width = video.videoWidth
-		, height = video.videoHeight;
+	document.getElementById('retry_camera').addEventListener('click', function() {
+		var button = this;
+		button.disabled = true;
+		showStatus('Retrying camera...');
+		startCamera().then(function() {
+			button.disabled = false;
+		});
+	});
 
-		canvas = canvas || document.createElement("canvas");
-		canvas.width = width;
-		canvas.height = height;
+	document.getElementById('take_snapshots').addEventListener('click', function() {
+		captureSource(video, video.videoWidth, video.videoHeight);
+	});
 
-		context = canvas.getContext("2d");
-		context.drawImage(video, 0, 0, width, height);
+	document.getElementById('retake_photo').addEventListener('click', function() {
+		imageData = null;
+		preview.innerHTML = '';
+		$('#photo_block').hide();
+		$('#video_block').show();
+		showStatus(stream ? 'Camera ready.' : 'Choose a photo below, or reload the page to retry the camera.');
+	});
 
-		myimg = canvas.toDataURL("image/jpeg");
+	document.getElementById('photo_file').addEventListener('change', function(event) {
+		var file = event.target.files && event.target.files[0];
+		if (!file) return;
+		if (!file.type || file.type.indexOf('image/') !== 0) {
+			showStatus('Please choose a valid image file.', true);
+			event.target.value = '';
+			return;
+		}
+		var reader = new FileReader();
+		reader.onload = function(loadEvent) {
+			var image = new Image();
+			image.onload = function() {
+				stopCamera();
+				captureSource(image, image.naturalWidth, image.naturalHeight);
+			};
+			image.onerror = function() {
+				showStatus('Could not open that image. Please choose another photo.', true);
+			};
+			image.src = loadEvent.target.result;
+		};
+		reader.onerror = function() {
+			showStatus('Could not read that image. Please choose another photo.', true);
+		};
+		reader.readAsDataURL(file);
+	});
 
-		$("#photo_block").show();
-		$("#video_block").hide();
-		new_badge_photo.append(canvas);
-    }
+	document.getElementById('save_photo').addEventListener('click', function() {
+		if (!imageData) {
+			showStatus('Take a photo or choose an image first.', true);
+			return;
+		}
+		var button = this;
+		button.disabled = true;
+		showStatus('Saving photo...');
+		$.ajax({
+			type: 'POST',
+			url: '/badges/photo-add?badge=<?= rawurlencode((string)Yii::$app->request->get('badge')) ?>',
+			data: { imgBase64: imageData, '_csrf-backend': <?= \yii\helpers\Json::htmlEncode($csrfToken) ?> }
+		}).done(function() {
+			window.location.href = '/badges/photo-crop?badge=<?= rawurlencode((string)Yii::$app->request->get('badge')) ?>';
+		}).fail(function() {
+			button.disabled = false;
+			showStatus('Photo could not be saved. Please try again.', true);
+		});
+	});
 
-	window.addEventListener('load', startup, false);
+	window.addEventListener('beforeunload', stopCamera);
+	window.addEventListener('DOMContentLoaded', startCamera);
   })();
-
-<?php } ?>
 </script>
