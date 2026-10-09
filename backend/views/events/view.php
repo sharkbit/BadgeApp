@@ -16,6 +16,8 @@ $model_ea = new Event_Att();
 $this->title = 'View Event';
 $this->params['breadcrumbs'][] = ['label' => 'Event List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title. " - ".$model->event_date. " - " .$model->event_name, 'url' => ['view','id'=>$model->ea_calendar_id ]];
+
+if ($model->event_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) {$isToday=true;} else {$isToday=false;}
 $div_closed=false;
 ?>
 <style>
@@ -86,7 +88,7 @@ $div_closed=false;
 $eventDateTimestamp = strtotime($model->event_date);
 $todayTimestamp = strtotime(date('Y-m-d', strtotime(yii::$app->controller->getNowTime())));
 $eventIsPast = $eventDateTimestamp !== false && $eventDateTimestamp < $todayTimestamp;
-if (yii::$app->controller->hasPermission('events/issue-credit')) {
+if ((yii::$app->controller->hasPermission('events/issue-credit')) && ($model->is_volunteer)) {
 	echo '<div class="col-xs-6 col-sm-2">';
 	if($model->issued_vol) {
 		echo "<p>Credits have been issued</p>";
@@ -106,7 +108,7 @@ if (yii::$app->controller->hasPermission('events/issue-credit')) {
 	<div class="col-xs-6 col-sm-8"><b>Instructors:</b> <?= Html::encode($model->cal_inst) ?> </div>
 <?php } ?>
 </div>
-<?php if (($model->event_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) && (yii::$app->controller->hasPermission('events/add-att'))) { ?>
+<?php if (($isToday) && (yii::$app->controller->hasPermission('events/add-att'))) { ?>
 <div class="row">
 	<div class="col-xs-12">
 	<section class="addPeeps-container" id="addPeepsSection">
@@ -192,7 +194,7 @@ if($att_count>0) {
 			}
 		}
 
-		if ((yii::$app->controller->hasPermission('events/remove-att')) ) { //&& $model->e_status==0) {  //Event is Open
+		if ((yii::$app->controller->hasPermission('events/remove-att')) && ($isToday)) {  //Event is Open
 
 			echo " <a href onclick='jsRemoveAtt(".$model->ea_calendar_id.",".$person->ea_id.',"'.$ba_name."\");' class='del'>&times;</a></p></div>\n";
 		} else { echo "</p></div>\n"; }
