@@ -4,13 +4,16 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\BadgeToClubs;
+use backend\models\BannedGuests;
 use backend\models\User;
+use backend\models\ViewBannedPeeps;
 use backend\models\search\UserSearch;
 use backend\models\ResetPasswordForm;
 use backend\models\Params;
 use backend\models\PasswordResetRequestForm;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 use backend\controllers\SiteController;
 use frontend\models\SignupForm;
@@ -19,41 +22,69 @@ use frontend\models\SignupForm;
  * AccountsController implements the CRUD actions for User model.
  */
 class AccountsController extends SiteController {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+	/**
+	 * @inheritdoc
+	 */
+	public function behaviors() {
+		return [
+			'verbs' => [
+				'class' => VerbFilter::className(),
+				'actions' => [
+					'delete' => ['POST'],
+					'add-banned-guest' => ['POST'],
+				],
+			],
+		];
+	}
 
-    public function actionIndex() {
-        $searchModel = new UserSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+	public function actionIndex() {
+		$searchModel = new UserSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
+		return $this->render('index', [
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+		]);
+	}
 
-    public function actionView($id) {
+	public function actionBanned() {
+		return $this->renderBannedPage(new BannedGuests());
+	}
+
+	public function actionAddBannedGuest() {
+		$model = new BannedGuests();
+		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('success', 'Banned guest has been added.');
+			return $this->redirect(['/accounts/banned']);
+		}
+
+		return $this->renderBannedPage($model);
+	}
+
+	private function renderBannedPage($bannedGuest) {
+		$dataProvider = new ActiveDataProvider([
+			'query' => ViewBannedPeeps::find()
+				->orderBy(['last_name' => SORT_ASC, 'first_name' => SORT_ASC]),
+			'pagination' => ['pageSize' => 50],
+		]);
+
+		return $this->render('banned', [
+			'dataProvider' => $dataProvider,
+			'bannedGuest' => $bannedGuest,
+		]);
+	}
+
+	public function actionView($id) {
 		$model = $this->findModel($id);
 		if ((!in_array(1, json_decode(yii::$app->user->identity->privilege))) && (in_array(1,json_decode($model->privilege)))) {
 			$this->redirect('index'); }
 			
-        return $this->render('view', [
-            'model' => $model
-        ]);
-    }
+		return $this->render('view', [
+			'model' => $model
+		]);
+	}
 
-    public function actionCreate() {
+	public function actionCreate() {
 		$model = new SignupForm();
 
 		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
@@ -68,34 +99,34 @@ class AccountsController extends SiteController {
 
 			$co_name=$model->auth_key;
 
-            if ($user=$model->signup()) {
+			if ($user=$model->signup()) {
 				$user_fix = User::find()->where(['id'=>$user->id])->one();
 				if($user_fix) {
 					if(in_array(8,json_decode($model->privilege))) { $user_fix->company = trim($co_name); }
 					$user_fix->badge_number = (int)$model->badge_number;
 					$user_fix->save(false);
 				}
-                $this->createLog($this->getNowTime(), $this->getActiveUser()->username, "New Authorized User Created: $user->id: $user->username");
-                Yii::$app->getSession()->setFlash('success', 'Authorized User has been added');
-                return $this->redirect(['/accounts/view','id'=>$user->id]);
-            } else {
+				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, "New Authorized User Created: $user->id: $user->username");
+				Yii::$app->getSession()->setFlash('success', 'Authorized User has been added');
+				return $this->redirect(['/accounts/view','id'=>$user->id]);
+			} else {
 				yii::$app->controller->createLog(false, 'trex C_AC-bn', 'error :67');
 			}
-        }
+		}
 
-        return $this->render('signup', [
-            'model' => $model,
-        ]);
-    }
+		return $this->render('signup', [
+			'model' => $model,
+		]);
+	}
 
-    public function actionUpdate($id) {
-        $model = $this->findModel($id);
+	public function actionUpdate($id) {
+		$model = $this->findModel($id);
 		if(isset($model->r_user)) { $old_r_user=$model->r_user;}
 		$old_priv = json_decode($model->privilege);
 
 		if ((!in_array(1, json_decode(yii::$app->user->identity->privilege))) && (array_intersect([1,2],json_decode($model->privilege)))) {
 			$this->redirect('index'); }
-        if ($model->load(Yii::$app->request->post()) ) {
+		if ($model->load(Yii::$app->request->post()) ) {
 	
 			if (empty($model->privilege)) {
 				if(intval($model->badge_number)>0) {
@@ -106,7 +137,7 @@ class AccountsController extends SiteController {
 				User::deleteAll("id = ".$model->id);
 				if(isset($old_r_user)) { $this->removeRemoteUser($old_r_user); }
 				if(isset($model->r_user)) { $this->removeRemoteUser($model->r_user); }
-                return $this->redirect(['/accounts/index']);
+				return $this->redirect(['/accounts/index']);
 			} else {
 				if(!array_intersect([8,9],$model->privilege)) {
 					$model->clubs = '';
@@ -138,13 +169,13 @@ class AccountsController extends SiteController {
 				$this->createLog($this->getNowTime(), $this->getActiveUser()->username, "Authorized User Updated: $model->id: $model->username");
 				return $this->redirect(['view', 'id' => $model->id]);
 			}
-        } else {
+		} else {
 			$model->clubs=json_decode($model->clubs);
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
+			return $this->render('update', [
+				'model' => $model,
+			]);
+		}
+	}
 
 	private function RemoveClub($badge_number) {
 		$BtC = (new BadgeToClubs)->find()->where(['badge_number'=>$badge_number,'club_id'=>33])->one();
@@ -175,7 +206,7 @@ class AccountsController extends SiteController {
 		}
 	}
 
-    public function actionRequestPasswordReset($id) {
+	public function actionRequestPasswordReset($id) {
 		if ((in_array(1,json_decode(yii::$app->user->identity->privilege))) || (yii::$app->user->id==$id)) { 
 			$model = new PasswordResetRequestForm();
 			$resetToken = $model->tokenGenerate($id);
@@ -189,40 +220,40 @@ class AccountsController extends SiteController {
 		} else {
 			return $this->redirect([Yii::$app->request->referrer ?: Yii::$app->homeUrl]);
 		}
-    }
+	}
 
-    public function actionResetPassword($token) {
-        try {
-            $model = new ResetPasswordForm($token);
-        } catch (InvalidArgumentException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        }
+	public function actionResetPassword($token) {
+		try {
+			$model = new ResetPasswordForm($token);
+		} catch (InvalidArgumentException $e) {
+			throw new BadRequestHttpException($e->getMessage());
+		}
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('success', 'New password saved.');
-            return $this->redirect(['accounts/index']);
-        }
+		if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+			Yii::$app->session->setFlash('success', 'New password saved.');
+			return $this->redirect(['accounts/index']);
+		}
 
-        return $this->render('resetPassword', [
-            'model' => $model,
-        ]);
-    }
+		return $this->render('resetPassword', [
+			'model' => $model,
+		]);
+	}
 
-    public function actionDelete($id) {
+	public function actionDelete($id) {
 		$model = $this->findModel($id);
 		if(isset($model->r_user)) { $this->removeRemoteUser($model->r_user); }
-        if($model->delete()) {
-            $this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Authorized User Deleted: '.$id);
-        }
+		if($model->delete()) {
+			$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Authorized User Deleted: '.$id);
+		}
 
-        return $this->redirect(['index']);
-    }
+		return $this->redirect(['index']);
+	}
 
-    protected function findModel($id) {
-        if (($model = User::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
+	protected function findModel($id) {
+		if (($model = User::findOne($id)) !== null) {
+			return $model;
+		} else {
+			throw new NotFoundHttpException('The requested page does not exist.');
+		}
+	}
 }

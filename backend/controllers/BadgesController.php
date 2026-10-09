@@ -9,6 +9,7 @@ use backend\models\AgcCal;
 use backend\models\BadgeCertification;
 use backend\models\Badges;
 use backend\models\BadgeSubscriptions;
+use backend\models\BannedGuests;
 use backend\models\CardReceipt;
 use backend\models\clubs;
 use backend\models\Event_Att;
@@ -907,50 +908,80 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionPhotoAdd() {
-		if (Yii::$app->request->post()) {
-			//Post & get are used because of the way data is sent back.
-			if(isset($_GET['badge']) && $_GET['badge'] >0 ) {
-				$myPath = "./files/badge_photos/";
-				if (!is_dir($myPath)) {
-					mkdir($myPath, 0775, true);
-				}
-				if(isset($_POST['imgBase64'])) {
-					$img = $_POST['imgBase64'];
-					if(strpos($img,"image/jpeg")) {
-						$img=explode(',',$img)[1];
-						$ext=".jpg";
-					} elseif (strpos($img,"image/png")) {
-						$img=explode(',',$img)[1];
-						$ext=".png";
-					} else {
-						yii::$app->controller->createLog(true, 'trex_C_BC add photo OTHER ',substr($img, 0, 80));
-						$ext=".txt";
-					}
-					$data = base64_decode($img);
-					$myfile = "files/badge_photos/".str_pad($_GET['badge'], 5, '0', STR_PAD_LEFT).$ext;
-					if(is_file($myfile)) {
-						unlink($myfile);
-					}
-
-					$file = file_put_contents( $myfile, $data );
-					if($file){
-						if(strpos($_SERVER['HTTP_REFERER'],'crop')) {
-							yii::$app->controller->createLog(true, $_SESSION['user'],"Added Photo','".$_GET['badge']);
-						}
-					} else {
-						yii::$app->controller->createLog(true, 'Error '.$_SESSION['user'],"Add Photo failed','".$_GET['badge']);
-					}
-					exit;
-				}
-
-			}
-		} else {
-			return $this->render('photo-add');
+		$target = Yii::$app->request->get('badge');
+		$photo = $this->getPhotoTarget($target);
+		if (!$photo) {
+			throw new \yii\web\NotFoundHttpException('The photo target was not found.');
 		}
+
+		if (Yii::$app->request->isPost) {
+			$imageData = Yii::$app->request->post('imgBase64');
+			if (!is_string($imageData) || !preg_match('/^data:image\/jpeg;base64,([A-Za-z0-9+\/=]+)$/', $imageData, $matches)) {
+				throw new \yii\web\BadRequestHttpException('A JPEG photo is required.');
+			}
+			$data = base64_decode($matches[1], true);
+			$imageInfo = $data === false ? false : @getimagesizefromstring($data);
+			if ($imageInfo === false || $imageInfo['mime'] !== 'image/jpeg') {
+				throw new \yii\web\BadRequestHttpException('The uploaded photo is invalid.');
+			}
+
+			$photoPath = Yii::getAlias('@webroot') . '/files/badge_photos';
+			if (!is_dir($photoPath) && !mkdir($photoPath, 0775, true) && !is_dir($photoPath)) {
+				throw new \yii\web\ServerErrorHttpException('Could not create the photo directory.');
+			}
+			if (file_put_contents($photoPath . '/' . $photo['fileName'], $data) === false) {
+				throw new \yii\web\ServerErrorHttpException('Could not save the photo.');
+			}
+			return 'OK';
+		}
+
+		return $this->render('photo-add', [
+			'photoTarget' => $photo['target'],
+			'photoFileName' => $photo['fileName'],
+			'isGuestPhoto' => $photo['isGuest'],
+		]);
 	}
 
 	public function actionPhotoCrop() {
-		return $this->render('photo-crop');
+		$photo = $this->getPhotoTarget(Yii::$app->request->get('badge'));
+		if (!$photo) {
+			throw new \yii\web\NotFoundHttpException('The photo target was not found.');
+		}
+		$photoPath = Yii::getAlias('@webroot') . '/files/badge_photos/' . $photo['fileName'];
+		if (!is_file($photoPath)) {
+			throw new \yii\web\NotFoundHttpException('The photo was not found.');
+		}
+
+		return $this->render('photo-crop', [
+			'photoTarget' => $photo['target'],
+			'photoFileName' => $photo['fileName'],
+			'isGuestPhoto' => $photo['isGuest'],
+		]);
+	}
+
+	private function getPhotoTarget($target) {
+		if (!is_string($target) && !is_numeric($target)) {
+			return false;
+		}
+		$target = (string)$target;
+		if (preg_match('/^g([1-9][0-9]*)$/', $target, $matches)) {
+			if (!BannedGuests::findOne((int)$matches[1])) {
+				return false;
+			}
+			return [
+				'target' => $target,
+				'fileName' => $target . '.jpg',
+				'isGuest' => true,
+			];
+		}
+		if (!preg_match('/^[1-9][0-9]*$/', $target) || !Badges::find()->where(['badge_number' => (int)$target])->exists()) {
+			return false;
+		}
+		return [
+			'target' => $target,
+			'fileName' => str_pad($target, 5, '0', STR_PAD_LEFT) . '.jpg',
+			'isGuest' => false,
+		];
 	}
 
 	public function actionPrint($badge_number,$ty='') {

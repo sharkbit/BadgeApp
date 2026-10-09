@@ -106,6 +106,12 @@ class Menu extends Widget{
 			'color' => 'btn-warning',
 		],
 		[
+			'label'=>'Banned',
+			'loc'=>['prod','dev'],
+			'url' => '/accounts/banned',
+			'color' => 'btn-warning',
+		],
+		[
 			'label'=>'Create Badge Rosters for Clubs',
 			'loc'=>['prod','dev'],
 			'url' => '/clubs/badge-rosters',

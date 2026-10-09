@@ -1,18 +1,25 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\Clubs
-*/
-/* @var $form yii\widgets\ActiveForm */
-$this->title = 'Crop Photo';
-$this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['/badges/index']];
-$this->params['breadcrumbs'][] = ['label' => $_GET['badge'], 'url' => ['/badges/view?badge_number='.$_GET['badge']]];
+$this->title = $isGuestPhoto ? 'Crop Guest Photo' : 'Crop Photo';
+if ($isGuestPhoto) {
+    $this->params['breadcrumbs'][] = ['label' => 'Banned', 'url' => ['/accounts/banned']];
+} else {
+    $this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['/badges/index']];
+    $this->params['breadcrumbs'][] = ['label' => $photoTarget, 'url' => ['/badges/view', 'badge_number' => $photoTarget]];
+}
 $this->params['breadcrumbs'][] = $this->title;
 
-$csrfToken=Yii::$app->request->getCsrfToken();
+$photoUrl = '/files/badge_photos/' . rawurlencode($photoFileName);
+$addUrl = Url::to(['/badges/photo-add', 'badge' => $photoTarget]);
+$saveUrl = Url::to(['/badges/photo-add', 'badge' => $photoTarget]);
+$returnUrl = $isGuestPhoto
+	? Url::to(['/accounts/banned'])
+	: Url::to(['/badges/view', 'badge_number' => $photoTarget]);
 ?>
 <style>
 @import "/css/cropper.css";
@@ -43,7 +50,7 @@ img {
     <div class="row">
       <div class="col col-1"> <p> </div>
 	  <div class="col col-6">
-		<img id="image" src="/files/badge_photos/<?=str_pad($_GET['badge'], 5, '0', STR_PAD_LEFT)?>.jpg?dummy=<?=rand(10000,99999)?>" alt="Picture">
+		<img id="image" src="<?= Html::encode($photoUrl . '?dummy=' . rand(10000, 99999)) ?>" alt="Picture">
       </div>
 	  <div class="col col-1"> <p> </div>
       <div class="col col-3">
@@ -68,7 +75,7 @@ img {
     }
 
 	$("#retake_photo").click(function(event) {
-		window.location.href = "/badges/photo-add?badge=<?=$_GET['badge']?>";
+		window.location.href = <?= \yii\helpers\Json::htmlEncode($addUrl) ?>;
 	});
 
 	$("#save_photo").click(function(event) {
@@ -86,11 +93,13 @@ img {
 
 			$.ajax({
 				type: "POST",
-				url: "/badges/photo-add?badge=<?=$_GET['badge']?>",
-				data: { 'data': mydata, 'imgdata': myimgdata, imgBase64: myimg }
+				url: <?= \yii\helpers\Json::htmlEncode($saveUrl) ?>,
+				data: { imgBase64: myimg, '_csrf-backend': <?= \yii\helpers\Json::htmlEncode(Yii::$app->request->getCsrfToken()) ?> }
 			}).done(function(o) {
 				console.log("saved");
-				window.location.href = "/badges/view?badge_number=<?=$_GET['badge']?>";
+				window.location.href = <?= \yii\helpers\Json::htmlEncode($returnUrl) ?>;
+			}).fail(function() {
+				alert('Could not save the cropped photo. Please try again.');
 			});
 
 		} else { console.log("cropper no found!"); }

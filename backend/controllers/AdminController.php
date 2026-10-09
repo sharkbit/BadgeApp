@@ -19,7 +19,7 @@ class AdminController extends \yii\web\Controller {
 	public $activeUser;  //badges/get-badge-name
 
 	public $rootAdminPermission = [
-		'Accounts' => ['accounts/temp','accounts/index','accounts/create','accounts/update','accounts/view','accounts/delete','accounts/reset-password','accounts/request-password-reset'],
+		'Accounts' => ['accounts/temp','accounts/index','accounts/banned','accounts/add-banned-guest','accounts/create','accounts/update','accounts/view','accounts/delete','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu','params/membershipstatus','params/membershipstatusupdate','params/membershipstatusview','params/membershipstatusdelete','params/discount','params/discountupdate','params/discountview','privileges/create','privileges/delete','privileges/index','privileges/update'],
 		'Badges'=>['badges/all','badges/add-certification','badges/api-check','badges/barcode','badges/create','badges/delete-certificate','badges/delete','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/overideprice','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log',],
 		'Calendar' =>['calendar/all','calendar/approve','calendar/bulkdelete','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recheck-future-conflicts','calendar/recur','calendar/republish','calendar/shoot','calendar/showed','calendar/update','calendar/view'],
@@ -40,7 +40,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $adminPermission = [
-		'Accounts' => ['accounts/index','accounts/create','accounts/update','accounts/view','accounts/reset-password','accounts/request-password-reset'],
+		'Accounts' => ['accounts/index','accounts/banned','accounts/add-banned-guest','accounts/create','accounts/update','accounts/view','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu','params/discount','params/membershipstatus'],
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/overideprice','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recheck-future-conflicts','calendar/recur','calendar/republish','calendar/shoot','calendar/update'],
@@ -57,7 +57,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $adminViewPermission = [
-		'Accounts' => ['accounts/index','accounts/view'],
+		'Accounts' => ['accounts/index','accounts/banned','accounts/view'],
 		'Admin' => ['site/admin-menu'],
 		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Clubs' => ['clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update','clubs/index','clubs/view'],

@@ -1037,3 +1037,30 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DE
 CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_events` AS
     SELECT vea.ea_calendar_id, vea.attended_badges, vea.attended_guests, vea.wb_out_zero, vce.event_date, vce.cal_start_time, vce.cal_end_time, vce.event_name, vce.event_status_name, vce.event_status_id, vce.club_name, vce.short_name, vce.club_id, vce.poc_badge, vce.allow_guests, vce.track_wristbands, vce.cal_inst, vce.is_volunteer, vce.credit_hours, vce.issued_vol
     FROM `view_event_att` vea LEFT JOIN view_cal_event vce ON vea.ea_calendar_id = vce.calendar_id order by ea_calendar_id desc;
+
+
+--for #263
+CREATE TABLE `BadgeDB`.`banned_guests` (
+  `bg_id` INT NOT NULL AUTO_INCREMENT,
+  `bg_first_name` VARCHAR(45) NOT NULL,
+  `bg_last_name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`bg_id`),
+  UNIQUE INDEX `bg_id_UNIQUE` (`bg_id` ASC) VISIBLE);
+
+CREATE OR REPLACE VIEW BadgeDB.view_banned_peeps AS
+SELECT 
+    concat('g', bg_id)  AS person_id, 
+    `bg_first_name` AS first_name, 
+    `bg_last_name` AS last_name, 
+    'guest' AS ban_status
+FROM BadgeDB.banned_guests
+
+UNION ALL
+
+SELECT 
+    badge_number AS person_id, 
+    first_name AS first_name, 
+    last_name AS last_name, 
+    'x-member' AS ban_status
+FROM BadgeDB.badges
+where badges.`status`='rev';

@@ -1,18 +1,22 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\Clubs
-*/
-/* @var $form yii\widgets\ActiveForm */
-$this->title = 'Add Photo';
-$this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['/badges/index']];
-$this->params['breadcrumbs'][] = ['label' => $_GET['badge'], 'url' => ['/badges/view?badge_number='.$_GET['badge']]];
+$this->title = $isGuestPhoto ? 'Add Guest Photo' : 'Add Photo';
+if ($isGuestPhoto) {
+    $this->params['breadcrumbs'][] = ['label' => 'Banned', 'url' => ['/accounts/banned']];
+} else {
+    $this->params['breadcrumbs'][] = ['label' => 'Range Badges', 'url' => ['/badges/index']];
+    $this->params['breadcrumbs'][] = ['label' => $photoTarget, 'url' => ['/badges/view', 'badge_number' => $photoTarget]];
+}
 $this->params['breadcrumbs'][] = $this->title;
 
 $csrfToken=Yii::$app->request->getCsrfToken();
+$saveUrl = Url::to(['/badges/photo-add', 'badge' => $photoTarget]);
+$cropUrl = Url::to(['/badges/photo-crop', 'badge' => $photoTarget]);
 ?>
 <div class="container">
 <ul>
@@ -230,10 +234,10 @@ $csrfToken=Yii::$app->request->getCsrfToken();
 		showStatus('Saving photo...');
 		$.ajax({
 			type: 'POST',
-			url: '/badges/photo-add?badge=<?= rawurlencode((string)Yii::$app->request->get('badge')) ?>',
+			url: <?= \yii\helpers\Json::htmlEncode($saveUrl) ?>,
 			data: { imgBase64: imageData, '_csrf-backend': <?= \yii\helpers\Json::htmlEncode($csrfToken) ?> }
 		}).done(function() {
-			window.location.href = '/badges/photo-crop?badge=<?= rawurlencode((string)Yii::$app->request->get('badge')) ?>';
+			window.location.href = <?= \yii\helpers\Json::htmlEncode($cropUrl) ?>;
 		}).fail(function() {
 			button.disabled = false;
 			showStatus('Photo could not be saved. Please try again.', true);
