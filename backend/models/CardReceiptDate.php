@@ -19,6 +19,7 @@ class CardReceiptDate extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
+	public $date_rng;
 	public $pagesize;
 	public $show_club;
 

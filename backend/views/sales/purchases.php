@@ -7,7 +7,7 @@ use kartik\widgets\ActiveForm;
 use kartik\export\ExportMenu;
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\search\CardReceiptSearch */
+/* @var $searchModel backend\models\search\CardReceiptDateSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Purchases';
@@ -15,9 +15,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Store', 'url' => ['index']];
 
 if (isset($_REQUEST['sales-showsku'])) {$showsku= true;} else {$showsku= false;}
 if (isset($_REQUEST['sales-show_club'])) {$show_club= true; $searchModel->show_club=true;} else {$show_club= false;}
-if (isset($_REQUEST['CardReceiptSearch']['pagesize'])) {
-	$pagesize = $_REQUEST['CardReceiptSearch']['pagesize'];
-	$_SESSION['pagesize'] = $_REQUEST['CardReceiptSearch']['pagesize'];
+if (isset($_REQUEST['CardReceiptDateSearch']['pagesize'])) {
+	$pagesize = $_REQUEST['CardReceiptDateSearch']['pagesize'];
+	$_SESSION['pagesize'] = $_REQUEST['CardReceiptDateSearch']['pagesize'];
 } elseif (isset($_SESSION['pagesize'])) {
 	$pagesize = $_SESSION['pagesize'];
 } else {
@@ -82,16 +82,14 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			'headerOptions' => ['width' => '100'],
 			'footer' => "$".number_format($dataProvider->query->sum('amount'), 2, '.', ','),
 		],
-	//	[	'attribute'=>'badges',
-	//		'value'=>function($model) {
-	//			return @$model->badges->first_name.' '.@$model->badges->last_name;}
-	//	],
 		[ 	'attribute'=>'cashier_badge',
 			'value' => function($model, $attribute) { return yii::$app->controller->decodeBadgeName((int)$model->cashier_badge); },
 			'label' => 'Cashier (Use commas to seperate multiple Cashiers when filtering.',
 			'headerOptions' => ['width' => '300'],
 		],
-		'tx_type',
+		[ 	'attribute'=>'tx_type',
+			'filter'=>\yii\helpers\Html::activeDropDownList($searchModel, 'tx_type',backend\controllers\PaymentController::GetPaymentTypes(false,false,true),['class'=>'form-control','prompt' => 'All']),
+		],
 		[	'header' => 'Actions',
 			'class' => 'yii\grid\ActionColumn',
 			'template'=>' {print} {delete}',
@@ -157,14 +155,14 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 <br /> <?php echo Html::checkbox('sales-show_club',$show_club,['value'=>1,'id'=>'sales-show_club']), PHP_EOL; ?><b> - Show Clubs</b>
 	</div>
 	<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 col-xl-3">
-	<?=$form->field($searchModel, 'tx_date', [
+	<?=$form->field($searchModel, 'date_rng', [
 		'options'=>['class'=>'drp-container form-group']
 		])->widget(DateRangePicker::classname(), [
 			'presetDropdown'=>true,
 			'hideInput'=>false,
 			'pluginOptions' => [
 				'opens'=>'left',
-				'locale'=>['format'=>'YYYY/MM/DD'],
+				'locale'=>['format'=>'YYYY/MM/DD', 'separator'=>' - '],
 			]])->label('Date range:'); ?>
 	</div>
 	<div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2">
