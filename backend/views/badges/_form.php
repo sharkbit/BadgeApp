@@ -161,16 +161,11 @@ $myPaymentList = backend\controllers\PaymentController::GetPaymentTypes($confPar
                 <?= $form->field($model, 'wt_instru')->textInput(['placeholder'=>'Required']) ?>
             </div>
 <?php $memstatus = (new MembershipStatus)::getIssueMemStatus($confParams);
-	yii::$app->controller->createLog(true, 'trex-gt3', var_export($memstatus,true));
-	if (count($memstatus)>1) { 
-		?>	
+	if (count($memstatus)>1) { ?>	
 			<div class="col-xs-6 col-sm-2">
                 <?= $form->field($model, 'status')->dropDownList($memstatus) ?>
             </div>	
-<?php } else {  
-yii::$app->controller->createLog(true, 'trex7474', var_export(key($memstatus),true));
- ?>
-			
+<?php } else { ?>
 			<?= $form->field($model, 'status')->hiddenInput(['value'=>key($memstatus)])->label(false).PHP_EOL;?>
 <?php } ?>	
              <div class="col-xs-6 col-sm-4">

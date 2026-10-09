@@ -1054,9 +1054,7 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 				yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:749', 'save error');
 				Yii::$app->getSession()->setFlash('error', 'Something Went Wrong');
 			}
-			yii::$app->controller->createCalLog(false, 'trex_B_C_CalC:752', 'updated');
 			return $this->redirect(['update','id' => $id,'hideRepub'=>"no"]);
-
 
 		} else {
 			if(($_SESSION['badge_number']>0) && ($model->poc_badge==0)) { $model->poc_badge=$_SESSION['badge_number']; }

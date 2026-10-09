@@ -63,6 +63,7 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		'club_name',
 		'short_name',
 		[	'attribute'=>'c_new',
+			'header'=>'New',
 			'value' => function($dataProvider) {
 				if($dataProvider['c_new']==0) {return '';} else {return $dataProvider['c_new'];}
 			}
