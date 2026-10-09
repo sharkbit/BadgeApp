@@ -47,6 +47,8 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 	} else { $New_WT_Needed = false; }
 
 	$isExpired = Badges::isExpired($model->badge_number,$confParams);
+	$mem_prefill = json_decode(MembershipStatus::getPrefill());
+
 	// mem_type needs to renew? Test:
 	$hide_Renew_message='';
 	if ((int)$DateExpires < (int)$badge_year_chk) {									// Is BadgeSubscription Current?
@@ -55,12 +57,11 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 				$mem_renew = backend\models\MembershipType::findOne(['id'=>$model->mem_type])->renew_yearly;
 				if ($mem_renew) { // Member needs to renew
 					$hide_Renew=false;
-					
-					$mem_prefill = json_decode(MembershipStatus::getPrefill());
+
 					if (in_array($model->status, $mem_prefill)) {
 						$badgeSubscriptions->wt_instru = $model->wt_instru;
 					}
-					
+
 				} else { $hide_Renew_message= "Membership Type dosn't need to Renew."; $hide_Renew=true; }
 			} else { $hide_Renew_message= 'Account Status not allowed to Renew.'; $hide_Renew=true; }
 		} else { $hide_Renew=true; }
@@ -229,7 +230,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
                 <?= $form->field($model, 'remarks_temp')->textarea(['rows' => '2'])->label('Remarks').PHP_EOL; ?>
             </div>
             <div class="col-xs-3 col-sm-3">
-		<?php if ($restrict) {
+		<?php if (($restrict) || ( in_array($model->status, $mem_prefill) )) {
                echo $form->field($model, 'status')->dropdownList((new MembershipStatus)->getMemberStatus(false,$model->status), ['disabled' => 'disabled']).PHP_EOL;
 			} else {
 				echo $form->field($model, 'status')->dropdownList((new MembershipStatus)->getMemberStatus(false,$model->status)).PHP_EOL;
@@ -277,7 +278,7 @@ $DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->
 
 <?php } ?>
 	<?php if ($hide_Renew) { ?>
-	<div class="row"> 
+	<div class="row">
 	<h4><?=$hide_Renew_message ?></h4>
 	</div>
 	<?php } ?>
