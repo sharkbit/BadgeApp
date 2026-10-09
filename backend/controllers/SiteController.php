@@ -414,6 +414,28 @@ class SiteController extends AdminController {
 		} else { echo " The Email you entered is invalid."; }
 	}
 
+	public function canLogin($ip) {
+		if (!is_string($ip) || $ip === '') {
+			return false;
+		}
+		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && str_starts_with($ip, '192.168.')) {
+			return true;
+		}
+
+		$since = (new \DateTimeImmutable('now', new \DateTimeZone(Yii::$app->params['timeZone'])))
+			->modify('-15 minutes')
+			->format('Y-m-d H:i:s');
+
+		return LoginAccess::find()
+			->where([
+				'ip' => $ip,
+				'module' => 'member',
+				'l_status' => 'FAIL',
+			])
+			->andWhere(['>=', 'l_date', $since])
+			->count() < 3;
+	}
+
 	public function log_access($m,$i,$n,$s) {
 		$log = new LoginAccess;
 		$log->l_date = yii::$app->controller->getNowTime();

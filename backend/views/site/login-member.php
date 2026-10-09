@@ -12,6 +12,7 @@ use backend\models\MembershipStatus;
 
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
+$canLogin = Yii::$app->controller->canLogin(Yii::$app->request->userIP);
 
 ?>
 <div class="site-login">
@@ -20,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 if ( Yii::$app->params['env'] != 'cal' ) {
 $agc_event = (new ViewCalEvent)->getActiveEventsQuery();
-if($agc_event) { ?>
+if(($agc_event) && ($canLogin)) { ?>
 			<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<h3>Todays Events:</h3><hr /><ul>
 <?php
@@ -42,6 +43,7 @@ foreach($agc_event as $an_event){
 <?php } } else { $agc_event = false; } ?>
 		</div>
         <div class="col-xs-12 col-md-4" >
+<?php if($canLogin) { ?>
             <div class="login-box">
 			<?= $this->render('_login-tab-menu',['model'=>$model]).PHP_EOL; ?>
 				<p class="help-block help-block-error"></p>
@@ -66,11 +68,16 @@ foreach($agc_event as $an_event){
                 <div class="clearfix"></div>
                 <?php ActiveForm::end(); ?>
             </div>
+<?php } else { ?>
+			<div class="login-box">
+				User is unable to login due too multiple failed login attempts.
+			</div>
+<?php } ?>
         </div>
         <div class="col-xs-12 col-md-4" >
 <?php if( Yii::$app->params['env'] != 'cal' ) {
 		$SignupName = (New MembershipStatus)->getSignup();
-		if ($SignupName) { ?>
+		if (($SignupName) && ($canLogin)) { ?>
 			<div style=" padding: 20px;"><p> <br /> </p>
 				<div class="events-box box" style="box-shadow: 3px 20px 79px #a2a2a2; padding: 15px 15px;" >
 				<p> </p> <center><h3><a href="/site/new-member">New Member Signup</a></h3></center>
