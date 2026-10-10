@@ -9,7 +9,7 @@ use yii\widgets\ActiveForm;
 /* @var $bannedGuest backend\models\BannedGuests */
 
 $this->title = 'Banned';
-$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
+//$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/accounts/banned']];
 
 $this->registerCss('

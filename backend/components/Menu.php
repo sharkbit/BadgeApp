@@ -45,6 +45,12 @@ class Menu extends Widget{
 			'color' => 'btn-success',
 		],
 		[
+			'label'=>'Banned',
+			'loc'=>['prod','dev'],
+			'url' => '/accounts/banned',
+			'color' => 'btn-warning',
+		],
+		[
 			'label'=>'Calender',
 			'loc'=>['cal','prod','dev'],
 			'url' => '/calendar/index',
@@ -103,12 +109,6 @@ class Menu extends Widget{
 			'label'=>'Authorized Users',
 			'loc'=>['prod','dev'],
 			'url' => '/accounts/index',
-			'color' => 'btn-warning',
-		],
-		[
-			'label'=>'Banned',
-			'loc'=>['prod','dev'],
-			'url' => '/accounts/banned',
 			'color' => 'btn-warning',
 		],
 		[
