@@ -94,7 +94,7 @@ class ViolationsSearch extends Violations {
 		if(!empty($this->vi_rules)) { 	$query->andFilterWhere(['like', 'vi_rules', $this->vi_rules]); }
 
 
-yii::$app->controller->createLog(true, 'trex-b-m-s-vs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
+//yii::$app->controller->createLog(true, 'trex-b-m-s-vs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
 
         return $dataProvider;
     }
