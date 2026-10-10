@@ -100,7 +100,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				},
 				'delete' => function($url,$model) {
 					if(!$model->id==0){
-						if(yii::$app->controller->hasPermission('accounts/delete'))  {
+						if( (yii::$app->controller->hasPermission('accounts/delete')) && (!array_intersect([1,2],json_decode($model->privilege))) )  {
 					return  Html::a(' <span class="glyphicon glyphicon-trash"></span> Delete <br />', ['/accounts/delete','id'=>$model->id], [
 						'data-toggle'=>'tooltip',
 						'data-placement'=>'top',

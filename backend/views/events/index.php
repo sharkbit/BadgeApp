@@ -89,10 +89,7 @@ $eventAttendee = new Event_Att();
 			[	'attribute'=>'event_name',
 				'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
 				'format'=>'raw',
-				'value'=>function($model) {
-					if(strtotime($model->event_date) <= strtotime(yii::$app->controller->getNowTime())) { $send_to="view"; } else {
-						if (yii::$app->controller->hasPermission('events/update')) { $send_to="update"; } else { $send_to="view"; } }
-					return Html::a($model->event_name,"/events/$send_to?id=".$model->ea_calendar_id);},
+				'value'=>function($model) {	return Html::a($model->event_name,"/events/view?id=".$model->ea_calendar_id); },
 				'headerOptions' => ['style' => 'width:25%']
 			],
 			[	'attribute'=>'Event Director',

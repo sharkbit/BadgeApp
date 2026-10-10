@@ -34,7 +34,7 @@ class DiscountSearch extends Discount {
 
 		$this->load($params);
 
-		if(!isset($params['sort'])) { $query->orderBy( ['dis_name' => SORT_ASC] ); }
+		if(empty($params['sort'])) { $query->orderBy( ['dis_name' => SORT_ASC] ); }
 
 		if (!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
@@ -43,11 +43,11 @@ class DiscountSearch extends Discount {
 		}
 
 		// grid filtering conditions
-		if(isset($this->dis_id)) { $query->andFilterWhere(['dis_id' => $this->role_id]); }
-		if(isset($this->dis_name)) { $query->andFilterWhere(['like','dis_name', $this->dis_name]); }
-		if(isset($this->dis_active)) { $query->andFilterWhere(['dis_active' => $this->dis_active]); }
-		if(isset($this->dis_allowed)) { $query->andFilterWhere(['like','dis_allowed', $this->dis_allowed]); }
-		if(isset($this->dis_def)) { $query->andFilterWhere(['like','dis_def', $this->dis_def]); }
+		if(!empty($this->dis_id)) { $query->andFilterWhere(['dis_id' => $this->role_id]); }
+		if(!empty($this->dis_name)) { $query->andFilterWhere(['like','dis_name', $this->dis_name]); }
+		if(!empty($this->dis_active)) { $query->andFilterWhere(['dis_active' => $this->dis_active]); }
+		if(!empty($this->dis_allowed)) { $query->andFilterWhere(['like','dis_allowed', $this->dis_allowed]); }
+		if(!empty($this->dis_def)) { $query->andFilterWhere(['like','dis_def', $this->dis_def]); }
 
 		return $dataProvider;
 	}

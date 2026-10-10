@@ -80,9 +80,9 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 				'contentOptions' =>  function($model) {
 					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
 					return ['style' => 'white-space:pre-line;'.$color];}, 
-				'value' => function($model) { if($model->was_guest=='1') {return "Yes";} else { return "No";} },
+				'value' => function($model) { if($model->was_guest==true) {return "Yes";} else { return "No";} },
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'was_guest',
-					['1'=>'Yes','0'=>'No'],['class'=>'form-control','prompt' => 'All']),
+					[true=>'Yes',false=>'No'],['class'=>'form-control','prompt' => 'All']),
 			],
 			[
 				'attribute' => 'vi_loc',

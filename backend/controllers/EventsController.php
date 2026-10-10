@@ -100,7 +100,7 @@ class EventsController extends AdminController {
 						}
 					}
 				}
-				$msg = "Event $event_issue->event_name Closed, ".count($event_attendee)." attendees";
+				$msg = "Volunteer hours issued for $event_issue->event_name, ".count($event_attendee)." attendees";
 			} else {
 				$msg = "Event $event_issue->event_name Closed";
 			}
@@ -122,32 +122,6 @@ class EventsController extends AdminController {
 		Yii::$app->session->setFlash('error', "Event not found");
 		return $this->redirect(['index']);
 	}
-
-    public function actionCreate() {
-		$model = new Events();
-        if ($model->load(Yii::$app->request->post())){
-
-			$model->e_date = date('Y-m-d',strtotime($model->e_date));
-			$model->e_name = trim($model->e_name);
-			if ($model->save()) {
-				$this->createLog($this->getNowTime(), $_SESSION['user'], 'Event Created: '.$model->e_name);
-				Yii::$app->getSession()->setFlash('success', 'Event '.$model->e_name.' has been created');
-				if(yii::$app->controller->hasPermission('events/update')) {
-					return $this->redirect(['update', 'id' => $model->e_id]);
-				} else {
-					return $this->redirect(['index']);
-				}
-			} else {
-				return $this->render('create', [
-					'model' => $model,
-				]);
-			}
-		} else {
-			return $this->render('create', [
-				'model' => $model,
-			]);
-		}
-    }
 
 	public function actionDelete($id) {
 		$att_chk = Event_Att::find()->where(['ea_calendar_id'=>$id])->all();
@@ -247,19 +221,6 @@ class EventsController extends AdminController {
 		Event_Att::deleteall(['ea_calendar_id'=>$id,'ea_id'=>$ea_id]);
 		Yii::$app->response->data = json_encode(['success'=>true]);
 	}
-
-    public function actionUpdate($id=0) {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post())) {
-        	$model->save();
-			return $this->redirect(['update', 'id' => $id]);
-	    } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
 
     public function actionView($id) {
 		return $this->render('view', [

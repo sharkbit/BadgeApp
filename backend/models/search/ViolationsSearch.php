@@ -18,7 +18,7 @@ class ViolationsSearch extends Violations {
 
     public function rules() {
         return [
-			[['badge_involved', 'badge_witness','vi_sum','vi_loc','vi_rules','vi_report','vi_action','vi_date','badge_reporter','vi_type','club_id'], 'safe'],
+			[['badge_involved', 'badge_witness','vi_sum','vi_loc','vi_rules','vi_report','vi_action','vi_date','badge_reporter','vi_type','was_guest','club_id'], 'safe'],
         ];
     }
 
@@ -82,23 +82,19 @@ class ViolationsSearch extends Violations {
 
         // grid filtering conditions
 		
-        $query->andFilterWhere(['vi_type' => $this->vi_type,]);
+        if(!empty($this->vi_type)) {	$query->andFilterWhere(['vi_type' => $this->vi_type]); }
 		
-		if(isset($this->vi_loc) && ($this->vi_loc <>'')) {
-			$query->andFilterWhere(['vi_loc' => $this->vi_loc,]);}
+		if(!empty($this->vi_loc)) {		$query->andFilterWhere(['vi_loc' => $this->vi_loc]);}
+		if(!empty($this->club_id)) {	$query->andWhere("badge_involved IN (SELECT badge_number FROM badge_to_club WHERE club_id=".$this->club_id.")"); }
+		if(!empty($this->badge_involved)) {	$query->andFilterWhere(['like', 'badge_involved', $this->badge_involved]);}
+		if(!empty($this->badge_witness)) {	$query->andFilterWhere(['like', 'badge_witness', $this->badge_witness]);}
+		if(!empty($this->badge_reporter)) {	$query->andFilterWhere(['like', 'badge_reporter', $this->badge_reporter]);}
+		if(isset($this->was_guest)) { 	$query->andFilterWhere(['was_guest' => $this->was_guest]);}
+		if(!empty($this->vi_sum)) {		$query->andFilterWhere(['like', 'vi_sum', $this->vi_sum]);}
+		if(!empty($this->vi_rules)) { 	$query->andFilterWhere(['like', 'vi_rules', $this->vi_rules]); }
 
-		if(isset($this->club_id) && ($this->club_id <>'')) {
-			$query->andWhere("badge_involved IN (SELECT badge_number FROM badge_to_club WHERE club_id=".$this->club_id.")"); }
-		if(isset($this->badge_involved) && ($this->badge_involved <>'')) {
-			$query->andFilterWhere(['like', 'badge_involved', $this->badge_involved]);}
-		if(isset($this->badge_witness) && ($this->badge_witness <>'')) {
-			$query->andFilterWhere(['like', 'badge_witness', $this->badge_witness]);}
-		if(isset($this->badge_reporter) && ($this->badge_reporter <>'')) {
-			$query->andFilterWhere(['like', 'badge_reporter', $this->badge_reporter]);}
-		if(isset($this->vi_sum) && ($this->vi_sum <>'')) {
-			$query->andFilterWhere(['like', 'vi_sum', $this->vi_sum]);}
-		if(isset($this->vi_rules) && ($this->vi_rules <>'')) {
-			$query->andFilterWhere(['like', 'vi_rules', (string)$this->vi_rules]);}
+
+yii::$app->controller->createLog(true, 'trex-b-m-s-vs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
 
         return $dataProvider;
     }

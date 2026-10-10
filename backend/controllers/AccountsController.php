@@ -241,9 +241,11 @@ class AccountsController extends SiteController {
 
 	public function actionDelete($id) {
 		$model = $this->findModel($id);
+		$deleted_user = $model->username;
+		
 		if(isset($model->r_user)) { $this->removeRemoteUser($model->r_user); }
 		if($model->delete()) {
-			$this->createLog($this->getNowTime(), $this->getActiveUser()->username, 'Authorized User Deleted: '.$id);
+			$this->createLog($this->getNowTime(), $this->getActiveUser()->username, "Authorized User Deleted: ($id) $deleted_user");
 		}
 
 		return $this->redirect(['index']);

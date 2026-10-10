@@ -26,7 +26,7 @@ class AdminController extends \yii\web\Controller {
 		'CalSetup' => ['cal-setup/index','cal-setup/clubs','cal-setup/updateclu','cal-setup/facility','cal-setup/updatefac','cal-setup/rangestatus','cal-setup/updateran','cal-setup/eventstatus','cal-setup/updateeven'],
 		'Clubs' => ['clubs/roles','clubs/role-create','clubs/role-delete','clubs/role-update','clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update','clubs/index','clubs/create','clubs/delete','clubs/update','clubs/view','clubs/badge-rosters'],
 		'MassEmail' => ['mass-email/create','mass-email/index','mass-email/update','mass-email/send','mass-email/process'],
-		'Events' => ['events/approve','events/add-att','events/issue-credit','events/create','events/delete','events/index','events/reg','events/return','events/remove-att','events/update','events/view'],
+		'Events' => ['events/approve','events/add-att','events/issue-credit','events/delete','events/index','events/reg','events/return','events/remove-att','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/delete-X','membership-type/view'],
 		'Guest' => ['guest/all','guest/update','guest/stats','guest/delete'],
 		'Index' => ['site/new-member','site/no-email','site/verify'],
@@ -47,7 +47,7 @@ class AdminController extends \yii\web\Controller {
 		'MassEmail' => ['mass-email/create','mass-email/index','mass-email/update','mass-email/send','mass-email/process'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/roles','clubs/role-create','clubs/role-delete','clubs/role-update','clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update','clubs/index','clubs/create','clubs/update','clubs/view','clubs/badge-rosters'],
-		'Events' => ['events/approve','events/add-att','events/issue-credit','events/create','events/delete','events/index','events/reg','events/remove-att','events/update','events/view'],
+		'Events' => ['events/approve','events/add-att','events/issue-credit','events/delete','events/index','events/reg','events/remove-att','events/view'],
 		'Guest' => ['guest/all','guest/update','guest/delete','guest/stats'],
 		'Rso Report'=>['rso-rpt/close_mod','rso-rpt/index','rso-rpt/remarks','rso-rpt/settings','rso-rpt/sticker','rso-rpt/view','sticker/add','sticker/move','rso-rpt/sticker-update'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
@@ -71,18 +71,20 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $cashierPermission = [
+		'Accounts' => ['accounts/banned'],
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/get-badge-name','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/overideprice','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
-		'Events' => ['events/all','events/add-att','events/index','events/view'],
+		'Events' => ['events/all','events/add-att','events/index','events/remove-att','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'sales' => ['sales/all','sales/index','sales/report','sales/stock','sales/summary'],
 		'Guest' => ['guest/all','guest/update'],
 	];
 
 	public $rsoLeadPermission = [
+		'Accounts' => ['accounts/banned'],
 		'Badges'=>['badges/all','badges/add-certification','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/showed','calendar/index'],
-		'Events' => ['events/approve','events/create','events/index','events/reg','events/return','events/remove-att','events/view'],
+		'Events' => ['events/approve','events/index','events/reg','events/return','events/remove-att','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert'],
 		'Guest' => ['guest/all','guest/update'],
 		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/index','rso-rpt/sticker','rso-rpt/update','rso-rpt/view'],
@@ -91,9 +93,10 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $rsoPermission = [
+		'Accounts' => ['accounts/banned'],
 		'Badges'=>['badges/all','badges/add-certification','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/showed','calendar/index'],
-		'Events' => ['events/approve','events/create','events/index','events/reg','events/return','events/remove-att','events/view'],
+		'Events' => ['events/approve','events/index','events/reg','events/return','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert'],
 		'Guest' => ['guest/all','guest/update'],
 		'Rso Report'=>['rso-rpt/current','rso-rpt/index','rso-rpt/sticker','rso-rpt/view'],
@@ -102,6 +105,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $viewPermission = [
+		'Accounts' => ['accounts/banned'],
 		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/index','calendar/view'],
 		'Events' => ['events/index','events/view'],
@@ -114,7 +118,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $workcreditPermission = [
 		'Badges'=>['badges/all','badges/get-badge-name','badges/view-certificate','badges/view-certifications-list','badges/view-remarks-history','badges/view-work-credits','badges/view-work-credits-log'],
-		'Events' => ['events/create','events/index','events/reg','events/view'],
+		'Events' => ['events/index','events/reg','events/view'],
 		'Guest' => ['guest/update'],
 		'Work Credits'=>['work-credits/add'],
 	];
@@ -122,7 +126,7 @@ class AdminController extends \yii\web\Controller {
 	public $cioPermission = [
 		'Badges'=>['badges/restrict','badges/get-badge-name','badges/view-certificate','badges/view-certifications-list','badges/view-remarks-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/get-event-types','calendar/inactive','calendar/open-range','calendar/update'],
-		'Events' => ['events/index','events/add-att','events/create','events/reg','events/view'],
+		'Events' => ['events/index','events/add-att','events/reg','events/view'],
 		'Guest' => ['guest/update'],
 	];
 
@@ -134,21 +138,21 @@ class AdminController extends \yii\web\Controller {
 	public $calendarPermission = [
 		'Badges' => ['badges/get-badge-name'],
 		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update'],
-		'Events' => ['events/add-att','events/create','events/index','events/reg','events/view'],
+		'Events' => ['events/add-att','events/index','events/reg','events/view'],
 		'Guest' => ['guest/update'],
 	];
 
 	public $chairmanPermission = [
 		'Badges' => ['badges/get-badge-name'],
 		'Calendar' => ['calendar/close','calendar/recur'],
-		'Events' => ['events/add-att','events/create','events/index','events/reg','events/return','events/view'],
+		'Events' => ['events/add-att','events/index','events/reg','events/return','events/view'],
 		'Work Credits'=>['work-credits/add'],
 	];
 
 	public $shootPermission = [
 		'Badges' => ['badges/get-badge-name'],
 		'Calendar' => ['calendar/all','calendar/shoot'],
-		'Events' => ['events/add-att','events/create','events/index','events/reg','events/view'],
+		'Events' => ['events/add-att','events/index','events/reg','events/view'],
 	];
 
 	public $AllPermission = [
