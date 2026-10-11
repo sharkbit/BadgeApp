@@ -41,7 +41,8 @@ class Events extends \yii\db\ActiveRecord{
 			->select('ea_calendar_id')
 			->where(['event_date' => new Expression('CURRENT_DATE')]);
 
-		if (yii::$app->controller->hasPermission('calendar/all')) { }									// Sees All Calendar
+		if (yii::$app->controller->hasPermission('calendar/all')) { }								// Sees All Calendar
+		elseif (yii::$app->controller->hasPermission('events/all')) { }								// Cashere
 		elseif ((in_array(9, $_SESSION['privilege'])) && isset(Yii::$app->user->identity->clubs)) {	// Have Calendar Cord and Clubs set
 			$eventsToday->andFilterWhere(['in', 'club_id', json_decode(Yii::$app->user->identity->clubs)]);
 		} else {																						// Is Range POC
@@ -67,7 +68,8 @@ class Events extends \yii\db\ActiveRecord{
 			->andWhere(['deleted'=>0])
 			->andWhere(['not in', 'cal.calendar_id', $eventsToday]);
 
-		if (yii::$app->controller->hasPermission('calendar/all')) { }									// Sees All Calendar
+		if (yii::$app->controller->hasPermission('calendar/all')) { }								// Sees All Calendar
+		elseif (yii::$app->controller->hasPermission('events/all')) { }								// Cashere
 		elseif ((in_array(9, $_SESSION['privilege'])) && isset(Yii::$app->user->identity->clubs)) {	// Have Calendar Cord and Clubs set
 			$calendarsWithoutEventsToday->andFilterWhere(['in', 'cal.club_id', json_decode(Yii::$app->user->identity->clubs)]);
 		} else {																						// Is Range POC
