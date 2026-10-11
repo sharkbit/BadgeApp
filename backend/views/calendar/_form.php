@@ -120,7 +120,7 @@ if((!empty($model->poc_badge)) && (filter_var($model->poc_badge, FILTER_VALIDATE
 
 if((!empty($model->cal_inst)) && (filter_var($model->cal_inst, FILTER_VALIDATE_INT))) {
 	$poce_badge_search = Badges::find()->where(['badge_number' => $model->cal_inst])->one();
-	if ($poce_badge_search && !Badges::isExpired($model->poc_badge, $confParams)) {
+	if ($poce_badge_search && !Badges::isExpired($model->cal_inst, $confParams)) {
 		$poce_badge_name = $poce_badge_search->first_name . ' ' . $poce_badge_search->last_name;
 	} else {
 		$poce_badge_name = 'Badge Expired';
@@ -241,7 +241,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			</div>
 		</div>
 		<div class="col-xs-3 col-sm-2 col-md-2 col-lg-2" id="div_trackWristband" >
-			<?= $form->field($model, 'cal_inst')->textInput(['maxlength'=>true])->label( (in_array($model->event_status_id,$TrackWristbands)) ? "" : 'Event Director' ) ?>
+			<?= $form->field($model, 'cal_inst')->textInput(['type' => 'number', 'min' => 0, 'step' => 1])->label( (in_array($model->event_status_id,$TrackWristbands)) ? "" : 'Event Director' ) ?>
 		</div>
 		<div class="col-xs-8 col-sm-4 col-md-4 col-lg-4">
 			<div class="form-group field-agccal-poce_badge_name">

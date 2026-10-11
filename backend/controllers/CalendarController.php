@@ -70,6 +70,7 @@ class CalendarController extends AdminController {
 			$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
 
 			$Req_Lanes = (new agcFacility)->getFacilRequiresLanes();
+			$reqLanesArray = [];
 			foreach ($Req_Lanes as $chk_rng) {
 				if (!empty($_POST['agccal-lanes_' . $chk_rng['facility_id']])) {
 					$req_num = (int)($_POST['agccal-lanes_' . $chk_rng['facility_id']]);
@@ -91,14 +92,39 @@ class CalendarController extends AdminController {
 				$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,false,false);
 
 				if (is_array($myEventDates) && sizeof($myEventDates) >0) {
-
-					$model->save();
-					$model->recurrent_calendar_id = $model->calendar_id;
-					$model->event_date = $myEventDates[0];
-					if ($this->actionOpenRange($model->event_date,$model->cal_start_time,$model->cal_end_time,$model->facility_id,$model->lanes_req,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true))
-						{ $model->conflict = 0; } else { $model->conflict = 1; }
-					$model->save();
-					$model = $this->createRecCalEvent($model,$myEventDates,false,true);
+					$transaction = Yii::$app->db->beginTransaction();
+					try {
+						if (!$model->save()) {
+							$transaction->rollBack();
+							Yii::$app->session->setFlash('error', 'Calendar item could not be saved. Please correct the highlighted fields.');
+							return $this->render('create', ['model' => $model]);
+						}
+						$model->recurrent_calendar_id = $model->calendar_id;
+						$model->event_date = $myEventDates[0];
+						if ($this->actionOpenRange($model->event_date,$model->cal_start_time,$model->cal_end_time,$model->facility_id,$model->lanes_req,$model->calendar_id,$model->recur_week_days,$model->event_status_id,true)) {
+							$model->conflict = 0;
+						} else {
+							$model->conflict = 1;
+						}
+						if (!$model->save()) {
+							$transaction->rollBack();
+							Yii::$app->session->setFlash('error', 'Recurring calendar item could not be saved. Please correct the highlighted fields.');
+							return $this->render('create', ['model' => $model]);
+						}
+						$recurringModel = $this->createRecCalEvent($model,$myEventDates,false,true);
+						if ($recurringModel === false) {
+							$transaction->rollBack();
+							Yii::$app->session->setFlash('error', 'A recurring calendar item could not be saved. Please correct the highlighted fields and try again.');
+							return $this->render('create', ['model' => $model]);
+						}
+						$model = $recurringModel;
+						$transaction->commit();
+					} catch (\Throwable $error) {
+						if ($transaction->isActive) {
+							$transaction->rollBack();
+						}
+						throw $error;
+					}
 				} else {
 					Yii::$app->getSession()->setFlash('error', 'No events will be created,  Check your dates!');
 					return $this->redirect(['create','recur'=>1,'model'=>$model]);
@@ -107,7 +133,10 @@ class CalendarController extends AdminController {
 				$model->recurrent_start_date = $model->recurrent_end_date = null;
 
 				$model->recur_every=0;
-				$model->save();
+				if (!$model->save()) {
+					Yii::$app->session->setFlash('error', 'Calendar item could not be saved. Please correct the highlighted fields.');
+					return $this->render('create', ['model' => $model]);
+				}
 			}
 
 			yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Created New Calendar item: ','".$model->calendar_id.'->'.$model->event_name);
@@ -930,7 +959,17 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 					if ((int)$model->deleted == 1 ) { return json_encode(['status'=>'error','msg'=>"Event has been deleted, can't republish"]); }
 					yii::$app->controller->createCalLog(true,  $_SESSION['user'], "Republishing event: ','".$model->event_name.'('.$model->calendar_id.')');
 
-					if($model->event_status_id=19) {$model->event_status_id=1; $model->save(false);}
+					$seriesId = $model->recurrent_calendar_id;
+					$transaction = Yii::$app->db->beginTransaction();
+					try {
+					if ((int)$model->event_status_id === 19) {
+						$model->event_status_id = 1;
+						if (!$model->save(false)) {
+							$transaction->rollBack();
+							Yii::$app->session->setFlash('error', 'The recurring event status could not be updated.');
+							return $this->redirect(['update', 'id' => $seriesId]);
+						}
+					}
 //					if($model->range_status_id=4) {$model->range_status_id=1; $model->save(false);}
 					if ($force_order) {
 						$nowTime = date('Y-01-01 00:00:00', strtotime(yii::$app->controller->getNowTime() . " + 1 year"));
@@ -949,7 +988,20 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 					if($tst) {echo "Repb: rec_start: ".$model->recurrent_start_date.", Rec_end: ".$model->recurrent_end_date.", :Rec_PATTERN: ".$model->recur_week_days."<br /> /n"; }
 					$myEventDates = $this->getEvents($model->recurrent_start_date,$model->recurrent_end_date,$model->recur_week_days,$tst,$force_order);
 
-					$model = $this->createRecCalEvent($model,$myEventDates,$force_order,false,$tst);
+					$republishedModel = $this->createRecCalEvent($model,$myEventDates,$force_order,false,$tst);
+					if ($republishedModel === false) {
+						$transaction->rollBack();
+						Yii::$app->session->setFlash('error', 'A recurring event could not be saved. Please review the event details.');
+						return $this->redirect(['update', 'id' => $seriesId]);
+					}
+					$model = $republishedModel;
+					$transaction->commit();
+					} catch (\Throwable $error) {
+						if ($transaction->isActive) {
+							$transaction->rollBack();
+						}
+						throw $error;
+					}
 					if($force_order) { return $this->redirect(['recur']); } else {
 					return $this->redirect(['update', 'id' => $model->recurrent_calendar_id]);}
 
@@ -1354,8 +1406,16 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 			if(!$model->rollover) { $model_event->rollover = 0; } else { $model_event->rollover = $model->rollover; }
 			$model_event->time_format 		= 1;
 			$model_event->poc_badge 		= $model->poc_badge;
+			$model_event->cal_inst 		= $model->cal_inst;
 			$model_event->remarks 			= $model->remarks;
-			$model_event->save();
+			if (!$model_event->save()) {
+				$errors = [];
+				foreach ($model_event->getErrors() as $attributeErrors) {
+					$errors = array_merge($errors, $attributeErrors);
+				}
+				$model->addError('cal_inst', 'Could not save a recurring event: ' . implode(' ', $errors));
+				return false;
+			}
 			if(!$first_id) {$first_id=$model_event->calendar_id;}
 			yii::$app->controller->createCalLog(true, $_SESSION['user'], "Created New Calendar item: ','".$model_event->calendar_id.'->'.$model_event->event_name);
 
@@ -1369,7 +1429,10 @@ if($tst) { if ($force_order) {yii::$app->controller->createCalLog(true, 'trex_B_
 			if (!$NewID) {$NewID=$first_id;}
 			AgcCal::UpdateAll(['recurrent_calendar_id'=>$NewID],"recurrent_calendar_id = ".$model->recurrent_calendar_id);
 			$model->recurrent_calendar_id=$NewID;
-			$model->save();
+			if (!$model->save()) {
+				$model->addError('cal_inst', 'Could not update the recurring event series.');
+				return false;
+			}
 		}
 		return $model;
 	}
