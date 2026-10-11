@@ -584,6 +584,17 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			$("#agccal-credit_hours").val("");
 			$("#div_canVolunteer").hide();
 		}
+		if(evnType==19) {
+			document.getElementById("cal_update_item").disabled=false;
+			document.getElementById("cal_update_item").classList.add('btn-success');
+			document.getElementById("cal_update_item").classList.remove('btn-secondary');
+			document.getElementById("cal_check_avail").disabled=true;
+		} else {
+			document.getElementById("cal_update_item").disabled=true;
+			document.getElementById("cal_update_item").classList.remove('btn-success');
+			document.getElementById("cal_update_item").classList.add('btn-secondary');
+			document.getElementById("cal_check_avail").disabled=false;
+		}
 	});
 
 	$("#agccal-club_id").change(function(e) { runClub(); });

@@ -53,9 +53,8 @@ class ViewCalEvent extends \yii\db\ActiveRecord {
 				'track_wristbands',
 				'is_volunteer'
             ])
-            ->where([
-				'event_date' => date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))
-			])
+            ->where(['event_date' => date('Y-m-d',strtotime(yii::$app->controller->getNowTime())) ])
+			->andWhere(['!=','event_status_id',19])
 			// Event starts anytime up to 1 hour into the future
 			->andWhere(['<=',
                 new \yii\db\Expression('CONCAT(event_date, " ", cal_start_time)'),
