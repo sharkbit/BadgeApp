@@ -40,7 +40,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $adminPermission = [
-		'Accounts' => ['accounts/index','accounts/banned','accounts/create','accounts/delete','accounts/update','accounts/view','accounts/reset-password','accounts/request-password-reset'],
+		'Accounts' => ['accounts/index','accounts/banned','accounts/add-banned-guest','accounts/create','accounts/delete','accounts/update','accounts/view','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu','params/discount','params/membershipstatus'],
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/overideprice','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/approve','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recheck-future-conflicts','calendar/recur','calendar/republish','calendar/shoot','calendar/update'],
@@ -71,7 +71,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $cashierPermission = [
-		'Accounts' => ['accounts/banned'],
+		'Accounts' => ['accounts/banned','accounts/add-banned-guest'],
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/get-badge-name','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/overideprice','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
 		'Events' => ['events/all','events/add-att','events/index','events/remove-att','events/update-director','events/view'],
@@ -81,7 +81,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $rsoLeadPermission = [
-		'Accounts' => ['accounts/banned'],
+		'Accounts' => ['accounts/banned','accounts/add-banned-guest'],
 		'Badges'=>['badges/all','badges/add-certification','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/showed','calendar/index'],
 		'Events' => ['events/approve','events/index','events/reg','events/return','events/remove-att','events/view'],
