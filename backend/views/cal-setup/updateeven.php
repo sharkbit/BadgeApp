@@ -32,6 +32,9 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/cal-setup
 		<?= $form->field($model, 'active')->DropDownList(['1'=>'True','0'=>'False']) ?>
 	</div>
 	<div class="col-xs-2 col-sm-2">
+		<?= $form->field($model, 'event_signup')->DropDownList(['1'=>'True','0'=>'False']) ?>
+	</div>
+	<div class="col-xs-2 col-sm-2">
 		<?= $form->field($model, 'allow_guests')->DropDownList(['1'=>'True','0'=>'False']) ?>
 	</div>
 	<div class="col-xs-2 col-sm-2">
@@ -40,12 +43,6 @@ $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/cal-setup
 	<div class="col-xs-2 col-sm-2">
 		<?= $form->field($model, 'is_volunteer')->DropDownList(['1'=>'True','0'=>'False']) ?>
 	</div>
-	<div class="col-xs-2 col-sm-2">
-		<?= $form->field($model, 'display_order')->textInput(['disabled'=>true,'maxlength'=>true]) ?>
-	</div>
-
-
-
 	<div class="col-xs-12 form-group">
 		<?= Html::submitButton('Update', ['class' => 'btn btn-primary pull-right']) ?>
 	</div>

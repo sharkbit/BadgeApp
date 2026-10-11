@@ -1064,3 +1064,10 @@ SELECT
     'x-member' AS ban_status
 FROM BadgeDB.badges
 where badges.`status`='rev';
+
+--for #??
+ALTER TABLE `BadgeDB`.`cal_event_status` 
+ADD COLUMN `event_signup` TINYINT NOT NULL DEFAULT 1 AFTER `track_wristbands`;
+
+UPDATE `BadgeDB`.`cal_event_status` SET `event_signup` = '0' WHERE (`event_status_id` = '18');
+UPDATE `BadgeDB`.`cal_event_status` SET `event_signup` = '0' WHERE (`event_status_id` = '19');

@@ -23,7 +23,7 @@ class agcEventStatus extends \yii\db\ActiveRecord {
     public function rules() {
         return [
 			[['name'], 'required'],
-			[['active','allow_guests','display_order','event_status_id','is_volunteer','track_wristbands'], 'integer'],
+			[['active','allow_guests','display_order','event_signup','event_status_id','is_volunteer','track_wristbands'], 'integer'],
 			[['name'], 'string'],
 			];
     }
@@ -36,6 +36,13 @@ class agcEventStatus extends \yii\db\ActiveRecord {
             'name' => 'Event Status'
         ];
     }
+
+	public static function getCanSignup() {
+		return agcEventStatus::find()
+			->select(['event_status_id'])
+			->where(['event_signup' => 1])
+			->column();
+	}
 
 	public static function getCanVolunteer() {
 		return agcEventStatus::find()

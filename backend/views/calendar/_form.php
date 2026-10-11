@@ -33,6 +33,7 @@ if (array_intersect(json_decode($model->facility_id),array_column($Req_Lanes,'fa
 	$allowLanes = false;
 }
 $is_club = ArrayHelper::getColumn(clubs::find()->where(['status'=>0,'is_club'=>1])->orderBy(['club_name'=>SORT_ASC])->asArray()->all(), 'club_id');
+$getCanSignup = agcEventStatus::getCanSignup();
 $CanVolunteer = agcEventStatus::getCanVolunteer();
 $TrackWristbands = agcEventStatus::getTrackWristbands();
 
@@ -130,11 +131,12 @@ if((!empty($model->cal_inst)) && (filter_var($model->cal_inst, FILTER_VALIDATE_I
 if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub=false; } else { $hideRepub=true; }
 ?>
 
- <input type='hidden' id='bad_words' value='<?=htmlspecialchars(json_encode($dirty),ENT_QUOTES)?>' />
- <input type="hidden" id="Req_Lanes" name="Req_Lanes" value='<?=Html::encode(json_encode($Req_Lanes, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
- <input type="hidden" id="is_club" name="is_club" value='<?=Html::encode(json_encode($is_club, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
- <input type="hidden" id="CanVolunteer" name="CanVolunteer" value='<?=Html::encode(json_encode($CanVolunteer, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
- <input type="hidden" id="TrackWristbands" name="TrackWristbands" value='<?=Html::encode(json_encode($TrackWristbands, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
+<input type='hidden' id='bad_words' value='<?=htmlspecialchars(json_encode($dirty),ENT_QUOTES)?>' />
+<input type="hidden" id="Req_Lanes" name="Req_Lanes" value='<?=Html::encode(json_encode($Req_Lanes, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
+<input type="hidden" id="is_club" name="is_club" value='<?=Html::encode(json_encode($is_club, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
+<input type="hidden" id="getCanSignup" name="getCanSignup" value='<?=Html::encode(json_encode($getCanSignup, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
+<input type="hidden" id="CanVolunteer" name="CanVolunteer" value='<?=Html::encode(json_encode($CanVolunteer, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
+<input type="hidden" id="TrackWristbands" name="TrackWristbands" value='<?=Html::encode(json_encode($TrackWristbands, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT))?>' />
 
 <?php $form = ActiveForm::begin(['id' => 'calendar-form']); ?>
 
@@ -224,6 +226,8 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<?= $form->field($model, 'is_event')->DropDownList(['1'=>'Yes','2'=>'No'],['value'=> $model->is_event]).PHP_EOL ?>
 		</div>
+<?php } else { ?>
+		<?= $form->field($model, 'is_event')->hiddenInput()->label(false) ?>
 <?php } ?>
 		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<?= $form->field($model, 'date_requested')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
@@ -555,7 +559,17 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		document.getElementById("pat_daily_n").disabled=true;
 	});
 
+	function syncEventSignup() {
+		var canSignup = JSON.parse($("#getCanSignup").val());
+		var eventStatusId = String($("#agccal-event_status_id").val());
+		var isEvent = canSignup.some(function(id) {
+			return String(id) === eventStatusId;
+		}) ? '1' : '2';
+		$("#agccal-is_event").val(isEvent);
+	}
+
 	$("#agccal-event_status_id").change(function(e) {
+		syncEventSignup();
 		var evnType = $(this).val();
 		var trkwristbands = $("#TrackWristbands").val() || "";
 		var canVolunteer  = $("#CanVolunteer").val() || "";
@@ -587,6 +601,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			success: function(responseData, textStatus, jqXHR) {
 				//console.log("success ");
 				document.getElementById("agccal-event_status_id").innerHTML = responseData;
+				$("#agccal-event_status_id").trigger("change");
 			},
 			error: function (responseData, textStatus, errorThrown) {
 				console.log("error ");
