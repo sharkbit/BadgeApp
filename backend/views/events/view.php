@@ -58,6 +58,15 @@ $div_closed=false;
   text-align: left;
 }
 
+.update-director-form summary {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.update-director-form[open] summary {
+  margin-bottom: 12px;
+}
+
 /* Hidden state class */
 .addPeeps-container.collapsed .addPeeps-content,
 .addPeeps-container.collapsed .addPeeps-header {
@@ -82,6 +91,73 @@ $div_closed=false;
 <?php if (yii::$app->controller->hasPermission('calendar/update')) { ?>
 	<div class="col-xs-6 col-sm-2">
 		<?= Html::a('Update Event', ['/calendar/update', 'id' => $model->ea_calendar_id], ['class' => 'btn btn-danger']) ?>
+	</div>
+<?php } ?>
+<?php if (yii::$app->controller->hasPermission('events/update-director')) { ?>
+	<div class="col-xs-12 col-sm-3">
+		<details class="update-director-form">
+			<summary class="btn btn-primary">Update Director</summary>
+			<?php
+				$directorBadge = $model->cal_inst;
+				$directorInputId = 'director-badge-' . (int)$model->ea_calendar_id;
+				$directorNameId = 'director-name-' . (int)$model->ea_calendar_id;
+				$directorName = !empty($directorBadge)
+					? yii::$app->controller->decodeBadgeName((int)$directorBadge)
+					: 'Not Found';
+				echo Html::beginForm(['/events/update-director', 'id' => $model->ea_calendar_id], 'post');
+				echo Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken);
+			?>
+			<div class="form-group">
+				<?= Html::label('Event Director Badge', $directorInputId) ?>
+				<?= Html::input('number', 'cal_inst', $directorBadge, [
+					'id' => $directorInputId,
+					'class' => 'form-control',
+					'min' => 1,
+					'step' => 1,
+					'required' => true,
+				]) ?>
+			</div>
+			<div class="form-group">
+				<?= Html::label('Event POC Name', $directorNameId) ?>
+				<?= Html::textInput('POCe_Name', $directorName, [
+					'id' => $directorNameId,
+					'class' => 'form-control',
+					'readonly' => true,
+				]) ?>
+			</div>
+			<?= Html::submitButton('Save Director', ['class' => 'btn btn-success']) ?>
+			<?= Html::endForm() ?>
+		</details>
+		<script>
+			(function() {
+				var badgeField = $('#<?= $directorInputId ?>');
+				var nameField = $('#<?= $directorNameId ?>');
+				badgeField.on('change', function() {
+					var badgeNumber = $.trim($(this).val());
+					if (!badgeNumber) {
+						nameField.val('Not Found');
+						return;
+					}
+					nameField.val('Searching...');
+					$.ajax({
+						method: 'POST',
+						url: '<?=yii::$app->params['rootUrl']?>/badges/get-badge-details?badge_number=' + encodeURIComponent(badgeNumber),
+						dataType: 'json',
+						data: {<?= \yii\helpers\Json::htmlEncode(Yii::$app->request->csrfParam) ?>: <?= \yii\helpers\Json::htmlEncode(Yii::$app->request->getCsrfToken()) ?>}
+					}).done(function(response) {
+						if (response && response.badge_number) {
+							nameField.val(response.isExpired
+								? 'Badge Expired'
+								: response.first_name + ' ' + response.last_name);
+						} else {
+							nameField.val('Not Found');
+						}
+					}).fail(function() {
+						nameField.val('Not Found');
+					});
+				});
+			})();
+		</script>
 	</div>
 <?php } ?>
 <?php

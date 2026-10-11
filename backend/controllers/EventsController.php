@@ -13,6 +13,7 @@ use backend\models\search\EventsSearch;
 use backend\models\WorkCredits;
 
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -29,6 +30,7 @@ class EventsController extends AdminController {
                 'actions' => [
                     'delete' => ['POST'],
                     'issue-credit' => ['POST'],
+                    'update-director' => ['POST'],
                 ],
             ],
         ];
@@ -121,6 +123,33 @@ class EventsController extends AdminController {
 		}
 		Yii::$app->session->setFlash('error', "Event not found");
 		return $this->redirect(['index']);
+	}
+
+	public function actionUpdateDirector($id) {
+		if (!$this->hasPermission('events/update-director')) {
+			throw new ForbiddenHttpException('You are not allowed to update the event director.');
+		}
+
+		$calendar = AgcCal::findOne(['calendar_id' => $id]);
+		if (!$calendar) {
+			throw new NotFoundHttpException('The calendar event could not be found.');
+		}
+
+		$badgeNumber = Yii::$app->request->post('cal_inst');
+		if (!is_string($badgeNumber) || !preg_match('/^[1-9][0-9]*$/', $badgeNumber)
+			|| !Badges::find()->where(['badge_number' => (int)$badgeNumber])->exists()) {
+			Yii::$app->session->setFlash('error', 'Enter a valid badge number for the event director.');
+			return $this->redirect(['view', 'id' => $id]);
+		}
+
+		if ((int)$calendar->cal_inst !== (int)$badgeNumber
+			&& $calendar->updateAttributes(['cal_inst' => (int)$badgeNumber]) === false) {
+			Yii::$app->session->setFlash('error', 'The event director could not be updated.');
+			return $this->redirect(['view', 'id' => $id]);
+		}
+
+		Yii::$app->session->setFlash('success', 'Event Director has been updated.');
+		return $this->redirect(['view', 'id' => $id]);
 	}
 
 	public function actionDelete($id) {

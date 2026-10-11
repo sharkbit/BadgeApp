@@ -74,7 +74,7 @@ class AdminController extends \yii\web\Controller {
 		'Accounts' => ['accounts/banned'],
 		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/get-badge-name','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/overideprice','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-work-credits','badges/view-work-credits-log'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
-		'Events' => ['events/all','events/add-att','events/index','events/remove-att','events/view'],
+		'Events' => ['events/all','events/add-att','events/index','events/remove-att','events/update-director','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'sales' => ['sales/all','sales/index','sales/report','sales/stock','sales/summary'],
 		'Guest' => ['guest/all','guest/update'],
