@@ -269,6 +269,7 @@ class AdminController extends \yii\web\Controller {
 				elseif ($priv==4) { if ($this->Check_Privs($event,$this->viewPermission)) return true; }
 				elseif ($priv==5) { if ($this->Check_Privs($event,$this->userPermission)) return true; }
 				elseif ($priv==11) { if ($this->Check_Privs($event,$this->chairmanPermission)) return true; }
+				//     ($priv==12)  only gives acces to print RSO Action shootin badge
 				elseif ($priv==13) { if ($this->Check_Privs($event,$this->adminViewPermission)) return true; }
 				elseif ($priv==15) { if ($this->Check_Privs($event,$this->shootPermission)) return true; }
 			}
