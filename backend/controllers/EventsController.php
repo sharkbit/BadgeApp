@@ -148,6 +148,7 @@ class EventsController extends AdminController {
 			return $this->redirect(['view', 'id' => $id]);
 		}
 
+		$this->createLog($this->getNowTime(), $_SESSION['user'], "Event Director has been updated. ($badgeNumber) for event #$id");
 		Yii::$app->session->setFlash('success', 'Event Director has been updated.');
 		return $this->redirect(['view', 'id' => $id]);
 	}

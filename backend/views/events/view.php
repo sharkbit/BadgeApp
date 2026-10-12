@@ -17,7 +17,17 @@ $this->title = 'View Event';
 $this->params['breadcrumbs'][] = ['label' => 'Event List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title. " - ".$model->event_date. " - " .$model->event_name, 'url' => ['view','id'=>$model->ea_calendar_id ]];
 
-if ($model->event_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) {$isToday=true;} else {$isToday=false;}
+if ($model->event_date == date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))) {
+	$isToday=true;
+} else {
+	if ( (yii::$app->controller->hasPermission('site/admin-menu')) && (strtotime($model->event_date) >= strtotime('-60 days')) ) {
+		$isToday=true;
+	} elseif ( (yii::$app->controller->hasPermission('sales/report')) && (strtotime($model->event_date) >= strtotime('-7 days')) ) {
+		$isToday=true;
+	} else {
+		$isToday=false;
+	}
+}
 $div_closed=false;
 ?>
 <style>

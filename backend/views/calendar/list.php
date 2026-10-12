@@ -93,7 +93,7 @@ $facilityNamesById = ArrayHelper::map(
 			<?= $form->field($searchModel, 'range_status_id')->DropDownList((new agcRangeStatus)->getStatusList(),['prompt'=>'Any','value'=> $searchModel->range_status_id]).PHP_EOL; ?>
 		</div>
 		<div class="col-sm-12 col-md-6">
-			<?= $form->field($searchModel, 'club_id')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'Any','value'=> $searchModel->club_id,'multiple'=>true]).PHP_EOL; ?>
+			<?= $form->field($searchModel, 'club_id')->dropDownList((new clubs)->getClubList(), ['prompt'=>'Any','value'=> $searchModel->club_id,'multiple'=>true]).PHP_EOL; ?>
 		</div>
 		<div class="col-xs-12 col-sm-6 col-md-6">
 			<?= $form->field($searchModel, 'facility_id')->dropDownList((new agcFacility)->getFacilityList(),['prompt'=>'Any','value'=> $searchModel->facility_id,'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
