@@ -559,26 +559,28 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		document.getElementById("pat_daily_n").disabled=true;
 	});
 
-	function syncEventSignup() {
-		var canSignup = JSON.parse($("#getCanSignup").val());
-		var eventStatusId = String($("#agccal-event_status_id").val());
-		var isEvent = canSignup.some(function(id) {
+	function eventStatusIsInList(listId, eventStatusId) {
+		var statusIds = JSON.parse($("#" + listId).val() || "[]");
+		return statusIds.some(function(id) {
 			return String(id) === eventStatusId;
-		}) ? '1' : '2';
+		});
+	}
+
+	function syncEventSignup() {
+		var eventStatusId = String($("#agccal-event_status_id").val());
+		var isEvent = eventStatusIsInList("getCanSignup", eventStatusId) ? '1' : '2';
 		$("#agccal-is_event").val(isEvent);
 	}
 
 	$("#agccal-event_status_id").change(function(e) {
 		syncEventSignup();
-		var evnType = $(this).val();
-		var trkwristbands = $("#TrackWristbands").val() || "";
-		var canVolunteer  = $("#CanVolunteer").val() || "";
-		if (trkwristbands.includes(evnType)) {
+		var evnType = String($(this).val());
+		if (eventStatusIsInList("TrackWristbands", evnType)) {
 			$("#div_trackWristband label").text("Instructor");
 		} else {
 			$("#div_trackWristband label").text("Event Director");
 		}
-		if (canVolunteer.includes(evnType)) {
+		if (eventStatusIsInList("CanVolunteer", evnType)) {
 			$("#div_canVolunteer").show();
 		} else {
 			$("#agccal-credit_hours").val("");
