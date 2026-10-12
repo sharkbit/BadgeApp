@@ -86,16 +86,17 @@ if (($crec==1) && ($model->isNewRecord)) {
 	$model->recurrent_calendar_id=$model->calendar_id;
 }
 
-$confParams  = Params::findOne('1');
-if(yii::$app->controller->hasPermission('calendar/all')) {
-	$ary_club =   (new clubs)->getClubList();
-	$ary_club_ac =(new clubs)->getClubList(true);
-	$ary_avoid =  (new clubs)->getAvoid();
+$ary_club =   (new clubs)->getClubList();
+$ary_club_ac =(new clubs)->getClubList(true);
+$ary_avoid =  (new clubs)->getAvoid();
+
+if ( (yii::$app->controller->hasPermission('calendar/all')) && (yii::$app->controller->hasPermission('calendar/approve')) ) {
+	$club_dropdown = $ary_club;
 } else {
-	$ary_club =	  (new clubs)->getClubList(false,Yii::$app->user->identity->clubs);
-	$ary_club_ac =(new clubs)->getClubList(true,Yii::$app->user->identity->clubs);
-	$ary_avoid =  (new clubs)->getAvoid(Yii::$app->user->identity->clubs);
+	$club_dropdown = (new clubs)->getClubList(false,Yii::$app->user->identity->clubs,false,false,true);
 }
+
+$confParams  = Params::findOne('1');
 $dirty = array();
 $search_all = [$ary_club, $ary_club_ac,$ary_avoid];
 foreach($search_all as $word_search) {
@@ -154,7 +155,13 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 					'todayHighlight' => true ] ] ); ?>
 		</div>
 		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-			<?= $form->field($model, 'club_id')->DropDownList($ary_club).PHP_EOL; ?>
+<?php if ($model->isNewRecord) { ?>
+			<?= $form->field($model, 'club_id')->DropDownList($club_dropdown).PHP_EOL; ?>
+<?php } else { ?>
+			<?= Html::label('Sponsor', 'club_name-input', ['class' => 'control-label']) ?>
+			<?= Html::textInput('Sponsor', $ary_club[$model->club_id], ['readonly'=>true,'class' => 'form-control']); ?>
+			<?= $form->field($model, 'club_id')->hiddenInput()->label(false) ?>
+<?php } ?>
 		</div>
 		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
 			<?= $form->field($model, 'event_name')->textInput(['maxlength'=>true]) ?>

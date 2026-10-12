@@ -57,7 +57,7 @@ class Clubs extends \yii\db\ActiveRecord {
 		return $this->hasMany(BadgeToClubs::class, ['club_id' => 'club_id']);
 	}
 
-    public function getClubList($use_short=false,$restrict=false,$allow_members=false,$add_CIO=false) {
+    public function getClubList($use_short=false,$restrict=false,$allow_members=false,$add_CIO=false,$no_really_restrict=false) {
 		if($use_short) {$field='short_name';} else {$field='club_name';}
 
 		if($allow_members==2) { $where = ['status'=>'0','allow_members'=>'1']; }
@@ -67,16 +67,26 @@ class Clubs extends \yii\db\ActiveRecord {
 			->orderBy(['is_club'=> SORT_DESC,$field => SORT_ASC ])
 			->all();
 
-		if((!yii::$app->controller->hasPermission('badges/all')) && ($restrict)) {
-			$myClubs='';
-			foreach ($clubArray as $key=>$value) {
-				if(in_array($value->club_id,json_decode($restrict))) {
-					$myClubs.= '"'.$value->club_id.'":"'.$value->$field.'",';
-				}
+		$mustRestrict = $no_really_restrict
+			|| (!Yii::$app->controller->hasPermission('badges/all') && !empty($restrict));
+		if ($mustRestrict) {
+			if (is_string($restrict)) {
+				$restrict = json_decode($restrict, true);
+			} elseif (is_object($restrict)) {
+				$restrict = (array)$restrict;
 			}
-			$ClubList = json_decode('{'.rtrim($myClubs,',').'}');
-		}
-		else {
+			if (!is_array($restrict)) {
+				$restrict = [];
+			}
+			$restrict = array_map('strval', $restrict);
+			$ClubList = ArrayHelper::map(
+				array_filter($clubArray, static function ($club) use ($restrict) {
+					return in_array((string)$club->club_id, $restrict, true);
+				}),
+				'club_id',
+				$field
+			);
+		} else {
 			$ClubList = ArrayHelper::map($clubArray,'club_id',$field);
 		}
 
