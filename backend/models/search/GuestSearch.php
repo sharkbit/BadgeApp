@@ -20,7 +20,7 @@ class GuestSearch extends Guest {
     public function rules() {
         return [
 			[['badge_number','tmp_badge','g_yob'], 'integer'],
-			[['g_first_name','g_last_name','g_city','g_state','g_paid'], 'safe'],
+			[['g_first_name','g_last_name','g_city','g_state','g_paid','SearchTime'], 'safe'],
         ];
     }
 
@@ -73,6 +73,39 @@ class GuestSearch extends Guest {
 			yii::$app->controller->createLog(true, 'trex-M-S-GS NOT VALID', var_export($this->errors,true));
             return $dataProvider;
         }
+
+		$searchTime = trim((string)$this->SearchTime);
+		if ($searchTime === '') {
+			$query->limit(1000);
+		} else {
+			$dateRange = preg_split('/\s+-\s+/', $searchTime, 2);
+			if (count($dateRange) !== 2) {
+				$this->addError('SearchTime', 'Select a valid start and end date.');
+				$query->where('0=1');
+				return $dataProvider;
+			}
+
+			$startDate = \DateTimeImmutable::createFromFormat('!Y-m-d', trim($dateRange[0]));
+			$startErrors = \DateTimeImmutable::getLastErrors();
+			$endDate = \DateTimeImmutable::createFromFormat('!Y-m-d', trim($dateRange[1]));
+			$endErrors = \DateTimeImmutable::getLastErrors();
+			if (
+				!$startDate
+				|| !$endDate
+				|| ($startErrors !== false && ($startErrors['warning_count'] || $startErrors['error_count']))
+				|| ($endErrors !== false && ($endErrors['warning_count'] || $endErrors['error_count']))
+				|| $endDate < $startDate
+				|| $startDate->format('Y-m-d') !== trim($dateRange[0])
+				|| $endDate->format('Y-m-d') !== trim($dateRange[1])
+			) {
+				$this->addError('SearchTime', 'Select a valid start and end date.');
+				$query->where('0=1');
+				return $dataProvider;
+			}
+
+			$query->andWhere(['>=', 'time_in', $startDate->format('Y-m-d 00:00:00')]);
+			$query->andWhere(['<', 'time_in', $endDate->modify('+1 day')->format('Y-m-d 00:00:00')]);
+		}
 
         // grid filtering conditions
 		if(isset($this->g_state)) { $query->andFilterWhere(['g_state'=>$this->g_state]); }

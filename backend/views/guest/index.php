@@ -5,7 +5,7 @@ use yii\grid\GridView;
 use backend\models\Guest;
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\search\WorkCreditsSearch */
+/* @var $searchModel backend\models\search\GuestSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Visitor Log';
@@ -30,107 +30,118 @@ if(yii::$app->controller->hasPermission('guest/delete')) {
 } else {$myTemplate='{view}';}
 ?>
 
+<?php $gridColumns = [
+	[
+		'attribute'=>'badge_number',
+		//'format' => 'raw',
+		'value'=>function ($model) {
+			return str_pad($model->badge_number, 5, '0', STR_PAD_LEFT);
+		}
+	],
+	'g_first_name',
+	'g_last_name',
+	'g_city',
+	'g_state',
+	'g_yob',
+	[
+		'attribute'=>'g_paid',
+		'format' => 'raw',
+		'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'g_paid',['a'=>'Cash','h'=>'Check','y'=>'Juniors Event','m'=>'Minor','o'=>'Observer','s'=>'Spouse'],['class'=>'form-control','prompt' => 'All']),
+		'value'=>function($model) {
+			if ($model->g_paid <> 1) {
+				$p_type='';
+				switch ($model->g_paid) { // Updated from SalesController Purchases Line:75
+					case 'a': $p_type=' (Cash)'; break;
+					case 'h': $p_type=' (Check)'; break;
+					case 'm': return "Minor"; break;
+					case 'o': return "Observer"; break;
+					case 's': return "Spouse"; break;
+					case 'y': return "Junior Event"; break;
+				}
+				if (yii::$app->controller->hasPermission('sales/all')) {
+					return Html::a('Pay Now'.$p_type,'/sales/index?badge='.$model->badge_number.'&id='.$model->id);
+				} else {
+					return "See Cashier"; //". $p_type;
+				}
+			} else {
+				return 'paid';
+			}
+		},
+	],
+	[
+		'attribute'=>'time_in',
+		'value'=>function($model) {
+			return yii::$app->controller->pretydtg($model->time_in);
+		},
+	],
+	[
+		'attribute'=>'time_out',
+		'format' => 'raw',
+		'value'=>function($model) {
+			if (!$model->time_out) {
+				//return 'Check Out';
+				return Html::a('Check Out','/guest/out?id='.$model->id);
+			} else {
+				return yii::$app->controller->pretydtg($model->time_out);
+			}
+		},
+	],
+	[
+		'header' => 'Actions',
+		'class' => 'yii\grid\ActionColumn',
+
+		'template'=>'{update}{delete}',
+		'buttons'=>[
+			'update' => function ($url, $model) {
+				if (yii::$app->controller->hasPermission('guest/update')) {
+				return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/guest/update','id'=>$model->id],
+				[	'data-toggle'=>'tooltip',
+					'data-placement'=>'top',
+					'title'=>'Edit',
+					'class'=>'edit_item',
+				]); }
+			},
+			'delete' => function($url,$model) {
+				if (yii::$app->controller->hasPermission('guest/delete')) {
+				return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', $url, [
+					'data-toggle'=>'tooltip',
+					'data-placement'=>'top',
+					'title'=>'Delete',
+					'data' => [
+						'confirm' => 'Are you sure you want to delete this item?',
+						'method' => 'post',
+					],
+				]); }
+			},
+		]
+	]
+]; ?>
+
 <?=$this->render('_view-tab-menu').PHP_EOL ?>
-<?=$this->render('_search',['model'=>$searchModel,'guestModel'=>$guestModel]).PHP_EOL ?>
 
 <div class="row">
-<div class="col-xs-12">
+	<div class="col-xs-8 col-sm-6">
+		<h1><?= Html::encode($this->title) ?></h1>
+	</div>
 <?php if(yii::$app->controller->hasPermission('guest/create')) { ?>
-	<div class="btn-group pull-right">
-	<?= Html::a('<i class="fa fa-plus-square" aria-hidden="true"></i> Add Guest', ['create'], ['class' => 'btn btn-success ']) ?>
-
+	<div class="col-xs-4 col-sm-6 col-md-2 col-lg-2 col-xl-2">
+		<br />
+		<div class="btn-group pull-right">
+			<?= Html::a('<i class="fa fa-plus-square" aria-hidden="true"></i> Add Guest', ['create'], ['class' => 'btn btn-success ']) ?>
+		</div>
 	</div>
 <?php } ?>
-	<?= GridView::widget([
-		'dataProvider' => $dataProvider,
-		'filterModel' => $searchModel,
-		'columns' => [
-			[
-				'attribute'=>'badge_number',
-				//'format' => 'raw',
-				'value'=>function ($model) {
-					return str_pad($model->badge_number, 5, '0', STR_PAD_LEFT);
-				}
-			],
-			'g_first_name',
-			'g_last_name',
-			'g_city',
-			'g_state',
-			'g_yob',
-			[
-				'attribute'=>'g_paid',
-				'format' => 'raw',
-				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'g_paid',['a'=>'Cash','h'=>'Check','y'=>'Juniors Event','m'=>'Minor','o'=>'Observer','s'=>'Spouse'],['class'=>'form-control','prompt' => 'All']),
-				'value'=>function($model) {
-					if ($model->g_paid <> 1) {
-						$p_type='';
-						switch ($model->g_paid) { // Updated from SalesController Purchases Line:75
-							case 'a': $p_type=' (Cash)'; break;
-							case 'h': $p_type=' (Check)'; break;
-							case 'm': return "Minor"; break;
-							case 'o': return "Observer"; break;
-							case 's': return "Spouse"; break;
-							case 'y': return "Junior Event"; break;
-						}
-						if (yii::$app->controller->hasPermission('sales/all')) {
-							return Html::a('Pay Now'.$p_type,'/sales/index?badge='.$model->badge_number.'&id='.$model->id);
-						} else {
-							return "See Cashier"; //". $p_type;
-						}
-					} else {
-						return 'paid';
-					}
-				},
-			],
-			[
-				'attribute'=>'time_in',
-				'value'=>function($model) {
-					return yii::$app->controller->pretydtg($model->time_in);
-				},
-			],
-			[
-				'attribute'=>'time_out',
-				'format' => 'raw',
-				'value'=>function($model) {
-					if (!$model->time_out) {
-						//return 'Check Out';
-						return Html::a('Check Out','/guest/out?id='.$model->id);
-					} else {
-						return yii::$app->controller->pretydtg($model->time_out);
-					}
-				},
-			],
-			[
-				'header' => 'Actions',
-				'class' => 'yii\grid\ActionColumn',
+</div>
 
-				'template'=>'{update}{delete}',
-				'buttons'=>[
-					'update' => function ($url, $model) {
-						if (yii::$app->controller->hasPermission('guest/update')) {
-						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/guest/update','id'=>$model->id],
-						[	'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'Edit',
-							'class'=>'edit_item',
-						]); }
-					},
-					'delete' => function($url,$model) {
-						if (yii::$app->controller->hasPermission('guest/delete')) {
-						return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ', $url, [
-							'data-toggle'=>'tooltip',
-							'data-placement'=>'top',
-							'title'=>'Delete',
-							'data' => [
-								'confirm' => 'Are you sure you want to delete this item?',
-								'method' => 'post',
-							],
-						]); }
-					},
-				]
-			]
-		]
-	]); ?>
-</div>
-</div>
+<?=$this->render('_search',['dataProvider'=>$dataProvider,'gridColumns'=>$gridColumns,'model'=>$searchModel,'guestModel'=>$guestModel]).PHP_EOL ?>
+
+<div class="row">
+	<div class="col-xs-12">
+		<?= GridView::widget([
+			'dataProvider' => $dataProvider,
+			'filterModel' => $searchModel,
+			'columns' => $gridColumns,
+			]); 
+	?>
+	</div>
 </div>

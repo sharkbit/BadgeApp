@@ -40,6 +40,7 @@ class Guest extends \yii\db\ActiveRecord {
 	public $cc_exp_yr;
 	public $cc_x_id;
 	public $tax;
+	public $SearchTime;
 
     public static function tableName() {
         return 'guest';
