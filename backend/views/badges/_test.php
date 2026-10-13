@@ -28,6 +28,7 @@ echo ExportMenu::widget([
     'columns' => $gridColumns,
     'fontAwesome' => true,
     'batchSize' => 20,
+	'clearBuffers' => true,
     'target' => '_blank',
     //'folder' => '@webroot/tmp', // this is default save folder on server
 ]) . "<hr>\n".

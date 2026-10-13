@@ -34,6 +34,7 @@ if (isset($_REQUEST['BadgesDatabaseSearch']['pagesize'])) {
 			'columns' => $gridColumns,
 			'fontAwesome' => true,
 			'batchSize' => 0,
+			'clearBuffers' => true,
 			'filename'=>  $this->title,
 			'target' => '_blank',
 			'folder' => '@webroot/export', // this is default save folder on server
