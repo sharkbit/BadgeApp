@@ -21,7 +21,8 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 <?php if(yii::$app->controller->hasPermission('rso-rpt/settings')) { ?>
 	<li class="<?php if($urlStatus['actionId']=='settings') echo 'active'; ?>"> 
 		<a href="<?=Url::to(['/rso-rpt/settings'])?>"> <span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-<?php } ?>		
-		
+<?php } ?>
+		<li class="<?php if($urlStatus['actionId']=='print-todays-events') echo 'active'; ?>"> 
+		<a target="rso-events" href="<?=Url::to(['/rso-rpt/print-todays-events'])?>"> <span class="glyphicon glyphicon-flag"></span> Todays Events</a></li>
 </ul>
 <br/>

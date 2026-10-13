@@ -1071,3 +1071,9 @@ ADD COLUMN `event_signup` TINYINT NOT NULL DEFAULT 1 AFTER `track_wristbands`;
 
 UPDATE `BadgeDB`.`cal_event_status` SET `event_signup` = '0' WHERE (`event_status_id` = '18');
 UPDATE `BadgeDB`.`cal_event_status` SET `event_signup` = '0' WHERE (`event_status_id` = '19');
+
+-- for #299
+CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_cal_event` AS 
+  SELECT  `cc`.`calendar_id` AS `calendar_id`,  `cc`.`event_date` AS `event_date`,  `cc`.`cal_start_time` AS `cal_start_time`,  `cc`.`cal_end_time` AS `cal_end_time`,  `cc`.`event_name` AS `event_name`,  `cc`.`facility_id` AS `facility_id`,  `cc`.`lanes_req` AS `lanes_req`,  `cc`.`cal_inst` AS `cal_inst`,  `cc`.`credit_hours` AS `credit_hours`,  `cc`.`issued_vol` AS `issued_vol`,  `cc`.`poc_badge` AS `poc_badge`,  `ces`.`name` AS `event_status_name`,  `ces`.`event_status_id` AS `event_status_id`,  `clubs`.`club_name` AS `club_name`,  `clubs`.`short_name` AS `short_name`,  `clubs`.`club_id` AS `club_id`,  `ces`.`allow_guests` AS `allow_guests`,  `ces`.`track_wristbands` AS `track_wristbands`, `ces`.`is_volunteer` AS `is_volunteer`  
+  FROM  ((`cal_calendar` `cc`  LEFT JOIN `cal_event_status` `ces` ON ((`cc`.`event_status_id` = `ces`.`event_status_id`)))  LEFT JOIN `clubs` ON ((`cc`.`club_id` = `clubs`.`club_id`)))  WHERE  ((`cc`.`deleted` = 0)  AND (`cc`.`is_event` = 1))  ORDER BY `cc`.`event_date` DESC;
+    

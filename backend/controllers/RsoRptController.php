@@ -6,10 +6,12 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use yii\data\ActiveDataProvider;
 use backend\controllers\AdminController;
 use backend\models\Params;
 use backend\models\RsoReports;
 use backend\models\Stickers;
+use backend\models\ViewCalEvent;
 use backend\models\search\RsoReportsSearch;
 use backend\models\search\StickersSearch;
 
@@ -126,6 +128,39 @@ class RsoRptController extends AdminController {
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 		]);
+	}
+
+	public function actionPrintTodaysEvents() {
+		$dataProvider = new ActiveDataProvider([
+			'query' => ViewCalEvent::find()
+				->where(['event_date'=>date('Y-m-d')])
+				->orderby(['cal_start_time' => SORT_ASC])
+				->limit(200),
+			'sort' => false,
+			'pagination' => false,
+		]);
+
+		if($dataProvider) {
+	//	return $this->render('_Print_Todays-Events',['dataProvider'=>$dataProvider]);
+		$PgOne = $this->renderPartial('_Print_Todays-Events',['dataProvider'=>$dataProvider]);
+		
+		$mpdf = new \Mpdf\Mpdf([
+			'margin_left' => 5,
+			'margin_right' => 5,
+			'margin_top' => 5,
+			'margin_bottom' => 5
+			]);
+		$mpdf->shrink_tables_to_fit = 1;
+		$mpdf->SetTitle('RSO Events '.date('Y-m-d'));
+		$mpdf->WriteHTML($PgOne);
+
+		$mpdf->Output("rso_events_".date('Y-m-d'),'I');
+		
+		} else {
+			Yii::$app->getSession()->setFlash('error', 'No events for today.');
+			return $this->redirect(['index']);
+		}
+	
 	}
 
     public function actionSettings($id=1) {
