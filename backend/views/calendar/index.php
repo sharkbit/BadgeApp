@@ -37,6 +37,7 @@ $facilityNamesById = ArrayHelper::map(
 	'facility_id',
 	'name'
 );
+$Req_Lanes = (new agcFacility)->getFacilRequiresLanes();
 
 if (yii::$app->controller->hasPermission('calendar/shoot')) {
 	$sql="SELECT facility_id FROM cal_facilities WHERE name like '%shoot%'";
@@ -78,16 +79,20 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				},
 			],
 			[	'attribute'=>'facility_id',
-				'value'=>function($model) use ($facilityNamesById) {
+				'value'=>function($model) use ($facilityNamesById,$Req_Lanes) {
 					$facilityIds = json_decode($model->facility_id, true);
+					$lanes_req = json_decode($model->lanes_req, true);
 					if (!is_array($facilityIds)) {
 						return '';
 					}
 					$facilityNames = [];
 					foreach ($facilityIds as $facilityId) {
-						if (isset($facilityNamesById[$facilityId])) {
-							$facilityNames[] = $facilityNamesById[$facilityId];
+						if (in_array($facilityId,array_column($Req_Lanes,'facility_id'))) {
+							$lanesRequested = ' ('.$lanes_req[$facilityId].')';
+						} else {
+							$lanesRequested = '';
 						}
+						$facilityNames[] = $facilityNamesById[$facilityId].$lanesRequested;
 					}
 					sort($facilityNames);
 					return implode(', ', $facilityNames);
