@@ -9,6 +9,7 @@ use backend\models\Params;
 
 /* Menu Colors:
 	btn-info	= Light Blue
+	btn-secondary = grey
  ** btn-primary = Blue 		-> Default
 	btn-success	= Green
 	btn-warning	= Orange
@@ -94,6 +95,12 @@ class Menu extends Widget{
 			'label'=>'Work Credits',
 			'loc'=>['prod','dev'],
 			'url' => '/work-credits/index',
+		],
+		[
+			'label'=>'Reports',
+			'loc'=>['prod','dev'],
+			'url' => '/reports/index',
+			'color' => 'btn-default',
 		],
 		[
 			'label'=>'Admin Functions',
