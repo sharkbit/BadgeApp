@@ -159,7 +159,7 @@ class AdminController extends \yii\web\Controller {
 	public $AllPermission = [
 		'Badges'=>['badges/api-zip','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
 		'Calendar' => ['calendar/list','calendar/rss','calendar/viewitem'],
-		'Guest' => ['guest/add','guest/addcredit','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
+		'Guest' => ['guest/add','guest/addcredit','guest/check-banned-name','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'membershiptype'=>['membership-type/fees-by-type'],
 		'help'=>['badges/help','sales/help','rso-rpt/help'],
 		'payments'=>['payment/charge'],
@@ -199,6 +199,7 @@ class AdminController extends \yii\web\Controller {
 		} else if (yii::$app->user->isGuest) {
 			// Pages that dont require login
 			if((Yii::$app->controller->id."/".Yii::$app->controller->action->id=='events/reg') ||
+				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='guest/check-banned-name') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/verify') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/new-member') ||
 				(Yii::$app->controller->id."/".Yii::$app->controller->action->id=='site/no-email') ||
@@ -281,6 +282,18 @@ class AdminController extends \yii\web\Controller {
 			return false;
 		}
 	} //.has permission ending
+
+	protected function canOverrideBannedRegistration() {
+		if (Yii::$app->user->isGuest || empty(Yii::$app->user->identity->privilege)) {
+			return false;
+		}
+
+		$privileges = Yii::$app->user->identity->privilege;
+		if (is_string($privileges)) {
+			$privileges = json_decode($privileges, true);
+		}
+		return is_array($privileges) && (bool)array_intersect([1, 2, 10], $privileges);
+	}
 
 	private function Check_Privs($event,$TestPriv) {
 		foreach ($TestPriv as $permission) { if(in_array($event,$permission)) { return true; } }

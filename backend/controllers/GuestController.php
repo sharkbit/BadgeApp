@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use yii;
 use backend\models\Guest;
+use backend\models\ViewBannedPeeps;
 use backend\models\search\GuestSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -24,6 +25,7 @@ class GuestController extends SiteController {
 				'class' => VerbFilter::className(),
 				'actions' => [
 					'delete' => ['POST'],
+					'check-banned-name' => ['POST'],
 				],
 			],
 		];
@@ -41,6 +43,18 @@ class GuestController extends SiteController {
 			$model->g_city = trim($model->g_city);
 			$model->g_state = strtoupper(trim($model->g_state));
 			if ($model->tmp_badge) { $model->tmp_badge = trim($model->tmp_badge); }
+
+			$isBanned = ViewBannedPeeps::CheckIfBanned($model->g_first_name, $model->g_last_name);
+			$canOverride = $this->canOverrideBannedRegistration();
+			$overrideBanned = Yii::$app->request->post('override_banned') === '1';
+			if ($isBanned && (!$canOverride || !$overrideBanned)) {
+				$model->addError('g_first_name', $canOverride
+					? 'Confirm the banned-name warning before submitting.'
+					: 'Please See Office Staff');
+			}
+			if ($model->hasErrors()) {
+				return $this->render('create', ['model' => $model]);
+			}
 
 			if($model->save()) {
 				Yii::$app->getSession()->setFlash('success', 'Visitor has been added!');
@@ -72,10 +86,29 @@ class GuestController extends SiteController {
 				Yii::$app->getSession()->setFlash('error', 'action create - no save?');
 				return $this->redirect(['/guest/index']);
 			}
-		}
-		else {
+		} else {
 			return $this->render('create', [ 'model' => $model ]);
 		}
+	}
+
+	public function actionCheckBannedName() {
+		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		$guestData = Yii::$app->request->post('Guest', []);
+		$firstName = trim((string)Yii::$app->request->post('first_name', is_array($guestData) ? ($guestData['g_first_name'] ?? '') : ''));
+		$lastName = trim((string)Yii::$app->request->post('last_name', is_array($guestData) ? ($guestData['g_last_name'] ?? '') : ''));
+		if ($firstName === '' || $lastName === '') {
+			return ['success' => false, 'msg' => 'Enter both first and last names to check.'];
+		}
+
+		$isBanned = ViewBannedPeeps::CheckIfBanned($firstName, $lastName);
+		return [
+			'success' => true,
+			'banned' => $isBanned,
+			'canOverride' => $this->canOverrideBannedRegistration(),
+			'msg' => $isBanned
+				? 'Are you sure? this name is on the banned list.'
+				: 'Name checked.',
+		];
 	}
 
 	public function actionDelete($id) {

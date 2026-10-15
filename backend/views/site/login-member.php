@@ -333,22 +333,25 @@ foreach($agc_event as $an_event){
 			var f_name = document.getElementById("event_att-ea_f_name").value;
 			var l_name = document.getElementById("event_att-ea_l_name").value;
 			var ea_serial='';
+			var ea_wb_serial='';
 			if((f_name) && (l_name)) {
-				var ea_wb_serial = document.getElementById("event_att-ea_wb_serial").value;
-				if(ea_wb_serial) {ea_serial='&e_wb='+ea_wb_serial;}
+				ea_wb_serial = document.getElementById("event_att-ea_wb_serial").value;
+				if(ea_wb_serial) {ea_serial='&e_wb='+encodeURIComponent(ea_wb_serial);}
 				console.log('/events/reg?id='+reg_id+'&f_name='+f_name+'&l_name='+l_name+ea_serial);
 				jQuery.ajax({
 					method: 'POST',
-					url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&f_name='+f_name+'&l_name='+l_name+ea_serial,
+					url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&f_name='+encodeURIComponent(f_name)+'&l_name='+encodeURIComponent(l_name)+ea_serial,
 					crossDomain: false,
 					success: function(responseData, textStatus, jqXHR) {
-						responseData =  JSON.parse(responseData);
+						responseData = typeof responseData === 'string' ? JSON.parse(responseData) : responseData;
 						console.log(responseData);
-						document.getElementById("event_att-ea_badge").value = null;
-						document.getElementById("event_att-ea_f_name").value = null;
-						document.getElementById("event_att-ea_l_name").value = null;
 						window.alert(responseData.msg);
-						document.getElementById('myModal').style.display = 'none';
+						if (responseData.success) {
+							document.getElementById("event_att-ea_badge").value = null;
+							document.getElementById("event_att-ea_f_name").value = null;
+							document.getElementById("event_att-ea_l_name").value = null;
+							document.getElementById('myModal').style.display = 'none';
+						}
 					},
 					error: function (responseData, textStatus, errorThrown) {
 						console.log('login_member:333'); console.log(textStatus);

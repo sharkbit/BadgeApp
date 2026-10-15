@@ -19,6 +19,7 @@ use backend\models\MembershipType;
 use backend\models\Params;
 use backend\models\PostPrintTransactions;
 use backend\models\StoreItems;
+use backend\models\ViewBannedPeeps;
 use backend\models\WorkCredits;
 use backend\models\Violations;
 use backend\models\search\BadgesSearch;
@@ -515,6 +516,14 @@ class BadgesController extends AdminController {
 			$model->created_at = $this->getNowTime();
 
 			$model = $model->cleanBadgeData($model,true,true);
+			$isBanned = ViewBannedPeeps::CheckIfBanned($model->first_name, $model->last_name);
+			$canOverride = $this->canOverrideBannedRegistration();
+			if ($isBanned && (!$canOverride || Yii::$app->request->post('override_banned') !== '1')) {
+				$model->addError('first_name', $canOverride
+					? 'Confirm the banned-name warning before submitting.'
+					: 'Please See Office Staff');
+				return $this->render('create', ['model' => $model, 'confParams' => $confParams]);
+			}
 
 			$bg_num =(New Badges)->find()->where(['badge_number'=>$model->badge_number])->count();
 			if($bg_num > 0) {

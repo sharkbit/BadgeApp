@@ -7,6 +7,7 @@ use backend\models\BadgeSubscriptions;
 use backend\models\BadgeToYear;
 use backend\models\ClubView;
 use backend\models\clubs;
+use backend\models\MembershipStatus;
 use backend\models\MembershipType;
 use backend\models\Params;
 use backend\models\StoreItems;
@@ -113,6 +114,11 @@ class Badges extends \yii\db\ActiveRecord {
 		$bgyr = BadgeSubscriptions::find()->where(['badge_number'=>$this->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one();
 		if ($bgyr) {return $bgyr->badge_year; } else { return null; }
     }
+
+	public static function getCanRenew($badge_number) {
+		$model = static::findOne(['badge_number' => $badge_number]);
+		return $model !== null && MembershipStatus::getCanRenew($model->status);
+	}
 
 	public function getClubView() {
 		return $this->hasMany(ClubView::className(), ['badge_number' => 'badge_number']);

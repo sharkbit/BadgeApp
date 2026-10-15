@@ -308,6 +308,8 @@ const registrationModal = document.getElementById('eventRegistrationModal');
 const registrationButton = document.getElementById('reg_button');
 const registrationAgreement = document.getElementById('iagree');
 const registrationUrl = <?= Json::htmlEncode(Url::to(['/events/reg'])) ?>;
+let registrationCheckPending = false;
+let registrationOverrideConfirmed = false;
 
 $('#addEvent').on('click', function() {
 	const eventId = $('#new_event_id').val();
@@ -325,6 +327,8 @@ function jsRegister(id, clubName, eventName, eventStatus, allowGuests, trackWris
 	document.getElementById('terms').checked = false;
 	registrationButton.disabled = false;
 	registrationAgreement.style.display = 'none';
+	registrationCheckPending = false;
+	registrationOverrideConfirmed = false;
 	$('#event_att-ea_badge, #event_att-ea_f_name, #event_att-ea_l_name, #event_att-ea_wb_serial').val('');
 	$('#reg_notes, #badge_name').empty();
 	document.getElementById('event_id').value = id;
@@ -404,6 +408,44 @@ function jsReg() {
 		actionParams.f_name = firstName;
 		actionParams.l_name = lastName;
 		actionParams.e_wb = $('#event_att-ea_wb_serial').val().trim();
+	}
+
+	const registrationForm = $('#Event-Reg-form');
+	if (!registrationOverrideConfirmed) {
+		if (registrationCheckPending) {
+			return false;
+		}
+		registrationCheckPending = true;
+		$.ajax({
+			method: 'POST',
+			url: registrationUrl + '?' + $.param(actionParams),
+			data: registrationForm.serialize() + '&check_banned=1',
+			success: function(responseData) {
+				registrationCheckPending = false;
+				if (typeof responseData === 'string') {
+					responseData = JSON.parse(responseData);
+				}
+				if (!responseData.success) {
+					$('#event_notes').text(responseData.msg);
+					return;
+				}
+				const requiresConfirmation = responseData.requiresConfirmation === true || responseData.banned === true;
+				if (requiresConfirmation && !window.confirm(responseData.msg)) {
+					return;
+				}
+				registrationOverrideConfirmed = requiresConfirmation;
+				if (registrationOverrideConfirmed) {
+					actionParams.override_banned = '1';
+				}
+				registrationForm.attr('action', registrationUrl + '?' + $.param(actionParams));
+				registrationForm[0].submit();
+			},
+			error: function() {
+				registrationCheckPending = false;
+				$('#event_notes').text('Could not verify the registration. Please try again.');
+			}
+		});
+		return false;
 	}
 	$('#Event-Reg-form').attr('action', registrationUrl + '?' + $.param(actionParams));
 	return Boolean(eventId);

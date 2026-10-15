@@ -2,6 +2,7 @@
 use backend\models\Params;
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
 
@@ -32,6 +33,14 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php $form = ActiveForm::begin(['id'=>'GuestForm',
+				'options' => [
+					'data-banned-name-check-url' => Url::to(['/guest/check-banned-name']),
+					'data-banned-name-first-name' => '#guest-g_first_name',
+					'data-banned-name-last-name' => '#guest-g_last_name',
+					'data-banned-name-status' => '#guest-banned-name-status',
+					'data-banned-name-override' => '#guest-override-banned',
+					'data-banned-name-decline-url' => Url::to(['/guest/index']),
+				],
 				'enableAjaxValidation' => true,
 				'enableClientValidation'=>true,
 				'validateOnSubmit'=>true,]); ?>
@@ -73,6 +82,9 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 		<div class="col-xs-12 col-sm-5">
 			<?= $form->field($model, 'g_last_name')->textInput([]) ?>
         </div>
+		<?php if ($model->isNewRecord) { ?>
+			<div class="col-xs-12"><div id="guest-banned-name-status" class="help-block" role="status" aria-live="polite"></div></div>
+		<?php } ?>
 		<div class="col-xs-4 col-sm-2">
 			<?= $form->field($model, 'g_yob')->label('Year of Birth') ?>
         </div>
@@ -156,6 +168,9 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 	</div>
 <?= $form->field($model, 'guest_count')->hiddenInput(['value'=>'1'])->label(false).PHP_EOL; ?>
 <?= $form->field($model, 'payment_type')->hiddenInput(['value'=>'cash'])->label(false).PHP_EOL; ?>
+<?php if ($model->isNewRecord) { ?>
+	<?= Html::hiddenInput('override_banned', '0', ['id' => 'guest-override-banned']) ?>
+<?php } ?>
 <input type="hidden" id='m_first_n' />
 <input type="hidden" id='m_last_n' />
 <input type="hidden" id='m_address' />
@@ -166,6 +181,10 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 <?php ActiveForm::end(); ?>
 </div>
 <script>
+	<?php if ($model->isNewRecord) { ?>
+	$this->registerJsFile('@web/js/banned-name-check.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+	<?php } ?>
+
 	$("#cert_search").hide();
 	$("#cc_form_div").hide();
 	var g_amount_due = document.getElementById("guest-amount_due");

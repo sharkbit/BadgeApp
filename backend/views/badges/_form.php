@@ -38,7 +38,18 @@ $myPaymentList = backend\controllers\PaymentController::GetPaymentTypes($confPar
 ?>
 
 <div class="badges-form">
-<?php $form = ActiveForm::begin(['id'=>'badgeCreate','enableAjaxValidation' => true]); ?>
+<?php $form = ActiveForm::begin([
+	'id' => 'badgeCreate',
+	'enableAjaxValidation' => true,
+	'options' => [
+		'data-banned-name-check-url' => Url::to(['/guest/check-banned-name']),
+		'data-banned-name-first-name' => '#badges-first_name',
+		'data-banned-name-last-name' => '#badges-last_name',
+		'data-banned-name-status' => '#badge-banned-name-status',
+		'data-banned-name-override' => '#badge-override-banned',
+		'data-banned-name-decline-url' => '/',
+	],
+]); ?>
 <div class="row">
 
     <div class="col-xs-12 col-sm-8">
@@ -58,6 +69,9 @@ $myPaymentList = backend\controllers\PaymentController::GetPaymentTypes($confPar
             <div class="col-xs-6 col-sm-4">
                 <?= $form->field($model, 'last_name')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,'placeholder' => 'Last']) ?>
             </div>
+			<?php if ($model->isNewRecord) { ?>
+				<div class="col-xs-12"><div id="badge-banned-name-status" class="help-block" role="status" aria-live="polite"></div></div>
+			<?php } ?>
             <div class="col-xs-6 col-sm-2">
                 <?= $form->field($model, 'suffix')->textInput(['autocomplete' => 'off','readonly'=> $model->isNewRecord ? false : true,]) ?>
             </div>
@@ -297,8 +311,14 @@ $myPaymentList = backend\controllers\PaymentController::GetPaymentTypes($confPar
         </div>
     </div>
 </div>
+<?php if ($model->isNewRecord) { ?>
+	<?= Html::hiddenInput('override_banned', '0', ['id' => 'badge-override-banned']) ?>
+<?php } ?>
 <?php ActiveForm::end(); ?>
 </div>
+<?php if ($model->isNewRecord) { ?>
+	<?php $this->registerJsFile('@web/js/banned-name-check.js', ['depends' => [\yii\web\JqueryAsset::class]]); ?>
+<?php } ?>
 <script>
 	$(".badge_store_div").click(function(e) {
         e.preventDefault();
