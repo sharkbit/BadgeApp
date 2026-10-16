@@ -79,6 +79,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				},
 			],
 			[	'attribute'=>'facility_id',
+				'label' => 'Facility (lanes)',
 				'value'=>function($model) use ($facilityNamesById,$Req_Lanes) {
 					$facilityIds = json_decode($model->facility_id, true);
 					$lanes_req = json_decode($model->lanes_req, true);

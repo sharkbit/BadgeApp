@@ -445,12 +445,34 @@ if($att_count>0) {
 		if (reg_badge >= 1 ) {
 			jQuery.ajax({
 				method: 'POST',
-				url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&badge='+reg_badge,
+				url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&badge='+encodeURIComponent(reg_badge),
 				crossDomain: false,
 				success: function(responseData, textStatus, jqXHR) {
-					responseData =  JSON.parse(responseData);
+					responseData = typeof responseData === 'string' ? JSON.parse(responseData) : responseData;
 					console.log(responseData);
-					window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+					if (responseData.requiresConfirmation && window.confirm(responseData.msg)) {
+						jQuery.ajax({
+							method: 'POST',
+							url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&badge='+encodeURIComponent(reg_badge),
+							data: {override_banned: '1'},
+							crossDomain: false,
+							success: function(overrideResponse) {
+								overrideResponse = typeof overrideResponse === 'string' ? JSON.parse(overrideResponse) : overrideResponse;
+								if (overrideResponse.success) {
+									window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+								} else {
+									$("#reg_notes").text(overrideResponse.msg);
+								}
+							},
+							error: function() {
+								$("#reg_notes").text('Registration failed. Please try again.');
+							}
+						});
+					} else if (responseData.success) {
+						window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+					} else {
+						$("#reg_notes").text(responseData.msg);
+					}
 				},
 				error: function (responseData, textStatus, errorThrown) {
 					console.log('e_view:294'); console.log(textStatus);
@@ -461,6 +483,7 @@ if($att_count>0) {
 			var f_name = document.getElementById("event_att-ea_f_name").value;
 			var l_name = document.getElementById("event_att-ea_l_name").value;
 			var ea_serial='';
+			var ea_wb_serial='';
 			if((f_name) && (l_name)) {
 				if(document.getElementById("event_att-track_wristbands").value==true) {
 					var ea_wb_serial = document.getElementById("event_att-ea_wb_serial").value;
@@ -469,16 +492,34 @@ if($att_count>0) {
 					alert("A Wrist Band is required for this individual.");
 					return;
 				}}
-				if(ea_wb_serial) {ea_serial='&e_wb='+ea_wb_serial;}
+				if(ea_wb_serial) {ea_serial='&e_wb='+encodeURIComponent(ea_wb_serial);}
 				console.log('/events/reg?id='+reg_id+'&f_name='+f_name+'&l_name='+l_name+ea_serial);
 				jQuery.ajax({
 					method: 'POST',
-					url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&f_name='+f_name+'&l_name='+l_name+ea_serial,
+					url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&f_name='+encodeURIComponent(f_name)+'&l_name='+encodeURIComponent(l_name)+ea_serial,
 					crossDomain: false,
 					success: function(responseData, textStatus, jqXHR) {
 						responseData =  JSON.parse(responseData);
 						console.log(responseData);
-						if (responseData.success) {
+						if (responseData.requiresConfirmation && window.confirm(responseData.msg)) {
+							jQuery.ajax({
+								method: 'POST',
+								url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&f_name='+encodeURIComponent(f_name)+'&l_name='+encodeURIComponent(l_name)+ea_serial,
+								data: {override_banned: '1'},
+								crossDomain: false,
+								success: function(overrideResponse) {
+									overrideResponse = typeof overrideResponse === 'string' ? JSON.parse(overrideResponse) : overrideResponse;
+									if (overrideResponse.success) {
+										window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+									} else {
+										$("#reg_notes").text(overrideResponse.msg);
+									}
+								},
+								error: function() {
+									$("#reg_notes").text('Registration failed. Please try again.');
+								}
+							});
+						} else if (responseData.success) {
 							window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
 						} else {
 							$("#reg_notes").text(responseData.msg);

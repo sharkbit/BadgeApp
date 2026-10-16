@@ -9,6 +9,7 @@ use backend\models\AgcCal;
 use backend\models\Events;
 use backend\models\Event_Att;
 use backend\models\Params;
+use backend\models\ViewBannedPeeps;
 use backend\models\search\EventsSearch;
 use backend\models\WorkCredits;
 
@@ -191,25 +192,48 @@ class EventsController extends AdminController {
 		$isFormPost = Yii::$app->request->isPost && !Yii::$app->request->isAjax;
 		$success = false;
 		$message = 'Registration failed.';
+		$checkBannedOnly = Yii::$app->request->post('check_banned') === '1';
+		$overrideBanned = Yii::$app->request->post('override_banned') === '1'
+			|| Yii::$app->request->get('override_banned') === '1';
+
+		$canOverrideRegistration = $this->canOverrideBannedRegistration();
+		if ($checkBannedOnly && $badge > 0) {
+			$params = Params::findOne('1');
+			if (Badges::isExpired($badge, $params)) {
+				return json_encode(['success' => false, 'msg' => 'Not an Active Member.'], true);
+			}
+			if (!Badges::getCanRenew($badge)) {
+				if (!$canOverrideRegistration) {
+					return json_encode(['success' => false, 'msg' => 'Please See Office Staff'], true);
+				}
+				return json_encode([
+					'success' => true,
+					'requiresConfirmation' => true,
+					'msg' => 'This badge is not eligible to renew. Are you sure you want to register?',
+				], true);
+			}
+			return json_encode(['success' => true, 'requiresConfirmation' => false], true);
+		}
 
 		if($badge>0){
 			$params = Params::findOne('1');
 			$isExpired = Badges::isExpired($badge,$params);
 			if(!$isExpired) {
-
-				$event_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_badge'=>$badge])->one();
-				if($event_chk) {
-					$message = 'Badge already at Event.';
-				} else {
-					$event_attendee = new Event_Att;
-					$event_attendee->ea_calendar_id=$id;
-					$event_attendee->ea_badge=$badge;
-					if ($event_attendee->save()) {
-						$success = true;
-						$message = 'Added Badge to Event.';
+				$canRenew = Badges::getCanRenew($badge);
+				if(!$canRenew) {
+					if (!$canOverrideRegistration) {
+						$message = 'Please See Office Staff';
+					} elseif (!$overrideBanned) {
+						return json_encode([
+							'success' => false,
+							'requiresConfirmation' => true,
+							'msg' => 'This badge is not eligible to renew. Are you sure you want to register?',
+						], true);
 					} else {
-						$message = 'Could not add badge to event.';
+						$this->registerBadgeForEvent($id, $badge, $success, $message);
 					}
+				} else {
+					$this->registerBadgeForEvent($id, $badge, $success, $message);
 				}
 			} else {
 				$message = 'Not an Active Member.';
@@ -220,20 +244,44 @@ class EventsController extends AdminController {
 			} else {
 				$f_name = ucfirst(trim($f_name));
 				$l_name = ucfirst(trim($l_name));
-				$event_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_f_name'=>$f_name,'ea_l_name'=>$l_name,])->one();
-				if($event_chk) {
-					$message = $f_name.' already at Event.';
+				$isBanned = ViewBannedPeeps::CheckIfBanned($f_name, $l_name);
+				$canOverrideBanned = $this->canOverrideBannedRegistration();
+				if ($checkBannedOnly) {
+					if ($isBanned && !$canOverrideBanned) {
+						return json_encode(['success' => false, 'msg' => 'Please See Office Staff'], true);
+					}
+					return json_encode([
+						'success' => true,
+						'banned' => $isBanned,
+						'canOverride' => $canOverrideBanned,
+						'msg' => $isBanned ? 'Are you sure? this name is on the banned list.' : '',
+					], true);
+				}
+
+				if ($isBanned && !$canOverrideBanned) {
+					$message = 'Please See Office Staff';
+				} elseif ($isBanned && !$overrideBanned) {
+					return json_encode([
+						'success' => false,
+						'requiresConfirmation' => true,
+						'msg' => 'Are you sure? this name is on the banned list.',
+					], true);
 				} else {
-					$event_attendee = new Event_Att;
-					$event_attendee->ea_calendar_id=$id;
-					if($e_wb) { $event_attendee->ea_wb_serial = $e_wb; }
-					$event_attendee->ea_f_name=$f_name;
-					$event_attendee->ea_l_name=$l_name;
-					if ($event_attendee->save()) {
-						$success = true;
-						$message = $f_name.' added to Event.';
+					$event_chk = Event_Att::find()->where(['ea_calendar_id'=>$id,'ea_f_name'=>$f_name,'ea_l_name'=>$l_name,])->one();
+					if($event_chk) {
+						$message = $f_name.' already at Event.';
 					} else {
-						$message = 'Could not add '.$f_name.' to event.';
+						$event_attendee = new Event_Att;
+						$event_attendee->ea_calendar_id=$id;
+						if($e_wb) { $event_attendee->ea_wb_serial = $e_wb; }
+						$event_attendee->ea_f_name=$f_name;
+						$event_attendee->ea_l_name=$l_name;
+						if ($event_attendee->save()) {
+							$success = true;
+							$message = $f_name.' added to Event.';
+						} else {
+							$message = 'Could not add '.$f_name.' to event.';
+						}
 					}
 				}
 			}
@@ -245,6 +293,26 @@ class EventsController extends AdminController {
 		}
 
 		return json_encode(['success' => $success, 'msg' => $message], true);
+	}
+
+	private function registerBadgeForEvent($eventId, $badgeNumber, &$success, &$message) {
+		$eventAttendee = Event_Att::find()
+			->where(['ea_calendar_id' => $eventId, 'ea_badge' => $badgeNumber])
+			->one();
+		if ($eventAttendee) {
+			$message = 'Badge already at Event.';
+			return;
+		}
+
+		$eventAttendee = new Event_Att();
+		$eventAttendee->ea_calendar_id = $eventId;
+		$eventAttendee->ea_badge = $badgeNumber;
+		if ($eventAttendee->save()) {
+			$success = true;
+			$message = 'Added Badge to Event.';
+		} else {
+			$message = 'Could not add badge to event.';
+		}
 	}
 
 	public function actionRemoveAtt($id,$ea_id) {
