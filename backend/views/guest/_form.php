@@ -15,13 +15,13 @@ if ( ($model->isNewRecord) && ($_SESSION["badge_number"]>0) ) { $model->badge_nu
 $model->time_in = yii::$app->controller->getNowTime();
 $Payment_block=''; $msg='Register';
 
-if(!yii::$app->controller->hasPermission('guest/update')) {
-	$isguest = true;
+if(!yii::$app->controller->hasPermission('guest/all')) {
+	$guestUpdate = true;
 } else {
 	if(!empty($stickyGuest)) {
 		$model->badge_number = $stickyGuest['badge_number'];
 	}
-	$isguest = false;
+	$guestUpdate = false;
 }
 
 $confParams = Params::findOne('1');
@@ -31,7 +31,7 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 
 <div class="guest-form" ng-controller="GuestFrom">
     <h1><?= Html::encode($this->title) ?></h1>
-
+<div class="container">
     <?php $form = ActiveForm::begin(['id'=>'GuestForm',
 				'options' => [
 					'data-banned-name-check-url' => Url::to(['/guest/check-banned-name']),
@@ -40,12 +40,16 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 					'data-banned-name-status' => '#guest-banned-name-status',
 					'data-banned-name-override' => '#guest-override-banned',
 					'data-banned-name-decline-url' => Url::to(['/guest/index']),
+					'data-badge-eligibility-check-url' => Url::to(['/guest/check-badge-eligibility']),
+					'data-badge-eligibility-input' => '#guest-badge_number',
+					'data-badge-eligibility-status' => '#guest-badge-eligibility-status',
+					'data-badge-eligibility-override' => '#guest-override-badge-renewal',
+					'data-badge-eligibility-decline-url' => Url::to(['/guest/index']),
 				],
 				'enableAjaxValidation' => true,
 				'enableClientValidation'=>true,
 				'validateOnSubmit'=>true,]); ?>
     <div class="row">
-	  <div class="col-xs-12 col-sm-8" >
         <div class="col-xs-12 col-sm-2" style="display: none;" >
 			<?= $form->field($model, 'id')->textInput(['readOnly'=>'true','value'=>$model->id]) ?>
 		</div>
@@ -53,7 +57,7 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 	<div class="row">
 		<div class="col-xs-3 col-sm-2">
         <?php if($model->isNewRecord) {
-			echo $form->field($model, 'badge_number')->textInput(['value'=>$model->badge_number,'readonly'=> $isguest]);
+			echo $form->field($model, 'badge_number')->textInput(['value'=>$model->badge_number,'readonly'=> $guestUpdate]);
 			echo '</div><div class="col-xs-6 col-sm-4">';
 			echo $form->field($model, 'time_in')->textInput(['readonly' => true,'value'=>(yii::$app->controller->getNowTime())]).PHP_EOL;
 			echo $form->field($model, 'g_paid')->hiddenInput(['value'=>(isset($_SESSION['stickyForm'])) ? $_SESSION['stickyForm']['g_paid'] : 'a'])->label(false).PHP_EOL;
@@ -72,19 +76,20 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 		} ?>
 
         </div>
-		<div class="col-sm-8">
-		</div>
+        <?php if ($model->isNewRecord) { ?>
+			<div class="col-xs-12"><div id="guest-badge-eligibility-status" class="help-block" role="status" aria-live="polite"></div></div>
+        <?php } ?>
 	</div>
 	<div class="row">
+		<?php if ($model->isNewRecord) { ?>
+			<div class="col-xs-12"><div id="guest-banned-name-status" class="help-block" role="status" aria-live="polite"></div></div>
+		<?php } ?>
         <div class="col-xs-12 col-sm-4">
             <?= $form->field($model, 'g_first_name')->textInput([]) ?>
 		</div>
 		<div class="col-xs-12 col-sm-5">
 			<?= $form->field($model, 'g_last_name')->textInput([]) ?>
         </div>
-		<?php if ($model->isNewRecord) { ?>
-			<div class="col-xs-12"><div id="guest-banned-name-status" class="help-block" role="status" aria-live="polite"></div></div>
-		<?php } ?>
 		<div class="col-xs-4 col-sm-2">
 			<?= $form->field($model, 'g_yob')->label('Year of Birth') ?>
         </div>
@@ -165,11 +170,11 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 	<?php } ?>
 		</div>
 	</div>
-	</div>
 <?= $form->field($model, 'guest_count')->hiddenInput(['value'=>'1'])->label(false).PHP_EOL; ?>
 <?= $form->field($model, 'payment_type')->hiddenInput(['value'=>'cash'])->label(false).PHP_EOL; ?>
 <?php if ($model->isNewRecord) { ?>
 	<?= Html::hiddenInput('override_banned', '0', ['id' => 'guest-override-banned']) ?>
+	<?= Html::hiddenInput('override_badge_renewal', '0', ['id' => 'guest-override-badge-renewal']) ?>
 <?php } ?>
 <input type="hidden" id='m_first_n' />
 <input type="hidden" id='m_last_n' />
@@ -178,13 +183,13 @@ if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2
 <input type="hidden" id='m_state' />
 <input type="hidden" id='m_zip' />
 </div>
+</div>
 <?php ActiveForm::end(); ?>
 </div>
-<script>
-	<?php if ($model->isNewRecord) { ?>
+<?php if ($model->isNewRecord) {
 	$this->registerJsFile('@web/js/banned-name-check.js', ['depends' => [\yii\web\JqueryAsset::class]]);
-	<?php } ?>
-
+} ?>
+<script>
 	$("#cert_search").hide();
 	$("#cc_form_div").hide();
 	var g_amount_due = document.getElementById("guest-amount_due");

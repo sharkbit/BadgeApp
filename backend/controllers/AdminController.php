@@ -159,7 +159,7 @@ class AdminController extends \yii\web\Controller {
 	public $AllPermission = [
 		'Badges'=>['badges/api-zip','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
 		'Calendar' => ['calendar/list','calendar/rss','calendar/viewitem'],
-		'Guest' => ['guest/add','guest/addcredit','guest/check-banned-name','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
+		'Guest' => ['guest/add','guest/addcredit','guest/check-badge-eligibility','guest/check-banned-name','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'membershiptype'=>['membership-type/fees-by-type'],
 		'help'=>['badges/help','sales/help','rso-rpt/help'],
 		'payments'=>['payment/charge'],

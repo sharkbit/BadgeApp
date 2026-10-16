@@ -139,5 +139,144 @@
 				}
 			});
 		});
+
+		$('form[data-badge-eligibility-check-url]').each(function () {
+			const form = $(this);
+			const badgeInput = $(form.data('badge-eligibility-input'));
+			const status = $(form.data('badge-eligibility-status'));
+			const override = $(form.data('badge-eligibility-override'));
+			const declineUrl = form.data('badge-eligibility-decline-url');
+			let checkState = 'unchecked';
+			let checkedBadge = '';
+			let requestPending = false;
+			let requestId = 0;
+			let submitAfterCheck = false;
+
+			function currentBadge() {
+				return $.trim(badgeInput.val() || '');
+			}
+
+			function resumeSubmit() {
+				if (!submitAfterCheck) {
+					return;
+				}
+				submitAfterCheck = false;
+				if (form[0].requestSubmit) {
+					form[0].requestSubmit();
+				} else {
+					form.trigger('submit');
+				}
+			}
+
+			function checkBadge() {
+				const badgeNumber = currentBadge();
+				if (!badgeNumber) {
+					checkState = 'allowed';
+					checkedBadge = '';
+					requestPending = false;
+					submitAfterCheck = false;
+					override.val('0');
+					status.empty();
+					resumeSubmit();
+					return;
+				}
+
+				checkState = 'checking';
+				requestPending = true;
+				checkedBadge = badgeNumber;
+				const currentRequest = ++requestId;
+				override.val('0');
+				status.removeClass('text-danger text-success').text('Checking badge eligibility...');
+
+				const data = { badge_number: badgeNumber };
+				const csrfParam = $('meta[name="csrf-param"]').attr('content');
+				const csrfToken = $('meta[name="csrf-token"]').attr('content');
+				if (csrfParam && csrfToken) {
+					data[csrfParam] = csrfToken;
+				}
+
+				$.ajax({
+					method: 'POST',
+					url: form.data('badge-eligibility-check-url'),
+					data: data,
+					dataType: 'json'
+				}).done(function (response) {
+					if (currentRequest !== requestId) {
+						return;
+					}
+					if (badgeNumber !== currentBadge()) {
+						requestPending = false;
+						checkState = 'unchecked';
+						return;
+					}
+					requestPending = false;
+					if (!response.success) {
+						checkState = 'blocked';
+						submitAfterCheck = false;
+						const message = response.msg || 'Could not check badge eligibility.';
+						status.removeClass('text-success').addClass('text-danger').text(message);
+						window.alert(message);
+						return;
+					}
+					if (response.requiresConfirmation && !window.confirm(response.msg)) {
+						checkState = 'blocked';
+						submitAfterCheck = false;
+						if (declineUrl) {
+							window.location.href = declineUrl;
+						} else {
+							status.removeClass('text-success').addClass('text-danger').text('Please See Office Staff');
+						}
+						return;
+					}
+					if (response.requiresConfirmation) {
+						override.val('1');
+						status.removeClass('text-danger').addClass('text-success').text('Override confirmed. You may continue.');
+					} else {
+						status.removeClass('text-danger').addClass('text-success').text('Badge eligibility checked.');
+					}
+					checkState = 'allowed';
+					resumeSubmit();
+				}).fail(function () {
+					if (currentRequest !== requestId) {
+						return;
+					}
+					requestPending = false;
+					checkState = 'blocked';
+					submitAfterCheck = false;
+					status.removeClass('text-success').addClass('text-danger').text('Could not check badge eligibility. Please try again.');
+				});
+			}
+
+			badgeInput.on('input', function () {
+				requestId++;
+				requestPending = false;
+				checkState = 'unchecked';
+				checkedBadge = '';
+				submitAfterCheck = false;
+				override.val('0');
+				status.empty();
+			}).on('change', checkBadge);
+
+			form.on('submit', function (event) {
+				const badgeNumber = currentBadge();
+				if (!badgeNumber || (checkState === 'allowed' && checkedBadge === badgeNumber)) {
+					return;
+				}
+				event.preventDefault();
+				if (checkState === 'checking' && requestPending) {
+					submitAfterCheck = true;
+					return false;
+				}
+				if (checkState === 'blocked') {
+					status.removeClass('text-success').addClass('text-danger')
+						.text('Change the badge number and leave the field to check eligibility.');
+					return false;
+				}
+				status.removeClass('text-success').addClass('text-danger')
+					.text('Change the badge number and leave the field to check eligibility.');
+				return false;
+			});
+
+		});
 	});
 })(jQuery);

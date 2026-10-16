@@ -150,7 +150,6 @@ $this->beginBody() ?>
         if ((window.location.pathname.indexOf('create') >0) ||
             (window.location.pathname.indexOf('update')>0) ||
             (window.location.pathname.indexOf('sales')>0)) {
-            console.log('NO Enter Button');
             if(e.keyCode == 13) {
                 var el = document.activeElement;
                 if (el.tagName.toLowerCase() != 'textarea') {
