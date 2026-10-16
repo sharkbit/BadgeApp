@@ -12,15 +12,10 @@ $reports = $dataProvider->getModels();
 $months = [];
 $types = [];
 $counts = [];
-$title = 'Monthly Sales count by transaction type';
-$x_axis = 'Month';
-$y_axis = 'Number of Sales';
-$y2_axis = 'Cumulative Totals';
-
 
 foreach ($reports as $report) {
-	$month = (string)$report['tx_month'];
-	$type = (string)$report['tx_type'];
+	$month = (string)$report[$chartMeta->x_axis_field];
+	$type = (string)$report[$chartMeta->y_axis_field];
 	if ($month === '' || $type === '') {
 		continue;
 	}
@@ -31,6 +26,7 @@ foreach ($reports as $report) {
 }
 
 $labels = array_keys($months);
+sort($labels, SORT_STRING);
 $datasetTypes = array_keys($types);
 sort($datasetTypes, SORT_NATURAL | SORT_FLAG_CASE);
 
@@ -54,6 +50,33 @@ foreach ($datasetTypes as $index => $type) {
 		'backgroundColor' => $color['background'],
 		'borderColor' => $color['border'],
 		'borderWidth' => 1,
+	];
+}
+
+$hasY2Axis = !empty($chartMeta->y2_axis);
+if ($hasY2Axis) {
+	$cumulativeTotal = 0;
+	$cumulativeTotals = [];
+	foreach ($labels as $month) {
+		$monthTotal = 0;
+		foreach ($datasetTypes as $type) {
+			$monthTotal += $counts[$type][$month] ?? 0;
+		}
+		$cumulativeTotal += $monthTotal;
+		$cumulativeTotals[] = $cumulativeTotal;
+	}
+
+	$datasets[] = [
+		'type' => 'line',
+		'label' => $chartMeta->y2_axis,
+		'data' => $cumulativeTotals,
+		'yAxisID' => 'y2',
+		'borderColor' => 'rgba(75, 75, 75, 1)',
+		'backgroundColor' => 'rgba(75, 75, 75, 1)',
+		'borderWidth' => 2,
+		'pointRadius' => 3,
+		'tension' => 0.2,
+		'fill' => false,
 	];
 }
 
@@ -91,7 +114,7 @@ $this->registerJs(
 	. 'let sum = 0;'
 	. 'chart.data.datasets.forEach(function (dataset) {'
 	. 'const value = Number(dataset.data[dataIndex]) || 0;'
-	. 'sum += value;'
+	. 'if (dataset.yAxisID !== "y2") { sum += value; }'
 	. 'const row = document.createElement("div");'
 	. 'row.className = "chartjs-custom-tooltip-row";'
 	. 'const swatch = document.createElement("span");'
@@ -120,13 +143,16 @@ $this->registerJs(
 	. 'data: {labels: ' . Json::htmlEncode($labels) . ', datasets: ' . Json::htmlEncode($datasets) . '},'
 	. 'options: {responsive: true, maintainAspectRatio: false,'
 	. 'plugins: {'
-	. 'title: {display: true, text: "'.$title.'"},'
+	. 'title: {display: true, text: ' . Json::htmlEncode($chartMeta->title) . ', font: {size: 24}},'
 	. 'legend: {position: "top"},'
 	. 'tooltip: {enabled: false, external: externalTooltipHandler}'
 	. '},'
 	. 'scales: {'
-	. 'x: {stacked: true, title: {display: true, text: "'.$x_axis.'"}},'
-	. 'y: {stacked: true, beginAtZero: true, title: {display: true, text: "'.$y_axis.'"}, ticks: {precision: 0}}'
+	. 'x: {stacked: true, title: {display: true, text: ' . Json::htmlEncode($chartMeta->x_axis_title) . '}},'
+	. 'y: {stacked: true, beginAtZero: true, title: {display: true, text: ' . Json::htmlEncode($chartMeta->y_axis_title) . '}, ticks: {precision: 0}}'
+	. ($hasY2Axis
+		? ',y2: {type: "linear", position: "right", beginAtZero: true, title: {display: true, text: ' . Json::htmlEncode($chartMeta->y2_axis) . '}, grid: {drawOnChartArea: false}, ticks: {precision: 0}}'
+		: '')
 	. '}'
 		. '}'
 	. '});'
@@ -136,14 +162,18 @@ $this->registerJs(
 
 
 ?>
+<?= $this->render('_tab-year') ?>
 
 <div class="reports-index">
-	<h1><?= Html::encode($this->title ?: 'Reports') ?></h1>
+	<!-- <h1><?= Html::encode($this->title ?: 'Reports') ?></h1> -->
 	<div class="chart-container" style="position: relative; width: 100%; min-height: 420px;">
 		<div class="chartjs-custom-tooltip" aria-hidden="true"></div>
-		<canvas id="txChart" role="img" aria-label="<?=$title?>"></canvas>
+		<canvas id="txChart" role="img" aria-label="<?= Html::encode($chartMeta->title) ?>"></canvas>
 	</div>
 	<?php if (empty($reports)) { ?>
 		<p>No report data is available.</p>
 	<?php } ?>
 </div>
+
+<br />
+<p>Check out all the <a href="https://www.chartjs.org/docs/latest/samples/information.html" target="charts">Charts </a></p>
