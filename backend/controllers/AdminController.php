@@ -32,6 +32,7 @@ class AdminController extends \yii\web\Controller {
 		'Index' => ['site/new-member','site/no-email','site/verify'],
 		'Params' => ['params/update'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
+		'Report' => ['reports/index'],
 		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/delete','rso-rpt/index','rso-rpt/print-todays-events','rso-rpt/remarks','rso-rpt/settings','rso-rpt/sticker','rso-rpt/update','rso-rpt/view','sticker/add','sticker/move','rso-rpt/sticker-update','rso-rpt/sticker-delete'],
 		'Rules'=> ['rules/index','rules/create','rules/update','rules/view'],
 		'sales' => ['payment/converge','payment/index','payment/inventory','sales/all','sales/create','sales/delete-sale','sales/delete','sales/index','sales/stock','sales/summary','sales/update','sales/inventory','sales/report'],
