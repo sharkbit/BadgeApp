@@ -7,6 +7,8 @@ use backend\models\Badges;
 use backend\models\Event_Att;
 use backend\models\User;
 
+$this->registerJsFile('@web/js/banned-name-check.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+
 $model_ea = new Event_Att();
 
 /* @var $this yii\web\View */
@@ -361,37 +363,45 @@ if($att_count>0) {
 	});
 
 	$("#event_approve").click(function() {
-		if (confirm('Are you sure you want to Approve Event?')) {
-		jQuery.ajax({
-			method: 'POST',
-			url: '<?=yii::$app->params['rootUrl']?>/events/approve?id='+<?=$model->ea_calendar_id?>,
-			crossDomain: false,
-			success: function(responseData, textStatus, jqXHR) {
-				responseData =  JSON.parse(responseData);
-				console.log(responseData);
-				window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
-			},
-			error: function (responseData, textStatus, errorThrown) {
-				console.log('e_view:213'); console.log(textStatus);
-			},
-		});}
+		window.agcDecisionDialog.confirm('Are you sure you want to Approve Event?', 'Approve').done(function(confirmed) {
+			if (!confirmed) {
+				return;
+			}
+			jQuery.ajax({
+				method: 'POST',
+				url: '<?=yii::$app->params['rootUrl']?>/events/approve?id='+<?=$model->ea_calendar_id?>,
+				crossDomain: false,
+				success: function(responseData, textStatus, jqXHR) {
+					responseData =  JSON.parse(responseData);
+					console.log(responseData);
+					window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+				},
+				error: function (responseData, textStatus, errorThrown) {
+					console.log('e_view:213'); console.log(textStatus);
+				},
+			});
+		});
 	});
 
 	$("#event_close").click(function() {
-		if (confirm('Are you sure you want to Permanently Close this Event?')) {
-		jQuery.ajax({
-			method: 'POST',
-			url: '<?=yii::$app->params['rootUrl']?>/events/issue-credit?id='+<?=$model->ea_calendar_id?>,
-			crossDomain: false,
-			success: function(responseData, textStatus, jqXHR) {
-				responseData =  JSON.parse(responseData);
-				console.log(responseData);
-				window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
-			},
-			error: function (responseData, textStatus, errorThrown) {
-				console.log('e_view:230'); console.log(textStatus);
-			},
-		});}
+		window.agcDecisionDialog.confirm('Are you sure you want to Permanently Close this Event?', 'Close Event').done(function(confirmed) {
+			if (!confirmed) {
+				return;
+			}
+			jQuery.ajax({
+				method: 'POST',
+				url: '<?=yii::$app->params['rootUrl']?>/events/issue-credit?id='+<?=$model->ea_calendar_id?>,
+				crossDomain: false,
+				success: function(responseData, textStatus, jqXHR) {
+					responseData =  JSON.parse(responseData);
+					console.log(responseData);
+					window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+				},
+				error: function (responseData, textStatus, errorThrown) {
+					console.log('e_view:230'); console.log(textStatus);
+				},
+			});
+		});
 	});
 
 	function changeBadgeNam(badgeNumber) {
@@ -420,7 +430,10 @@ if($att_count>0) {
 	}
 
 	function jsRemoveAtt(ea_calendar_id,ea_id,name) {
-		if (confirm('Are you sure you want to remove '+name+' from the event?')) {
+		window.agcDecisionDialog.confirm('Are you sure you want to remove '+name+' from the event?', 'Remove').done(function(confirmed) {
+			if (!confirmed) {
+				return;
+			}
 			jQuery.ajax({
 				method: 'POST',
 				url: '<?=yii::$app->params['rootUrl']?>/events/remove-att?id='+ea_calendar_id+'&ea_id='+ea_id,
@@ -434,7 +447,7 @@ if($att_count>0) {
 					console.log('e_view:272'); console.log(textStatus);
 				},
 			});
-		}
+		});
 	}
 
 	function jsReg() {
@@ -450,23 +463,29 @@ if($att_count>0) {
 				success: function(responseData, textStatus, jqXHR) {
 					responseData = typeof responseData === 'string' ? JSON.parse(responseData) : responseData;
 					console.log(responseData);
-					if (responseData.requiresConfirmation && window.confirm(responseData.msg)) {
-						jQuery.ajax({
-							method: 'POST',
-							url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&badge='+encodeURIComponent(reg_badge),
-							data: {override_banned: '1'},
-							crossDomain: false,
-							success: function(overrideResponse) {
-								overrideResponse = typeof overrideResponse === 'string' ? JSON.parse(overrideResponse) : overrideResponse;
-								if (overrideResponse.success) {
-									window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
-								} else {
-									$("#reg_notes").text(overrideResponse.msg);
-								}
-							},
-							error: function() {
-								$("#reg_notes").text('Registration failed. Please try again.');
+					if (responseData.requiresConfirmation) {
+						window.agcDecisionDialog.confirm(responseData.msg, 'Override').done(function(confirmed) {
+							if (!confirmed) {
+								$("#reg_notes").text(responseData.msg);
+								return;
 							}
+							jQuery.ajax({
+								method: 'POST',
+								url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&badge='+encodeURIComponent(reg_badge),
+								data: {override_banned: '1'},
+								crossDomain: false,
+								success: function(overrideResponse) {
+									overrideResponse = typeof overrideResponse === 'string' ? JSON.parse(overrideResponse) : overrideResponse;
+									if (overrideResponse.success) {
+										window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+									} else {
+										$("#reg_notes").text(overrideResponse.msg);
+									}
+								},
+								error: function() {
+									$("#reg_notes").text('Registration failed. Please try again.');
+								}
+							});
 						});
 					} else if (responseData.success) {
 						window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
@@ -489,7 +508,7 @@ if($att_count>0) {
 					var ea_wb_serial = document.getElementById("event_att-ea_wb_serial").value;
 					if (!ea_wb_serial) {
 					console.log('yes yes:308');
-					alert("A Wrist Band is required for this individual.");
+					window.agcDecisionDialog.notice("A Wrist Band is required for this individual.");
 					return;
 				}}
 				if(ea_wb_serial) {ea_serial='&e_wb='+encodeURIComponent(ea_wb_serial);}
@@ -501,23 +520,29 @@ if($att_count>0) {
 					success: function(responseData, textStatus, jqXHR) {
 						responseData =  JSON.parse(responseData);
 						console.log(responseData);
-						if (responseData.requiresConfirmation && window.confirm(responseData.msg)) {
-							jQuery.ajax({
-								method: 'POST',
-								url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&f_name='+encodeURIComponent(f_name)+'&l_name='+encodeURIComponent(l_name)+ea_serial,
-								data: {override_banned: '1'},
-								crossDomain: false,
-								success: function(overrideResponse) {
-									overrideResponse = typeof overrideResponse === 'string' ? JSON.parse(overrideResponse) : overrideResponse;
-									if (overrideResponse.success) {
-										window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
-									} else {
-										$("#reg_notes").text(overrideResponse.msg);
-									}
-								},
-								error: function() {
-									$("#reg_notes").text('Registration failed. Please try again.');
+						if (responseData.requiresConfirmation) {
+							window.agcDecisionDialog.confirm(responseData.msg, 'Override').done(function(confirmed) {
+								if (!confirmed) {
+									$("#reg_notes").text(responseData.msg);
+									return;
 								}
+								jQuery.ajax({
+									method: 'POST',
+									url: '<?=yii::$app->params['rootUrl']?>/events/reg?id='+reg_id+'&f_name='+encodeURIComponent(f_name)+'&l_name='+encodeURIComponent(l_name)+ea_serial,
+									data: {override_banned: '1'},
+									crossDomain: false,
+									success: function(overrideResponse) {
+										overrideResponse = typeof overrideResponse === 'string' ? JSON.parse(overrideResponse) : overrideResponse;
+										if (overrideResponse.success) {
+											window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
+										} else {
+											$("#reg_notes").text(overrideResponse.msg);
+										}
+									},
+									error: function() {
+										$("#reg_notes").text('Registration failed. Please try again.');
+									}
+								});
 							});
 						} else if (responseData.success) {
 							window.location.href = "<?=yii::$app->params['rootUrl']?>/events/view?id=<?=$model->ea_calendar_id?>";
@@ -531,7 +556,7 @@ if($att_count>0) {
 					},
 				});
 
-			} else { alert("Please check that first and last name is specified"); }
+			} else { window.agcDecisionDialog.notice("Please check that first and last name is specified"); }
 
 		}
 	}

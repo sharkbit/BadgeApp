@@ -1,6 +1,126 @@
 (function ($) {
 	'use strict';
 
+	function showDecisionDialog(message, confirmLabel) {
+		const deferred = $.Deferred();
+		const isConfirmation = Boolean(confirmLabel);
+		const overlay = $('<div>', {
+			css: {
+				position: 'fixed',
+				inset: 0,
+				zIndex: 20000,
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				padding: '20px',
+				background: 'rgba(0, 0, 0, 0.55)'
+			}
+		});
+		const dialog = $('<div>', {
+			role: 'dialog',
+			'aria-modal': 'true',
+			'aria-labelledby': 'banned-name-dialog-title',
+			css: {
+				width: '100%',
+				maxWidth: '440px',
+				padding: '24px',
+				borderRadius: '6px',
+				background: '#fff',
+				boxShadow: '0 8px 28px rgba(0, 0, 0, 0.3)',
+				fontFamily: 'Arial, sans-serif'
+			}
+		});
+		const title = $('<h2>', {
+			id: 'banned-name-dialog-title',
+			text: 'Please confirm',
+			css: { margin: '0 0 14px', fontSize: '20px' }
+		});
+		const messageText = $('<p>', {
+			text: message,
+			css: { margin: '0 0 22px', lineHeight: '1.5' }
+		});
+		const buttons = $('<div>', {
+			css: { display: 'flex', justifyContent: 'flex-end', gap: '10px' }
+		});
+		const cancelButton = $('<button>', {
+			type: 'button',
+			text: 'Cancel',
+			css: {
+				padding: '8px 16px',
+				border: '1px solid #666',
+				borderRadius: '4px',
+				background: '#fff',
+				color: '#222',
+				cursor: 'pointer'
+			}
+		});
+		let confirmButton = null;
+
+		if (isConfirmation) {
+			confirmButton = $('<button>', {
+				type: 'button',
+				text: confirmLabel,
+				css: {
+					padding: '8px 16px',
+					border: '1px solid #a94442',
+					borderRadius: '4px',
+					background: '#c9302c',
+					color: '#fff',
+					cursor: 'pointer'
+				}
+			});
+		}
+
+		let isClosed = false;
+		function close(confirmed) {
+			if (isClosed) {
+				return;
+			}
+			isClosed = true;
+			$(document).off('keydown.bannedNameDialog');
+			overlay.remove();
+			deferred.resolve(confirmed);
+		}
+
+		cancelButton.on('click', function () {
+			close(false);
+		});
+		buttons.append(cancelButton);
+		if (confirmButton) {
+			confirmButton.on('click', function () {
+				close(true);
+			});
+			buttons.append(confirmButton);
+		}
+		dialog.append(title, messageText, buttons);
+		overlay.append(dialog).appendTo('body');
+		cancelButton.trigger('focus');
+		$(document).on('keydown.bannedNameDialog', function (event) {
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				close(false);
+			} else if (event.key === 'Enter') {
+				event.preventDefault();
+				close(Boolean(confirmButton && document.activeElement === confirmButton[0]));
+			}
+		});
+
+		return deferred.promise();
+	}
+
+	function showNotice(message) {
+		showDecisionDialog(message, null);
+	}
+
+	function showConfirmation(message, confirmLabel) {
+		return showDecisionDialog(message, confirmLabel);
+	}
+
+	window.agcDecisionDialog = {
+		confirm: showConfirmation,
+		notice: showNotice
+	};
+
 	$(function () {
 		$('form[data-banned-name-check-url]').each(function () {
 			const form = $(this);
@@ -86,13 +206,24 @@
 						return;
 					}
 					if (response.banned) {
-						if (response.canOverride && window.confirm(response.msg)) {
-							override.val('1');
-							checkState = 'allowed';
-							status.removeClass('text-danger').addClass('text-success').text('Override confirmed. You may continue.');
-							resumeSubmit();
-						} else if (response.canOverride && declineUrl) {
-							window.location.href = declineUrl;
+						if (response.canOverride) {
+							showConfirmation(response.msg, 'Override').done(function (confirmed) {
+								if (currentRequest !== requestId || name !== currentName()) {
+									return;
+								}
+								if (confirmed) {
+									override.val('1');
+									checkState = 'allowed';
+									status.removeClass('text-danger').addClass('text-success').text('Override confirmed. You may continue.');
+									resumeSubmit();
+								} else if (declineUrl) {
+									window.location.href = declineUrl;
+								} else {
+									checkState = 'blocked';
+									submitAfterCheck = false;
+									status.removeClass('text-success').addClass('text-danger').text('Please See Office Staff');
+								}
+							});
 						} else {
 							checkState = 'blocked';
 							submitAfterCheck = false;
@@ -215,25 +346,32 @@
 						submitAfterCheck = false;
 						const message = response.msg || 'Could not check badge eligibility.';
 						status.removeClass('text-success').addClass('text-danger').text(message);
-						window.alert(message);
-						return;
-					}
-					if (response.requiresConfirmation && !window.confirm(response.msg)) {
-						checkState = 'blocked';
-						submitAfterCheck = false;
-						if (declineUrl) {
-							window.location.href = declineUrl;
-						} else {
-							status.removeClass('text-success').addClass('text-danger').text('Please See Office Staff');
-						}
+						showNotice(message);
 						return;
 					}
 					if (response.requiresConfirmation) {
-						override.val('1');
-						status.removeClass('text-danger').addClass('text-success').text('Override confirmed. You may continue.');
-					} else {
-						status.removeClass('text-danger').addClass('text-success').text('Badge eligibility checked.');
+						showConfirmation(response.msg, 'Override').done(function (confirmed) {
+							if (currentRequest !== requestId || badgeNumber !== currentBadge()) {
+								return;
+							}
+							if (!confirmed) {
+								checkState = 'blocked';
+								submitAfterCheck = false;
+								if (declineUrl) {
+									window.location.href = declineUrl;
+								} else {
+									status.removeClass('text-success').addClass('text-danger').text('Please See Office Staff');
+								}
+								return;
+							}
+							override.val('1');
+							status.removeClass('text-danger').addClass('text-success').text('Override confirmed. You may continue.');
+							checkState = 'allowed';
+							resumeSubmit();
+						});
+						return;
 					}
+					status.removeClass('text-danger').addClass('text-success').text('Badge eligibility checked.');
 					checkState = 'allowed';
 					resumeSubmit();
 				}).fail(function () {
