@@ -9,6 +9,7 @@ use backend\models\agcEventStatus;
 use backend\models\agcFacility;
 use backend\models\clubs;
 use backend\models\search\AgcCalSearch;
+use yii\db\Query;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -16,7 +17,6 @@ use yii\web\Controller;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\db\Query;
 
 /**
  * CalendarController implements the CRUD actions for Calendar model.
@@ -184,37 +184,102 @@ class CalendarController extends AdminController {
 			'dataProvider' => $dataProvider ]);
 	}
 
-	public function actionMergeOldEvents() {
+	public function actionMergeOldEvents() { //   /calendar/merge-old-events
 		Yii::$app->response->format = Response::FORMAT_JSON;
-	//	$selection = Yii::$app->request->post('selection');
+		$selection = (new Query())
+			->select(['e_id'])
+			->from('BadgeDB.events_old')
+			->where(['in', 'e_id', 
+				(new Query())
+					->select(['ea_calendar_id'])->distinct()
+					->from('BadgeDB.event_attendee')
+					->where(['<', 'ea_calendar_id', 3000])						
+			])
+			->andWhere(['calendar_id'=>0])
+			->andWhere(['or',
+				['like', 'e_name', 'hql'],
+				['like', 'e_name', 'carry'],
+				['like', 'e_name', 'ccw'],
+				['like', 'e_name', 'pistol'],
+				['like', 'e_name', 'hgp'],
+				['like', 'e_name', 'hqp'],
+				['like', 'e_name', 'hgl'],
+				['like', 'e_name', 'w&c'],
+				['like', 'e_name', 'hand'],
+				['like', 'e_name', 'olste'],
+			])
+			->column();
+		$defaults = (object) [
+			'event_status_id'=>4,
+			'facility_id' => '[2]',
+			'lanes_req' => '{"2":1}',
+		];
+		$pistolResults = $this->runMergeOldEvents($selection, $defaults);
+
+		$selection = (new Query())
+			->select(['e_id'])
+			->from('BadgeDB.events_old')
+			->where(['in', 'e_id', 
+				(new Query())
+					->select(['ea_calendar_id'])->distinct()
+					->from('BadgeDB.event_attendee')
+					->where(['<', 'ea_calendar_id', 3000])						
+			])
+			->andWhere(['calendar_id'=>0])
+			->andWhere(['or',
+				['like', 'e_name', 'rif'],
+				['like', 'e_name', '15'],
+			])
+			->column();
+		$defaults = (object) [
+			'event_status_id'=>4,
+			'facility_id' => '[3]',
+			'lanes_req' => '{"3":1}',
+		];
+		$rifelResults = $this->runMergeOldEvents($selection, $defaults);
 		
- 
-			$selection = (new Query())
-				->select(['e_id'])
-				->from('BadgeDB.events_old')
-				->where([
-					'in', 
-					'e_id', 
-					(new Query())
-						->select(['ea_calendar_id'])
-						->distinct()
-						->from('BadgeDB.event_attendee')
-						->where(['<', 'ea_calendar_id', 3000])
-				])
-				->orWhere(['like', 'e_name', 'hql'])
-				->orWhere(['like', 'e_name', 'carry'])
-				->orWhere(['like', 'e_name', 'ccw'])
-				->orWhere(['like', 'e_name', 'pistol'])
-				->orWhere(['like', 'e_name', 'hgp'])
-				->orWhere(['like', 'e_name', 'hqp'])
-				->orWhere(['like', 'e_name', 'hgl'])
-				->orWhere(['like', 'e_name', 'w&c'])
-				->orWhere(['like', 'e_name', 'hand'])
-				->column();
-				
+		$selection = (new Query())
+			->select(['e_id'])
+			->from('BadgeDB.events_old')
+			->where(['in', 'e_id', 
+				(new Query())
+					->select(['ea_calendar_id'])->distinct()
+					->from('BadgeDB.event_attendee')
+					->where(['<', 'ea_calendar_id', 3000])						
+			])
+			->andWhere(['calendar_id'=>0])
+			->andWhere(['e_type'=>'vol'])
+			->column();
+		$defaults = (object) [
+			'event_status_id'=>10,
+			'facility_id' => '[6]',
+			'lanes_req' => NULL,
+		];
+		$volunteerResults = $this->runMergeOldEvents($selection, $defaults);
+		
+
+		$mergeResults = ['merged' => [], 'skipped' => [], 'errors' => []];
+		foreach ([$pistolResults, $rifelResults, $volunteerResults] as $runResults) {
+			foreach (['merged', 'skipped', 'errors'] as $resultType) {
+				$mergeResults[$resultType] = array_merge(
+					$mergeResults[$resultType],
+					$runResults[$resultType] ?? []
+				);
+			}
+		}
+		$mergeResults['success'] = !empty($pistolResults['success'])
+			&& !empty($rifelResults['success'])
+			&& !empty($volunteerResults['success']);
+
+		return $mergeResults;
+		
+	}
+		
+	public function runMergeOldEvents($selection, $defaults) {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+		
 		if (!is_array($selection) || empty($selection)) {
-			Yii::$app->response->statusCode = 400;
-			return ['success' => false, 'message' => 'Select at least one old event to merge.'];
+			return ['success' => true, 'merged' => [], 'skipped' => [], 'errors' => []];
 		}
 
 		$eventIds = [];
@@ -262,12 +327,12 @@ class CalendarController extends AdminController {
 					'cal_start_time' => '00:00:00',
 					'cal_end_time' => '00:00:00',
 					'club_id' => $oldEvent['sponsor'],
-					'facility_id' => '[2]',
+					'facility_id' => $defaults->facility_id,
 					'event_name' => $oldEvent['e_name'],
 					'key_words' => 'old',
 					'date_requested' => $oldEvent['e_date'],
-					'lanes_req' => '{"2":1}',
-					'event_status_id' => 4,
+					'lanes_req' => $defaults->lanes_req,
+					'event_status_id' => $defaults->event_status_id,
 					'range_status_id' => 1,
 					'poc_badge' => $oldEvent['e_poc'],
 					'cal_inst' => $this->findLegacyInstructorBadge($oldEvent['e_inst']),
