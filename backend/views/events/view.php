@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
+use backend\models\AgcCal;
 use backend\models\Badges;
 use backend\models\Event_Att;
 use backend\models\User;
@@ -10,6 +11,7 @@ use backend\models\User;
 $this->registerJsFile('@web/js/banned-name-check.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 
 $model_ea = new Event_Att();
+$calendarRecord = AgcCal::findOne(['calendar_id' => $model->ea_calendar_id]);
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\Events */
@@ -108,11 +110,13 @@ $div_closed=false;
 <?php if (yii::$app->controller->hasPermission('events/update-director')) { ?>
 	<div class="col-xs-12 col-sm-3">
 		<details class="update-director-form">
-			<summary class="btn btn-primary">Update Director</summary>
+			<summary class="btn btn-primary">Update Event Details</summary>
 			<?php
 				$directorBadge = $model->cal_inst;
+				$salesOrder = $calendarRecord ? $calendarRecord->sales_order : null;
 				$directorInputId = 'director-badge-' . (int)$model->ea_calendar_id;
 				$directorNameId = 'director-name-' . (int)$model->ea_calendar_id;
+				$salesOrderInputId = 'sales-order-' . (int)$model->ea_calendar_id;
 				$directorName = !empty($directorBadge)
 					? yii::$app->controller->decodeBadgeName((int)$directorBadge)
 					: 'Not Found';
@@ -137,7 +141,16 @@ $div_closed=false;
 					'readonly' => true,
 				]) ?>
 			</div>
-			<?= Html::submitButton('Save Director', ['class' => 'btn btn-success']) ?>
+			<div class="form-group">
+				<?= Html::label('Sales Order', $salesOrderInputId) ?>
+				<?= Html::input('number', 'sales_order', $salesOrder, [
+					'id' => $salesOrderInputId,
+					'class' => 'form-control',
+					'min' => 0,
+					'step' => 1,
+				]) ?>
+			</div>
+			<?= Html::submitButton('Save Event Details', ['class' => 'btn btn-success']) ?>
 			<?= Html::endForm() ?>
 		</details>
 		<script>

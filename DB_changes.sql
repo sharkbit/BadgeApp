@@ -1047,23 +1047,15 @@ CREATE TABLE `BadgeDB`.`banned_guests` (
   PRIMARY KEY (`bg_id`),
   UNIQUE INDEX `bg_id_UNIQUE` (`bg_id` ASC) VISIBLE);
 
-CREATE OR REPLACE VIEW BadgeDB.view_banned_peeps AS
-SELECT 
-    concat('g', bg_id)  AS person_id, 
-    `bg_first_name` AS first_name, 
-    `bg_last_name` AS last_name, 
-    'guest' AS ban_status
-FROM BadgeDB.banned_guests
+CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW BadgeDB.view_banned_peeps AS
+	SELECT concat('g', bg_id)  AS person_id, `bg_first_name` AS first_name, `bg_last_name` AS last_name, 'guest' AS ban_status
+		FROM BadgeDB.banned_guests
 
-UNION ALL
+	UNION ALL
 
-SELECT 
-    badge_number AS person_id, 
-    first_name AS first_name, 
-    last_name AS last_name, 
-    'x-member' AS ban_status
-FROM BadgeDB.badges
-where badges.`status`='rev';
+	SELECT badge_number AS person_id, first_name AS first_name, last_name AS last_name, 'x-member' AS ban_status 
+		FROM BadgeDB.badges
+		where badges.`status`='rev';
 
 --for #??
 ALTER TABLE `BadgeDB`.`cal_event_status` 
@@ -1074,7 +1066,7 @@ UPDATE `BadgeDB`.`cal_event_status` SET `event_signup` = '0' WHERE (`event_statu
 
 -- for #299
 CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_cal_event` AS 
-  SELECT  `cc`.`calendar_id` AS `calendar_id`,  `cc`.`event_date` AS `event_date`,  `cc`.`cal_start_time` AS `cal_start_time`,  `cc`.`cal_end_time` AS `cal_end_time`,  `cc`.`event_name` AS `event_name`,  `cc`.`facility_id` AS `facility_id`,  `cc`.`lanes_req` AS `lanes_req`,  `cc`.`cal_inst` AS `cal_inst`,  `cc`.`credit_hours` AS `credit_hours`,  `cc`.`issued_vol` AS `issued_vol`,  `cc`.`poc_badge` AS `poc_badge`,  `ces`.`name` AS `event_status_name`,  `ces`.`event_status_id` AS `event_status_id`,  `clubs`.`club_name` AS `club_name`,  `clubs`.`short_name` AS `short_name`,  `clubs`.`club_id` AS `club_id`,  `ces`.`allow_guests` AS `allow_guests`,  `ces`.`track_wristbands` AS `track_wristbands`, `ces`.`is_volunteer` AS `is_volunteer`  
+  SELECT  `cc`.`calendar_id` AS `calendar_id`,  `cc`.`event_date` AS `event_date`,  `cc`.`cal_start_time` AS `cal_start_time`,  `cc`.`cal_end_time` AS `cal_end_time`,  `cc`.`event_name` AS `event_name`,  `cc`.`facility_id` AS `facility_id`,  `cc`.`lanes_req` AS `lanes_req`,  `cc`.`cal_inst` AS `cal_inst`,  `cc`.`credit_hours` AS `credit_hours`,  `cc`.`issued_vol` AS `issued_vol`,  `cc`.`poc_badge` AS `poc_badge`, `cc`.`sales_order` AS `sales_order`, `ces`.`name` AS `event_status_name`,  `ces`.`event_status_id` AS `event_status_id`,  `clubs`.`club_name` AS `club_name`,  `clubs`.`short_name` AS `short_name`,  `clubs`.`club_id` AS `club_id`,  `ces`.`allow_guests` AS `allow_guests`,  `ces`.`track_wristbands` AS `track_wristbands`, `ces`.`is_volunteer` AS `is_volunteer`  
   FROM  ((`cal_calendar` `cc`  LEFT JOIN `cal_event_status` `ces` ON ((`cc`.`event_status_id` = `ces`.`event_status_id`)))  LEFT JOIN `clubs` ON ((`cc`.`club_id` = `clubs`.`club_id`)))  WHERE  ((`cc`.`deleted` = 0)  AND (`cc`.`is_event` = 1))  ORDER BY `cc`.`event_date` DESC;
 
 -- for #305
@@ -1091,3 +1083,15 @@ VIEW `view_rpt_1` AS
         `cc_receipts`
     GROUP BY DATE_FORMAT(`cc_receipts`.`tx_date`, '%Y-%m') , `cc_receipts`.`tx_type`
     ORDER BY `tx_month` DESC , `cc_receipts`.`tx_type`;
+
+-- for #306
+ALTER TABLE `BadgeDB`.`cal_calendar` 
+ADD COLUMN `sales_order` INT NULL DEFAULT 0 AFTER `remarks`;
+
+CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_cal_event` AS 
+  SELECT  `cc`.`calendar_id` AS `calendar_id`,  `cc`.`event_date` AS `event_date`,  `cc`.`cal_start_time` AS `cal_start_time`,  `cc`.`cal_end_time` AS `cal_end_time`,  `cc`.`event_name` AS `event_name`,  `cc`.`facility_id` AS `facility_id`,  `cc`.`lanes_req` AS `lanes_req`,  `cc`.`cal_inst` AS `cal_inst`,  `cc`.`credit_hours` AS `credit_hours`,  `cc`.`issued_vol` AS `issued_vol`,  `cc`.`poc_badge` AS `poc_badge`, `cc`.`sales_order` AS `sales_order`, `cc`.`remarks` AS cal_remarks, `ces`.`name` AS `event_status_name`,  `ces`.`event_status_id` AS `event_status_id`,  `clubs`.`club_name` AS `club_name`,  `clubs`.`short_name` AS `short_name`,  `clubs`.`club_id` AS `club_id`,  `ces`.`allow_guests` AS `allow_guests`,  `ces`.`track_wristbands` AS `track_wristbands`, `ces`.`is_volunteer` AS `is_volunteer`  
+  FROM  ((`cal_calendar` `cc`  LEFT JOIN `cal_event_status` `ces` ON ((`cc`.`event_status_id` = `ces`.`event_status_id`)))  LEFT JOIN `clubs` ON ((`cc`.`club_id` = `clubs`.`club_id`)))  WHERE  ((`cc`.`deleted` = 0)  AND (`cc`.`is_event` = 1))  ORDER BY `cc`.`event_date` DESC;
+
+CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_events` AS
+    SELECT vea.ea_calendar_id, vea.attended_badges, vea.attended_guests, vea.wb_out_zero, vce.event_date, vce.cal_start_time, vce.cal_end_time, vce.event_name, vce.event_status_name, vce.event_status_id, vce.club_name, vce.short_name, vce.club_id, vce.poc_badge, vce.sales_order, vce.allow_guests, vce.track_wristbands, vce.cal_inst, vce.is_volunteer, vce.credit_hours, vce.issued_vol, vce.cal_remarks
+    FROM `view_event_att` vea LEFT JOIN view_cal_event vce ON vea.ea_calendar_id = vce.calendar_id order by ea_calendar_id desc;
