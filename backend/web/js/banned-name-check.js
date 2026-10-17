@@ -129,15 +129,25 @@
 			const status = $(form.data('banned-name-status'));
 			const override = $(form.data('banned-name-override'));
 			const declineUrl = form.data('banned-name-decline-url');
+			const agreeButton = form.find('#guest-agree');
+			const requiresNameCheck = agreeButton.prop('disabled');
 			let checkState = 'unchecked';
 			let checkedName = '';
 			let requestPending = false;
 			let requestId = 0;
 			let submitAfterCheck = false;
 
+			function updateAgreeButton() {
+				if (requiresNameCheck) {
+					agreeButton.prop('disabled', checkState !== 'allowed' || checkedName !== currentName());
+				}
+			}
+
 			function currentName() {
 				return $.trim(firstName.val() || '') + '\u0000' + $.trim(lastName.val() || '');
 			}
+
+			updateAgreeButton();
 
 			function resumeSubmit() {
 				if (!submitAfterCheck) {
@@ -161,6 +171,7 @@
 					submitAfterCheck = false;
 					override.val('0');
 					status.empty();
+					updateAgreeButton();
 					return;
 				}
 				if (!force && checkState !== 'unchecked' && checkedName === name) {
@@ -203,6 +214,7 @@
 						checkState = 'blocked';
 						submitAfterCheck = false;
 						status.addClass('text-danger').text(response.msg || 'Could not check the name.');
+						updateAgreeButton();
 						return;
 					}
 					if (response.banned) {
@@ -215,6 +227,7 @@
 									override.val('1');
 									checkState = 'allowed';
 									status.removeClass('text-danger').addClass('text-success').text('Override confirmed. You may continue.');
+									updateAgreeButton();
 									resumeSubmit();
 								} else if (declineUrl) {
 									window.location.href = declineUrl;
@@ -222,17 +235,20 @@
 									checkState = 'blocked';
 									submitAfterCheck = false;
 									status.removeClass('text-success').addClass('text-danger').text('Please See Office Staff');
+									updateAgreeButton();
 								}
 							});
 						} else {
 							checkState = 'blocked';
 							submitAfterCheck = false;
 							status.removeClass('text-success').addClass('text-danger').text('Please See Office Staff');
+							updateAgreeButton();
 						}
 						return;
 					}
 					checkState = 'allowed';
 					status.removeClass('text-danger').addClass('text-success').text('Name checked.');
+					updateAgreeButton();
 					resumeSubmit();
 				}).fail(function () {
 					if (currentRequest !== requestId) {
@@ -242,6 +258,7 @@
 					checkState = 'blocked';
 					submitAfterCheck = false;
 					status.removeClass('text-success').addClass('text-danger').text('Could not check the name. Please try again.');
+					updateAgreeButton();
 				});
 			}
 
@@ -253,6 +270,7 @@
 				submitAfterCheck = false;
 				override.val('0');
 				status.empty();
+				updateAgreeButton();
 			}).on('blur', function () {
 				checkName(false);
 			});
@@ -279,7 +297,6 @@
 			const declineUrl = form.data('badge-eligibility-decline-url');
 			let checkState = 'unchecked';
 			let checkedBadge = '';
-			let requestPending = false;
 			let requestId = 0;
 			let submitAfterCheck = false;
 
@@ -304,7 +321,6 @@
 				if (!badgeNumber) {
 					checkState = 'allowed';
 					checkedBadge = '';
-					requestPending = false;
 					submitAfterCheck = false;
 					override.val('0');
 					status.empty();
@@ -313,7 +329,6 @@
 				}
 
 				checkState = 'checking';
-				requestPending = true;
 				checkedBadge = badgeNumber;
 				const currentRequest = ++requestId;
 				override.val('0');
@@ -336,11 +351,9 @@
 						return;
 					}
 					if (badgeNumber !== currentBadge()) {
-						requestPending = false;
 						checkState = 'unchecked';
 						return;
 					}
-					requestPending = false;
 					if (!response.success) {
 						checkState = 'blocked';
 						submitAfterCheck = false;
@@ -378,7 +391,6 @@
 					if (currentRequest !== requestId) {
 						return;
 					}
-					requestPending = false;
 					checkState = 'blocked';
 					submitAfterCheck = false;
 					status.removeClass('text-success').addClass('text-danger').text('Could not check badge eligibility. Please try again.');
@@ -387,7 +399,6 @@
 
 			badgeInput.on('input', function () {
 				requestId++;
-				requestPending = false;
 				checkState = 'unchecked';
 				checkedBadge = '';
 				submitAfterCheck = false;
@@ -401,7 +412,7 @@
 					return;
 				}
 				event.preventDefault();
-				if (checkState === 'checking' && requestPending) {
+				if (checkState === 'checking') {
 					submitAfterCheck = true;
 					return false;
 				}
@@ -410,8 +421,8 @@
 						.text('Change the badge number and leave the field to check eligibility.');
 					return false;
 				}
-				status.removeClass('text-success').addClass('text-danger')
-					.text('Change the badge number and leave the field to check eligibility.');
+				submitAfterCheck = true;
+				checkBadge();
 				return false;
 			});
 
