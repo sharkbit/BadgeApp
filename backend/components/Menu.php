@@ -100,7 +100,7 @@ class Menu extends Widget{
 			'label'=>'Reports',
 			'loc'=>['prod','dev'],
 			'url' => '/reports/index',
-			'color' => 'btn-default',
+//			'color' => 'btn-default',
 		],
 		[
 			'label'=>'Admin Functions',
