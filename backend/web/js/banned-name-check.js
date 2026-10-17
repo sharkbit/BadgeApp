@@ -427,5 +427,19 @@
 			});
 
 		});
+
+		$('form[data-banned-name-check-url][data-badge-eligibility-check-url]').each(function () {
+			const form = $(this);
+			const agreeButton = form.find('#guest-agree');
+
+			form.on('beforeSubmit.guestSubmissionGuard', function (event) {
+				if (form.data('guestSubmissionInProgress')) {
+					event.preventDefault();
+					return false;
+				}
+				form.data('guestSubmissionInProgress', true);
+				agreeButton.prop('disabled', true);
+			});
+		});
 	});
 })(jQuery);
