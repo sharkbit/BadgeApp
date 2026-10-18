@@ -206,6 +206,7 @@ class CalendarController extends AdminController {
 				['like', 'e_name', 'hgl'],
 				['like', 'e_name', 'w&c'],
 				['like', 'e_name', 'hand'],
+				['like', 'e_name', 'priva'],
 				['like', 'e_name', 'olste'],
 			])
 			->column();
