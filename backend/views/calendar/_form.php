@@ -236,7 +236,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 <?php } else { ?>
 		<?= $form->field($model, 'is_event')->hiddenInput()->label(false) ?>
 <?php }
-if(yii::$app->controller->hasPermission('site/admin-menu')) { ?>
+if(yii::$app->controller->hasPermission('sales/summary')) { ?>
 		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<?= $form->field($model, 'sales_order')->textInput().PHP_EOL ?>
 		</div>
