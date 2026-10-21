@@ -121,6 +121,7 @@ $eventAttendee = new Event_Att();
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'event_status_id',(new agcEventStatus)->getStatusList(),['class'=>'form-control','prompt' => 'Any']),
 			],
 			[	'attribute'=>'sales_order',
+				'value'=>function($model) { return empty($model->sales_order) ? '-' : $model->sales_order; },
 				'visible'=>(yii::$app->controller->hasPermission('sales/summary'))
 			],
 			[
