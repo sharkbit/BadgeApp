@@ -10,6 +10,7 @@ use kartik\daterange\DateRangePicker;
 use kartik\widgets\ActiveForm;
 use kartik\export\ExportMenu;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
 
@@ -32,6 +33,7 @@ if (isset($_REQUEST['AgcCal']['pagesize'])) {
 	$pagesize=20;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
+$canManageRsoComments = yii::$app->controller->hasPermission('calendar/rso-comment');
 $facilityNamesById = ArrayHelper::map(
 	agcFacility::find()->select(['facility_id', 'name'])->asArray()->all(),
 	'facility_id',
@@ -67,7 +69,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 			],
 			[	'attribute'=>'event_name',
 				'format' => 'raw',
-				'headerOptions' => ['style' => 'width:20%'],
+				'headerOptions' => ['style' => 'width:15%'],
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'value'=>function ($model) use ($shoot) {
 					if($model->recurrent_calendar_id>0) {$recurr=" *";} else {$recurr="";}
@@ -154,6 +156,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 			],
 			[	'attribute'=>'showed_up',
 				'visible' => (yii::$app->controller->hasPermission('calendar/showed')) ? (($urlStatus['actionId']=='index') ? true : false ): false,
+				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'showed_up',[1=>'Yes',0=>'No'],['class'=>'form-control','prompt' => 'Any']),
 				'format'=>'raw',
 				'value'=>function($model) {
 					if ($model->event_date <= date('Y-m-d',strtotime("-8 day", strtotime(yii::$app->controller->getNowTime())))) {
@@ -167,6 +170,43 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 						}
 						return $link_y. " / ".$link_n." - <i class='fa fa-thumbs-$thum' ></i>";
 					} else { return "Not Yet"; }
+				},
+			],
+			[	'attribute'=>'remarks',
+				'contentOptions' => ['style' => 'white-space:pre-line;'],
+				'label'=>'RSO Comments',
+				'format'=>'raw',
+				'value'=>function($model) use ($canManageRsoComments) {
+					$remarks = json_decode($model->remarks, true);
+					$currentComment = '';
+					if (is_array($remarks)) {
+						foreach (array_reverse($remarks) as $remark) {
+							if (isset($remark['changed']) && strpos($remark['changed'], 'RSO-comment') === 0) {
+								$currentComment = isset($remark['data']) ? $remark['data'] : '';
+								break;
+							}
+						}
+					}
+					$commentPreview = mb_strlen($currentComment, 'UTF-8') > 30
+						? mb_substr($currentComment, 0, 30, 'UTF-8').'...'
+						: $currentComment;
+					$content = Html::tag('span', Html::encode($commentPreview), ['class' => 'rso-comment-value']);
+					if ($currentComment !== '') {
+						$content .= ' '.Html::button('View', [
+							'type' => 'button',
+							'class' => 'btn btn-xs btn-link rso-comment-view',
+							'data-comment' => $currentComment,
+						]);
+					}
+					if ($canManageRsoComments && date('Y-m-d', strtotime($model->event_date)) === date('Y-m-d', strtotime(yii::$app->controller->getNowTime()))) {
+						$content .= ' '.Html::button($currentComment === '' ? 'Add' : 'Edit', [
+							'type' => 'button',
+							'class' => 'btn btn-xs btn-primary rso-comment-edit',
+							'data-id' => $model->calendar_id,
+							'data-comment' => $currentComment,
+						]);
+					}
+					return Html::tag('div', $content, ['id' => 'rso-comment-cell-'.$model->calendar_id]);
 				},
 			],
 			[	'attribute'=>'event_status_id',
@@ -335,8 +375,89 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 </div>
 <p>* is a Recurring Event</p>
 <P>m is a Master Record - do not delete</p>
+<div class="modal fade" id="rso-comment-view-modal" tabindex="-1" role="dialog" aria-labelledby="rso-comment-view-modal-title">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="rso-comment-view-modal-title">RSO Comment</h4>
+			</div>
+			<div class="modal-body" id="rso-comment-full-text" style="white-space:pre-wrap;word-wrap:break-word"></div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<?php if ($canManageRsoComments) { ?>
+<div class="modal fade" id="rso-comment-modal" tabindex="-1" role="dialog" aria-labelledby="rso-comment-modal-title">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form id="rso-comment-form" action="<?= Url::to(['/calendar/rso-comment']) ?>" method="post">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="rso-comment-modal-title">RSO Comment</h4>
+				</div>
+				<div class="modal-body">
+					<div class="alert alert-danger rso-comment-error" style="display:none"></div>
+					<?= Html::hiddenInput('id', '', ['id' => 'rso-comment-id']) ?>
+					<?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->getCsrfToken()) ?>
+					<?= Html::textarea('comment', '', ['id' => 'rso-comment-input', 'class' => 'form-control', 'rows' => 5, 'maxlength' => 2000]) ?>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="submit" class="btn btn-primary">Save Comment</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<?php } ?>
 <script>
 //$("#w0-cols").hide();
+
+$(document).on('click', '.rso-comment-view', function() {
+	$('#rso-comment-full-text').text($(this).attr('data-comment') || '');
+	$('#rso-comment-view-modal').modal('show');
+});
+
+<?php if ($canManageRsoComments) { ?>
+$(document).on('click', '.rso-comment-edit', function() {
+	$('#rso-comment-id').val($(this).data('id'));
+	$('#rso-comment-input').val($(this).attr('data-comment') || '');
+	$('.rso-comment-error').hide().text('');
+	$('#rso-comment-modal').modal('show');
+});
+
+$('#rso-comment-form').on('submit', function(event) {
+	event.preventDefault();
+	var $form = $(this);
+	$.ajax({
+		url: $form.attr('action') + '?id=' + encodeURIComponent($('#rso-comment-id').val()),
+		type: 'POST',
+		data: $form.serialize(),
+		dataType: 'json'
+	}).done(function(response) {
+		var calendarId = $('#rso-comment-id').val();
+		var $cell = $('#rso-comment-cell-' + calendarId);
+		var preview = response.comment.length > 20 ? response.comment.substring(0, 20) + '...' : response.comment;
+		$cell.find('.rso-comment-value').text(preview);
+		$cell.find('.rso-comment-view').attr('data-comment', response.comment);
+		if (response.comment !== '' && !$cell.find('.rso-comment-view').length) {
+			$cell.find('.rso-comment-value').after(' <button type="button" class="btn btn-xs btn-link rso-comment-view">View</button>');
+			$cell.find('.rso-comment-view').attr('data-comment', response.comment);
+		}
+		$cell.find('.rso-comment-edit').attr('data-comment', response.comment).text('Edit');
+		$('#rso-comment-modal').modal('hide');
+	}).fail(function(xhr) {
+		var message = 'The comment could not be saved.';
+		if (xhr.responseJSON && xhr.responseJSON.message) {
+			message = xhr.responseJSON.message;
+		}
+		$('.rso-comment-error').text(message).show();
+	});
+});
+<?php } ?>
 
 <?php if ($urlStatus['actionId']=='conflict') { ?>
 document.getElementById("del_sel_all").addEventListener("click", function(event){

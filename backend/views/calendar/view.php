@@ -11,6 +11,17 @@ use yii\widgets\DetailView;
 $this->title = $model->event_name;
 $this->params['breadcrumbs'][] = ['label' => 'Calendar List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$rsoComment = null;
+$remarks = json_decode($model->remarks, true);
+if (is_array($remarks)) {
+	foreach (array_reverse($remarks) as $remark) {
+		if (isset($remark['changed']) && strpos($remark['changed'], 'RSO-comment') === 0) {
+			$rsoComment = $remark;
+			break;
+		}
+	}
+}
 ?>
 <div class="row">
 	<div class="col-xs-12" class="calendar-view">
@@ -75,7 +86,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function($model) { if($model->deleted==0) return'Yes'; else return 'Deleted'; },
                 'headerOptions' => ['style' => 'width:5%'],
             ],
-
+			[	'attribute'=>'remarks',
+				'contentOptions' => ['style' => 'white-space:pre-line;'],
+				'label'=>'RSO Comments',
+				 'value' => function($model) use ($rsoComment) {
+					  if (!empty($rsoComment['created_at']) || !empty($rsoComment['changed'])) {
+						return Html::encode(trim((isset($rsoComment['created_at']) ? $rsoComment['created_at'].' ' : '').(isset($rsoComment['changed']) ? $rsoComment['changed'] : ''))). ' -- '.
+							Html::encode(isset($rsoComment['data']) ? $rsoComment['data'] : '');
+					  }  else { 
+						return '<p>No RSO comment recorded.</p>';
+					  }
+				 },
+				 'visible'=>(!empty($rsoComment)),
+			],
         ],
     ]) ?>
 	</div>

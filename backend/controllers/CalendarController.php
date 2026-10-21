@@ -32,6 +32,7 @@ class CalendarController extends AdminController {
 				'class' => VerbFilter::className(),
 				'actions' => [
 					'delete' => ['POST'],
+					'rso-comment' => ['POST'],
 				//	'recheck-future-conflicts' => ['POST'],
 				],
 			],
@@ -48,6 +49,40 @@ class CalendarController extends AdminController {
 			Yii::$app->getSession()->setFlash('success', 'Approved event id: '.$id);
 		} else {Yii::$app->getSession()->setFlash('error', 'it didnt save :(');}
 		return $this->redirect([$redir]);
+	}
+
+	public function actionRsoComment($id = null) {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+		$id = $id ?: Yii::$app->request->post('id');
+		if (!ctype_digit((string)$id) || (int)$id < 1) {
+			Yii::$app->response->statusCode = 400;
+			return ['success' => false, 'message' => 'Invalid calendar event.'];
+		}
+
+		$comment = trim(Yii::$app->request->post('comment', ''));
+		if ($comment === '') {
+			Yii::$app->response->statusCode = 400;
+			return ['success' => false, 'message' => 'Comment cannot be empty.'];
+		}
+
+		$model = $this->findModel($id);
+		if (date('Y-m-d', strtotime($model->event_date)) !== date('Y-m-d', strtotime($this->getNowTime()))) {
+			Yii::$app->response->statusCode = 403;
+			return ['success' => false, 'message' => 'RSO comments can only be changed on the event date.'];
+		}
+
+		$myRemarks = [
+			'created_at' => $this->getNowTime(),
+			'changed' => 'RSO-comment by '.$_SESSION['user'],
+			'data' => $comment,
+		];
+		$model->remarks = $this->mergeRemarks($model->remarks, $myRemarks);
+		if (!$model->save(false)) {
+			Yii::$app->response->statusCode = 500;
+			return ['success' => false, 'message' => 'The comment could not be saved.'];
+		}
+
+		return ['success' => true, 'comment' => $comment];
 	}
 
 	public function actionCreate() {
