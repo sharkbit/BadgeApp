@@ -89,7 +89,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 				if ( !in_array($badgeArray->status,$CanLogin) ) {
 					$MemStatus = (new MembershipStatus)->GetMemStatus($badgeArray->status);
 					Yii::$app->getSession()->setFlash('error', 'Badge '.$MemStatus.', Please See Staff.',false);
-					yii::$app->controller->createLog(true, 'Site_Login '.$MemStatus.':',$badgeArray->badge_number.' - '.$badgeArray->expires);
+					yii::$app->controller->createLog(true, 'Site_Login '.$MemStatus.':',$badgeArray->badge_number);
 					return false;
 				}
 				// does member have privileges?

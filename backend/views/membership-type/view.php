@@ -46,6 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[	'attribute'=>'renew_yearly',
 				'value'=>function($model) { if($model->renew_yearly=='1') {return 'Yes'; } else {return 'No'; } },
 			],
+			'multi_year',
             [       
                 'attribute'=>'status',
                 'value'=> function($model,$attribute) {

@@ -49,6 +49,9 @@ use kartik\money\MaskMoney;
 	<div class="col-xs-12 col-sm-6">
     <?= $form->field($model, 'renew_yearly')->dropDownList([ '1'=>'Yes', '0'=>'No', ],['value'=>$model->isNewRecord ? 1: $model->renew_yearly]) ?>
 	</div>
+	<div class="col-xs-6 col-sm-5">
+		<?= $form->field($model, 'multi_year')->textInput(['value'=>$model->isNewRecord ? 0: $model->multi_year])?>
+	</div>
 	<div class="col-xs-12 col-sm-6">
     <?= $form->field($model, 'status')->dropDownList([ '1'=>'Active', '0'=>'Inactive', ],['value'=>$model->isNewRecord ? 1: $model->status]) ?>
 	</div>

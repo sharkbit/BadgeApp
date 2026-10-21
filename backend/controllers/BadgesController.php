@@ -278,7 +278,7 @@ class BadgesController extends AdminController {
 
 		}
 		elseif(isset($_GET['reverify']) && ($_GET['reverify']=='true')) {			//   /badges/api-check?reverify=true
-			$model = Badges::find()->where("email_vrfy=0 AND email <>'' AND expires > '2016-01-01'")->orderBy(['badge_number' => SORT_ASC])->all();
+		//	$model = Badges::find()->where("email_vrfy=0 AND email <>''")->orderBy(['badge_number' => SORT_ASC])->all();
 
 			foreach ($model as $key => $member) {
 			//	if ($member->badge_number < 525 ) { continue; }
@@ -608,6 +608,7 @@ class BadgesController extends AdminController {
 						yii::$app->controller->createLog(true, 'Badge With WorkCredits Broke!', var_export($workCredit->getErrors()));
 					}
 				}
+yii::$app->controller->createLog(true, 'trex_C_BC newww', var_export($_REQUEST,true));
 
 				$badgeSubscriptionsModel = new BadgeSubscriptions();
 				$badgeSubscriptionsModel->badge_number = $model->badge_number;
@@ -619,9 +620,18 @@ class BadgesController extends AdminController {
 				$badgeSubscriptionsModel->paid_amount = $model->amt_due;
 				$badgeSubscriptionsModel->discount = $model->badge_fee - $model->amt_due;
 				$badgeSubscriptionsModel->sticker = $model->sticker;
-				$badgeSubscriptionsModel->transaction_type ='NEW';
 				$badgeSubscriptionsModel->club_id = $model->club_id;
 				$badgeSubscriptionsModel->cc_x_id = $model->cc_x_id;
+				
+				if($_POST['item_sku']=='Free') {
+					$badgeSubscriptionsModel->transaction_type = str_replace(' ', '-', trim(str_replace(['Badge', '.'], '', $_POST['item_name'])));
+				} elseif ($model->redeemable_credit==40) {
+					$badgeSubscriptionsModel->transaction_type = 'Free-WC';
+				} else {
+					$badgeSubscriptionsModel->transaction_type ='NEW';
+				}
+				
+				
 				if($badgeSubscriptionsModel->save(false)) {
 					if($model->save()) {
 					} else {
@@ -1097,7 +1107,13 @@ class BadgesController extends AdminController {
 				$model->transaction_type = 'NEW';
 				$badgeRecords->status = 'app';
 			} else {
-				$model->transaction_type = 'RENEW';
+				if($_POST['item_sku']=='Free') {
+					$model->transaction_type = str_replace(' ', '-', trim(str_replace(['Badge', '.'], '', $_POST['item_name'])));
+				} elseif ($model->redeemable_credit==40) {
+					$model->transaction_type = 'Free-WC';
+				} else {
+					$model->transaction_type = 'RENEW';
+				}
 			}
 
 			$model->club_id = $badgeRecords->club_id;

@@ -204,7 +204,7 @@ class MassEmailController extends AdminController {
 			if (filter_var($value['email'], FILTER_VALIDATE_EMAIL)) {
 
 				if ($value['status']=='approved' || $value['status']=='pending' || isset($_POST['email_test'])) {
-					//yii::$app->controller->createEmailLog(true, 'Mass-Email', $value['email'].', '.$value['expires'].', '.$value['badge_number']);
+					//yii::$app->controller->createEmailLog(true, 'Mass-Email', $value['email'].', - , '.$value['badge_number']);
 					try {
 						$mail = AdminController::emailSetup();
 						$mail->addCustomHeader('List-Unsubscribe', '<'.yii::$app->params['wp_site'].'/comms.php?unsubscribe='.$value['email'].'>');
@@ -227,7 +227,7 @@ class MassEmailController extends AdminController {
 						sleep(3);  // Default 3,  Throttled by cPanel ~ 2000 Emails per Hour
 	// testing					$mail->send();
 						//echo ->  Yii::$app->response->data = "Message has been sent<br />?n";
-						yii::$app->controller->createEmailLog(true, 'Mass-Email', "Sent to ".$value['email'].', '.$value['expires'].', '.$value['badge_number']);
+						yii::$app->controller->createEmailLog(true, 'Mass-Email', "Sent to ".$value['email'].', - , '.$value['badge_number']);
 					} catch (Exception $e) {
 						//echo 'Message could not be sent.';
 						//echo 'Mailer Error: ' . $mail->ErrorInfo;

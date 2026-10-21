@@ -1100,3 +1100,10 @@ CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURIT
 ALTER TABLE `BadgeDB`.`cal_calendar` 
 CHANGE COLUMN `sales_order` `sales_order` TEXT NULL DEFAULT NULL ;
 update  BadgeDB.cal_calendar set sales_order = null where sales_order = 0;
+
+-- for #?? 2026-10-22
+ALTER TABLE `BadgeDB`.`membership_type` 
+ADD COLUMN `multi_year` INT NULL DEFAULT 0 AFTER `renew_yearly`;
+update BadgeDB.membership_type set multi_year=15 where id = 70;
+ALTER TABLE `BadgeDB`.`badge_subscriptions` 
+CHANGE COLUMN `transaction_type` `transaction_type` VARCHAR(15) NULL DEFAULT NULL ;

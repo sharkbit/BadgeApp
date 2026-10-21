@@ -30,7 +30,7 @@ class MembershipType extends \yii\db\ActiveRecord{
         return [
            [['type', 'status','renew_yearly'], 'required'],
            [['status'], 'string'],
-		   [['renew_yearly'], 'integer'],
+		   [['multi_year','renew_yearly'], 'integer'],
            [['type'], 'string', 'max' => 25],
        ];
     }
@@ -49,7 +49,7 @@ class MembershipType extends \yii\db\ActiveRecord{
 		if(!isset($sku_data->price)){
 			$sku_data = new \stdClass();
 			$sku_data->price='0.00';
-			$sku_data->item='Free';
+			$sku_data->item='Free-'.$this->type;
 			$sku_data->sku='00000';
 		}
 		return $sku_data;
@@ -60,7 +60,7 @@ class MembershipType extends \yii\db\ActiveRecord{
 		if(!isset($sku_data->price)){
 			$sku_data = new \stdClass();
 			$sku_data->price='0.00';
-			$sku_data->item='Free';
+			$sku_data->item='Free-'.$this->type;
 			$sku_data->sku='00000';
 		}
 		return $sku_data;
