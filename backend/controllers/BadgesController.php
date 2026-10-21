@@ -608,7 +608,6 @@ class BadgesController extends AdminController {
 						yii::$app->controller->createLog(true, 'Badge With WorkCredits Broke!', var_export($workCredit->getErrors()));
 					}
 				}
-yii::$app->controller->createLog(true, 'trex_C_BC newww', var_export($_REQUEST,true));
 
 				$badgeSubscriptionsModel = new BadgeSubscriptions();
 				$badgeSubscriptionsModel->badge_number = $model->badge_number;
@@ -622,7 +621,7 @@ yii::$app->controller->createLog(true, 'trex_C_BC newww', var_export($_REQUEST,t
 				$badgeSubscriptionsModel->sticker = $model->sticker;
 				$badgeSubscriptionsModel->club_id = $model->club_id;
 				$badgeSubscriptionsModel->cc_x_id = $model->cc_x_id;
-				
+
 				if($_POST['item_sku']=='Free') {
 					$badgeSubscriptionsModel->transaction_type = str_replace(' ', '-', trim(str_replace(['Badge', '.'], '', $_POST['item_name'])));
 				} elseif ($model->redeemable_credit==40) {
@@ -630,8 +629,7 @@ yii::$app->controller->createLog(true, 'trex_C_BC newww', var_export($_REQUEST,t
 				} else {
 					$badgeSubscriptionsModel->transaction_type ='NEW';
 				}
-				
-				
+
 				if($badgeSubscriptionsModel->save(false)) {
 					if($model->save()) {
 					} else {
