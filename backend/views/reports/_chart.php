@@ -1,5 +1,6 @@
 <?php
 
+use kartik\export\ExportMenu;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\web\View;
@@ -55,6 +56,29 @@ foreach ($datasetTypes as $index => $type) {
 
 $hasY2Axis = !empty($chartMeta->y2_axis);
 if ($hasY2Axis) {
+	foreach ($datasetTypes as $index => $type) {
+		$cumulativeTotal = 0;
+		$cumulativeTotals = [];
+		foreach ($labels as $month) {
+			$cumulativeTotal += $counts[$type][$month] ?? 0;
+			$cumulativeTotals[] = $cumulativeTotal;
+		}
+
+		$color = $colors[$index % count($colors)];
+		$datasets[] = [
+			'type' => 'line',
+			'label' => $type . ' Total',
+			'data' => $cumulativeTotals,
+			'yAxisID' => 'y2',
+			'borderColor' => $color['border'],
+			'backgroundColor' => $color['border'],
+			'borderWidth' => 2,
+			'pointRadius' => 3,
+			'tension' => 0.2,
+			'fill' => false,
+		];
+	}
+
 	$cumulativeTotal = 0;
 	$cumulativeTotals = [];
 	foreach ($labels as $month) {
@@ -160,9 +184,46 @@ $this->registerJs(
 	View::POS_READY
 );
 
-
 ?>
 <?= $this->render('_tab-year') ?>
+
+<div class="row">
+	<div class="col-xs-6 col-sm-6">
+		<div class="reports-export">
+	<?= ExportMenu::widget([
+		'dataProvider' => $dataProvider,
+		'columns' => [
+			[
+				'attribute' => $chartMeta->x_axis_field,
+				'label' => $chartMeta->x_axis_title,
+			],
+			[
+				'attribute' => $chartMeta->y_axis_field,
+				'label' => ucfirst(str_replace('_', ' ', $chartMeta->y_axis_field)),
+			],
+			[
+				'attribute' => 'item_count',
+				'label' => $chartMeta->y_axis_title,
+			],
+		],
+		'fontAwesome' => true,
+		'batchSize' => 0,
+		'clearBuffers' => true,
+		'filename' => $this->title,
+		'target' => '_blank',
+		'exportConfig' => [
+			ExportMenu::FORMAT_HTML => false,
+			ExportMenu::FORMAT_EXCEL => false,
+			ExportMenu::FORMAT_EXCEL_X => false,
+			ExportMenu::FORMAT_PDF => false
+		],
+	]) ?>
+		</div>
+	</div>
+		<div class="col-xs-6 col-sm-6 text-right">
+<p>Check out all the <a href="https://www.chartjs.org/docs/latest/samples/information.html" target="charts">Charts </a></p>
+	</div>
+</div>
 
 <div class="reports-index">
 	<!-- <h1><?= Html::encode($this->title ?: 'Reports') ?></h1> -->
@@ -175,5 +236,3 @@ $this->registerJs(
 	<?php } ?>
 </div>
 
-<br />
-<p>Check out all the <a href="https://www.chartjs.org/docs/latest/samples/information.html" target="charts">Charts </a></p>
