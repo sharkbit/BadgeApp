@@ -1095,3 +1095,8 @@ CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURIT
 CREATE OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_events` AS
     SELECT vea.ea_calendar_id, vea.attended_badges, vea.attended_guests, vea.wb_out_zero, vce.event_date, vce.cal_start_time, vce.cal_end_time, vce.event_name, vce.event_status_name, vce.event_status_id, vce.club_name, vce.short_name, vce.club_id, vce.poc_badge, vce.sales_order, vce.allow_guests, vce.track_wristbands, vce.cal_inst, vce.is_volunteer, vce.credit_hours, vce.issued_vol, vce.cal_remarks
     FROM `view_event_att` vea LEFT JOIN view_cal_event vce ON vea.ea_calendar_id = vce.calendar_id order by ea_calendar_id desc;
+
+-- for #306  2026-10-21
+ALTER TABLE `BadgeDB`.`cal_calendar` 
+CHANGE COLUMN `sales_order` `sales_order` TEXT NULL DEFAULT NULL ;
+update  BadgeDB.cal_calendar set sales_order = null where sales_order = 0;
