@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use backend\models\Params;
 
-$startYear = 2017;
 $currentYear = (int)date('Y');
 
 $params = Params::findOne('1');
@@ -18,17 +17,19 @@ if ($DateChk <= $nowDate) {
 
 $yearParam = Yii::$app->request->get('year', $currentYear);
 $selectedYear = $yearParam === 'all' ? null : filter_var($yearParam, FILTER_VALIDATE_INT);
-$selectedYear = ($selectedYear !== false && $selectedYear >= $startYear && $selectedYear <= $throughYear)
+$selectedYear = ($selectedYear !== false && $selectedYear >= $firstYear && $selectedYear <= $throughYear)
 	? $selectedYear
 	: null;
+$reportRoute = '/reports/' . Yii::$app->controller->action->id;
+$studentParams = !empty($student) ? ['student' => 1] : [];
 ?>
 <ul class="nav nav-tabs">
 	<li class="<?= $selectedYear === null ? 'active' : '' ?>">
-		<?= Html::a('All', Url::to(['/reports/index', 'year' => 'all'])) ?>
+		<?= Html::a('All', Url::to(array_merge([$reportRoute, 'year' => 'all'], $studentParams))) ?>
 	</li>
-	<?php for ($year = $startYear; $year <= $throughYear; $year++) { ?>
+	<?php for ($year = $firstYear; $year <= $throughYear; $year++) { ?>
 		<li class="<?= $year === $selectedYear ? 'active' : '' ?>">
-			<?= Html::a((string)$year, Url::to(['/reports/index', 'year' => $year])) ?>
+			<?= Html::a((string)$year, Url::to(array_merge([$reportRoute, 'year' => $year], $studentParams))) ?>
 		</li>
 	<?php } ?>
 </ul>

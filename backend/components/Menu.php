@@ -100,13 +100,36 @@ class Menu extends Widget{
 			'label'=>'Reports',
 			'loc'=>['prod','dev'],
 			'url' => '/reports/index',
-//			'color' => 'btn-default',
 		],
 		[
 			'label'=>'Admin Functions',
 			'loc'=>['prod','dev'],
 			'url' => '/site/admin-menu',
 			'color' => 'btn-warning',
+		],
+
+	];
+
+	public $reportsMenu = [
+		[
+			'label'=>'Active Badges',
+			'loc'=>['prod','dev'],
+			'url' => '/reports/active-badges',
+		],
+		[
+			'label'=>'CIO Report',
+			'loc'=>['prod','dev'],
+			'url' => '/reports/cio-report',
+		],
+		[
+			'label'=>'Events Report',
+			'loc'=>['prod','dev'],
+			'url' => '/reports/events-report',
+		],
+		[
+			'label'=>'Guest Report',
+			'loc'=>['prod','dev'],
+			'url' => '/reports/guest-report',
 		],
 
 	];
@@ -211,15 +234,19 @@ class Menu extends Widget{
 	protected function generateMenu($type,$privilege) {
 		$html ='';
 		$param = Params::find()->one();
-		if($type=='admin') {
+		if ($type == 'admin') {
 			$print_menu =  $this->adminMenu;
+		} elseif ($type == 'reports') {
+			$print_menu = $this->reportsMenu;
 		} else {
 			$print_menu =  $this->mainMenu;
 			if ((file_exists($param->remote_users)) && (isset($_SESSION['r_user']) && ($_SESSION['r_user'] !=null))) {
 				$print_menu = array_merge($print_menu, [['label'=>'Remote User Password','loc'=>['prod','dev'],'url' => '/params/password','color' => 'btn-warning',],]);
 			}
 		}
-		$print_menu = array_merge($print_menu, $this->LastMenu);
+		if ($type !== 'reports') {
+			$print_menu = array_merge($print_menu, $this->LastMenu);
+		}
 
 		if (in_array(5,json_decode(yii::$app->user->identity->privilege))) {
 			$member = (New Badges)->find()->where(['badge_number'=>$_SESSION['badge_number'],'status'=>'self'])->one();

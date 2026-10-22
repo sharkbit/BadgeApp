@@ -8,7 +8,10 @@ use yii\web\View;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\SqlDataProvider */
 
-$this->title = 'Reports';
+$this->title = $chartMeta->title;
+$this->params['breadcrumbs'][] = ['label'=>'Reports', 'url'=>['/reports']];
+$this->params['breadcrumbs'][] = ['label'=>$chartMeta->title];
+
 $reports = $dataProvider->getModels();
 $months = [];
 $types = [];
@@ -32,12 +35,21 @@ $datasetTypes = array_keys($types);
 sort($datasetTypes, SORT_NATURAL | SORT_FLAG_CASE);
 
 $colors = [
+	['background' => 'rgba(75, 192, 192, 0.7)', 'border' => 'rgba(75, 192, 192, 1)'],
 	['background' => 'rgba(54, 162, 235, 0.7)', 'border' => 'rgba(54, 162, 235, 1)'],
 	['background' => 'rgba(255, 99, 132, 0.7)', 'border' => 'rgba(255, 99, 132, 1)'],
-	['background' => 'rgba(255, 206, 86, 0.7)', 'border' => 'rgba(255, 206, 86, 1)'],
-	['background' => 'rgba(75, 192, 192, 0.7)', 'border' => 'rgba(75, 192, 192, 1)'],
 	['background' => 'rgba(153, 102, 255, 0.7)', 'border' => 'rgba(153, 102, 255, 1)'],
+	['background' => 'rgba(255, 206, 86, 0.7)', 'border' => 'rgba(255, 206, 86, 1)'],
 	['background' => 'rgba(255, 159, 64, 0.7)', 'border' => 'rgba(255, 159, 64, 1)'],
+	['background' => 'rgba(201, 203, 207, 0.7)', 'border' => 'rgba(201, 203, 207, 1)'],
+	['background' => 'rgba(46, 204, 113, 0.7)', 'border' => 'rgba(46, 204, 113, 1)'],
+	['background' => 'rgba(26, 188, 156, 0.7)', 'border' => 'rgba(26, 188, 156, 1)'],
+	['background' => 'rgba(52, 152, 219, 0.7)', 'border' => 'rgba(52, 152, 219, 1)'],
+	['background' => 'rgba(142, 68, 173, 0.7)', 'border' => 'rgba(142, 68, 173, 1)'],
+	['background' => 'rgba(241, 196, 15, 0.7)', 'border' => 'rgba(241, 196, 15, 1)'],
+	['background' => 'rgba(230, 126, 34, 0.7)', 'border' => 'rgba(230, 126, 34, 1)'],
+	['background' => 'rgba(231, 76, 60, 0.7)', 'border' => 'rgba(231, 76, 60, 1)'],
+	['background' => 'rgba(52, 73, 94, 0.7)', 'border' => 'rgba(52, 73, 94, 1)'],
 ];
 
 $datasets = [];
@@ -56,6 +68,20 @@ foreach ($datasetTypes as $index => $type) {
 
 $hasY2Axis = !empty($chartMeta->y2_axis);
 if ($hasY2Axis) {
+	$totalChartData = [];
+	foreach ($datasetTypes as $index => $type) {
+		$total = 0;
+		foreach ($labels as $month) {
+			$total += $counts[$type][$month] ?? 0;
+		}
+		$totalChartData[] = [
+			'label' => $type,
+			'value' => $total,
+			'backgroundColor' => $colors[$index % count($colors)]['background'],
+			'borderColor' => $colors[$index % count($colors)]['border'],
+		];
+	}
+
 	foreach ($datasetTypes as $index => $type) {
 		$cumulativeTotal = 0;
 		$cumulativeTotals = [];
@@ -183,12 +209,49 @@ $this->registerJs(
 	. '}',
 	View::POS_READY
 );
+if ($hasY2Axis) {
+	$this->registerJs(
+		'const totalsCanvas = document.getElementById("totalsChart");'
+		. 'if (totalsCanvas) {'
+		. 'const totals = ' . Json::htmlEncode($totalChartData) . ';'
+		. 'new Chart(totalsCanvas, {'
+		. 'type: "doughnut",'
+		. 'data: {'
+		. 'labels: totals.map(function (item) { return item.label; }),'
+		. 'datasets: [{'
+		. 'data: totals.map(function (item) { return item.value; }),'
+		. 'backgroundColor: totals.map(function (item) { return item.backgroundColor; }),'
+		. 'borderColor: totals.map(function (item) { return item.borderColor; }),'
+		. 'borderWidth: 1'
+		. '}]'
+		. '},'
+		. 'options: {responsive: true, maintainAspectRatio: false,'
+		. 'plugins: {'
+		. 'title: {display: true, text: ' . Json::htmlEncode($chartMeta->title . ' Totals') . ', font: {size: 24}},'
+		. 'legend: {position: "top"},'
+		. 'tooltip: {callbacks: {label: function (context) {'
+		. 'const values = context.dataset.data;'
+		. 'const total = values.reduce(function (sum, value) { return sum + Number(value || 0); }, 0);'
+		. 'const value = Number(context.raw) || 0;'
+		. 'const percentage = total > 0 ? (value / total * 100).toFixed(1) : "0.0";'
+		. 'return context.label + ": " + value + " (" + percentage + "%)";'
+		. '}}}'
+		. '}'
+		. '}'
+		. '});'
+		. '}',
+		View::POS_READY
+	);
+}
 
 ?>
-<?= $this->render('_tab-year') ?>
+<?= $this->render('_tab-year', [
+	'firstYear' => $chartMeta->firstYear,
+	'student' => !empty($chartMeta->student),
+]) ?>
 
 <div class="row">
-	<div class="col-xs-6 col-sm-6">
+	<div class="col-xs-6 col-sm-4">
 		<div class="reports-export">
 	<?= ExportMenu::widget([
 		'dataProvider' => $dataProvider,
@@ -220,7 +283,21 @@ $this->registerJs(
 	]) ?>
 		</div>
 	</div>
-		<div class="col-xs-6 col-sm-6 text-right">
+	<div class="col-xs-4 col-sm-4">
+		<?php if (isset($chartMeta->student)) { ?>
+			<?= Html::beginForm(['/reports/' . Yii::$app->controller->action->id], 'get') ?>
+			<?= Html::hiddenInput('year', Yii::$app->request->get('year', date('Y'))) ?>
+			<div class="text-center">
+				<?= Html::checkbox('student', (bool)$chartMeta->student, [
+					'value' => 1,
+					'label' => 'Only events with attendees',
+				]) ?>
+				<?= Html::submitButton('Update Chart', ['class' => 'btn btn-primary']) ?>
+			</div>
+			<?= Html::endForm() ?>
+		<?php } ?>
+	</div>
+	<div class="col-xs-4 col-sm-4 text-right">
 <p>Check out all the <a href="https://www.chartjs.org/docs/latest/samples/information.html" target="charts">Charts </a></p>
 	</div>
 </div>
@@ -234,5 +311,9 @@ $this->registerJs(
 	<?php if (empty($reports)) { ?>
 		<p>No report data is available.</p>
 	<?php } ?>
+	<?php if ($hasY2Axis) { ?>
+		<div class="chart-container" style="position: relative; width: 100%; min-height: 420px; margin-top: 24px;">
+			<canvas id="totalsChart" role="img" aria-label="<?= Html::encode($chartMeta->title . ' Totals') ?>"></canvas>
+		</div>
+	<?php } ?>
 </div>
-

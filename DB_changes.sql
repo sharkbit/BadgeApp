@@ -1107,3 +1107,15 @@ ADD COLUMN `multi_year` INT NULL DEFAULT 0 AFTER `renew_yearly`;
 update BadgeDB.membership_type set multi_year=15 where id = 70;
 ALTER TABLE `BadgeDB`.`badge_subscriptions` 
 CHANGE COLUMN `transaction_type` `transaction_type` VARCHAR(15) NULL DEFAULT NULL ;
+
+-- for #306 2026-10-22
+CREATE TABLE `BadgeDB`.`guest_type` (
+  `gt_id` INT NOT NULL AUTO_INCREMENT,
+  `gt_code` VARCHAR(1) NOT NULL,
+  `gt_name` VARCHAR(25) NOT NULL,
+  `is_active` BOOLEAN NOT NULL DEFAULT 1,
+  PRIMARY KEY (`gt_id`),
+  UNIQUE INDEX `gt_code_UNIQUE` (`gt_code` ASC) VISIBLE);
+  
+INSERT INTO `guest_type` (`gt_code`, `gt_name`) 
+	VALUES ('1','Shooter'),('m', 'Minor'), ('o','Observer'),('s','Spouse'),('y','Youth Participant');
