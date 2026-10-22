@@ -175,8 +175,7 @@ class ReportsController extends AdminController {
 			$params[':yearEnd'] = ($selectedYear + 1) . '-01-01';
 		}
 		$sql .= " GROUP BY DATE_FORMAT(event_date, '%Y-%m'), event_status_name";
-		
-yii::$app->controller->createLog(true, 'trex_sql_sql', var_export($sql,true));
+
 		$dataProvider = new SqlDataProvider([
 			'sql' => $sql,
 			'params' => $params,
