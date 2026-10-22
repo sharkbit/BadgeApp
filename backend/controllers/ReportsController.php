@@ -55,7 +55,7 @@ class ReportsController extends AdminController {
 
 
 		$selectedYear = filter_var($year, FILTER_VALIDATE_INT);
-		if ($selectedYear === false || $selectedYear < 2017 || $selectedYear > (int)date('Y')) {
+		if ($selectedYear === false || $selectedYear < 2017 || $selectedYear > (int)date('Y')+1) {
 			$selectedYear = null;
 		}
 
@@ -67,9 +67,8 @@ class ReportsController extends AdminController {
 				WHERE created_at >= :startDate";
 		$params = [':startDate' => '2016-11-01'];
 		if ($selectedYear !== null) {
-			$sql .= " AND created_at < :endDate";
-			$params[':startDate'] = ($selectedYear - 1) . '-11-01';
-			$params[':endDate'] = $selectedYear . '-11-01';
+			$sql .= " AND badge_year = :endDate";
+			$params[':endDate'] = $selectedYear;
 		}
 		$sql .= " GROUP BY DATE_FORMAT(created_at, '%Y-%m'), transaction_type";
 
