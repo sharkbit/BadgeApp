@@ -48,7 +48,7 @@ class AdminController extends \yii\web\Controller {
 		'MassEmail' => ['mass-email/create','mass-email/index','mass-email/update','mass-email/send','mass-email/process'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
 		'Clubs' => ['clubs/roles','clubs/role-create','clubs/role-delete','clubs/role-update','clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update','clubs/index','clubs/create','clubs/update','clubs/view','clubs/badge-rosters'],
-		'Events' => ['events/approve','events/add-att','events/issue-credit','events/delete','events/index','events/reg','events/remove-att','events/view'],
+		'Events' => ['events/approve','events/add-att','events/issue-credit','events/delete','events/index','events/reg','events/remove-att','events/update-director','events/view'],
 		'Guest' => ['guest/all','guest/update','guest/delete','guest/stats'],
 		'Report' => ['reports/index','reports/active-badges','reports/cio-report','reports/guest-report','reports/events-report'],
 		'Rso Report'=>['rso-rpt/close_mod','rso-rpt/index','rso-rpt/print-todays-events','rso-rpt/remarks','rso-rpt/settings','rso-rpt/sticker','rso-rpt/view','sticker/add','sticker/move','rso-rpt/sticker-update'],

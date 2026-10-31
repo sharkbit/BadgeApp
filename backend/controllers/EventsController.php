@@ -146,8 +146,8 @@ class EventsController extends AdminController {
 		$salesOrder = Yii::$app->request->post('sales_order');
 		if ($salesOrder === null || $salesOrder === '') {
 			$salesOrder = null;
-		} elseif (!is_string($salesOrder) || filter_var($salesOrder, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) === false) {
-			Yii::$app->session->setFlash('error', 'Sales order must be a non-negative integer.');
+		} elseif (!is_string($salesOrder)) {
+			Yii::$app->session->setFlash('error', 'Sales order must be a Leters and Nunmbers.');
 			return $this->redirect(['view', 'id' => $id]);
 		}
 

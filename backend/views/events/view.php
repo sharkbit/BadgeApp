@@ -143,7 +143,7 @@ $div_closed=false;
 			</div>
 			<div class="form-group">
 				<?= Html::label('Sales Order', $salesOrderInputId) ?>
-				<?= Html::input('number', 'sales_order', $salesOrder, [
+				<?= Html::input('text', 'sales_order', $salesOrder, [
 					'id' => $salesOrderInputId,
 					'class' => 'form-control',
 					'min' => 0,
