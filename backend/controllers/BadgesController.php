@@ -624,7 +624,7 @@ class BadgesController extends AdminController {
 
 				if($_POST['item_sku']=='Free') {
 					$badgeSubscriptionsModel->transaction_type = str_replace(' ', '-', trim(str_replace(['Badge', '.'], '', $_POST['item_name'])));
-				} elseif ($model->redeemable_credit==40) {
+				} elseif ((!empty($model->redeemable_credit)) && $model->redeemable_credit==40) {
 					$badgeSubscriptionsModel->transaction_type = 'Free-WC';
 				} else {
 					$badgeSubscriptionsModel->transaction_type ='NEW';
