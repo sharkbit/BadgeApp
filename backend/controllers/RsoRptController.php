@@ -143,19 +143,26 @@ class RsoRptController extends AdminController {
 		if($dataProvider) {
 	//	return $this->render('_Print_Todays-Events',['dataProvider'=>$dataProvider]);
 		$PgOne = $this->renderPartial('_Print_Todays-Events',['dataProvider'=>$dataProvider]);
-		
-		$mpdf = new \Mpdf\Mpdf([
-			'margin_left' => 5,
-			'margin_right' => 5,
-			'margin_top' => 5,
-			'margin_bottom' => 5
-			]);
-		$mpdf->shrink_tables_to_fit = 1;
-		$mpdf->SetTitle('RSO Events '.date('Y-m-d'));
-		$mpdf->WriteHTML($PgOne);
 
-		$mpdf->Output("rso_events_".date('Y-m-d'),'I');
-		
+		$options = new \Dompdf\Options();
+		$options->set('title', 'RSO Events ' . date('Y-m-d'));
+		$dompdf = new \Dompdf\Dompdf($options);
+		$dompdf->loadHtml(
+			'<style>@page { margin: 5mm; }</style>' . $PgOne,
+			'UTF-8'
+		);
+		$dompdf->setPaper('A4', 'portrait');
+		$dompdf->render();
+		$response = Yii::$app->response;
+		$response->format = \yii\web\Response::FORMAT_RAW;
+		$response->headers->set('Content-Type', 'application/pdf');
+		$response->headers->set(
+			'Content-Disposition',
+			'inline; filename="rso_events_' . date('Y-m-d') . '.pdf"'
+		);
+		$response->content = $dompdf->output();
+		return $response;
+
 		} else {
 			Yii::$app->getSession()->setFlash('error', 'No events for today.');
 			return $this->redirect(['index']);

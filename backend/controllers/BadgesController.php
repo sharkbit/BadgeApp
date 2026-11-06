@@ -1008,21 +1008,51 @@ class BadgesController extends AdminController {
 		$this->UpdateQR($badgeModel);
 		$PgOne = $this->renderPartial('_badge-print-view',['model'=>$badgeModel,'page'=>1,'chk'=>$ty]);
 		$PgThr = $this->renderPartial('_badge-print-view',['model'=>$badgeModel,'page'=>3]);
-		$mpdf = new \Mpdf\Mpdf([
-			'mode' => 'c',
-			'margin_left' => 0,
-			'margin_right' => 0,
-			'margin_top' => 0,
-			'margin_bottom' => 0,
-			'format' => [54,86],
-			]);
-		$mpdf->SetTitle('AGC: '.$badgeModel->badge_number);
-		$mpdf->WriteHTML($PgOne);
+		$barcodeGenerator = new \Picqer\Barcode\BarcodeGeneratorSVG();
+		$PgThr = preg_replace_callback(
+			'/<barcode\b[^>]*\bcode=(["\'])(.*?)\1[^>]*\/?>/i',
+			static function ($matches) use ($barcodeGenerator) {
+				$code = html_entity_decode($matches[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+				$svg = $barcodeGenerator->getBarcode(
+					$code,
+					$barcodeGenerator::TYPE_CODE_128,
+					1.2,
+					40
+				);
+				return '<img class="barcode" src="data:image/svg+xml;base64,'
+					. base64_encode($svg)
+					. '" style="width:81.6px;height:40px;" />';
+			},
+			$PgThr
+		);
+		$webroot = Yii::getAlias('@webroot');
+		$webrootPath = str_replace(DIRECTORY_SEPARATOR, '/', $webroot);
+		$fileBase = 'file://' . (preg_match('/^[A-Za-z]:\//', $webrootPath) ? '/' : '') . $webrootPath;
+		$rootUrl = rtrim(Yii::$app->params['rootUrl'], '/');
+		$PgOne = str_replace($rootUrl, $fileBase, $PgOne);
+		$PgThr = str_replace($rootUrl, $fileBase, $PgThr);
+		$PgOne = '<div style="position:absolute; top:0; left:86mm; width:54mm; height:86mm; '
+			. 'transform:rotate(90deg); transform-origin:top left;">' . $PgOne . '</div>';
+		$html = '<!doctype html><html><head><meta charset="UTF-8"><style>'
+			. '@page { margin: 0; } html, body { margin: 0; padding: 0; }'
+			. '</style></head><body>' . $PgOne
+			. '<div style="page-break-before:always"></div>' . $PgThr
+			. '</body></html>';
 
-		$mpdf->AddPage('L');
-		$mpdf->WriteHTML($PgThr);
-
-		$mpdf->Output($badge_number.'_'.$ty,'I');
+		$options = new \Dompdf\Options();
+		$options->setChroot($webroot);
+		$options->set('title', 'AGC: ' . $badgeModel->badge_number);
+		$dompdf = new \Dompdf\Dompdf($options);
+		$dompdf->setPaper([0, 0, 86 * 72 / 25.4, 54 * 72 / 25.4]);
+		$dompdf->loadHtml($html, 'UTF-8');
+		$dompdf->render();
+		$filename = preg_replace('/[^A-Za-z0-9_-]/', '', $badge_number . '_' . $ty) . '.pdf';
+		$response = Yii::$app->response;
+		$response->format = \yii\web\Response::FORMAT_RAW;
+		$response->headers->set('Content-Type', 'application/pdf');
+		$response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
+		$response->content = $dompdf->output();
+		return $response;
 	}
 
 	public function actionPrintRcpt ($x_id,$badge_number,$email=false,$first=null) {  //Reciept Email or Print
