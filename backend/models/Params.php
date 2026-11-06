@@ -28,7 +28,7 @@ class Params extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['sell_date','guest_sku','guest_total'], 'required'],
+            [['sell_date'], 'required'],
 			[['pp_id','pp_sec','remote_users','usps_api',],'string'],
 			[['rso_email'],'safe'],
 			[['conv_p_merc_id','conv_p_user_id','conv_p_pin','conv_d_merc_id','conv_d_user_id','conv_d_pin'],'string'],

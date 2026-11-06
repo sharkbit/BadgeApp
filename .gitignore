@@ -18,6 +18,8 @@ backend\config\main-local.php
 backend/config/main-local.php
 common\config\main-local.php
 common/config/main-local.php
+common\config\test-local.php
+common/config/test-local.php
 vendor
 comms_constants.php
 backend/web/passwd

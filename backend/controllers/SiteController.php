@@ -16,6 +16,7 @@ use backend\models\clubs;
 use backend\models\Guest;
 use backend\models\LoginAccess;
 use backend\models\MembershipStatus;
+use backend\models\InitialAdminForm;
 use backend\models\Params;
 use backend\models\Privileges;
 
@@ -236,6 +237,22 @@ class SiteController extends AdminController {
 	public function actionLogin() {
 		if (!Yii::$app->user->isGuest) {
 			return $this->goHome();
+		}
+
+		if (InitialAdminForm::isSetupRequired()) {
+			$setupModel = new InitialAdminForm();
+			if ($setupModel->load(Yii::$app->request->post())) {
+				$user = $setupModel->createFirstAdmin();
+				if ($user !== null) {
+					Yii::$app->user->login($user, 0);
+					Yii::$app->getSession()->setFlash('success', 'Initial administrator account created.');
+					return $this->goHome();
+				}
+			}
+
+			return $this->render('initial-admin', [
+				'model' => $setupModel,
+			]);
 		}
 
 		$model = new LoginForm();

@@ -1119,3 +1119,23 @@ CREATE TABLE `BadgeDB`.`guest_type` (
   
 INSERT INTO `guest_type` (`gt_code`, `gt_name`) 
 	VALUES ('1','Shooter'),('m', 'Minor'), ('o','Observer'),('s','Spouse'),('y','Youth Participant');
+    
+-- database cleanup 2026-11-01
+ALTER TABLE `BadgeDB`.`params` 
+DROP COLUMN `qb_env`,
+CHANGE COLUMN `remote_users` `remote_users` VARCHAR(100) NULL DEFAULT NULL AFTER `sell_date`,
+CHANGE COLUMN `whitelist` `whitelist` TEXT NULL DEFAULT NULL AFTER `remote_users`,
+CHANGE COLUMN `rso_email` `rso_email` TEXT NULL DEFAULT NULL AFTER `whitelist`,
+CHANGE COLUMN `status` `status` ENUM('active', 'disabled') NULL DEFAULT NULL AFTER `rso_email`,
+CHANGE COLUMN `log_rotate` `log_rotate` INT NULL DEFAULT NULL AFTER `status`,
+CHANGE COLUMN `check_ip` `check_ip` VARCHAR(45) NULL DEFAULT NULL AFTER `log_rotate`,
+CHANGE COLUMN `check_ip_name` `check_ip_name` VARCHAR(45) NULL DEFAULT NULL AFTER `check_ip`,
+CHANGE COLUMN `usps_api` `usps_api` VARCHAR(45) NULL DEFAULT NULL AFTER `check_ip_name`,
+CHANGE COLUMN `sku_student` `sku_student` VARCHAR(15) NULL DEFAULT NULL AFTER `guest_total`,
+CHANGE COLUMN `sku_wc_discount` `sku_wc_discount` VARCHAR(15) NULL DEFAULT NULL AFTER `sku_student`,
+CHANGE COLUMN `id` `id` INT NOT NULL ,
+CHANGE COLUMN `guest_sku` `guest_sku` INT NULL DEFAULT NULL ,
+CHANGE COLUMN `guest_total` `guest_total` INT NULL DEFAULT NULL ,
+ADD UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE;
+;
+
