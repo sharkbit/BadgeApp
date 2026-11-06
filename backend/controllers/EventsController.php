@@ -151,20 +151,8 @@ class EventsController extends AdminController {
 			return $this->redirect(['view', 'id' => $id]);
 		}
 
-		$attributes = [];
-		if ((int)$calendar->cal_inst !== (int)$badgeNumber) {
-			$attributes['cal_inst'] = (int)$badgeNumber;
-		}
-		if ($calendar->sales_order !== $salesOrder) {
-			$attributes['sales_order'] = $salesOrder;
-		}
-		if ($attributes && $calendar->updateAttributes($attributes) === false) {
-			Yii::$app->session->setFlash('error', 'The event details could not be updated.');
-			return $this->redirect(['view', 'id' => $id]);
-		}
-
-		$this->createLog($this->getNowTime(), $_SESSION['user'], "Event details updated for event #$id (director: $badgeNumber, sales order: " . ($salesOrder ?? 'none') . ").");
-		Yii::$app->session->setFlash('success', 'Event details have been updated.');
+		$this->createLog($this->getNowTime(), $_SESSION['user'], "Event Director has been updated. ($badgeNumber) for event #$id");
+		Yii::$app->session->setFlash('success', 'Event Director has been updated.');
 		return $this->redirect(['view', 'id' => $id]);
 	}
 

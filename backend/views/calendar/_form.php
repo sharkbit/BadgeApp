@@ -235,13 +235,6 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 		</div>
 <?php } else { ?>
 		<?= $form->field($model, 'is_event')->hiddenInput()->label(false) ?>
-<?php }
-if(yii::$app->controller->hasPermission('sales/summary')) { ?>
-		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2">
-			<?= $form->field($model, 'sales_order')->textInput().PHP_EOL ?>
-		</div>
-<?php } else { ?>
-		<?= $form->field($model, 'sales_order')->hiddenInput()->label(false) ?>
 <?php } ?>
 		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<?= $form->field($model, 'date_requested')->textInput(['readonly'=>true,'maxlength'=>true]).PHP_EOL ?>
