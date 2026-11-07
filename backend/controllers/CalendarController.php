@@ -284,6 +284,27 @@ class CalendarController extends AdminController {
 					->where(['<', 'ea_calendar_id', 3000])						
 			])
 			->andWhere(['calendar_id'=>0])
+			->andWhere(['or',
+				['like', 'e_name', 'trap'],
+			])
+			->column();
+		$defaults = (object) [
+			'event_status_id'=>2,
+			'facility_id' => '[17]',
+			'lanes_req' => NULL,
+		];
+		$trapResults = $this->runMergeOldEvents($selection, $defaults);
+
+		$selection = (new Query())
+			->select(['e_id'])
+			->from('BadgeDB.events_old')
+			->where(['in', 'e_id', 
+				(new Query())
+					->select(['ea_calendar_id'])->distinct()
+					->from('BadgeDB.event_attendee')
+					->where(['<', 'ea_calendar_id', 3000])						
+			])
+			->andWhere(['calendar_id'=>0])
 			->andWhere(['e_type'=>'vol'])
 			->column();
 		$defaults = (object) [
@@ -293,9 +314,26 @@ class CalendarController extends AdminController {
 		];
 		$volunteerResults = $this->runMergeOldEvents($selection, $defaults);
 		
+		$selection = (new Query())
+			->select(['e_id'])
+			->from('BadgeDB.events_old')
+			->where(['in', 'e_id', 
+				(new Query())
+					->select(['ea_calendar_id'])->distinct()
+					->from('BadgeDB.event_attendee')
+					->where(['<', 'ea_calendar_id', 3000])						
+			])
+			->andWhere(['calendar_id'=>0])
+			->column();
+		$defaults = (object) [
+			'event_status_id'=>4,
+			'facility_id' => '[2]',
+			'lanes_req' => '{"2":1}',
+		];
+		$restResults = $this->runMergeOldEvents($selection, $defaults);
 
 		$mergeResults = ['merged' => [], 'skipped' => [], 'errors' => []];
-		foreach ([$pistolResults, $rifelResults, $volunteerResults] as $runResults) {
+		foreach ([$pistolResults, $rifelResults, $trapResults, $volunteerResults, $restResults] as $runResults) {
 			foreach (['merged', 'skipped', 'errors'] as $resultType) {
 				$mergeResults[$resultType] = array_merge(
 					$mergeResults[$resultType],
