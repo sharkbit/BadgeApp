@@ -113,6 +113,8 @@ $div_closed=false;
 				$directorBadge = $model->cal_inst;
 				$directorInputId = 'director-badge-' . (int)$model->ea_calendar_id;
 				$directorNameId = 'director-name-' . (int)$model->ea_calendar_id;
+				$salesOrder = $model->sales_order ?? '';
+				$salesOrderInputId = 'sales-order-' . (int)$model->ea_calendar_id;
 				$directorName = !empty($directorBadge)
 					? yii::$app->controller->decodeBadgeName((int)$directorBadge)
 					: 'Not Found';
