@@ -58,7 +58,7 @@ class ClubsController extends AdminController {
 
 			if($club_id != null) {
 				$clubData = Clubs::find()->where(['club_id'=>$club_id])->one();
-				$createdDate = date('M_d_Y',strtotime($this->getNowTime()));
+				$createdDate = date('Y_m_d',strtotime($this->getNowTime()));
 				$fileName = $createdDate.'_'.$clubData->club_name.'_'.$clubData->club_id.'.csv';
 				$fileName = strtolower($fileName);
 				$fileName = $this->stringReplace($fileName,[' ',",",'/',';',':','%','__','-','--','&']);
@@ -119,7 +119,7 @@ class ClubsController extends AdminController {
 				Yii::$app->response->data = $returnArray;
 			} else {
 				$clubListArray = Clubs::find()->where(['status'=>0, 'is_club'=>1])->orderBy(['club_name' => SORT_ASC ])->all();
-				$createdDate = date('M_d_Y',strtotime($this->getNowTime()));
+				$createdDate = date('Y_m_d',strtotime($this->getNowTime()));
 
 				$fileNameAll = $createdDate.'_Full_AGC_Roster.csv';
 				@unlink('files/rosters/'.$fileNameAll);
