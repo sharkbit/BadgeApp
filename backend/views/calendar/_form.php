@@ -369,16 +369,22 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 						'pluginOptions' => [
 							'autoclose'=>true,
 							'format' => 'd M',
-							'todayHighlight' => true ] ] ).PHP_EOL; ?>
+							'todayHighlight' => true,
+							'startView' => 0,
+							'maxViewMode' => 1,
+							'minViewMode' => 0, ] ] ).PHP_EOL; ?>
 				</div>
 				<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" style="background-color: silver">
 					<?php   echo $form->field($model, 'recurrent_end_date')->widget(DatePicker::classname(), [
-							'options' => ['value' =>  (isset($model->recurrent_end_date) && $model->recurrent_end_date >0) ? $model->recurrent_end_date : '31 Dec'],
-							'size' => 'xs',
-							'pluginOptions' => [
-								'autoclose'=>true,
-								'format' => 'd M',
-								'todayHighlight' => true ] ] ).PHP_EOL; ?>
+						'options' => ['value' =>  (isset($model->recurrent_end_date) && $model->recurrent_end_date >0) ? $model->recurrent_end_date : '31 Dec'],
+						'size' => 'xs',
+						'pluginOptions' => [
+							'autoclose'=>true,
+							'format' => 'd M',
+							'todayHighlight' => true,
+							'startView' => 0,
+							'maxViewMode' => 1,
+							'minViewMode' => 0, ] ] ).PHP_EOL; ?>
 				</div>
 				<div class="col-xs-12 col-sm-6 col-md-3 col=lg-3" style="background-color: silver">
 					<?php echo $form->field($model, 'recur_every')->hiddeninput(['readonly'=>true,'maxlength'=>true])->label(false).PHP_EOL;
