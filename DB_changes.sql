@@ -1128,7 +1128,7 @@ CREATE TABLE `BadgeDB`.`guest_type` (
 INSERT INTO `guest_type` (`gt_code`, `gt_name`) 
 	VALUES ('1','Shooter'),('m', 'Minor'), ('o','Observer'),('s','Spouse'),('y','Youth Participant');
     
--- database cleanup 2026-11-01
+-- database cleanup 2026-11-08
 ALTER TABLE `BadgeDB`.`params` 
 DROP COLUMN `qb_env`,
 CHANGE COLUMN `remote_users` `remote_users` VARCHAR(100) NULL DEFAULT NULL AFTER `sell_date`,
@@ -1145,5 +1145,15 @@ CHANGE COLUMN `id` `id` INT NOT NULL ,
 CHANGE COLUMN `guest_sku` `guest_sku` INT NULL DEFAULT NULL ,
 CHANGE COLUMN `guest_total` `guest_total` INT NULL DEFAULT NULL ,
 ADD UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE;
-;
 
+CREATE  OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_cal_event` AS
+    SELECT `cc`.`calendar_id` AS `calendar_id`,`cc`.`event_date` AS `event_date`,`cc`.`cal_start_time` AS `cal_start_time`,`cc`.`cal_end_time` AS `cal_end_time`,`cc`.`event_name` AS `event_name`,`cc`.`facility_id` AS `facility_id`,`cc`.`lanes_req` AS `lanes_req`,`cc`.`cal_inst` AS `cal_inst`,`cc`.`credit_hours` AS `credit_hours`,`cc`.`issued_vol` AS `issued_vol`,`cc`.`poc_badge` AS `poc_badge`,`cc`.`sales_order` AS `sales_order`,`cc`.`is_event` AS `is_event`,`cc`.`remarks` AS `cal_remarks`,`ces`.`name` AS `event_status_name`,`ces`.`event_status_id` AS `event_status_id`,`clubs`.`club_name` AS `club_name`,`clubs`.`short_name` AS `short_name`,`clubs`.`club_id` AS `club_id`,`ces`.`allow_guests` AS `allow_guests`,`ces`.`track_wristbands` AS `track_wristbands`,`ces`.`is_volunteer` AS `is_volunteer`
+    FROM ((`cal_calendar` `cc`LEFT JOIN `cal_event_status` `ces` ON ((`cc`.`event_status_id` = `ces`.`event_status_id`)))LEFT JOIN `clubs` ON ((`cc`.`club_id` = `clubs`.`club_id`)))
+    WHERE ((`cc`.`deleted` = 0) AND (`cc`.`is_event` = 1))
+    ORDER BY `cc`.`event_date` DESC;
+
+CREATE  OR REPLACE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_events` AS
+    SELECT `vce`.`calendar_id` AS `ea_calendar_id`,`vea`.`attended_badges` AS `attended_badges`,`vea`.`attended_guests` AS `attended_guests`,`vea`.`wb_out_zero` AS `wb_out_zero`,`vce`.`event_date` AS `event_date`,`vce`.`cal_start_time` AS `cal_start_time`,`vce`.`cal_end_time` AS `cal_end_time`,`vce`.`event_name` AS `event_name`,`vce`.`event_status_name` AS `event_status_name`,`vce`.`event_status_id` AS `event_status_id`,`vce`.`club_name` AS `club_name`,`vce`.`short_name` AS `short_name`,`vce`.`club_id` AS `club_id`,`vce`.`poc_badge` AS `poc_badge`,`vce`.`sales_order` AS `sales_order`,`vce`.`allow_guests` AS `allow_guests`,`vce`.`track_wristbands` AS `track_wristbands`,`vce`.`cal_inst` AS `cal_inst`,`vce`.`is_volunteer` AS `is_volunteer`,`vce`.`credit_hours` AS `credit_hours`,`vce`.`issued_vol` AS `issued_vol`,`vce`.`is_event` AS `is_event`,`vce`.`cal_remarks` AS `cal_remarks`
+    FROM (`view_cal_event` `vce` LEFT JOIN `view_event_att` `vea` ON ((`vea`.`ea_calendar_id` = `vce`.`calendar_id`)))
+    WHERE (`vce`.`event_date` <= CURDATE())
+    ORDER BY `vce`.`event_date` DESC , `vce`.`cal_start_time`;

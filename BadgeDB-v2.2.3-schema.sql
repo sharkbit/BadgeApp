@@ -688,8 +688,8 @@ CREATE TABLE `params` (
   `id` int NOT NULL,
   `sell_date` varchar(5) NOT NULL,
   `remote_users` varchar(100) DEFAULT NULL,
-  `whitelist` text,
-  `rso_email` text,
+  `whitelist` text NULL DEFAULT NULL,
+  `rso_email` text NULL DEFAULT NULL,
   `status` enum('active','disabled') DEFAULT NULL,
   `log_rotate` int DEFAULT NULL,
   `check_ip` varchar(45) DEFAULT NULL,
@@ -948,6 +948,7 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `issued_vol`,
  1 AS `poc_badge`,
  1 AS `sales_order`,
+ 1 AS `is_event`,
  1 AS `cal_remarks`,
  1 AS `event_status_name`,
  1 AS `event_status_id`,
@@ -1004,6 +1005,7 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `is_volunteer`,
  1 AS `credit_hours`,
  1 AS `issued_vol`,
+ 1 AS `is_event`,
  1 AS `cal_remarks`*/;
 SET character_set_client = @saved_cs_client;
 
@@ -1198,7 +1200,7 @@ CREATE TABLE `work_credits` (
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_cal_event` AS select `cc`.`calendar_id` AS `calendar_id`,`cc`.`event_date` AS `event_date`,`cc`.`cal_start_time` AS `cal_start_time`,`cc`.`cal_end_time` AS `cal_end_time`,`cc`.`event_name` AS `event_name`,`cc`.`facility_id` AS `facility_id`,`cc`.`lanes_req` AS `lanes_req`,`cc`.`cal_inst` AS `cal_inst`,`cc`.`credit_hours` AS `credit_hours`,`cc`.`issued_vol` AS `issued_vol`,`cc`.`poc_badge` AS `poc_badge`,`cc`.`sales_order` AS `sales_order`,`cc`.`remarks` AS `cal_remarks`,`ces`.`name` AS `event_status_name`,`ces`.`event_status_id` AS `event_status_id`,`clubs`.`club_name` AS `club_name`,`clubs`.`short_name` AS `short_name`,`clubs`.`club_id` AS `club_id`,`ces`.`allow_guests` AS `allow_guests`,`ces`.`track_wristbands` AS `track_wristbands`,`ces`.`is_volunteer` AS `is_volunteer` from ((`cal_calendar` `cc` left join `cal_event_status` `ces` on((`cc`.`event_status_id` = `ces`.`event_status_id`))) left join `clubs` on((`cc`.`club_id` = `clubs`.`club_id`))) where ((`cc`.`deleted` = 0) and (`cc`.`is_event` = 1)) order by `cc`.`event_date` desc */;
+/*!50001 VIEW `view_cal_event` AS select `cc`.`calendar_id` AS `calendar_id`,`cc`.`event_date` AS `event_date`,`cc`.`cal_start_time` AS `cal_start_time`,`cc`.`cal_end_time` AS `cal_end_time`,`cc`.`event_name` AS `event_name`,`cc`.`facility_id` AS `facility_id`,`cc`.`lanes_req` AS `lanes_req`,`cc`.`cal_inst` AS `cal_inst`,`cc`.`credit_hours` AS `credit_hours`,`cc`.`issued_vol` AS `issued_vol`,`cc`.`poc_badge` AS `poc_badge`,`cc`.`sales_order` AS `sales_order`,`cc`.`is_event` AS `is_event`,`cc`.`remarks` AS `cal_remarks`,`ces`.`name` AS `event_status_name`,`ces`.`event_status_id` AS `event_status_id`,`clubs`.`club_name` AS `club_name`,`clubs`.`short_name` AS `short_name`,`clubs`.`club_id` AS `club_id`,`ces`.`allow_guests` AS `allow_guests`,`ces`.`track_wristbands` AS `track_wristbands`,`ces`.`is_volunteer` AS `is_volunteer` from ((`cal_calendar` `cc` left join `cal_event_status` `ces` on((`cc`.`event_status_id` = `ces`.`event_status_id`))) left join `clubs` on((`cc`.`club_id` = `clubs`.`club_id`))) where ((`cc`.`deleted` = 0) and (`cc`.`is_event` = 1)) order by `cc`.`event_date` desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1234,7 +1236,7 @@ CREATE TABLE `work_credits` (
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_events` AS select `vce`.`calendar_id` AS `ea_calendar_id`,`vea`.`attended_badges` AS `attended_badges`,`vea`.`attended_guests` AS `attended_guests`,`vea`.`wb_out_zero` AS `wb_out_zero`,`vce`.`event_date` AS `event_date`,`vce`.`cal_start_time` AS `cal_start_time`,`vce`.`cal_end_time` AS `cal_end_time`,`vce`.`event_name` AS `event_name`,`vce`.`event_status_name` AS `event_status_name`,`vce`.`event_status_id` AS `event_status_id`,`vce`.`club_name` AS `club_name`,`vce`.`short_name` AS `short_name`,`vce`.`club_id` AS `club_id`,`vce`.`poc_badge` AS `poc_badge`,`vce`.`sales_order` AS `sales_order`,`vce`.`allow_guests` AS `allow_guests`,`vce`.`track_wristbands` AS `track_wristbands`,`vce`.`cal_inst` AS `cal_inst`,`vce`.`is_volunteer` AS `is_volunteer`,`vce`.`credit_hours` AS `credit_hours`,`vce`.`issued_vol` AS `issued_vol`,`vce`.`cal_remarks` AS `cal_remarks` from (`view_cal_event` `vce` left join `view_event_att` `vea` on((`vce`.`calendar_id` = `vea`.`ea_calendar_id`))) where (`vce`.`event_date` <= curdate()) order by `vce`.`event_date` desc,`vce`.`cal_start_time` desc */;
+/*!50001 VIEW `view_events` AS select `vce`.`calendar_id` AS `ea_calendar_id`,`vea`.`attended_badges` AS `attended_badges`,`vea`.`attended_guests` AS `attended_guests`,`vea`.`wb_out_zero` AS `wb_out_zero`,`vce`.`event_date` AS `event_date`,`vce`.`cal_start_time` AS `cal_start_time`,`vce`.`cal_end_time` AS `cal_end_time`,`vce`.`event_name` AS `event_name`,`vce`.`event_status_name` AS `event_status_name`,`vce`.`event_status_id` AS `event_status_id`,`vce`.`club_name` AS `club_name`,`vce`.`short_name` AS `short_name`,`vce`.`club_id` AS `club_id`,`vce`.`poc_badge` AS `poc_badge`,`vce`.`sales_order` AS `sales_order`,`vce`.`allow_guests` AS `allow_guests`,`vce`.`track_wristbands` AS `track_wristbands`,`vce`.`cal_inst` AS `cal_inst`,`vce`.`is_volunteer` AS `is_volunteer`,`vce`.`credit_hours` AS `credit_hours`,`vce`.`issued_vol` AS `issued_vol`,`vce`.`is_event` AS `is_event`,`vce`.`cal_remarks` AS `cal_remarks` from (`view_cal_event` `vce` left join `view_event_att` `vea` on((`vce`.`calendar_id` = `vea`.`ea_calendar_id`))) where (`vce`.`event_date` <= curdate()) order by `vce`.`event_date` desc,`vce`.`cal_start_time` desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
