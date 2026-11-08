@@ -142,6 +142,7 @@ class EventsController extends AdminController {
 			Yii::$app->session->setFlash('error', 'Enter a valid badge number for the event director.');
 			return $this->redirect(['view', 'id' => $id]);
 		}
+		$calendar->cal_inst = $badgeNumber;
 
 		$salesOrder = Yii::$app->request->post('sales_order');
 		if ($salesOrder === null || $salesOrder === '') {
@@ -150,7 +151,14 @@ class EventsController extends AdminController {
 			Yii::$app->session->setFlash('error', 'Sales order must be a Leters and Nunmbers.');
 			return $this->redirect(['view', 'id' => $id]);
 		}
-
+		$calendar->sales_order = $salesOrder;
+		
+		if ($calendar->save()) {
+			$this->createLog($this->getNowTime(), $_SESSION['user'], "Event Director has been updated. ($badgeNumber) for event #$id");
+			Yii::$app->session->setFlash('success', 'Event has been updated.');
+		} else {
+			Yii::$app->session->setFlash('error', 'Event failed to save.');
+		}
 		$this->createLog($this->getNowTime(), $_SESSION['user'], "Event Director has been updated. ($badgeNumber) for event #$id");
 		Yii::$app->session->setFlash('success', 'Event Director has been updated.');
 		return $this->redirect(['view', 'id' => $id]);
