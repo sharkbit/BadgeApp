@@ -176,6 +176,7 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
 				'label'=>'RSO Comments',
 				'format'=>'raw',
+				'visible' => ($urlStatus['actionId']=='index') ? true : false ,
 				'value'=>function($model) use ($canManageRsoComments) {
 					$remarks = json_decode($model->remarks, true);
 					$currentComment = '';
