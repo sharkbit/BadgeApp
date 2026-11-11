@@ -24,6 +24,49 @@ if (!isset($suites[$suite])) {
 	exit(2);
 }
 
+$requiresNode = false;
+foreach ($suites[$suite] as [$runtime]) {
+	if ($runtime === 'node') {
+		$requiresNode = true;
+		break;
+	}
+}
+
+if ($requiresNode) {
+	$nodeProcess = @proc_open(
+		['node', '--version'],
+		[
+			0 => ['pipe', 'r'],
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w'],
+		],
+		$nodePipes,
+		$root,
+		null,
+		['bypass_shell' => true]
+	);
+
+	$nodeAvailable = false;
+	if (is_resource($nodeProcess)) {
+		fclose($nodePipes[0]);
+		stream_get_contents($nodePipes[1]);
+		fclose($nodePipes[1]);
+		stream_get_contents($nodePipes[2]);
+		fclose($nodePipes[2]);
+		$nodeAvailable = proc_close($nodeProcess) === 0;
+	}
+
+	if (!$nodeAvailable) {
+		fwrite(
+			STDERR,
+			"Node.js is required for this test suite, but the 'node' executable could not be run. "
+				. "Install Node.js from https://nodejs.org/ and ensure 'node' is on PATH, then rerun the tests."
+				. PHP_EOL
+		);
+		exit(1);
+	}
+}
+
 if ($suite !== 'js') {
 	try {
 		require $root . '/backend/tests/_schema-bootstrap.php';
