@@ -316,6 +316,7 @@ $myPaymentList = backend\controllers\PaymentController::GetPaymentTypes($confPar
 <?php } ?>
 <?php ActiveForm::end(); ?>
 </div>
+<?php $this->registerJsFile('@web/js/badge-form-logic.js', ['position' => \yii\web\View::POS_HEAD]); ?>
 <?php if ($model->isNewRecord) { ?>
 	<?php $this->registerJsFile('@web/js/banned-name-check.js', ['depends' => [\yii\web\JqueryAsset::class]]); ?>
 <?php } ?>
@@ -330,197 +331,93 @@ $myPaymentList = backend\controllers\PaymentController::GetPaymentTypes($confPar
 	$("#badges-status").change(function(e) {
 		var act_Status = document.getElementById('badges-status');
 		const getPrefill = <?=(new MembershipStatus)::getPrefill(); ?> ;
-		if (getPrefill.includes(act_Status.value)) {
+		const stickerIndex = BadgeFormLogic.getPrefillStickerIndex(
+			act_Status.value,
+			getPrefill,
+			document.getElementById("badges-sticker").options.length
+		);
+		if (stickerIndex !== null) {
 			const dropdown = document.getElementById("badges-sticker");
-			dropdown.selectedIndex = dropdown.options.length - 1;
+			dropdown.selectedIndex = stickerIndex;
 		}
 	});
 
 	function doCheckField(e) {
 		e = e || window.event;
-		if(e.target.value=='0') e.target.value='';
+		e.target.value = BadgeFormLogic.normalizeZeroValue(e.target.value);
 	};
 
 	function doCalcNew() {
 		var ContainerID = document.getElementById('store_items');
-
-		var arrItem = new Array();
-		var arrSku = new Array();
-		var arrEa = new Array();
-		var arrQty = new Array();
-		var arrTax = new Array();
-		var arrPrice = new Array();
-		var cart =  new Array();
-		var ItemTotal = 0; var TaxTotal = 0; var TotalTotal = 0;
-		var ContainerIDElements = new Array( 'input');
-		//var ContainerIDElements = new Array('input', 'textarea', 'select');
-
-		for( var i = 0; i < ContainerIDElements.length; i++ ){
-			els = ContainerID.getElementsByTagName( ContainerIDElements[i] );
-			for( var j = 0; j < els.length; j++ ){
-				if(els[j].name == 'item') arrItem.push(els[j]);
-				if(els[j].name == 'sku') arrSku.push(els[j]);
-				if(els[j].name == 'ea') arrEa.push(els[j]);
-				if(els[j].name == 'tax_rate') arrTax.push(els[j]);
-				if(els[j].name == 'qty') arrQty.push(els[j]);
-				if(els[j].name == 'price') arrPrice.push(els[j]);
-			}
+		var inputs = ContainerID.getElementsByTagName('input');
+		var groupedInputs = { item: [], sku: [], ea: [], tax_rate: [], qty: [], price: [] };
+		for (var i = 0; i < inputs.length; i++) {
+			groupedInputs[inputs[i].name] = groupedInputs[inputs[i].name] || [];
+			groupedInputs[inputs[i].name].push(inputs[i]);
 		}
-
-		for( var j = 0; j < arrEa.length; j++ ) {
-			if(Number(arrQty[j].value)>0) {
-				var itto = parseFloat(Math.round((Number(arrEa[j].value) * Number(arrQty[j].value)) * 100) / 100).toFixed(2);
-				var tato = parseFloat(Math.round((Number(arrEa[j].value) * Number(arrQty[j].value) * Number(arrTax[j].value)) * 100) / 100).toFixed(2);
-				arrPrice[j].value = parseFloat(Number(itto) + Number(tato)).toFixed(2);
-				ItemTotal += Number(itto);
-				TaxTotal += Number(tato);
-				TotalTotal += Number(arrPrice[j].value);
-				var item = { "item":arrItem[j].value, "sku":arrSku[j].value, "ea":arrEa[j].value, "qty":arrQty[j].value, "price":arrPrice[j].value };
-				cart.push(item);
-			} else { arrPrice[j].value=null; }
-		}
-		$("#cart").val(JSON.stringify(cart));
-
-		var badgeFee = parseInt($("#badges-badge_fee").val());
-		var discount = 0;
-        for (var option of document.getElementById('badges-discounts').options)	{
-			if (option.selected) {
-				if(option.value.length > 2){
-					var d_opt=option.value.split(":")
-					discount +=d_opt[1];
-				}
-			}
-		}
+		var items = [];
+		groupedInputs.ea.forEach(function (ea, index) {
+			items.push({
+				item: groupedInputs.item[index].value,
+				sku: groupedInputs.sku[index].value,
+				ea: ea.value,
+				taxRate: groupedInputs.tax_rate[index].value,
+				qty: groupedInputs.qty[index].value,
+			});
+		});
+		var selectedDiscounts = Array.from(document.getElementById('badges-discounts').options)
+			.filter(function (option) { return option.selected; })
+			.map(function (option) { return option.value; });
+		var result = BadgeFormLogic.calculateCart(
+			items,
+			$("#badges-badge_fee").val(),
+			selectedDiscounts,
+			false
+		);
+		groupedInputs.price.forEach(function (input, index) {
+			input.value = result.prices[index] || '';
+		});
+		$("#cart").val(JSON.stringify(result.cart));
 
 		const myDivDiscount = document.getElementById("discount_amt_div");
-		if((discount) && (discount>0)) {  //extras grand
+		if (result.discount > 0) {
 			$("#discount_amt_div").show();
-			myDivDiscount.textContent = 'Discount: ' + Number(discount);
-			console.log('Discount: '+ Number(discount) );
+			myDivDiscount.textContent = 'Discount: ' + result.discount;
 		} else {
 			myDivDiscount.textContent = '';
 			$("#discount_amt_div").hide();
-			console.log('No discount ');
 		}
 
-		var amountDue = badgeFee - discount;
-		if(amountDue<0) {
-			amountDue = 0.00;
+		if (result.setCash) {
 			$("#badges-payment_method").val('cash');
 		}
-		amountDue = amountDue + TotalTotal;
-		$("#badges-tax").val(TaxTotal.toFixed(2));
-		$("#badges-amt_due-disp").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
-		$("#badges-amt_due").val(parseFloat(Math.round(amountDue * 100) / 100).toFixed(2));
-		console.log('Badge Total: '+badgeFee+ '; Tax: '+ TaxTotal+ '; Grand total: '+ amountDue);
+		$("#badges-tax").val(result.taxTotal.toFixed(2));
+		$("#badges-amt_due-disp").val(result.amountDue.toFixed(2));
+		$("#badges-amt_due").val(result.amountDue.toFixed(2));
 	}
 
 	function ProcessSwipe(cleanUPC) {
-
-		if  ((cleanUPC.indexOf('ANSI 6360') > 0) || (cleanUPC.indexOf('AAMVA6360') > 0)) { // Matched Drivers Licence
-			console.log('Drivers Licence Scanned: ', cleanUPC);
-			var FName=false;
-
-			if (cleanUPC.indexOf('DAC') > 0) {  //Parse Name
-			  var fsName = cleanUPC.indexOf('DAC')+3;
-			  var feName = cleanUPC.indexOf("ArrowDown",fsName);
-			  var FName = cleanUPC.slice(fsName,feName);
-			  FName = titleCase(FName);
-			  var msName = cleanUPC.indexOf('DAD')+3;
-			  var meName = cleanUPC.indexOf("ArrowDown",msName);
-			  var MName = cleanUPC.slice(msName,meName);
-			  MName = MName.charAt(0).toUpperCase();
-			  var lsName = cleanUPC.indexOf('DCS')+3;
-			  var leName = cleanUPC.indexOf("ArrowDown",lsName);
-			  var LName = cleanUPC.slice(lsName,leName);
-			  LName = titleCase(LName);
-			} //Parse Name Second Try
-			else if  (cleanUPC.indexOf('DAA') > 0) {
-			  var nsName = cleanUPC.indexOf('DAA')+3;
-			  var neName = cleanUPC.indexOf("ArrowDown",nsName);
-			  var FullName = cleanUPC.slice(nsName,neName);
-			  FullName = FullName.split(",");
-			  var LName = titleCase(FullName[0]);
-			  var FName = titleCase(FullName[1]);
-			  var MName = FullName[2].charAt(0).toUpperCase();
-			}
-            console.log("Full Name: "+FName+' - '+MName+' - '+LName);
-			document.getElementById("badges-first_name").value = FName+' '+MName;
-			document.getElementById("badges-last_name").value = LName;
-
-			if (cleanUPC.indexOf('DBB') > 0) {  //Parse Date of Birth
-			  var fDOB = cleanUPC.indexOf('DBB')+3;
-			  var lDOB = cleanUPC.indexOf("ArrowDown",fDOB);
-			  var DOB = cleanUPC.slice(fDOB,lDOB);
-
-			  var DOBtest=true;
-			  var DOBy=DOB.substring(0,4);
-			  var DOBm=DOB.substring(4,6);
-			  var DOBd=DOB.substring(6);
-
-			  if (DOBm > 12) {DOBtest=false;}
-			  if (DOBd > 31) {DOBtest=false;}
-			  if (DOBy < 1900) {DOBtest=false;}
-			  if (!DOBtest) {
-			    var DOBy=DOB.substring(4);
-			    var DOBm=DOB.substring(0,2);
-			    var DOBd=DOB.substring(2,4);
-			  }
-              console.log("DOB: m "+DOBm+" d "+DOBd+" y "+DOBy);
-			  document.getElementById("badges-yob").value = DOBy;
-			}
-
-			if (cleanUPC.indexOf('DAG') > 0) {  //Parse Address
-			  var fAddr = cleanUPC.indexOf('DAG')+3;
-			  var lAddr = cleanUPC.indexOf("ArrowDown",fAddr);
-			  var Addr = cleanUPC.slice(fAddr,lAddr);
-			  Addr = titleCase(Addr);
-              console.log("Addr: "+Addr);
-			  document.getElementById("badges-address").value = Addr;
-			}
-
-			if (cleanUPC.indexOf('DAI') > 0) {  //Parse City
-			  var fCty = cleanUPC.indexOf('DAI')+3;
-			  var lCty = cleanUPC.indexOf("ArrowDown",fCty);
-			  var Cty = cleanUPC.slice(fCty,lCty);
-			  Cty = titleCase(Cty);
-              console.log("City: "+Cty);
-			  document.getElementById("badges-city").value = Cty;
-			}
-
-			if (cleanUPC.indexOf('DAJ') > 0) {  //Parse State
-			  var fST = cleanUPC.indexOf('DAJ')+3;
-			  var lST = cleanUPC.indexOf("ArrowDown",fST);
-			  var Stat = cleanUPC.slice(fST,lST);
-              console.log("State: "+Stat);
-			  document.getElementById("badges-state").value = Stat;
-            }
-
-			if (cleanUPC.indexOf('DAK') > 0) {  //Parse ZIP
-			  var fZIP = cleanUPC.indexOf('DAK')+3;
-			  var lZIP = cleanUPC.indexOf("ArrowDown",fZIP);
-			  var ZIP = cleanUPC.slice(fZIP,lZIP);
-			  ZIP = ZIP.substring(0,5);
-              console.log("ZIP: "+ZIP);
-			  document.getElementById("badges-zip").value = ZIP;
-			}
-
+		var result = BadgeFormLogic.parseSwipe(cleanUPC, new Date().getFullYear());
+		if (result && result.type === 'license') {
+			var fields = {
+				firstName: 'badges-first_name',
+				lastName: 'badges-last_name',
+				yob: 'badges-yob',
+				address: 'badges-address',
+				city: 'badges-city',
+				state: 'badges-state',
+				zip: 'badges-zip',
+			};
+			Object.keys(result.fields).forEach(function (key) {
+				document.getElementById(fields[key]).value = result.fields[key];
+			});
+		} else if (result && result.type === 'card') {
+			document.getElementById('badges-cc_num').value = result.fields.cardNumber;
+			document.getElementById('badges-cc_exp_mo').value = result.fields.expirationMonth;
+			document.getElementById('badges-cc_exp_yr').value = result.fields.expirationYear;
+		} else {
+			SwipeError(cleanUPC, 'b_v_b_f:461');
 		}
-		else if (cleanUPC.match(/[Bb]\d{16}/g)) {  // Matched Credit Card!
-			console.log('Credit Card Scanned: ', cleanUPC);
-			var ccNum = cleanUPC.substring(1,17);
-			var fExp = cleanUPC.indexOf('^')+1;
-			var fExp = cleanUPC.indexOf('^',fExp)+1;
-			var ExpYr = cleanUPC.substring(fExp,fExp+2);
-			var ExpMo = cleanUPC.substring(fExp+2,fExp+4);
-			ccNum = ccFormat(ccNum);
-			console.log("Num: "+ccNum+" Exp Yr: "+ExpYr+" Exp Mo: "+ExpMo);
-			ExpYr = ExpYr - (new Date().getFullYear().toString().substr(-2));
-
-			document.getElementById("badges-cc_num").value = ccNum;
-			document.getElementById("badges-cc_exp_mo").value = ExpMo;
-			document.getElementById("badges-cc_exp_yr").value = ExpYr;
-		} else { SwipeError(cleanUPC,'b_v_b_f:461'); }
 		cleanUPC = '';
 	};
 </script>

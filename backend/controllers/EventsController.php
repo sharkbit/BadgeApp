@@ -142,6 +142,7 @@ class EventsController extends AdminController {
 			Yii::$app->session->setFlash('error', 'Enter a valid badge number for the event director.');
 			return $this->redirect(['view', 'id' => $id]);
 		}
+		$calendar->cal_inst = $badgeNumber;
 
 		$salesOrder = Yii::$app->request->post('sales_order');
 		if ($salesOrder === null || $salesOrder === '') {
@@ -150,21 +151,16 @@ class EventsController extends AdminController {
 			Yii::$app->session->setFlash('error', 'Sales order must be a Leters and Nunmbers.');
 			return $this->redirect(['view', 'id' => $id]);
 		}
-
-		$attributes = [];
-		if ((int)$calendar->cal_inst !== (int)$badgeNumber) {
-			$attributes['cal_inst'] = (int)$badgeNumber;
+		$calendar->sales_order = $salesOrder;
+		
+		if ($calendar->save()) {
+			$this->createLog($this->getNowTime(), $_SESSION['user'], "Event Director has been updated. ($badgeNumber) for event #$id");
+			Yii::$app->session->setFlash('success', 'Event has been updated.');
+		} else {
+			Yii::$app->session->setFlash('error', 'Event failed to save.');
 		}
-		if ($calendar->sales_order !== $salesOrder) {
-			$attributes['sales_order'] = $salesOrder;
-		}
-		if ($attributes && $calendar->updateAttributes($attributes) === false) {
-			Yii::$app->session->setFlash('error', 'The event details could not be updated.');
-			return $this->redirect(['view', 'id' => $id]);
-		}
-
-		$this->createLog($this->getNowTime(), $_SESSION['user'], "Event details updated for event #$id (director: $badgeNumber, sales order: " . ($salesOrder ?? 'none') . ").");
-		Yii::$app->session->setFlash('success', 'Event details have been updated.');
+		$this->createLog($this->getNowTime(), $_SESSION['user'], "Event Director has been updated. ($badgeNumber) for event #$id");
+		Yii::$app->session->setFlash('success', 'Event Director has been updated.');
 		return $this->redirect(['view', 'id' => $id]);
 	}
 

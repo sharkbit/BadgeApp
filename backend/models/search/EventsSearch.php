@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\Events;
 use backend\models\Event_Att;
+use backend\models\agcEventStatus;
 
 /**
  * ParamsSearch represents the model behind the search form about `backend\models\Events`.
@@ -36,7 +37,10 @@ class EventsSearch extends Events {
 
         $this->load($params);
 
-		if(!isset($params['sort'])) { $query->orderBy( ['event_date' => SORT_DESC] ); }
+		if(!isset($params['sort'])) { $query->orderBy( [ 'event_date' => SORT_DESC, 'cal_start_time' => SORT_ASC ] ); }
+		
+		$CanSignup = agcEventStatus::getCanSignup();
+		$query->andFilterWhere(['in','event_status_id',$CanSignup]);
 		
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

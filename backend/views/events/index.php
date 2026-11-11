@@ -104,19 +104,22 @@ $eventAttendee = new Event_Att();
 
 			],
 			[	'attribute'=>'attended_badges',
-				'value'=>function($model) { return ($model->attended_badges > 0) ? $model->attended_badges : '-';}
+				'value'=>function($model) {
+					return (!empty($model->attended_badges)) ? $model->attended_badges : '-'; 
+				}
 			],
 			[	'attribute'=>'attended_guests',
-				'value'=>function($model) { return ($model->attended_guests > 0) ? $model->attended_guests : '-';}
+				'value'=>function($model) {
+					return (!empty($model->attended_guests)) ? $model->attended_guests : '-'; 
+				}
 			],
 			[	'attribute'=>'wb_out_zero',
 				'value'=>function($model) {
-						if($model->track_wristbands==1) {return ($model->attended_guests-$model->wb_out_zero ?? 0 ); } else { return '-'; }
+					if($model->track_wristbands==1) {return ($model->attended_guests-$model->wb_out_zero ?? 0 ); } else { return '-'; }
 				}
 			],
 			[	'attribute'=>'event_status_id',
 				'contentOptions' =>['style' => 'overflow: auto; word-wrap: break-word; white-space: normal;'],
-				'label'=>'Event Status',
 				'value'=>function($model) { return $model->event_status_name; },
 				'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'event_status_id',(new agcEventStatus)->getStatusList(),['class'=>'form-control','prompt' => 'Any']),
 			],

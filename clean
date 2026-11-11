@@ -1,3 +1,5 @@
 #!/bin/bash
 rm ./backend/web/files/rosters/*.csv
+rm ./backend/runtime/debug/*
+rm ./backend/runtime/logs/*.log
 rm -R ./backend/web/assets/*
