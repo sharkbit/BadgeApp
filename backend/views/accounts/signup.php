@@ -66,10 +66,6 @@ $randStr = generateRandomString();
 			<input type="hidden" id="signupform-password"  name="SignupForm[password]" value='<?=$randStr ?>' />
 			<input type="hidden" id="signupform-confirm_password"  name="SignupForm[confirm_password]" value='<?=$randStr ?>' />
 		</div>
-		<div class="col-xs-12 col-sm-6 col-md-3" id="cio_hide" style="display: none;" >
-			<?= $form->field($model, 'auth_key')->textInput(['autofocus' => true])->label('Company').PHP_EOL ?>
-		</div>
-
 		<div class="col-xs-12 col-sm-6 col-md-3">
 			<?= $form->field($model, 'username')->textInput(['autofocus' => true]).PHP_EOL ?>
 		</div>
@@ -110,10 +106,8 @@ $randStr = generateRandomString();
 	}
 
 	if ((selectedText.indexOf("CIO")>0) || (selectedText.indexOf("Calendar")>0)) {
-		if (selectedText.indexOf("CIO")>0) { $("#cio_hide").show(); console.log('hii');}
 		$("#need_cal").show(); $("#dont_need_cal").hide();
 	} else {
-		$("#cio_hide").hide();
 		$("#need_cal").hide();$ ("#dont_need_cal").show();
 	}
 
@@ -131,15 +125,7 @@ $randStr = generateRandomString();
     if(selectedText != ' ') { buildUsername();}
   });
 
-  $("#club-id")
-    .select2({placeholder_text_multiple:'Choose Clubs',width: "100%"})
-	.change(function(){
-    var myCom = document.getElementById("signupform-auth_key");
-    if(!myCom.value) {
-      var selectedText = $(this).find("option:selected").text();
-      myCom.value=selectedText;
-    }
-  });
+  $("#club-id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
 
     $("#signupform-badge_number").change(function() {
     var badgeNumber = $(this).val();

@@ -4,6 +4,7 @@ namespace backend\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\db\Query;
 use backend\models\BadgeToClubs;
 
 /**
@@ -111,6 +112,34 @@ class Clubs extends \yii\db\ActiveRecord {
 		return $ClubList;
     }
 
+	public static function getClubNames($club_ids) {
+		if (is_string($club_ids)) {
+			$decodedClubIds = json_decode($club_ids, true);
+			$club_ids = json_last_error() === JSON_ERROR_NONE
+				? $decodedClubIds
+				: explode(',', $club_ids);
+		}
+
+		if (!is_array($club_ids)) {
+			$club_ids = [$club_ids];
+		}
+
+		$club_ids = array_values(array_filter($club_ids, static function ($clubId) {
+			return $clubId !== null && $clubId !== '';
+		}));
+		if (!$club_ids) {
+			return '';
+		}
+
+		$clubNames = static::find()
+			->select('club_name')
+			->where(['in', 'club_id', $club_ids])
+			->orderBy(['club_name' => SORT_ASC])
+			->column();
+
+		return implode(', ', $clubNames);
+	}
+
 	public function getClubsWithMembers() {
 		$dropdownData = Clubs::find()
 			->innerJoinWith('badgeToClubs')
@@ -143,20 +172,22 @@ class Clubs extends \yii\db\ActiveRecord {
     }
 
 	public function getMyClubs($badge_number) {
-		$command = Yii::$app->db->createCommand("SELECT club_id FROM badge_to_club WHERE badge_number=".$badge_number);
-		$myClubs = $command->queryAll();
-		$myClubsId='';
-		foreach($myClubs as $club){
-			$myClubsId .= $club['club_id'].",";
-		}
-		return explode(",",rtrim($myClubsId, ','));
+		$clubIds = (new Query())
+			->select('club_id')
+			->from('badge_to_club')
+			->where(['badge_number' => $badge_number])
+			->column();
+
+		return array_map('strval', $clubIds);
 	}
 
 	public function getMyClubsNames($badge_number,$use_short=false) {
-		$sql = "SELECT short_name, club_name from clubs JOIN badge_to_club on (clubs.club_id = badge_to_club.club_id) ".
-				"WHERE badge_number=".$badge_number;
-		$command = Yii::$app->db->createCommand($sql);
-		$myClubN = $command->queryAll();
+		$myClubN = (new Query())
+			->select(['clubs.short_name', 'clubs.club_name'])
+			->from('clubs')
+			->innerJoin('badge_to_club', 'clubs.club_id = badge_to_club.club_id')
+			->where(['badge_to_club.badge_number' => $badge_number])
+			->all();
 		$myClubsNames='';
 		foreach($myClubN as $club){
 			if($use_short){
@@ -169,32 +200,40 @@ class Clubs extends \yii\db\ActiveRecord {
 	}
 
 	public function getClubRoster($club_id) {
-		$sql = "SELECT *  FROM badges WHERE badge_number IN (SELECT badge_number FROM badge_to_club WHERE club_id = ".$club_id.")";
-		$command = Yii::$app->db->createCommand($sql);
-		return $command->queryAll();
+		$badgeNumbers = (new Query())
+			->select('badge_number')
+			->from('badge_to_club')
+			->where(['club_id' => $club_id]);
+
+		return Badges::find()
+			->where(['in', 'badge_number', $badgeNumbers])
+			->asArray()
+			->all();
 	}
 
 	public static function saveClub($badge_number, $clubs, $delOld=true) {
 		$connection = Yii::$app->getDb();
 
-		if ($delOld) {
-			$sql="DELETE FROM `badge_to_club` WHERE badge_number=".$badge_number;
-			$command = $connection->createCommand($sql);
-			$exec = $command->execute();
-		}
+		$clubIds = is_array($clubs) ? $clubs : [$clubs];
+		$rows = array_map(static function ($clubId) use ($badge_number) {
+			return [$badge_number, $clubId];
+		}, $clubIds);
 
-		$myClubs="";
-		if (is_array($clubs)) {
-			foreach($clubs as $clubid) {
-				$myClubs .= "(".$badge_number.",".$clubid."),";
+		return $connection->transaction(function ($db) use ($badge_number, $delOld, $rows) {
+			if ($delOld) {
+				$db->createCommand()
+					->delete('badge_to_club', ['badge_number' => $badge_number])
+					->execute();
 			}
-		} else {
-			$myClubs = "(".$badge_number.",".$clubs.")";
-		}
-		$myClubs = "INSERT INTO `badge_to_club` (badge_number,Club_id) VALUES ".rtrim($myClubs, ',');
-		$command = $connection->createCommand($myClubs);
-		$exec = $command->execute();
-		return $exec;
+
+			if (!$rows) {
+				return 0;
+			}
+
+			return $db->createCommand()
+				->batchInsert('badge_to_club', ['badge_number', 'club_id'], $rows)
+				->execute();
+		});
 	}
 
 }

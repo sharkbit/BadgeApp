@@ -40,7 +40,7 @@ class User extends \yii\db\ActiveRecord {
             [['badge_number','status','created_at', 'updated_at'], 'integer'],
             [['username', 'email', 'full_name', 'password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32],
-			[['company','r_user'], 'string', 'max' => 45],
+			[['r_user'], 'string', 'max' => 45],
             [['username'], 'unique','message' => 'This username has already been taken.'],
             [['email'], 'unique','message' => 'This email has already been taken.'],
         ];
@@ -56,7 +56,6 @@ class User extends \yii\db\ActiveRecord {
 			'clubs'=>'Calendar Access',
             'email' => 'Email',
             'full_name' => 'Full Name',
-			'company' => 'Company',
             'privilege' => 'Privilege',
             'status' => 'Status',
 			'badge_number' => 'Badge Number',

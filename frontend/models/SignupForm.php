@@ -19,7 +19,6 @@ class SignupForm extends Model {
 	public $confirm_password;
 	public $privilege;
 	public $id;
-	public $auth_key;
 	public $clubs;
 	public $r_user;
 
@@ -35,7 +34,6 @@ class SignupForm extends Model {
 			[['crated_at','updated_at','clubs','privilege'],'safe'],
 			[['username', 'email'], 'trim'],
 			['email', 'email'],
-			[['auth_key'],'string','max'=>100],
 			[['username','email'], 'string', 'min' => 2, 'max' => 255],
 			[['r_user'], 'string', 'max' => 45],
 			['email', 'filter', 'filter' => 'trim'],

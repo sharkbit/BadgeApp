@@ -59,6 +59,16 @@ if ($sql === null) {
 	throw new RuntimeException('Could not normalize view definers in the schema dump.');
 }
 
+$userTableMatch = [];
+if (preg_match('/CREATE TABLE `user` \((.*?)\) ENGINE=/s', $sql, $userTableMatch)
+	&& !str_contains($userTableMatch[1], '`company`')) {
+	$sql = str_replace(
+		"INSERT INTO `user` VALUES (0,'member','noreply@agcrange.org','',NULL,'[5]',10,0,'x','x',NULL,0,0,NULL,NULL);",
+		"INSERT INTO `user` (`id`,`username`,`email`,`full_name`,`privilege`,`status`,`badge_number`,`auth_key`,`password_hash`,`password_reset_token`,`created_at`,`updated_at`,`clubs`,`r_user`) VALUES (0,'member','noreply@agcrange.org','', '[5]',10,0,'x','x',NULL,0,0,NULL,NULL);",
+		$sql
+	);
+}
+
 $pdo = new PDO(
 	$dsn,
 	$dbConfig['username'] ?? null,

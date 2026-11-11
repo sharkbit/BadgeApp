@@ -2,6 +2,7 @@
 /* @var $this yii\web\View */
 /* @var $model backend\models\Badges */
 
+use backend\models\clubs;
 use backend\models\User;
 ?> 
 <div class="container" >
@@ -93,7 +94,8 @@ td { margin: 0px; padding: 0px; }
 		<div class="col-xs-2" style="font-size: 20px; text-align:center; ">CIO&nbsp; INSTRUCTOR</div>
 	</div>
 <?php $cio = User::find()->where(['badge_number'=>$model->badge_number])->one(); 
-	$cio_len=strlen($cio->company);	
+	$cioCompany = (new clubs)->getClubNames($cio->clubs);
+	$cio_len=strlen($cioCompany);	
 	if($cio_len > 32){
 		echo '<div class="row" style="font-weight: bold; height:20px;"> </div>';
 		$l_height='40px';$f_size='20px';
@@ -105,7 +107,7 @@ td { margin: 0px; padding: 0px; }
 	} ?>
 	<div class="row" style="text-align:center; vertical-align:middle; line-height:<?=$l_height?>; font-size: <?=$f_size?>" >
 		
-<?php echo $cio->company; ?>
+<?php echo $cioCompany; ?>
 	</div> 
 <?php } elseif($chk=='m') { //Member Badge (Special casess  Same as Else)
 	echo $Badge_bar.$model->badge_number."</div>\n</div>\n"; ?>

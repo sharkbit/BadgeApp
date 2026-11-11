@@ -97,12 +97,9 @@ class AccountsController extends SiteController {
 			$model->privilege = str_replace('"',"", json_encode($model->privilege));
 			 str_replace("\\","", str_replace('"',"", json_encode($model->clubs)));
 
-			$co_name=$model->auth_key;
-
 			if ($user=$model->signup()) {
 				$user_fix = User::find()->where(['id'=>$user->id])->one();
 				if($user_fix) {
-					if(in_array(8,json_decode($model->privilege))) { $user_fix->company = trim($co_name); }
 					$user_fix->badge_number = (int)$model->badge_number;
 					$user_fix->save(false);
 				}

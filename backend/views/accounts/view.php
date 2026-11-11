@@ -42,13 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'email:email',
             'full_name',
 			[
-                'attribute' =>'company',
-				'label'=>'Company',
-                'value' => function($model) {
-					if(in_array(8,json_decode($model->privilege))) { return $model->company; } },
-				'visible'=> (in_array(8,json_decode($model->privilege))) ? true : false,
-            ],
-			[
 				'attribute'=>'badge_number',
 				'format' => 'raw',
 				'value'=>function($model) { 

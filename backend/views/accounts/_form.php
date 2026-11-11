@@ -38,8 +38,6 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 	<?= $form->field($model, 'clubs')->dropDownList((new clubs)->getClubList(), ['id'=>'club-id', 'multiple'=>true, 'size'=>false]).PHP_EOL; ?>
 	</div>
 	<div id='dont_need_cal'<?php if($need_cal) {?> style="display: none;" <?php } ?>><input type='hidden' id="club-id" value=''> </div>
-<?php if (($model->privilege<>'') && (in_array(8,json_decode($model->privilege)))) { echo $form->field($model, 'company')->textInput(['autofocus' => true]).PHP_EOL; } ?>
-
     <div class="form-group pull-right">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success pull-right' : 'btn btn-success pull-right']) ?>
     </div>
@@ -107,11 +105,5 @@ if(array_intersect([8,9],json_decode($model->privilege))) { $need_cal=true; } el
 	document.getElementById("user-username").readOnly=true;
   });
 
-  $("#club-id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"}).change(function(){
-    var myCom = document.getElementById("user-company");
-    if((myCom) && (!myCom.value)) {
-      var selectedText = $(this).find("option:selected").text();
-      myCom.value=selectedText;
-    }
-  });
+  $("#club-id").select2({placeholder_text_multiple:'Choose Clubs',width: "100%"});
 </script>
