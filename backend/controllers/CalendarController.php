@@ -971,13 +971,14 @@ class CalendarController extends AdminController {
 					? $item->lanes_req
 					: (json_decode((string)$item->lanes_req, true) ?? []);
 				$obj->lanes_req = $item_lanes_req;
+				$recurWeekDays = (string)$item->recur_week_days;
 
 				$type_i = match(true) {
 					$obj->event_status_id == 18 => 1,
-					strpos($item->recur_week_days, 'daily') !== false => 5,
-					strpos($item->recur_week_days, 'weekly') !== false => 4,
-					strpos($item->recur_week_days, 'monthly') !== false => 3,
-					strpos($item->recur_week_days, 'yearly') !== false => 2,
+					strpos($recurWeekDays, 'daily') !== false => 5,
+					strpos($recurWeekDays, 'weekly') !== false => 4,
+					strpos($recurWeekDays, 'monthly') !== false => 3,
+					strpos($recurWeekDays, 'yearly') !== false => 2,
 					default => 6
 				};
 
