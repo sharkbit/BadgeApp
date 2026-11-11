@@ -170,6 +170,84 @@ try {
 			&& $updatedView['params']['model']->calendar_id == $createdId,
 		'actionUpdate renders the selected calendar event.'
 	);
+	$createdEvent = \backend\models\AgcCal::findOne($createdId);
+	$updateData = [
+		'AgcCal' => [
+			'event_name' => $createdEvent->event_name,
+			'event_date' => $createdEvent->event_date,
+			'cal_start_time' => $createdEvent->cal_start_time,
+			'cal_end_time' => $createdEvent->cal_end_time,
+			'club_id' => $createdEvent->club_id,
+			'facility_id' => [(string)$facilityId],
+			'event_status_id' => $createdEvent->event_status_id,
+			'range_status_id' => $createdEvent->range_status_id,
+			'poc_badge' => $createdEvent->poc_badge,
+			'cal_inst' => $createdEvent->cal_inst,
+			'key_words' => $createdEvent->key_words,
+			'is_event' => 2,
+		],
+	];
+	Yii::$app->request->setBodyParams($updateData);
+	$_POST = $updateData;
+	$controller->actionUpdate($createdId);
+	$assert(
+		(int)\backend\models\AgcCal::findOne($createdId)->is_event === 2,
+		'actionUpdate saves the Event Signup setting.'
+	);
+	Yii::$app->request->setBodyParams([]);
+	$_POST = [];
+	$recurringMasterId = $insertEvent($eventPrefix . 'signup-master', [
+		'event_date' => date('Y-m-d', strtotime('+3 days')),
+		'cal_start_time' => '13:00:00',
+		'cal_end_time' => '14:00:00',
+		'club_id' => $clubId,
+		'facility_id' => '[' . $facilityId . ']',
+		'recur_every' => 1,
+		'recur_week_days' => '{"daily":"1"}',
+	]);
+	$eventIds[] = $recurringMasterId;
+	$db->createCommand()->update('cal_calendar', [
+		'recurrent_calendar_id' => $recurringMasterId,
+	], ['calendar_id' => $recurringMasterId])->execute();
+	$recurringOccurrenceId = $insertEvent($eventPrefix . 'signup-occurrence', [
+		'event_date' => date('Y-m-d', strtotime('+4 days')),
+		'cal_start_time' => '13:00:00',
+		'cal_end_time' => '14:00:00',
+		'club_id' => $clubId,
+		'facility_id' => '[' . $facilityId . ']',
+		'recur_every' => 1,
+		'recurrent_calendar_id' => $recurringMasterId,
+		'recur_week_days' => '{"daily":"1"}',
+	]);
+	$eventIds[] = $recurringOccurrenceId;
+	$recurringMaster = \backend\models\AgcCal::findOne($recurringMasterId);
+	$recurringUpdateData = [
+		'AgcCal' => [
+			'event_name' => $recurringMaster->event_name,
+			'event_date' => $recurringMaster->event_date,
+			'cal_start_time' => $recurringMaster->cal_start_time,
+			'cal_end_time' => $recurringMaster->cal_end_time,
+			'club_id' => $recurringMaster->club_id,
+			'facility_id' => [(string)$facilityId],
+			'event_status_id' => $recurringMaster->event_status_id,
+			'range_status_id' => $recurringMaster->range_status_id,
+			'poc_badge' => $recurringMaster->poc_badge,
+			'cal_inst' => $recurringMaster->cal_inst,
+			'key_words' => $recurringMaster->key_words,
+			'is_event' => 2,
+		],
+		'pat_type' => 'daily',
+		'pat_daily' => '1',
+	];
+	Yii::$app->request->setBodyParams($recurringUpdateData);
+	$_POST = $recurringUpdateData;
+	$controller->actionUpdate($recurringMasterId);
+	$assert(
+		(int)\backend\models\AgcCal::findOne($recurringOccurrenceId)->is_event === 2,
+		'actionUpdate propagates Event Signup changes to future recurring events.'
+	);
+	Yii::$app->request->setBodyParams([]);
+	$_POST = [];
 	$itemView = $controller->actionViewitem($createdId);
 	$assert(
 		$itemView['view'] === 'viewitem'

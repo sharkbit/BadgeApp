@@ -580,6 +580,10 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 	}
 
 	function syncEventSignup() {
+		if ($("#agccal-is_event").is("select")) {
+			return;
+		}
+
 		var eventStatusId = String($("#agccal-event_status_id").val());
 		var isEvent = eventStatusIsInList("getCanSignup", eventStatusId) ? '1' : '2';
 		$("#agccal-is_event").val(isEvent);
