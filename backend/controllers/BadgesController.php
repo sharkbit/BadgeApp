@@ -1295,11 +1295,31 @@ class BadgesController extends AdminController {
 	public function actionUpdateCertificate($membership_id,$view_id) {
 
 	   $badgesModel = Badges::find()->where(['badge_number'=>$membership_id])->one();
-	   $certificationModel = BadgeCertification::findOne($view_id);
+	   $certificationModel = BadgeCertification::find()->where([
+			'id' => $view_id,
+			'badge_number' => $membership_id,
+		])->one();
+	   if (!$badgesModel || !$certificationModel) {
+			throw new \yii\web\NotFoundHttpException('Certification not found.');
+	   }
 	   if($certificationModel->load(Yii::$app->request->post())) {
-			$certificationModel->updated_at = $this->getNowTime();
-			$certificationModel->save(false);
-			Yii::$app->getSession()->setFlash('success', 'Certificate has been edited');
+			$stickerChanged = $certificationModel->sticker
+				!== $certificationModel->getOldAttribute('sticker');
+			$canSave = !$stickerChanged || $certificationModel->validate(['sticker']);
+			if ($canSave && $stickerChanged
+				&& !$certificationModel->validateSticker($certificationModel->sticker)) {
+				$certificationModel->addError('sticker', 'This sticker is already in use.');
+				$canSave = false;
+			}
+
+			if ($canSave) {
+				$certificationModel->updated_at = $this->getNowTime();
+				if ($certificationModel->save(false)) {
+					Yii::$app->getSession()->setFlash('success', 'Certificate has been edited');
+				} else {
+					Yii::$app->getSession()->setFlash('error', 'Failed to save certificate changes.');
+				}
+			}
 	   }
 
 		return $this->render('update-certificate',[

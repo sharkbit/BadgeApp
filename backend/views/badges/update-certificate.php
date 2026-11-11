@@ -21,7 +21,7 @@ $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
               <li> Badge Number <span class="pull-right"> <?=$badgeModel->badge_number?>  </span> </li>
               <li> Name <span class="pull-right"> <?= $badgeModel->prefix.' '.$badgeModel->first_name.' '.$badgeModel->last_name.' '.$badgeModel->suffix ?>  </span> </li>
               <li> Email <span class="pull-right"> <?= $badgeModel->email ?>  </span> </li>
-              <li> Sticker <span class="pull-right"> <?= $certificationModel->sticker ?>  </span> </li>
+              <?= $form->field($certificationModel, 'sticker')->textInput(['maxlength' => true]) ?>
               <li> Fee <span class="pull-right"> <?=$formatter->formatCurrency($certificationModel->fee, 'USD') ?>  </span> </li>
               <li> Discount <span class="pull-right"> <?=$formatter->formatCurrency($certificationModel->discount, 'USD') ?>  </span> </li>
               <li> Amount Paid <span class="pull-right"> <?=$formatter->formatCurrency($certificationModel->amount_due, 'USD') ?>  </span> </li>
@@ -30,7 +30,7 @@ $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
               <?= $form->field($certificationModel, 'status')->dropdownList(['0'=>'Active','1'=>'Suspended','2'=>'Revoked'],['prompt'=>'status']) ?>
               
               <div class="form-group">
-                    <?= Html::submitButton( '<i class="fa fa-plus-square" aria-hidden="true"></i> Change Certifcation', ['class' => 'btn btn-primary pull-right']) ?>
+                    <?= Html::submitButton( '<i class="fa fa-plus-square" aria-hidden="true"></i> Save Changes', ['class' => 'btn btn-primary pull-right']) ?>
                 </div>
               <?php ActiveForm::end(); ?>
 

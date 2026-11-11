@@ -4,7 +4,7 @@ namespace backend\models;
 
 use Yii;
 use backend\models\StoreItems;
-use backend\models\Badges;
+use backend\models\BadgeSubscriptions;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -100,22 +100,11 @@ class BadgeCertification extends \yii\db\ActiveRecord
         return $dateTime;
     }
     public function validateSticker($sticker) {
-        $badgesResult = Badges::find()
-            ->where(['sticker'=>$sticker])
-            ->all();
-        if(empty($badgesResult)) {
-           $badgeCertification = BadgeCertification::find()
-             ->where(['sticker'=>$sticker])
-            ->all();
-            if(empty($badgeCertification)) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-           return false;
-        }
+        return !BadgeSubscriptions::find()
+                ->where(['sticker' => $sticker])
+                ->exists()
+            && !self::find()
+                ->where(['sticker' => $sticker])
+                ->exists();
     }
 }

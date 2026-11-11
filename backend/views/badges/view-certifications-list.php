@@ -72,11 +72,11 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 						'template'=>'{view}{update}{delete}',
 						'buttons'=>[
 						'update' => function ($url, $model) {    
-							if(!yii::$app->controller->hasPermission('badges/delete-renewal')) {
+							if(yii::$app->controller->hasPermission('badges/update-certificate')) {
 								return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ',['/badges/update-certificate','membership_id'=>$model->badge_number,'view_id'=>$model->id], [
 									'data-toggle'=>'tooltip',
 									'data-placement'=>'top',
-									'title'=>'Edit',
+									'title'=>'Edit Certification and Sticker',
 									'class'=>'edit_item',
 								]); } else {return '';}
 						},
