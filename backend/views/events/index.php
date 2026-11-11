@@ -103,11 +103,19 @@ $eventAttendee = new Event_Att();
 				},
 
 			],
-			'attended_badges',
-			'attended_guests',
+			[	'attribute'=>'attended_badges',
+				'value'=>function($model) {
+					return (!empty($model->attended_badges)) ? $model->attended_badges : '-'; 
+				}
+			],
+			[	'attribute'=>'attended_guests',
+				'value'=>function($model) {
+					return (!empty($model->attended_guests)) ? $model->attended_guests : '-'; 
+				}
+			],
 			[	'attribute'=>'wb_out_zero',
 				'value'=>function($model) {
-						if($model->track_wristbands==1) {return ($model->attended_guests-$model->wb_out_zero ?? 0 ); } else { return '-'; }
+					if($model->track_wristbands==1) {return ($model->attended_guests-$model->wb_out_zero ?? 0 ); } else { return '-'; }
 				}
 			],
 			[	'attribute'=>'event_status_id',
