@@ -6,6 +6,7 @@ defined('YII_ENV') or define('YII_ENV', 'test');
 $root = dirname(__DIR__, 3);
 require $root . '/vendor/autoload.php';
 require $root . '/vendor/yiisoft/yii2/Yii.php';
+require_once $root . '/backend/tests/_schema-bootstrap.php';
 
 class BadgesCreateViewProbe {
 	public $title;

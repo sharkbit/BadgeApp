@@ -8,6 +8,7 @@ require $root . '/vendor/autoload.php';
 require $root . '/vendor/yiisoft/yii2/Yii.php';
 require $root . '/common/config/bootstrap.php';
 Yii::setAlias('@backend', $root . '/backend');
+require_once $root . '/backend/tests/_schema-bootstrap.php';
 
 $config = require $root . '/common/config/test-local.php';
 $dbConfig = $config['components']['db'];

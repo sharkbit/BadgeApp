@@ -8,6 +8,7 @@ require $root . '/vendor/autoload.php';
 require $root . '/vendor/yiisoft/yii2/Yii.php';
 require $root . '/common/config/bootstrap.php';
 require $root . '/backend/config/bootstrap.php';
+require_once $root . '/backend/tests/_schema-bootstrap.php';
 
 $_SERVER['REQUEST_SCHEME'] = 'https';
 $_SERVER['SERVER_NAME'] = 'test.example';
