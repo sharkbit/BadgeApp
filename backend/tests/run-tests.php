@@ -12,6 +12,7 @@ $suites = [
 		['php', $root . '/backend/tests/integration/initial-admin-setup.php'],
 		['php', $root . '/backend/tests/integration/badges-update-view.php'],
 		['php', $root . '/backend/tests/integration/clubs-query-builder.php'],
+		['php', $root . '/backend/tests/integration/calendar-controller.php'],
 	],
 	'js' => [
 		['node', $root . '/backend/tests/js/badge-form-logic.test.js'],

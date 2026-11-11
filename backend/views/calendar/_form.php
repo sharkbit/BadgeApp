@@ -90,7 +90,7 @@ $ary_club =   (new clubs)->getClubList();
 $ary_club_ac =(new clubs)->getClubList(true);
 $ary_avoid =  (new clubs)->getAvoid();
 
-if ( (yii::$app->controller->hasPermission('calendar/all')) && (yii::$app->controller->hasPermission('calendar/approve')) ) {
+if ( (yii::$app->controller->hasPermission('calendar/all')) && (yii::$app->controller->hasPermission('calendar/close')) ) {
 	$club_dropdown = $ary_club;
 } else {
 	$club_dropdown = (new clubs)->getClubList(false,Yii::$app->user->identity->clubs,false,false,true);

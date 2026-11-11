@@ -42,18 +42,6 @@ class CalendarController extends AdminController {
 		];
 	}
 
-	public function actionApprove($id,$redir='index') {
-		$model = $this->findModel($id);
-		$model->approved = 1;
-		$myRemarks = ['created_at'=>yii::$app->controller->getNowTime(),'changed'=>'Approved by '.$_SESSION['user'],'data'=>""];
-
-		$model->remarks = yii::$app->controller->mergeRemarks($model->remarks, $myRemarks);
-		if($model->save(false)) {
-			Yii::$app->getSession()->setFlash('success', 'Approved event id: '.$id);
-		} else {Yii::$app->getSession()->setFlash('error', 'it didnt save :(');}
-		return $this->redirect([$redir]);
-	}
-
 	public function actionRsoComment($id = null) {
 		Yii::$app->response->format = Response::FORMAT_JSON;
 		$id = $id ?: Yii::$app->request->post('id');
