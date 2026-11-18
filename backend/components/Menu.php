@@ -233,7 +233,7 @@ class Menu extends Widget{
 
 	protected function generateMenu($type,$privilege) {
 		$html ='';
-		$param = Params::find()->one();
+		$param = Params::getParams();
 		if ($type == 'admin') {
 			$print_menu =  $this->adminMenu;
 		} elseif ($type == 'reports') {

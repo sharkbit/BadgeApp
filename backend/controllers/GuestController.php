@@ -56,7 +56,7 @@ class GuestController extends SiteController {
 			}
 			$badgeNumber = (int)$model->badge_number;
 			if ($badgeNumber > 0) {
-				$params = Params::findOne('1');
+				$params = Params::getParams();
 				if (Badges::isExpired($badgeNumber, $params)) {
 					$model->addError('badge_number', 'Not an Active Member.');
 				} elseif (!Badges::getCanRenew($badgeNumber)
@@ -132,7 +132,7 @@ class GuestController extends SiteController {
 			return ['success' => false, 'msg' => 'Enter a valid badge number to check.'];
 		}
 
-		$params = Params::findOne('1');
+		$params = Params::getParams();
 		if (Badges::isExpired((int)$badgeNumber, $params)) {
 			return ['success' => false, 'msg' => 'Not an Active Member.'];
 		}

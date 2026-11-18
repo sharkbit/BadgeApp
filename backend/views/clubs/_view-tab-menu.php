@@ -21,5 +21,9 @@ $urlStatus = yii::$app->controller->getCurrentUrl();
 	if(yii::$app->controller->hasPermission('clubs/roles')) { ?>
 	<li class="<?php if($urlStatus['actionId']=='roles')echo'active';?>">
 		<a href="<?=Url::to(['/clubs/roles'])?>">  <span class="glyphicon glyphicon-book"></span> Club Roles</a></li>
-	<?php } ?>
+	<?php } 
+	if(yii::$app->controller->hasPermission('privileges/raw')) { ?>
+	<li class="<?=($urlStatus['actionId'] ?? '') === 'raw' ? 'active' : '' ?>">
+		<a href="<?=Url::to(['/privileges/raw'])?>">  <span class="glyphicon glyphicon-th"></span> Full Privilege List</a></li> 
+<?php } ?>
 </ul>

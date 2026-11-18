@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use backend\models\Params;
 
 $urlStatus = yii::$app->controller->getCurrentUrl();
-$confParams  = Params::findOne('1');
+$confParams  = Params::getParams();
 ?>
 
 <ul class="nav nav-tabs">

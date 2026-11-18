@@ -151,7 +151,7 @@ class ParamsController extends AdminController {
     }
 
 	public function RemoteUser($action, $username, $pwd=null) {
-		$param = Params::find()->one();
+		$param = Params::getParams();
 		$pwd_file = Yii::getAlias('@webroot').'/'.$param->remote_users;
 		if ($action=='check'){
 		//	$txt = file_get_contents($param->remote_users);

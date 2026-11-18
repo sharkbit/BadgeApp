@@ -142,7 +142,7 @@ class SalesController extends AdminController {
 	}
 
 	function CheckGuest($model,$g_id=false) {
-		$confParams = Params::findOne('1');
+		$confParams = Params::getParams();
 		$tst = (string)$confParams->guest_sku;
 		if (strpos($model->cart,  $tst)) {
 			$cart = json_decode($model->cart);
@@ -170,7 +170,7 @@ class SalesController extends AdminController {
 
 	public function actionInventory () {
 		$dataService = PaymentController::OAuth();
-		$confParams = Params::findOne('1');
+		$confParams = Params::getParams();
 
 		return $this->render('inventory', [
 			'dataService' => $dataService,

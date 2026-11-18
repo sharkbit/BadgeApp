@@ -83,7 +83,7 @@ class WorkCreditsSearch extends WorkCredits {
 		if(isset($this->authorized_by)) {
 			$query->andFilterWhere(['like', 'authorized_by', $this->authorized_by]); }
 
-		$confParams  = Params::findOne('1');
+		$confParams  = Params::getParams();
 		$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 		$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
 		if((isset($this->work_date)) && ($this->work_date=='A')) {} 

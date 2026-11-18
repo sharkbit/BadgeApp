@@ -96,7 +96,7 @@ if ( (yii::$app->controller->hasPermission('calendar/all')) && (yii::$app->contr
 	$club_dropdown = (new clubs)->getClubList(false,Yii::$app->user->identity->clubs,false,false,true);
 }
 
-$confParams  = Params::findOne('1');
+$confParams  = Params::getParams();
 $dirty = array();
 $search_all = [$ary_club, $ary_club_ac,$ary_avoid];
 foreach($search_all as $word_search) {

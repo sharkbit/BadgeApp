@@ -14,7 +14,7 @@ $years = [];
 for ($year = $startYear; $year >= $endYear; $year--) {
     $years[$year] = $year;
 }
-$confParams  = backend\models\Params::findOne('1');
+$confParams  = backend\models\Params::getParams();
 $PaymentTypes = backend\controllers\PaymentController::GetPaymentTypes($confParams);
 ?>
 

@@ -148,7 +148,7 @@ class BadgesController extends AdminController {
 
 			$workcreditper = $BaseFee / 40;
 
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 			$DateChk = date("Y-".$params['sell_date'], strtotime(yii::$app->controller->getNowTime()));
 
@@ -203,7 +203,7 @@ class BadgesController extends AdminController {
 			$badgeArray = Badges::find()->where(['badge_number' => $badge_number])->one();
 			if(!empty($badgeArray)) {
 
-				$params = Params::findOne('1');
+				$params = Params::getParams();
 				$isExpired = Badges::isExpired($badge_number,$params);
 
 				if($badgeArray->phone) {$ice_phone=$badgeArray->phone;} else {$ice_phone=$badgeArray->phone_op;}
@@ -355,7 +355,7 @@ class BadgesController extends AdminController {
 			echo "Phone #'s Cleaned";
 		}
 		elseif(isset($_GET['address']) ) {  //address
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
 				$verify = new AddressVerify($params->usps_api);
 				$address = new Address;
@@ -390,7 +390,7 @@ class BadgesController extends AdminController {
 			}
 		}
 		elseif(isset($_GET['ckh_zip']) ) {  //  ./badges/api-check?zip=21075
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
 				$verify = new CityStateLookup($params->usps_api);
 
@@ -478,7 +478,7 @@ class BadgesController extends AdminController {
 
 	public function actionApiZip($zip) {
 		/* need new USPS API
-		$params = Params::findOne('1');
+		$params = Params::getParams();
 		if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
 			$verify = new CityStateLookup($params->usps_api);
 			$verify->addZipCode($zip);
@@ -504,7 +504,7 @@ class BadgesController extends AdminController {
 
 	public function actionCreate() {
 		parent::init();
-		$confParams  = Params::findOne('1');
+		$confParams  = Params::getParams();
 		$model = new Badges();
 
 		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
@@ -785,7 +785,7 @@ class BadgesController extends AdminController {
 				$mergtwo=['wcCurYr'=>$myCurYr,'wcCurHr'=>0,'wcLasYr'=>$myLasYr,'wcLasHr'=>0];
 			}
 
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			$isExpired = Badges::isExpired($badge_number,$params);
 			$mergtwo=array_merge($mergtwo,['isExpired'=> $isExpired]);
 
@@ -814,7 +814,7 @@ class BadgesController extends AdminController {
 		Yii::$app->response->format = Response::FORMAT_JSON;
 		$badgeArray = Badges::find()->where(['badge_number'=>$badge_number])->one();
 		if($badgeArray) {
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			$isExpired = Badges::isExpired($badge_number,$params);
 
 			return [
@@ -1065,7 +1065,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionRenewMembership($membership_id) {
-		$confParams  = Params::findOne('1');
+		$confParams  = Params::getParams();
 		$model = new BadgeSubscriptions();
 		$badgeRecords = Badges::find()->where(['badge_number'=>$membership_id])->one();
 		$badgeRecords->load(Yii::$app->request->post());
@@ -1277,7 +1277,7 @@ class BadgesController extends AdminController {
 					return $this->redirect(['update', 'badge_number' => $_GET['badge_number']]);
 
 				} else {
-					$confParams  = Params::findOne('1');
+					$confParams  = Params::getParams();
 					return $this->render('update', [
 						'model' => $model,
 						'badgeSubscriptions'=>$badgeSubscriptions,

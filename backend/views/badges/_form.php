@@ -23,7 +23,7 @@ for ($x = 1; $x <= 90; $x++) {
 }
 $YearList = json_decode(str_replace('}{',',',$YearList));
 
-$confParams  = Params::findOne('1');
+$confParams  = Params::getParams();
 
 $Club_List = (new clubs)->getClubList(false,false,true);
 if(empty($Club_List)) {

@@ -690,6 +690,7 @@ CREATE TABLE `params` (
   `remote_users` varchar(100) DEFAULT NULL,
   `whitelist` text NULL DEFAULT NULL,
   `rso_email` text NULL DEFAULT NULL,
+  `privs` TEXT NULL DEFAULT NULL,
   `status` enum('active','disabled') DEFAULT NULL,
   `log_rotate` int DEFAULT NULL,
   `check_ip` varchar(45) DEFAULT NULL,
@@ -754,6 +755,7 @@ CREATE TABLE `roles` (
   `role_id` int NOT NULL AUTO_INCREMENT,
   `role_name` varchar(45) NOT NULL,
   `disp_order` int DEFAULT NULL,
+  `r_privs` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`role_id`),
   UNIQUE KEY `role_name_UNIQUE` (`role_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb3;
@@ -1254,7 +1256,7 @@ CREATE TABLE `work_credits` (
 
 -- Defaults for database
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (1,'President',10),(2,'Vice President',20),(3,'Executive Officer',30),(4,'Treasurer',40),(5,'Secretary',50),(6,'Trustee',60),(7,'Alternate Trustee',70);
+INSERT INTO `roles` (`role_id`,`role_name`,`disp_order`) VALUES (1,'President',10),(2,'Vice President',20),(3,'Executive Officer',30),(4,'Treasurer',40),(5,'Secretary',50),(6,'Trustee',60),(7,'Alternate Trustee',70);
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `rule_list` DISABLE KEYS */;
@@ -1266,7 +1268,7 @@ INSERT INTO `user_privileges` VALUES (1,'Root',1,60,1),(2,'Admin',20,30,1),(3,'R
 /*!40000 ALTER TABLE `user_privileges` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `params` DISABLE KEYS */;
-INSERT INTO `params` (`id`, `sell_date`, `remote_users`) VALUES (1, '10-16', 'passwd');
+INSERT INTO `params` (`id`, `sell_date`, `remote_users`, `privs`) VALUES (1, '10-16', 'passwd', '[\"badges/club\",\"badges/modify\",\"calendar/create\",\"calendar/view\",\"clubs/index\",\"clubs/officers-update\",\"clubs/view\",\"events/index\",\"events/reg\",\"events/view\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\",\"rules/index\",\"rules/view\",\"violations/index\",\"violations/report\",\"violations/view\"]');
 /*!40000 ALTER TABLE `params` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;

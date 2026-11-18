@@ -6,7 +6,7 @@ use backend\models\Params;
 
 $currentYear = (int)date('Y');
 
-$params = Params::findOne('1');
+$params = Params::getParams();
 $nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 $DateChk = date("Y-".$params['sell_date'], strtotime(yii::$app->controller->getNowTime()));
 if ($DateChk <= $nowDate) {

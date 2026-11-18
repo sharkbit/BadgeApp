@@ -211,7 +211,7 @@ class SiteController extends AdminController {
 		$displayB=false;
 		$nowYear = date('Y',strtotime($this->getNowTime()));
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
-		$sell_date = Params::findOne('1')->sell_date;
+		$sell_date = Params::getParams()->sell_date;
 		$chkDate = date('Y-'.$sell_date,strtotime($nowDate));
 		if($chkDate <= $nowDate) { $add=1; $displayB=true; } else { $add=0; }
 		if(date('y-m-d',strtotime($nowYear."01-31")) <= $nowDate) { $displayB=true; }

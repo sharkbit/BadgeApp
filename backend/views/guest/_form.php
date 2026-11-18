@@ -24,7 +24,7 @@ if(!yii::$app->controller->hasPermission('guest/all')) {
 	$guestUpdate = false;
 }
 
-$confParams = Params::findOne('1');
+$confParams = Params::getParams();
 $guest_band = (new backend\models\StoreItems)->find()->where(['sku'=>$confParams->guest_sku])->one();
 if(!$guest_band) { echo '<h2>Please verify Guest Sku in App->Admin->Settings</h2>'; return;}
 ?>
