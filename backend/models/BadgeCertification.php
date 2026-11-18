@@ -102,9 +102,6 @@ class BadgeCertification extends \yii\db\ActiveRecord
     public function validateSticker($sticker) {
         return !BadgeSubscriptions::find()
                 ->where(['sticker' => $sticker])
-                ->exists()
-            && !self::find()
-                ->where(['sticker' => $sticker])
                 ->exists();
     }
 }

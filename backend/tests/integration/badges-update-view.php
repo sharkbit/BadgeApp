@@ -111,9 +111,34 @@ $transaction = $db->beginTransaction();
 try {
 	if (!$db->schema->getTableSchema('badges', true)
 		|| !$db->schema->getTableSchema('badge_subscriptions', true)
+		|| !$db->schema->getTableSchema('badge_certification', true)
 		|| !$db->schema->getTableSchema('account_status', true)) {
 		throw new RuntimeException('The configured test database is missing BadgeDB schema tables.');
 	}
+
+	$testSticker = 'CERT-TEST-' . bin2hex(random_bytes(6));
+	$certificateData = [
+		'badge_number' => 99999999,
+		'created_at' => date('Y-m-d H:i:s'),
+		'updated_at' => date('Y-m-d H:i:s'),
+		'sticker' => $testSticker,
+		'certification_type' => 1,
+		'status' => '0',
+		'fee' => 0,
+		'discount' => 0,
+		'amount_due' => 0,
+	];
+	$db->createCommand()->insert('badge_certification', $certificateData)->execute();
+	$certificate = \backend\models\BadgeCertification::findOne($db->getLastInsertID());
+	$assert(
+		$certificate !== null && $certificate->validateSticker($testSticker),
+		'Allows a certificate to retain its own sticker during update validation.'
+	);
+	$db->createCommand()->insert('badge_certification', $certificateData)->execute();
+	$assert(
+		$certificate->validateSticker($testSticker),
+		'Allows certificate sticker numbers to overlap.'
+	);
 
 	if (!$db->createCommand('SELECT 1 FROM params WHERE id = 1')->queryScalar()) {
 		$db->createCommand()->insert('params', [
