@@ -1306,11 +1306,6 @@ class BadgesController extends AdminController {
 			$stickerChanged = $certificationModel->sticker
 				!== $certificationModel->getOldAttribute('sticker');
 			$canSave = !$stickerChanged || $certificationModel->validate(['sticker']);
-			if ($canSave && $stickerChanged
-				&& !$certificationModel->validateSticker($certificationModel->sticker)) {
-				$certificationModel->addError('sticker', 'This sticker is already in use.');
-				$canSave = false;
-			}
 
 			if ($canSave) {
 				$certificationModel->updated_at = $this->getNowTime();
