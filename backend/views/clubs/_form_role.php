@@ -18,13 +18,16 @@ $numList = json_decode(str_replace('}{',',',$numList));
 <div class="roles-form">
 <?php $form = ActiveForm::begin(); ?>
 <div class="row" style="margin: auto;">
-	<div class="col-xs-6 col-sm-2" <?php if($model->isNewRecord){echo 'style="display: none;"';} ?> >
+	<div class="col-xs-3 col-sm-2 col-md-2" <?php if($model->isNewRecord){echo 'style="display: none;"';} ?> >
 	<?= $form->field($model, 'role_id')->textInput(['maxlength' => true,'readonly'=>true]) ?>
 	</div>
-	<div class="col-xs-12 col-sm-4">
+	<div class="col-xs-9 col-sm-4 col-md-4">
 	<?= $form->field($model, 'role_name')->textInput(['maxlength' => true]) ?>
 	</div>
-	<div class="col-xs-12 col-sm-4">
+	<div class="col-xs-6 col-sm-2 col-md-2">
+	<?= $form->field($model, 'r_timeout')->textInput(['maxlength' => true]) ?>
+	</div>
+	<div class="col-xs-6 col-sm-2 col-md-2">
 	<?= $form->field($model, 'disp_order')->dropDownList($numList,['value'=>$model->isNewRecord ? mt_rand(1, 100) : $model->disp_order]) ?>
 	</div>
 	<div class="col-xs-12">
@@ -43,7 +46,7 @@ $numList = json_decode(str_replace('}{',',',$numList));
 				<?php foreach ($permissions as $permission) {
 					$isEnabled = in_array($permission, $selectedPermissions, true);
 				?>
-					<div class="col-xs-6 col-sm-4 col-md-3">
+					<div class="col-xs-6 col-sm-3 col-md-2">
 						<button type="button"
 							class="btn btn-xs role-permission-toggle <?= $isEnabled ? 'btn-success' : 'btn-default' ?>"
 							data-permission="<?= Html::encode($permission) ?>"

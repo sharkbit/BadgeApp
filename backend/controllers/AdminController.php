@@ -8,6 +8,7 @@ use yii;
 use common\models\User;
 use backend\models\AgcCal;
 use backend\models\Badges;
+use backend\models\Officers;
 use backend\models\Params;
 use backend\models\Privileges;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -31,7 +32,7 @@ class AdminController extends \yii\web\Controller {
 		'Guest' => ['guest/all','guest/update','guest/stats','guest/delete'],
 		'Index' => ['site/new-member','site/no-email','site/verify'],
 		'Params' => ['params/update'],
-		'Privileges' => ['privileges/create','privileges/delete','privileges/index','privileges/update','privileges/raw'],
+		'Privileges' => ['privileges/create','privileges/delete','privileges/index','privileges/raw','privileges/update','privileges/view'],
 		'Range Badge Database' => ['range-badge-database/index','range-badge-database/view','range-badge-database/delete','range-badge-database/update'],
 		'Report' => ['reports/index','reports/active-badges','reports/cio-report','reports/guest-report','reports/events-report'],
 		'Rso Report'=>['rso-rpt/current','rso-rpt/close_mod','rso-rpt/delete','rso-rpt/index','rso-rpt/print-todays-events','rso-rpt/remarks','rso-rpt/settings','rso-rpt/sticker','rso-rpt/update','rso-rpt/view','sticker/add','sticker/move','rso-rpt/sticker-update','rso-rpt/sticker-delete'],
@@ -223,6 +224,28 @@ class AdminController extends \yii\web\Controller {
 		return parent::beforeAction($event);
 	}
 
+	public function setSessionTimeout() {
+		$privileges = $_SESSION['privilege'] ?? [];
+		if (is_string($privileges)) {
+			$privileges = json_decode($privileges, true);
+		}
+		if (!is_array($privileges)) {
+			$privileges = [];
+		}
+		$privileges = array_values(array_filter($privileges, static function ($privilege) {
+			return is_numeric($privilege) && (int)$privilege > 0;
+		}));
+
+		$privilegeTimeout = $privileges
+			? (int)Privileges::find()->where(['id' => $privileges])->max('timeout')
+			: 0;
+
+		unset($_SESSION['O_Timeout'], $_SESSION['O_Privs'], $_SESSION['O_Clubs']);
+		$_SESSION['timeout'] = max($privilegeTimeout, Officers::getOfficerTimeout());
+
+		return $_SESSION['timeout'];
+	}
+
 	public function hasPermission($event, $id = null) {
 		if ($id !== null) {
 			$privilegePermissions = [
@@ -255,13 +278,7 @@ class AdminController extends \yii\web\Controller {
 				$_SESSION['privilege'] = json_decode($activeUser->privilege);
 				$_SESSION['user'] = $activeUser->full_name;
 				$_SESSION['names'] = $this->getBadgeList();
-				foreach ($_SESSION['privilege'] as $priv) {
-					$chk_priv = Privileges::find()->where(['id'=>$priv])->one();
-					if (isset($_SESSION['timeout'])) {
-						if ($_SESSION['timeout'] < $chk_priv->timeout) {
-						$_SESSION['timeout'] = $chk_priv->timeout; }
-					} else { $_SESSION['timeout'] = $chk_priv->timeout; }
-				}
+				$this->setSessionTimeout();
 				if ((isset($activeUser->clubs)) && (is_array(json_decode($activeUser->clubs)))) {
 					$_SESSION['cal_clubs'] = json_decode($activeUser->clubs); }
 			}
@@ -283,6 +300,12 @@ class AdminController extends \yii\web\Controller {
 				elseif ($priv==13) { if ($this->Check_Privs($event,$this->adminViewPermission)) return true; }
 				elseif ($priv==15) { if ($this->Check_Privs($event,$this->shootPermission)) return true; }
 			}
+			
+			$officerPermissions = json_decode(Officers::getOfficerPrivs(), true);
+			if (is_array($officerPermissions) && in_array($event, $officerPermissions, true)) {
+				return true;
+			}
+			
 			if ($this->Check_Privs($event,$this->eventDirector)) {
 				$ed_cal_check = (new AgcCal)::find()->where(['cal_inst'=>$_SESSION['badge_number']])
 					->andWhere(['event_date' => date('Y-m-d')])->one();

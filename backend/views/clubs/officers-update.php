@@ -8,8 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Update Officer';
 if(yii::$app->controller->hasPermission('site/admin-menu')) {
 	$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']]; }
-$this->params['breadcrumbs'][] = ['label' => 'Member Club List', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => 'Club Roles', 'url' => ['roles']];
+$this->params['breadcrumbs'][] = ['label' => 'Member Club Officer', 'url' => ['officers']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

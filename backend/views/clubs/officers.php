@@ -11,10 +11,10 @@ use backend\models\Roles;
 /* @var $searchModel backend\models\search\roles */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Club Officers';
+$this->title = 'Member Club Officers';
 if(yii::$app->controller->hasPermission('site/admin-menu')) {
 	$this->params['breadcrumbs'][] = ['label' => 'Admin Menu', 'url' => ['/site/admin-menu']]; }
-$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/roles']];
+$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/clubs/officers']];
 
 if (isset($_SESSION['pagesize'])) {
 	$pagesize = $_SESSION['pagesize'];

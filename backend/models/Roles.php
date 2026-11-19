@@ -24,8 +24,9 @@ class Roles extends \yii\db\ActiveRecord {
     public function rules() {
         return [
 			[['role_name'], 'required'],
-			[['disp_order','role_id'], 'integer'],
+			[['disp_order','role_id','r_timeout'], 'integer'],
 			[['role_name','r_privs'], 'safe'],
+			[['r_timeout'], 'integer', 'min'=>2, 'max' => 60],
 		];
     }
 
@@ -35,6 +36,7 @@ class Roles extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'r_privs' => 'Privileges',
+			'r_timeout' => 'Timeout',
 			'role_name' => 'Role Name',
 			'disp_order' => 'Display Order'
         ];

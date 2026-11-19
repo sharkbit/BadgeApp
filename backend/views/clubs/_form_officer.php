@@ -4,10 +4,21 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use backend\models\clubs;
 use backend\models\Roles;
+use backend\models\Officers;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\Badge_to_Role */
 /* @var $form yii\widgets\ActiveForm */
+
+if (yii::$app->controller->hasPermission('calendar/all')) {
+	$Clubs_Viz = false;
+} else {
+	$Clubs_Viz = Officers::getOfficerClubs();
+	if(empty($Clubs_Viz)) {
+		$Clubs_Viz = true;
+	}
+}
+
 ?>
 <div class="officers-form" >
 
@@ -40,7 +51,7 @@ use backend\models\Roles;
 		</div>
 		<div class="row">
 			<div class="col-xs-12 col-sm-7">
-				<?= $form->field($model, 'club')->dropDownList((new clubs)->getClubList(false,false,true), ['prompt'=>'select']).PHP_EOL; ?>
+				<?= $form->field($model, 'club')->dropDownList((new clubs)->getClubList(false,$Clubs_Viz,true), ['prompt'=>'select']).PHP_EOL; ?>
 			</div>
 		
 		</div>

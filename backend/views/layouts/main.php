@@ -59,10 +59,11 @@ $this->beginBody() ?>
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
 		$pg="?url=".base64_encode($_SERVER['REQUEST_URI']);
+		$loginUsername = $_SESSION['login_username'] ?? Yii::$app->user->identity->username;
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'.$pg], 'post')
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
+                'Logout (' . Html::encode($loginUsername) . ')',
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()

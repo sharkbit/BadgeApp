@@ -5,6 +5,7 @@ use backend\models\agcEventStatus;
 use backend\models\agcFacility;
 use backend\models\agcRangeStatus;
 use backend\models\clubs;
+use backend\models\Officers;
 use kartik\grid\GridView;
 use kartik\daterange\DateRangePicker;
 use kartik\widgets\ActiveForm;
@@ -22,7 +23,13 @@ $model = new AgcCal();
 
 $this->title = 'Calendar List';
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['/calendar/index']];
+
 $urlStatus = yii::$app->controller->getCurrentUrl();
+
+$userClubs = json_decode(Yii::$app->user->identity->clubs, true);
+if (!is_array($userClubs)) { $userClubs = []; }
+$userClubs = array_values(array_unique(array_merge($userClubs, Officers::getOfficerClubs())));
+if (!is_array($userClubs)) { $userClubs = []; }
 
 if (isset($_REQUEST['AgcCal']['pagesize'])) {
 	$pagesize = $_REQUEST['AgcCal']['pagesize'];
@@ -71,10 +78,10 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 				'format' => 'raw',
 				'headerOptions' => ['style' => 'width:15%'],
 				'contentOptions' => ['style' => 'white-space:pre-line;'],
-				'value'=>function ($model) use ($shoot) {
+				'value'=>function ($model) use ($shoot, $userClubs) {
 					if($model->recurrent_calendar_id>0) {$recurr=" *";} else {$recurr="";}
 					if($model->calendar_id==$model->recurrent_calendar_id) {$master=" m";} else {$master="";}
-					if ( ( (yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs)))) ) ||
+					if ( ( (yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, $userClubs))) ) ||
 						( (yii::$app->controller->hasPermission('calendar/shoot')) && ( array_intersect($shoot, json_decode($model->facility_id)) ) ) ) {
 						return Html::a($model->event_name,'/calendar/update?id='.$model->calendar_id).$recurr.$master; }
 					else { return $model->event_name.$recurr.$master; }
@@ -265,8 +272,8 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 							'title'=>'View',
 						]);}
 					},
-					'update' => function($url,$model) use ($shoot) {
-						if ( ( (yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs)))) ) ||
+					'update' => function($url,$model) use ($shoot, $userClubs) {
+						if ( ( (yii::$app->controller->hasPermission('calendar/update')) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, $userClubs))) ) ||
 							( (yii::$app->controller->hasPermission('calendar/shoot')) && ( array_intersect($shoot, json_decode($model->facility_id)) ) ) ) {
 						return  Html::a(' <span class="glyphicon glyphicon-pencil"></span> ', ['/calendar/update','id'=>$model->calendar_id], [
 							'data-toggle'=>'tooltip',
@@ -274,8 +281,8 @@ if (yii::$app->controller->hasPermission('calendar/shoot')) {
 							'title'=>'Update',
 						]);}
 					},
-					'delete' => function($url,$model) use ($shoot) {
-						if( ( (yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, json_decode(yii::$app->user->identity->clubs))))) ||
+					'delete' => function($url,$model) use ($shoot, $userClubs) {
+						if( ( (yii::$app->controller->hasPermission('calendar/delete')) && ($model->deleted==0) && ((array_intersect([1,2],$_SESSION['privilege'])) || (in_array($model->club_id, $userClubs))) ) ||
 						( (yii::$app->controller->hasPermission('calendar/shoot')) && ( array_intersect($shoot, json_decode($model->facility_id)) ) ) ) {
 							return  Html::a(' <span class="glyphicon glyphicon-trash"></span> ',  ['/calendar/delete','id'=>$model->calendar_id,'type'=>(strpos($_SERVER['REQUEST_URI'],'recu') ? 'm' : 's'),'redir'=>yii::$app->controller->getCurrentUrl()['actionId']], [
 							'data-toggle'=>'tooltip',

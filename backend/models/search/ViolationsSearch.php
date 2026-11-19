@@ -5,6 +5,8 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Query;
+use backend\models\Officers;
 use backend\models\Violations;
 
 /**
@@ -50,7 +52,19 @@ class ViolationsSearch extends Violations {
 		if(!isset($params['sort'])) { $query->orderBy( ['vi_date' => SORT_DESC] ); }
 
 		if(!yii::$app->controller->hasPermission('violations/all')) {
-			$query->andFilterWhere(['like','badge_involved',$_SESSION["badge_number"]]);
+			$o_clubs = Officers::getOfficerClubs();
+			$badgeAccess = ['or'];
+			if ($o_clubs) {
+					$badgeNumbers = (new Query())
+					->select('badge_number')
+					->from('badge_to_club')
+					->where(['in', 'club_id', $o_clubs]);
+				$badgeAccess[] = ['in', 'badge_involved', $badgeNumbers];
+			}
+			if (isset($_SESSION['badge_number'])) {
+				$badgeAccess[] = ['badge_involved' => $_SESSION['badge_number']];
+			}
+			$query->andWhere($badgeAccess);
 		}
 
 		$two=false;
@@ -71,8 +85,8 @@ class ViolationsSearch extends Violations {
 			if(strpos($_SERVER['REDIRECT_URL'],'report')) {
 				$query->andFilterWhere(['like','vi_date',date('Y-m-d',strtotime(yii::$app->controller->getNowTime()))]);
 			}
-		} 
-		
+		}
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             //  $query->where('0=1');
@@ -81,18 +95,17 @@ class ViolationsSearch extends Violations {
         }
 
         // grid filtering conditions
-		
+
         if(!empty($this->vi_type)) {	$query->andFilterWhere(['vi_type' => $this->vi_type]); }
-		
+
 		if(!empty($this->vi_loc)) {		$query->andFilterWhere(['vi_loc' => $this->vi_loc]);}
 		if(!empty($this->club_id)) {	$query->andWhere("badge_involved IN (SELECT badge_number FROM badge_to_club WHERE club_id=".$this->club_id.")"); }
-		if(!empty($this->badge_involved)) {	$query->andFilterWhere(['like', 'badge_involved', $this->badge_involved]);}
+		if(!empty($this->badge_involved)) {	$query->andFilterWhere(['like', 'badge_involved', (int)$this->badge_involved]);}
 		if(!empty($this->badge_witness)) {	$query->andFilterWhere(['like', 'badge_witness', $this->badge_witness]);}
-		if(!empty($this->badge_reporter)) {	$query->andFilterWhere(['like', 'badge_reporter', $this->badge_reporter]);}
+		if(!empty($this->badge_reporter)) {	$query->andFilterWhere(['like', 'badge_reporter', (int)$this->badge_reporter]);}
 		if(isset($this->was_guest)) { 	$query->andFilterWhere(['was_guest' => $this->was_guest]);}
 		if(!empty($this->vi_sum)) {		$query->andFilterWhere(['like', 'vi_sum', $this->vi_sum]);}
 		if(!empty($this->vi_rules)) { 	$query->andFilterWhere(['like', 'vi_rules', $this->vi_rules]); }
-
 
 //yii::$app->controller->createLog(true, 'trex-b-m-s-vs', 'Raw Sql: '.var_export($query->createCommand()->getRawSql(),true));
 

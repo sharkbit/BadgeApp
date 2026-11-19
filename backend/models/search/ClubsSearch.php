@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\clubs;
+use backend\models\Officers;
 
 /**
  * ClubsSearch represents the model behind the search form about `backend\models\Clubs`.
@@ -48,6 +49,15 @@ class ClubsSearch extends Clubs {
         ]);
 
         $this->load($params);
+
+		if (!yii::$app->controller->hasPermission('badges/all')) {
+			$o_clubs = Officers::getOfficerClubs();
+			if ($o_clubs) {
+				$query->andWhere(['in', 'club_id', $o_clubs]);
+			} else {
+				$query->where('0=1');  // fail
+			}
+		}
 
 		if(!isset($params['sort'])) { $query->orderBy( ['club_name' => SORT_ASC] ); }
 

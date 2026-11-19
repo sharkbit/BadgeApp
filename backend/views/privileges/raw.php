@@ -81,27 +81,25 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 
 	<script>
 		function jsRemovePermission(permission) {
-			window.agcDecisionDialog.confirm('Are you sure you want to remove ' + permission + '?', 'Remove').done(function(confirmed) {
-				if (!confirmed) {
-					return;
-				}
+			if (!window.confirm('Are you sure you want to remove ' + permission + '?')) {
+				return;
+			}
 
-				const data = {deletePermission: permission};
-				data[<?= Json::htmlEncode(Yii::$app->request->csrfParam) ?>] = <?= Json::htmlEncode(Yii::$app->request->getCsrfToken()) ?>;
-				jQuery.ajax({
-					method: 'POST',
-					url: <?= Json::htmlEncode(Yii::$app->params['rootUrl'] . '/privileges/raw') ?>,
-					data: data,
-					dataType: 'json'
-				}).done(function(response) {
-					if (response && response.success) {
-						window.location.reload();
-					} else {
-						window.agcDecisionDialog.notice((response && response.message) || 'The permission could not be deleted.');
-					}
-				}).fail(function() {
-					window.agcDecisionDialog.notice('The permission could not be deleted.');
-				});
+			const data = {deletePermission: permission};
+			data[<?= Json::htmlEncode(Yii::$app->request->csrfParam) ?>] = <?= Json::htmlEncode(Yii::$app->request->getCsrfToken()) ?>;
+			jQuery.ajax({
+				method: 'POST',
+				url: <?= Json::htmlEncode(Yii::$app->params['rootUrl'] . '/privileges/raw') ?>,
+				data: data,
+				dataType: 'json'
+			}).done(function(response) {
+				if (response && response.success) {
+					window.location.reload();
+				} else {
+					window.alert((response && response.message) || 'The permission could not be deleted.');
+				}
+			}).fail(function() {
+				window.alert('The permission could not be deleted.');
 			});
 		}
 	</script>

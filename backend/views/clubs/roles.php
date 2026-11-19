@@ -50,6 +50,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					'attribute'=>'role_name',
 					'headerOptions' => ['style' => 'width:15%'],
 				],
+				'r_timeout',
 				[	'attribute' => 'r_privs',
 					'contentOptions' => ['style' => 'white-space:pre-line;'],
 					'value' => function ($model) {

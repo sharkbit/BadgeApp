@@ -77,6 +77,15 @@ $assert(
 	'hasPermission checks the requested privilege ID instead of the logged-in user.'
 );
 
+$_SESSION['badge_number'] = 0;
+$_SESSION['privilege'] = [4, 5];
+$expectedTimeout = (int)\backend\models\Privileges::find()->where(['id' => [4, 5]])->max('timeout');
+$assert(
+	$permissionChecker->setSessionTimeout() === $expectedTimeout
+		&& $_SESSION['timeout'] === $expectedTimeout,
+	'setSessionTimeout stores the highest user privilege timeout.'
+);
+
 try {
 	$settings->privs = json_encode(['events/view', 'accounts/index']);
 	$settings->save(false, ['privs']);

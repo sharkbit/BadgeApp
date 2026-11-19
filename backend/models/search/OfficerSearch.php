@@ -35,6 +35,15 @@ class OfficerSearch extends Officers {
 
 		$this->load($params);
 
+		if (!yii::$app->controller->hasPermission('badges/all')) {
+			$o_clubs = Officers::getOfficerClubs();
+			if ($o_clubs) {
+				$query->andWhere(['in', 'club', $o_clubs]);
+			} else {
+				$query->where('0=1');  // fail
+			}
+		}
+
 		if(!isset($params['sort'])) { $query->orderBy( ['club_name' => SORT_DESC] ); }
 		
 		if (!$this->validate()) {

@@ -5,7 +5,9 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Query;
 use backend\models\Badges;
+use backend\models\Officers;
 
 /**
  * BadgesSearch represents the model behind the search form about `backend\models\Badges`.
@@ -90,10 +92,6 @@ class BadgesSearch extends Badges {
         }
         else { /* no filter needed for all */ }
 
-		if(!yii::$app->controller->hasPermission('badges/all')) {
-			$query->andFilterWhere(['badges.badge_number'=>$_SESSION["badge_number"]]);
-		}
-
         if($this->expire_date_range==null) {
             $expireDateRange[0] = '2000-01-01';
             $expireDateRange[1] = '2100-01-01';
@@ -103,6 +101,22 @@ class BadgesSearch extends Badges {
             $expireDateRange[0] = date('Y-m-d',strtotime($tempexpireDateRange[0]));
             $expireDateRange[1] = date('Y-m-d',strtotime($tempexpireDateRange[1]));
         }
+
+		if (!yii::$app->controller->hasPermission('badges/all')) {
+			$o_clubs = Officers::getOfficerClubs();
+			$badgeAccess = ['or'];
+			if ($o_clubs) {
+				$badgeNumbers = (new Query())
+					->select('badge_number')
+					->from('badge_to_club')
+					->where(['in', 'club_id', $o_clubs]);
+				$badgeAccess[] = ['in', 'badges.badge_number', $badgeNumbers];
+			}
+			if (isset($_SESSION['badge_number'])) {
+				$badgeAccess[] = ['badges.badge_number' => $_SESSION['badge_number']];
+			}
+			$query->andWhere($badgeAccess);
+		}
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
