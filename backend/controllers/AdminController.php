@@ -119,6 +119,7 @@ class AdminController extends \yii\web\Controller {
 		'sales' => ['sales/all','sales/index','sales/stock','sales/report','sales/summary'],
 		'Report' => ['reports/index','reports/active-badges','reports/cio-report','reports/guest-report','reports/events-report'],
 		'Rso Report'=>['rso-rpt/index'],
+		'Rules'=> ['rules/index','rules/view'],
 		'violations' => ['violations/all'],
 		'Work Credits'=>['work-credits/all'],
 	];
@@ -131,14 +132,14 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $cioPermission = [
-		'Badges'=>['badges/restrict','badges/get-badge-name','badges/view-certificate','badges/view-certifications-list','badges/view-remarks-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/get-badge-name','badges/view-certificate','badges/view-certifications-list','badges/view-remarks-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/get-event-types','calendar/inactive','calendar/open-range','calendar/update'],
 		'Events' => ['events/index','events/add-att','events/reg','events/view'],
 		'Guest' => ['guest/update'],
 	];
 
 	public $userPermission = [
-		'Badges'=>['badges/restrict','badges/photo-add','badges/photo-crop','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/photo-add','badges/photo-crop','badges/view-certificate','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Guest' => ['guest/update'],
 	];
 

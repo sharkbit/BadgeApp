@@ -25,7 +25,6 @@ class Menu extends Widget{
 			'label'=>'Add Guest',
 			'loc'=>['prod'],
 			'url' => '/guest/create',
-			'allow' => 'badges/restrict',
 			'color' => 'btn-success',
 		],
 		[
@@ -55,7 +54,6 @@ class Menu extends Widget{
 			'label'=>'Calender',
 			'loc'=>['cal','prod','dev'],
 			'url' => '/calendar/index',
-			'allow' => 'calendar/index',
 			'color' => 'btn-danger',
 		],
 		[

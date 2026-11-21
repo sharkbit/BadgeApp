@@ -6,6 +6,7 @@ use Yii;
 use backend\controllers\AdminController;
 use backend\models\Privileges;
 use backend\models\Params;
+use backend\models\Roles;
 use backend\models\search\PrivilegesSearch;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -107,6 +108,34 @@ class PrivilegesController extends AdminController {
 					throw new \UnexpectedValueException('The stored permission list must be a JSON array.');
 				}
 
+				$rolePermissions = [];
+				foreach (Roles::find()->all() as $role) {
+					if ($role->r_privs === null || trim((string)$role->r_privs) === '') {
+						continue;
+					}
+					$permissionsForRole = json_decode((string)$role->r_privs, true);
+					if (!is_array($permissionsForRole) || array_values($permissionsForRole) !== $permissionsForRole) {
+						throw new \UnexpectedValueException('Role privileges must be stored as JSON arrays.');
+					}
+					foreach ($permissionsForRole as $permission) {
+						if (!is_string($permission)) {
+							throw new \UnexpectedValueException('Role privileges must contain permission strings.');
+						}
+					}
+					if (!in_array($deletePermission, $permissionsForRole, true)) {
+						continue;
+					}
+
+					$permissionsForRole = array_values(array_filter(
+						$permissionsForRole,
+						static function ($permission) use ($deletePermission) {
+							return $permission !== $deletePermission;
+						}
+					));
+					sort($permissionsForRole, SORT_STRING);
+					$rolePermissions[$role->role_id] = json_encode($permissionsForRole, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+				}
+
 				$permissions = array_values(array_filter(
 					$permissions,
 					static function ($permission) use ($deletePermission) {
@@ -114,20 +143,42 @@ class PrivilegesController extends AdminController {
 					}
 				));
 				sort($permissions, SORT_STRING);
-				$model->privs = json_encode($permissions, JSON_UNESCAPED_SLASHES);
-				if (!$model->save(false, ['privs'])) {
-					if (Yii::$app->request->isAjax) {
-						Yii::$app->response->statusCode = 500;
-						Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-						return ['success' => false, 'message' => 'The permission could not be deleted.'];
+				$updatedParams = clone $model;
+				$updatedParams->privs = json_encode($permissions, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+
+				$transaction = Yii::$app->db->beginTransaction();
+				$deleted = false;
+				try {
+					if (!$updatedParams->save(false, ['privs'])) {
+						$transaction->rollBack();
+						if (Yii::$app->request->isAjax) {
+							Yii::$app->response->statusCode = 500;
+							Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+							return ['success' => false, 'message' => 'The permission could not be deleted.'];
+						}
+						Yii::$app->session->setFlash('error', 'The permission could not be deleted.');
+					} else {
+						foreach ($rolePermissions as $roleId => $rolePrivs) {
+							Roles::updateAll(['r_privs' => $rolePrivs], ['role_id' => $roleId]);
+						}
+						$transaction->commit();
+						$model = $updatedParams;
+						$deleted = true;
 					}
-					Yii::$app->session->setFlash('error', 'The permission could not be deleted.');
-				} else {
+				} catch (\Throwable $exception) {
+					if ($transaction->isActive) {
+						$transaction->rollBack();
+					}
+					Yii::$app->session->remove('paramsRecord');
+					throw $exception;
+				}
+
+				if ($deleted) {
 					if (Yii::$app->request->isAjax) {
 						Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 						return ['success' => true];
 					}
-					Yii::$app->session->setFlash('success', 'Permission deleted.');
+					Yii::$app->session->setFlash('success', 'Permission deleted from permissions and club roles.');
 					return $this->redirect(['raw']);
 				}
 			}

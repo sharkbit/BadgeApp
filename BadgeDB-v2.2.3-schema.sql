@@ -1260,6 +1260,10 @@ CREATE TABLE `work_credits` (
 INSERT INTO `account_status` VALUES (1,'sel','Self-Register',0,1,10,'BH has entered basic info to help speed up regestration','green',1,0,1,1),(3,'app','Approved',1,0,20,'BH is in good standing with the AGC','green',1,1,1,0),(4,'oph','Open House',0,1,30,'BH regestered durring open house; Needs walkthrough and sticker','green',0,1,1,0),(5,'pen','Pending',0,0,40,'BH is in the database but needs to provide more info to get a badge','green',1,0,1,0),(6,'pro','Probation',1,0,50,'BH had badge returned after RSSOP dispensation putting the BH in probationary status following a RR Violation','green',1,0,1,0),(7,'sus','Suspended',0,0,60,'BH has had badge suspended pending RSSOP investigation into RR Violation','red',1,0,0,0),(8,'ret','Retired',0,0,70,'BH is deceased (policy update needed to determine when BH is removed from database)','black',1,0,0,0),(9,'rev','Revoked',0,0,80,'BH Account Status of \"Revoked\" now has two meanings,\n ** 1 - BHs who get their badge revoked meaning they did something really wrong and cannot become a BH again, and\n ** 2 - AGC Staff who are not members of a Club who leave employment. The Club remains Associated Gun Clubs Staff and their Badge Type remains N.C.M. These two indications would allow the former staff member to join a Club and use the range.','red',1,0,0,0);
 /*!40000 ALTER TABLE `account_status` ENABLE KEYS */;
 
+/*!40000 ALTER TABLE `membership_type` DISABLE KEYS */;
+INSERT INTO `membership_type` VALUES (50,'Primary',1,1,'2351306','235130',1,0),(51,'Family',1,1,'2351326','235132',1,0),(52,'Junior',1,1,'23513226','2351322',1,0),(70,'15yr',1,1,'450200','450200',1,15),(88,'N.C.M.',0,1,NULL,NULL,1,0),(99,'Life',0,1,NULL,NULL,1,0),(100,'Trial',1,1,'2351406','2351406',0,0);
+/*!40000 ALTER TABLE `membership_type` ENABLE KEYS */;
+
 /*!40000 ALTER TABLE `guest_type` DISABLE KEYS */;
 INSERT INTO `guest_type` VALUES (1,'1','Shooter',1),(2,'m','Minor',1),(3,'o','Observer',1),(4,'s','Spouse',1),(5,'y','Youth Participant',1);
 /*!40000 ALTER TABLE `guest_type` ENABLE KEYS */;

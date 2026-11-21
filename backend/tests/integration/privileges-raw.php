@@ -62,6 +62,7 @@ $assert = static function ($condition, $message) use (&$passed) {
 };
 
 $settingsSessionKey = 'paramsRecord';
+$testRoleId = null;
 Yii::$app->session->remove($settingsSessionKey);
 $cachedSettings = \backend\models\Params::getParams();
 $assert(
@@ -131,13 +132,23 @@ try {
 
 	$_SERVER['REQUEST_METHOD'] = 'POST';
 	Yii::$app->request->headers->set('X-Requested-With', 'XMLHttpRequest');
+	$db->createCommand()->insert('roles', [
+		'role_name' => 'Permission Delete Test ' . bin2hex(random_bytes(4)),
+		'r_privs' => json_encode(['events/view', 'params/update']),
+	])->execute();
+	$testRoleId = (int)$db->getLastInsertID();
 	Yii::$app->request->setBodyParams(['deletePermission' => 'events/view']);
 	$deleteResult = $controller->actionRaw();
 	$permissions = json_decode(\backend\models\Params::findOne(1)->privs, true);
+	$rolePermissions = json_decode(
+		(string)\backend\models\Roles::findOne($testRoleId)->r_privs,
+		true
+	);
 	$assert(
 		$deleteResult === ['success' => true]
-			&& $permissions === ['accounts/index', 'params/update'],
-		'actionRaw deletes the selected permission for an authorized user.'
+			&& $permissions === ['accounts/index', 'params/update']
+			&& $rolePermissions === ['params/update'],
+		'actionRaw deletes the selected permission from application permissions and club roles.'
 	);
 
 	$controller->allowDelete = false;
@@ -151,11 +162,16 @@ try {
 	$assert(
 		$forbidden
 			&& json_decode(\backend\models\Params::findOne(1)->privs, true)
-				=== ['accounts/index', 'params/update'],
+				=== ['accounts/index', 'params/update']
+			&& json_decode((string)\backend\models\Roles::findOne($testRoleId)->r_privs, true)
+				=== ['params/update'],
 		'actionRaw blocks permission deletion without privileges/delete.'
 	);
 } finally {
 	$db->createCommand()->update('params', ['privs' => $originalPrivs], ['id' => 1])->execute();
+	if ($testRoleId !== null) {
+		$db->createCommand()->delete('roles', ['role_id' => $testRoleId])->execute();
+	}
 	Yii::$app->session->remove($settingsSessionKey);
 	Yii::$app->request->headers->remove('X-Requested-With');
 }
