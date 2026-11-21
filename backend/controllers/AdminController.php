@@ -190,13 +190,32 @@ class AdminController extends \yii\web\Controller {
 	public function beforeAction($event) {
 
 		if(!yii::$app->user->isGuest) {
-			if(isset($_GET['goBack'])) {
-				array_pop($_SESSION['back']);
-				$goBack = end($_SESSION['back']);
-				array_pop($_SESSION['back']);
+			if (Yii::$app->request->get('goBack') !== null) {
+				$history = $_SESSION['back'] ?? [];
+				if (!is_array($history)) {
+					$history = [];
+				}
+				array_pop($history);
+				$goBack = end($history);
+				$_SESSION['back'] = $history;
+				if (!$goBack) {
+					$goBack = Yii::$app->homeUrl;
+				}
 				$this->redirect($goBack);
+				return false;
 			} else {
-				$_SESSION['back'][]=$_SERVER['REQUEST_URI'];
+				$request = Yii::$app->request;
+				if ($request->isGet && !$request->isAjax) {
+					$history = $_SESSION['back'] ?? [];
+					if (!is_array($history)) {
+						$history = [];
+					}
+					$currentUrl = $request->getUrl();
+					if (!$history || end($history) !== $currentUrl) {
+						$history[] = $currentUrl;
+					}
+					$_SESSION['back'] = $history;
+				}
 			}
 			if(!$this->hasPermission(Yii::$app->controller->id."/".Yii::$app->controller->action->id)){
 				//throw new \yii\web\UnauthorizedHttpException();
