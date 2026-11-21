@@ -25,7 +25,6 @@ class Menu extends Widget{
 			'label'=>'Add Guest',
 			'loc'=>['prod'],
 			'url' => '/guest/create',
-			'allow' => 'badges/restrict',
 			'color' => 'btn-success',
 		],
 		[
@@ -55,7 +54,6 @@ class Menu extends Widget{
 			'label'=>'Calender',
 			'loc'=>['cal','prod','dev'],
 			'url' => '/calendar/index',
-			'allow' => 'calendar/index',
 			'color' => 'btn-danger',
 		],
 		[
@@ -233,7 +231,7 @@ class Menu extends Widget{
 
 	protected function generateMenu($type,$privilege) {
 		$html ='';
-		$param = Params::find()->one();
+		$param = Params::getParams();
 		if ($type == 'admin') {
 			$print_menu =  $this->adminMenu;
 		} elseif ($type == 'reports') {

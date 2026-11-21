@@ -208,7 +208,7 @@ class EventsController extends AdminController {
 
 		$canOverrideRegistration = $this->canOverrideBannedRegistration();
 		if ($checkBannedOnly && $badge > 0) {
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			if (Badges::isExpired($badge, $params)) {
 				return json_encode(['success' => false, 'msg' => 'Not an Active Member.'], true);
 			}
@@ -226,7 +226,7 @@ class EventsController extends AdminController {
 		}
 
 		if($badge>0){
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			$isExpired = Badges::isExpired($badge,$params);
 			if(!$isExpired) {
 				$canRenew = Badges::getCanRenew($badge);

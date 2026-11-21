@@ -14,6 +14,8 @@ $suites = [
 		['php', $root . '/backend/tests/integration/clubs-query-builder.php'],
 		['php', $root . '/backend/tests/integration/calendar-controller.php'],
 		['php', $root . '/backend/tests/integration/agc-cal-model.php'],
+		['php', $root . '/backend/tests/integration/privileges-raw.php'],
+		['php', $root . '/backend/tests/integration/club-role-permissions.php'],
 	],
 	'js' => [
 		['node', $root . '/backend/tests/js/badge-form-logic.test.js'],

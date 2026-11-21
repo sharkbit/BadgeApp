@@ -6,6 +6,7 @@ use kartik\widgets\ActiveForm;
 use backend\models\Badges;
 use backend\models\clubs;
 use backend\models\MembershipStatus;
+use backend\models\Officers;
 
 $badgesModel = new Badges();
 
@@ -26,6 +27,7 @@ if (isset($_REQUEST['BadgesSearch']['pagesize'])) {
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
 $membershipStatusNames = MembershipStatus::getMemberStatus(true);
+$o_clubs = Officers::getOfficerClubs();
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -38,7 +40,7 @@ $membershipStatusNames = MembershipStatus::getMemberStatus(true);
      <div class="col-xs-4 col-sm-4">
         <h1><?= Html::encode($this->title) ?></h1>
     </div>
-	<?php if(yii::$app->controller->hasPermission('badges/all')) {
+	<?php if((yii::$app->controller->hasPermission('badges/all')) || (!empty($o_clubs))) {
 	echo $this->render('_search',['model'=>$searchModel,'badgesModel'=>$badgesModel,'form'=>$form]).PHP_EOL; } ?>
 </div>
 <div class="row">

@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 $this->title = 'Store';
 $this->params['breadcrumbs'][] = ['label'=>$this->title, 'url'=>['/sales']];
 
-$confParams  = Params::findOne('1');
+$confParams  = Params::getParams();
 
 $is_dev=false;
 if(yii::$app->controller->hasPermission('sales/all')) {

@@ -101,7 +101,7 @@ $myPaymentList = backend\controllers\PaymentController::GetPaymentTypes(false, f
 						]);
 					},
 					'print' => function($url,$model) {
-						if($model->cc_x_id) {
+						if ((yii::$app->controller->hasPermission('badges/print-rcpt')) && ($model->cc_x_id)) {
 						return  Html::a(' <span class="glyphicon glyphicon-print"></span> ',
 							['/badges/print-rcpt','x_id'=>$model->cc_x_id,'badge_number'=>$model->badge_number], [
 							'target'=>'_blank',
@@ -111,7 +111,7 @@ $myPaymentList = backend\controllers\PaymentController::GetPaymentTypes(false, f
 						]); }
 					},
 					'email' => function($url,$model) {
-						if($model->cc_x_id) {
+						if ((yii::$app->controller->hasPermission('badges/print-rcpt')) && ($model->cc_x_id)) {
 							$model_badge = Badges::find()->where(['badge_number'=>$model->badge_number])->one();
 							$email=$model_badge->email;
 							if($email) {

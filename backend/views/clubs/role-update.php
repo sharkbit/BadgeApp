@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = 'Update';
 <h2><?= Html::encode($this->title) ?></h2>
     <?= $this->render('_form_role', [
         'model' => $model,
+		'permissionGroups' => $permissionGroups,
     ]) ?>
 
 </div>

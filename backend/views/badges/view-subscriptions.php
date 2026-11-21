@@ -36,7 +36,7 @@ if(isset($rcpt->on_qb) && $rcpt->on_qb==0) {
         <div class="panel-heading">
             <h3 class="panel-title pull-left"> Subscriptions Details</h3>
             <div class="pull-right">
-<?php if($subciptionsArray->cc_x_id) {
+<?php if ((yii::$app->controller->hasPermission('badges/print-rcpt')) && ($subciptionsArray->cc_x_id)) {
 		echo  Html::a('[ <span class="glyphicon glyphicon-print"> Print Recipt ]</span> ',
 			['/badges/print-rcpt','x_id'=>$subciptionsArray->cc_x_id,"badge_number"=>$subciptionsArray->badge_number], [
 			'target'=>'_blank',

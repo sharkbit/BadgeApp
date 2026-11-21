@@ -17,8 +17,8 @@ use backend\models\Guest;
 use backend\models\LoginAccess;
 use backend\models\MembershipStatus;
 use backend\models\InitialAdminForm;
+use backend\models\Officers;
 use backend\models\Params;
-use backend\models\Privileges;
 
 /**
  * Site controller
@@ -97,19 +97,14 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 				$_SESSION["badge_number"] = $badgeArray->badge_number;
 				$_SESSION["user"] = $badgeArray->first_name.' '.$badgeArray->last_name;
 				$_SESSION['names'] = yii::$app->controller->getBadgeList();
+				unset($_SESSION['login_username']);
 				$userArray = User::find()->where(['badge_number'=> $model->badge])->one();
 				if($userArray) {
 					yii::$app->controller->RotateLog();
 					// user has privileges
 					$_SESSION['privilege']=json_decode($userArray->privilege);
 					$_SESSION['r_user']=$userArray->r_user;
-					foreach ($_SESSION['privilege'] as $priv) {
-						$chk_priv = Privileges::find()->where(['id'=>$priv])->one();
-						if (isset($_SESSION['timeout'])) {
-							if ($_SESSION['timeout'] < $chk_priv->timeout) {
-							$_SESSION['timeout'] = $chk_priv->timeout; }
-						} else { $_SESSION['timeout'] = $chk_priv->timeout; }
-					}
+					Yii::$app->controller->setSessionTimeout();
 					$compnow = date("Y-m-d",strtotime($this->getNowTime()));
 					$badge_year = BadgeSubscriptions::find()->where(['badge_number'=>$badgeArray->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
 					if(strtotime($compnow) <= strtotime(date('Y').'-01-31')) { $badge_year++; }
@@ -123,6 +118,32 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 						}
 					}
 					return Yii::$app->user->login(User::findIdentity($userArray->id), 0);
+				} elseif ($officer = Officers::getOfficerRoles($badgeArray->badge_number)) {
+					$roleName = trim((string)$officer['role_name']);
+					if ($roleName === '') {
+						Yii::$app->getSession()->setFlash('error', 'Officer roles are missing for this badge. Please See Staff.', false);
+						return false;
+					}
+
+					$_SESSION['privilege'] = [5];
+					$_SESSION['login_username'] = 'club.'.$roleName;
+					Yii::$app->controller->setSessionTimeout();
+					$compnow = date("Y-m-d",strtotime($this->getNowTime()));
+					$badge_year = BadgeSubscriptions::find()->where(['badge_number'=>$badgeArray->badge_number])->orderBy(['badge_year'=>SORT_DESC])->one()->badge_year;
+					if(strtotime($compnow) <= strtotime(date('Y').'-01-31')) { $badge_year++; }
+					if(isset($badge_year) && ((int)$badge_year < date('Y'))) {
+						unset($_SESSION);
+						yii::$app->controller->createLog(true, 'Site_Login 133 member Needs to renew badge:',$badgeArray->badge_number);
+						Yii::$app->getSession()->setFlash('warning', 'Badge needs to be Renewed! Please See Staff.',false);
+						return false;
+					}
+					$rtn = User::findIdentity(0);
+					if($rtn) {
+						return Yii::$app->user->login($rtn, 0);
+					}
+					unset($_SESSION);
+					Yii::$app->getSession()->setFlash('error', ' Default user missing from DB: id 0 => Member.',false);
+					return false;
 				} else {  // Default Privilege for members
 					// Is badge current?
 					$compnow = date("Y-m-d",strtotime($this->getNowTime()));
@@ -135,8 +156,7 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 						return false;
 					}
 					$_SESSION['privilege']=array(5);
-					$priv = Privileges::find()->where(['id'=>5])->one();
-					$_SESSION['timeout'] = $priv->timeout;
+					Yii::$app->controller->setSessionTimeout();
 					$rtn = User::findIdentity(0);
 					if($rtn) {
 						return Yii::$app->user->login($rtn, 0);
@@ -211,7 +231,7 @@ class SiteController extends AdminController {
 		$displayB=false;
 		$nowYear = date('Y',strtotime($this->getNowTime()));
 		$nowDate = date('Y-m-d',strtotime($this->getNowTime()));
-		$sell_date = Params::findOne('1')->sell_date;
+		$sell_date = Params::getParams()->sell_date;
 		$chkDate = date('Y-'.$sell_date,strtotime($nowDate));
 		if($chkDate <= $nowDate) { $add=1; $displayB=true; } else { $add=0; }
 		if(date('y-m-d',strtotime($nowYear."01-31")) <= $nowDate) { $displayB=true; }
@@ -303,6 +323,7 @@ class SiteController extends AdminController {
 
 	public function actionLogout($url=false) {
 		if (in_array(5, $_SESSION['privilege'])) {$ReDir=false;} else {$ReDir=true;}
+		unset($_SESSION['login_username']);
 		Yii::$app->user->logout();
 		if (($url) && ($ReDir)) {
 			return $this->redirect(['login-member', 'url' => $url]);
@@ -346,8 +367,7 @@ class SiteController extends AdminController {
 					$_SESSION["user"] = $badgeArray->first_name.' '.$badgeArray->last_name;
 					$_SESSION['names'] = yii::$app->controller->getBadgeList();
 					$_SESSION['privilege']=array(5);
-					$priv = Privileges::find()->where(['id'=>5])->one();
-					$_SESSION['timeout'] = $priv->timeout;
+					$this->setSessionTimeout();
 					Yii::$app->user->login(User::findIdentity(0), 0);
 					$this->createLog($this->getNowTime(), $_SESSION['user'], "Self-Registered new Badge','".$model->badge_number);
 

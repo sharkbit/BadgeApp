@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\models\clubs;
 use backend\models\Roles;
+use backend\models\Params;
 use backend\models\BadgeToRoles;
 use backend\models\Badges;
 use backend\models\search\ClubsSearch;
@@ -303,18 +304,21 @@ class ClubsController extends AdminController {
 		$model = new Roles();
         if ($model->load(Yii::$app->request->post())){
 
-			if ($model->save()) {
+			$permissions = $this->getCurrentPermissions();
+			if ($this->normalizeRolePermissions($model, $permissions) && $model->save()) {
 				$this->createLog($this->getNowTime(), $_SESSION['user'], 'New Club Role Created : '.$model->role_id);
 				Yii::$app->getSession()->setFlash('success', 'Club Role '.$model->role_name.' has been created');
 				return $this->redirect(['roles']);
 			} else {
 				return $this->render('role-create', [
 					'model' => $model,
+					'permissionGroups' => $this->groupPermissions($permissions),
 				]);
 			}
 		} else {
 			return $this->render('role-create', [
 				'model' => $model,
+				'permissionGroups' => $this->groupPermissions($this->getCurrentPermissions()),
 			]);
 		}
     }
@@ -330,17 +334,78 @@ class ClubsController extends AdminController {
 
     public function actionRoleUpdate($id) {
         $model = Roles::findOne($id);
+		$permissions = $this->getCurrentPermissions();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())
+			&& $this->normalizeRolePermissions($model, $permissions)
+			&& $model->save()) {
             $this->createLog($this->getNowTime(), $_SESSION['user'], 'Club Role Updated : '.$model->role_id);
             Yii::$app->getSession()->setFlash('success', 'Club Role '.$model->role_name.' has been updated');
             return $this->redirect(['role-update', 'id' => $model->role_id]);
         } else {
             return $this->render('role-update', [
                 'model' => $model,
+				'permissionGroups' => $this->groupPermissions($permissions),
             ]);
         }
     }
+
+	private function getCurrentPermissions() {
+		$params = Params::getParams();
+		$permissions = $params ? json_decode((string)$params->privs, true) : [];
+		if ($params && trim((string)$params->privs) !== '' && !is_array($permissions)) {
+			throw new \UnexpectedValueException('The current permission list must be a JSON array.');
+		}
+		if (!is_array($permissions)) {
+			$permissions = [];
+		}
+
+		foreach ($permissions as $permission) {
+			if (!is_string($permission) || !preg_match('#^[a-z0-9_-]+/[a-z0-9_-]+$#i', $permission)) {
+				throw new \UnexpectedValueException('Each current permission must use the section/action format.');
+			}
+		}
+		$permissions = array_values(array_unique($permissions));
+		sort($permissions, SORT_STRING);
+		return $permissions;
+	}
+
+	private function groupPermissions(array $permissions) {
+		$groups = [];
+		foreach ($permissions as $permission) {
+			[$section] = explode('/', $permission, 2);
+			$groups[$section][] = $permission;
+		}
+		ksort($groups, SORT_STRING);
+		return $groups;
+	}
+
+	private function normalizeRolePermissions(Roles $model, array $availablePermissions) {
+		if ($model->r_privs === null || $model->r_privs === '') {
+			$selectedPermissions = [];
+		} elseif (!is_string($model->r_privs)) {
+			$model->addError('r_privs', 'Select valid permissions.');
+			return false;
+		} else {
+			$selectedPermissions = json_decode($model->r_privs, true);
+		}
+		if (!is_array($selectedPermissions) || array_values($selectedPermissions) !== $selectedPermissions) {
+			$model->addError('r_privs', 'Select valid permissions.');
+			return false;
+		}
+
+		foreach ($selectedPermissions as $permission) {
+			if (!is_string($permission) || !in_array($permission, $availablePermissions, true)) {
+				$model->addError('r_privs', 'Select only permissions in the current permission list.');
+				return false;
+			}
+		}
+
+		$selectedPermissions = array_values(array_unique($selectedPermissions));
+		sort($selectedPermissions, SORT_STRING);
+		$model->r_privs = json_encode($selectedPermissions, JSON_UNESCAPED_SLASHES);
+		return true;
+	}
 
     public function actionUpdate($id) {
         $model = $this->findModel($id);

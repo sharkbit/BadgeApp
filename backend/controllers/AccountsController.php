@@ -188,7 +188,7 @@ class AccountsController extends SiteController {
 	}
 					
 	private function removeRemoteUser($r_user){
-		$param = Params::find()->one();
+		$param = Params::getParams();
 		$pwd_file = Yii::getAlias('@webroot').'/'.$param->remote_users;
 		$newPasswd='';
 		if (file_exists($param->remote_users)) { 

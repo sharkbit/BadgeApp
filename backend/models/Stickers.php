@@ -55,7 +55,7 @@ class Stickers extends \yii\db\ActiveRecord{
 		if($sticker){
 			$use = ArrayHelper::map($sticker,'sticker','sticker');
 
-			$confParams  = Params::findOne('1');
+			$confParams  = Params::getParams();
 			$DateChk = date("Y-".$confParams['sell_date'], strtotime(yii::$app->controller->getNowTime()));
 			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 

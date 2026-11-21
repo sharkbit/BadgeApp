@@ -22,7 +22,7 @@ class CalendarControllerTestDouble extends \backend\controllers\CalendarControll
 		return null;
 	}
 
-	public function hasPermission($event)
+	public function hasPermission($event, $id = null)
 	{
 		return true;
 	}

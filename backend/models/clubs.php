@@ -68,10 +68,8 @@ class Clubs extends \yii\db\ActiveRecord {
 			->orderBy(['is_club'=> SORT_DESC,$field => SORT_ASC ])
 			->all();
 
-		$hasFullClubListPermission = Yii::$app->controller->hasPermission('badges/all')
-			|| Yii::$app->controller->hasPermission('calendar/shoot');
-		$mustRestrict = !$hasFullClubListPermission
-			&& ($no_really_restrict || !empty($restrict));
+		$hasFullClubListPermission = Yii::$app->controller->hasPermission('badges/all')	|| Yii::$app->controller->hasPermission('calendar/shoot');
+		$mustRestrict = !$hasFullClubListPermission && ($no_really_restrict || !empty($restrict));
 		if ($mustRestrict) {
 			if (is_string($restrict)) {
 				$restrict = json_decode($restrict, true);

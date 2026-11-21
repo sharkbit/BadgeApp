@@ -23,6 +23,29 @@ class Params extends \yii\db\ActiveRecord {
         return 'params';
     }
 
+	public static function getParams() {
+		$session = Yii::$app->has('session') ? Yii::$app->session : null;
+		if ($session !== null) {
+			$params = $session->get('paramsRecord');
+			if ($params instanceof self && (int)$params->id === 1) {
+				return $params;
+			}
+		}
+
+		$params = static::findOne(1);
+		if ($params !== null && $session !== null) {
+			$session->set('paramsRecord', $params);
+		}
+		return $params;
+	}
+
+	public function afterSave($insert, $changedAttributes) {
+		parent::afterSave($insert, $changedAttributes);
+		if ((int)$this->id === 1 && Yii::$app->has('session')) {
+			Yii::$app->session->set('paramsRecord', $this);
+		}
+	}
+
     /**
      * @inheritdoc
      */

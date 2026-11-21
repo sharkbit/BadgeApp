@@ -36,7 +36,7 @@ class PaymentController extends AdminController {
 		}
 //yii::$app->controller->createLog(true, 'trex_C_PayCtl', var_export($_REQUEST,true));
 		if ($model->load(Yii::$app->request->post())) {
-			$confParams = Params::findOne('1');
+			$confParams = Params::getParams();
 
 			if(Yii::$app->params['env'] == 'prod') {
 				$payenv = true; //'production';
@@ -233,19 +233,19 @@ class PaymentController extends AdminController {
 	}
 
 	public function actionConverge(){
-		$confParams = Params::findOne('1');
+		$confParams = Params::getParams();
 		return $this->render('converge', ['confParams' => $confParams]);
 	}
 
 	public function actionIndex() {
-		$confParams = Params::findOne('1');
+		$confParams = Params::getParams();
 		return $this->render('index', [
 			'confParams' => $confParams
 		]);
 	}
 
 	public function actionInventory() {
-		$confParams = Params::findOne('1');
+		$confParams = Params::getParams();
 	/*	return $this->render('inventory', [
 			'confParams' => $confParams
 		]);  */

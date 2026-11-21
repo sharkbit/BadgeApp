@@ -5,9 +5,10 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use backend\models\agcEventStatus;
 use backend\models\Events;
 use backend\models\Event_Att;
-use backend\models\agcEventStatus;
+use backend\models\Officers;
 
 /**
  * ParamsSearch represents the model behind the search form about `backend\models\Events`.
@@ -50,10 +51,18 @@ class EventsSearch extends Events {
 
         // grid filtering conditions
 		if ( (yii::$app->controller->hasPermission('calendar/all')) || (yii::$app->controller->hasPermission('events/all')) ) { }	// Sees All Events
-		elseif ( (array_intersect([8,9],$_SESSION['privilege']))  && isset(Yii::$app->user->identity->clubs)) {	// Have Calendar Cord and Clubs set
+		elseif ( (array_intersect([8,9],$_SESSION['privilege']))  && isset(Yii::$app->user->identity->clubs)) {	// Have CIO or Calendar Cord and Clubs set
 			$query->andFilterWhere(['in','club_id',json_decode(Yii::$app->user->identity->clubs)]); }
-		else {																							// Is Range POC
-			$query->andFilterWhere(['cal_inst' => $_SESSION['badge_number']]);
+		else {																							// Is Officer or Is Range POC
+			$o_clubs = Officers::getOfficerClubs();
+			$badgeAccess = ['or'];
+			if ($o_clubs) {
+				$badgeAccess[] = ['in', 'club_id', $o_clubs];
+			}
+			if (isset($_SESSION['badge_number'])) {
+				$badgeAccess[] = ['cal_inst' => $_SESSION['badge_number']];
+			}
+			$query->andWhere($badgeAccess);
 		}
 		
         if(!empty($this->event_date)) {			$query->andFilterWhere(['like', 'event_date', $this->event_date]); }

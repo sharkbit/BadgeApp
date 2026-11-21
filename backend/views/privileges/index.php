@@ -17,6 +17,8 @@ if (isset($_SESSION['pagesize'])) {
 	$pagesize=20;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
+
+echo $this->render('_view-tab-menu').PHP_EOL;
 ?>
 <div class="privileges-index">
     <div class="row">

@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form_role', [
         'model' => $model,
+		'permissionGroups' => $permissionGroups,
     ]) ?>
 
 </div>

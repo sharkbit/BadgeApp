@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\AgcCal;
+use backend\models\Officers;
 
 /**
  * ParamsSearch represents the model behind the search form about `backend\models\AgcCal`.
@@ -67,7 +68,12 @@ class AgcCalSearch extends AgcCal {
 		elseif ( (array_intersect([8,9],$_SESSION['privilege']))  && isset(Yii::$app->user->identity->clubs)) {	// Have Calendar Cord and Clubs set
 			$query->andFilterWhere(['in','cal_calendar.club_id',json_decode(Yii::$app->user->identity->clubs)]); 
 		} else {
-			$query->where('0=1');  // fail
+			$o_clubs = Officers::getOfficerClubs();
+			if ($o_clubs) {
+				$query->andWhere(['in', 'cal_calendar.club_id', $o_clubs]);
+			} else {
+				$query->where('0=1');  // fail
+			}
 		}
 
 		if (is_scalar($this->key_words) && trim((string)$this->key_words) !== '') {

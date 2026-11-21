@@ -7,6 +7,7 @@ use backend\controllers\AdminController;
 use backend\controllers\SalesController;
 use backend\models\AgcCal;
 use backend\models\BadgeCertification;
+use backend\models\BadgeToClubs;
 use backend\models\Badges;
 use backend\models\BadgeSubscriptions;
 use backend\models\BannedGuests;
@@ -16,6 +17,7 @@ use backend\models\Event_Att;
 use backend\models\Guest;
 use backend\models\MembershipStatus;
 use backend\models\MembershipType;
+use backend\models\Officers;
 use backend\models\Params;
 use backend\models\PostPrintTransactions;
 use backend\models\StoreItems;
@@ -148,7 +150,7 @@ class BadgesController extends AdminController {
 
 			$workcreditper = $BaseFee / 40;
 
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			$nowDate = date('Y-m-d',strtotime(yii::$app->controller->getNowTime()));
 			$DateChk = date("Y-".$params['sell_date'], strtotime(yii::$app->controller->getNowTime()));
 
@@ -203,7 +205,7 @@ class BadgesController extends AdminController {
 			$badgeArray = Badges::find()->where(['badge_number' => $badge_number])->one();
 			if(!empty($badgeArray)) {
 
-				$params = Params::findOne('1');
+				$params = Params::getParams();
 				$isExpired = Badges::isExpired($badge_number,$params);
 
 				if($badgeArray->phone) {$ice_phone=$badgeArray->phone;} else {$ice_phone=$badgeArray->phone_op;}
@@ -355,7 +357,7 @@ class BadgesController extends AdminController {
 			echo "Phone #'s Cleaned";
 		}
 		elseif(isset($_GET['address']) ) {  //address
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
 				$verify = new AddressVerify($params->usps_api);
 				$address = new Address;
@@ -390,7 +392,7 @@ class BadgesController extends AdminController {
 			}
 		}
 		elseif(isset($_GET['ckh_zip']) ) {  //  ./badges/api-check?zip=21075
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
 				$verify = new CityStateLookup($params->usps_api);
 
@@ -478,7 +480,7 @@ class BadgesController extends AdminController {
 
 	public function actionApiZip($zip) {
 		/* need new USPS API
-		$params = Params::findOne('1');
+		$params = Params::getParams();
 		if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
 			$verify = new CityStateLookup($params->usps_api);
 			$verify->addZipCode($zip);
@@ -504,7 +506,7 @@ class BadgesController extends AdminController {
 
 	public function actionCreate() {
 		parent::init();
-		$confParams  = Params::findOne('1');
+		$confParams  = Params::getParams();
 		$model = new Badges();
 
 		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
@@ -785,7 +787,7 @@ class BadgesController extends AdminController {
 				$mergtwo=['wcCurYr'=>$myCurYr,'wcCurHr'=>0,'wcLasYr'=>$myLasYr,'wcLasHr'=>0];
 			}
 
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			$isExpired = Badges::isExpired($badge_number,$params);
 			$mergtwo=array_merge($mergtwo,['isExpired'=> $isExpired]);
 
@@ -814,7 +816,7 @@ class BadgesController extends AdminController {
 		Yii::$app->response->format = Response::FORMAT_JSON;
 		$badgeArray = Badges::find()->where(['badge_number'=>$badge_number])->one();
 		if($badgeArray) {
-			$params = Params::findOne('1');
+			$params = Params::getParams();
 			$isExpired = Badges::isExpired($badge_number,$params);
 
 			return [
@@ -1065,7 +1067,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionRenewMembership($membership_id) {
-		$confParams  = Params::findOne('1');
+		$confParams  = Params::getParams();
 		$model = new BadgeSubscriptions();
 		$badgeRecords = Badges::find()->where(['badge_number'=>$membership_id])->one();
 		$badgeRecords->load(Yii::$app->request->post());
@@ -1229,9 +1231,30 @@ class BadgesController extends AdminController {
 				return $this->render('scan-badge');
 	}
 
+	protected function canAccessBadge($badgeNumber) {
+		$requestedBadge = (int)$badgeNumber;
+		$currentBadge = (int)($_SESSION['badge_number'] ?? 0);
+
+		if ($currentBadge > 0 && $requestedBadge === $currentBadge) {
+			return true;
+		}
+		if ($this->hasPermission('badges/all')) {
+			return true;
+		}
+
+		$userClubs = Officers::getOfficerClubs();
+		if (!$userClubs) {
+			return false;
+		}
+
+		$clubMembers = array_map('intval', BadgeToClubs::getClubMembers($userClubs));
+		return in_array($requestedBadge, $clubMembers, true);
+	}
+
 	public function actionUpdate($badge_number) {
-		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
-			return $this->redirect(['update', 'badge_number' => $_SESSION['badge_number']]);
+		$currentBadge = (int)($_SESSION['badge_number'] ?? 0);
+		if (!$this->canAccessBadge($badge_number)) {
+			return $this->redirect(['update', 'badge_number' => $currentBadge]);
 		}
 		$model = Badges::find()->where(['badge_number'=>$badge_number])->one();
 
@@ -1277,7 +1300,7 @@ class BadgesController extends AdminController {
 					return $this->redirect(['update', 'badge_number' => $_GET['badge_number']]);
 
 				} else {
-					$confParams  = Params::findOne('1');
+					$confParams  = Params::getParams();
 					return $this->render('update', [
 						'model' => $model,
 						'badgeSubscriptions'=>$badgeSubscriptions,
@@ -1293,7 +1316,6 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionUpdateCertificate($membership_id,$view_id) {
-
 	   $badgesModel = Badges::find()->where(['badge_number'=>$membership_id])->one();
 	   $certificationModel = BadgeCertification::find()->where([
 			'id' => $view_id,
@@ -1404,8 +1426,9 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionView($badge_number) {
-		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
-			return $this->redirect(['view', 'badge_number' => $_SESSION['badge_number']]);
+		$currentBadge = (int)($_SESSION['badge_number'] ?? 0);
+		if (!$this->canAccessBadge($badge_number)) {
+			return $this->redirect(['view', 'badge_number' => $currentBadge]);
 		}
 
 		$model = Badges::find()->where(['badge_number'=>$badge_number])->one();
@@ -1431,7 +1454,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewCertificationsList($badge_number) {
-		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
+		if (!$this->canAccessBadge($badge_number)) {
 			return $this->redirect(['view-certifications-list', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
@@ -1451,7 +1474,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewRemarksHistory($badge_number) {
-		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
+		if (!$this->canAccessBadge($badge_number)) {
 			return $this->redirect(['view-remarks-history', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
@@ -1463,7 +1486,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewRenewalHistory($badge_number) {
-		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
+		if (!$this->canAccessBadge($badge_number)) {
 			return $this->redirect(['view-renewal-history', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
@@ -1494,7 +1517,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewViolationsHistory($badge_number) {
-		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
+		if (!$this->canAccessBadge($badge_number)) {
 			return $this->redirect(['view-violations-history', 'badge_number' => $_SESSION['badge_number']]);
 		}
 		$model = Badges::find()->where(['badge_number'=>$badge_number])->one();
@@ -1511,7 +1534,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewWorkCredits($badge_number) {
-		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
+		if (!$this->canAccessBadge($badge_number)) {
 			return $this->redirect(['view-work-credits', 'badge_number' => $_SESSION['badge_number']]);
 		}
 
@@ -1532,7 +1555,7 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionViewWorkCreditsLog($badge_number) {
-		if(!yii::$app->controller->hasPermission('badges/all') && $badge_number!=$_SESSION['badge_number']) {
+		if (!$this->canAccessBadge($badge_number)) {
 			return $this->redirect(['view-work-credits-log', 'badge_number' => $_SESSION['badge_number']]);
 		}
 

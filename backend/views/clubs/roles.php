@@ -39,13 +39,27 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			'dataProvider' => $dataProvider,
 			'filterModel' => $searchModel,
 			'columns' => [
-				[	'attribute'=>'role_id',
+			//	[	'attribute'=>'role_id',
+			//		'headerOptions' => ['style' => 'width:15%'],
+			//	],
+				[
+					'attribute'=>'disp_order',
+					'headerOptions' => ['style' => 'width:10%'],
+				],
+				[
+					'attribute'=>'role_name',
 					'headerOptions' => ['style' => 'width:15%'],
 				],
-				'role_name',
-				'disp_order',
-				[	'attribute' => 'privs',
-					'visible' => (yii::$app->controller->hasPermission('privileges/create')),
+				'r_timeout',
+				[	'attribute' => 'r_privs',
+					'contentOptions' => ['style' => 'white-space:pre-line;'],
+					'value' => function ($model) {
+						$permissions = json_decode((string)$model->r_privs, true);
+						return is_array($permissions)
+							? implode(', ', array_filter($permissions, 'is_string'))
+							: '';
+					},
+					'visible' => (yii::$app->controller->hasPermission('privileges/index')),
 				],
 				[	'header'=>'Action',
 					'class' => 'yii\grid\ActionColumn',

@@ -64,6 +64,14 @@ try {
 		backend\models\clubs::saveClub($badgeNumber, [$clubId]) === 1,
 		'saveClub inserts club mappings with a Yii batch insert.'
 	);
+	$assert(
+		array_map('intval', backend\models\BadgeToClubs::getClubMembers([$clubId])) === [$badgeNumber],
+		'getClubMembers returns badges mapped to the requested club IDs.'
+	);
+	$assert(
+		backend\models\BadgeToClubs::getClubMembers([]) === [],
+		'getClubMembers returns an empty array when no club IDs are supplied.'
+	);
 	$clubModel = new backend\models\clubs();
 	$assert(
 		$clubModel->getMyClubs($badgeNumber) === [(string)$clubId],
@@ -102,6 +110,10 @@ try {
 	$assert(
 		$clubModel->getMyClubs($badgeNumber) === [(string)$clubId, (string)$secondClubId],
 		'saveClub preserves existing mappings when delOld is false.'
+	);
+	$assert(
+		array_map('intval', backend\models\BadgeToClubs::getClubMembers([$clubId, $secondClubId])) === [$badgeNumber],
+		'getClubMembers returns distinct badges across multiple club IDs.'
 	);
 	$assert(
 		backend\models\clubs::saveClub($badgeNumber, []) === 0
