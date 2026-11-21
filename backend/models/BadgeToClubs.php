@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\db\Query;
 
 /**
  * This is the model class for table "badge_to_club".
@@ -35,4 +36,17 @@ class BadgeToClubs extends \yii\db\ActiveRecord {
           //  'id' => 'BtC ID',
         ];
     }
+
+	public static function getClubMembers($clubs) {
+		if (!is_array($clubs) || !$clubs) {
+			return [];
+		}
+
+		return (new Query())
+			->select('badge_number')
+			->distinct()
+			->from(self::tableName())
+			->where(['in', 'club_id', $clubs])
+			->column();
+	}
 }

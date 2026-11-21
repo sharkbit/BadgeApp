@@ -1323,13 +1323,17 @@ if ($tst) { yii::$app->controller->createCalLog(true, 'trex_B_C_CalC:500 lanes',
 		$model = $this->findModel($id);
 		if (!$model) { return $this->redirect(['index']); }
 
-		$userClubs = json_decode(Yii::$app->user->identity->clubs, true);
-		if (!is_array($userClubs)) {
-			$userClubs = [];
-		}
-		$userClubs = array_values(array_unique(array_merge($userClubs, Officers::getOfficerClubs())));
-		if((!yii::$app->controller->hasPermission('calendar/all')) && (!in_array($model->club_id, $userClubs))) {
-			Yii::$app->getSession()->setFlash('error', 'Not Your Event.');return $this->redirect(['/calendar/index']);
+		if (!yii::$app->controller->hasPermission('calendar/all')) {
+			$identity = Yii::$app->user->identity;
+			$userClubs = $identity ? json_decode($identity->clubs, true) : [];
+			if (!is_array($userClubs)) {
+				$userClubs = [];
+			}
+			$userClubs = array_values(array_unique(array_merge($userClubs, Officers::getOfficerClubs())));
+			if (!in_array($model->club_id, $userClubs)) {
+				Yii::$app->getSession()->setFlash('error', 'Not Your Event.');
+				return $this->redirect(['/calendar/index']);
+			}
 		}
 
 		if ($model->load(Yii::$app->request->post())) {

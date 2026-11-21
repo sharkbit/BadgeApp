@@ -18,6 +18,20 @@ use kartik\widgets\TimePicker;
 /* @var $form yii\widgets\ActiveForm */
 
 $getNowTime = yii::$app->controller->getNowTime();
+
+if(yii::$app->controller->hasPermission('calendar/shoot')) {
+	$ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
+} else {
+	$ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->andWhere(['not',['like', 'name', '%Shooting Bay%', false]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
+}
+if (!$model->isNewRecord) {
+	$selectedFacilities = agcFacility::getSelectedFacilityList($model->facility_id);
+	$ary_fac = $ary_fac + $selectedFacilities;
+	uasort($ary_fac, static function ($a, $b) {
+		return strcasecmp((string)$a, (string)$b);
+	});
+}
+
 if($model->isNewRecord) {
 	$model->cal_start_time=date('h:00 A', strtotime($getNowTime));
 	$model->cal_end_time=date('h:00 A', strtotime($getNowTime) + 60*60*2);
@@ -167,12 +181,7 @@ if(isset($_REQUEST['hideRepub']) && ($_REQUEST['hideRepub']=="no")) { $hideRepub
 			<?= $form->field($model, 'event_name')->textInput(['maxlength'=>true]) ?>
 		</div>
 		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	<?php if(yii::$app->controller->hasPermission('calendar/shoot')) {
-		 $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
-		} else {
-		 $ary_fac = ArrayHelper::map(agcFacility::find()->where(['active'=>1])->andWhere(['not',['like', 'name', '%Shooting Bay%', false]])->orderBy(['name'=>SORT_ASC])->asArray()->all(), 'facility_id', 'name');
-		}
-		echo $form->field($model, 'facility_id')->dropDownList($ary_fac,['value'=>json_decode($model->facility_id),'prompt'=>'Select', 'id'=>'agccal-facility_id','multiple'=>true]).PHP_EOL;
+	<?php echo $form->field($model, 'facility_id')->dropDownList($ary_fac,['value'=>json_decode($model->facility_id),'prompt'=>'Select', 'id'=>'agccal-facility_id','multiple'=>true]).PHP_EOL;
 	?>
 		</div>
 <?php
