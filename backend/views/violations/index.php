@@ -48,7 +48,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 					return ['style' => 'white-space:pre-line;'.$color];}, 
 				//'format' => 'raw',
 				'value'=>function ($model) {
-					return yii::$app->controller->decodeBadgeName((int)$model->badge_reporter).' ('.$model->badge_reporter.')';
+					return \backend\models\Badges::getBadgeName((int)$model->badge_reporter).' ('.$model->badge_reporter.')';
 				}
 			],
 			[
@@ -66,7 +66,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 					if($model->vi_type =='4') {$color=" color:red;";} else {$color="";}
 					return ['style' => 'white-space:pre-line;'.$color];}, 
 				'value' => function($model) {
-					return yii::$app->controller->decodeBadgeName((int)$model->badge_involved).' ('.$model->badge_involved.')';
+					return \backend\models\Badges::getBadgeName((int)$model->badge_involved).' ('.$model->badge_involved.')';
 				},
 			],
 			[

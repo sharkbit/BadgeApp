@@ -205,6 +205,36 @@ try {
 	$controller->id = 'badges';
 	Yii::$app->controller = $controller;
 
+	$nameLookupBadgeNumber = random_int(9000000, 9900000);
+	while ((new yii\db\Query())->from('badges')->where(['badge_number' => $nameLookupBadgeNumber])->exists()) {
+		$nameLookupBadgeNumber++;
+	}
+	$db->createCommand()->insert('badges', [
+		'badge_number' => $nameLookupBadgeNumber,
+		'prefix' => 'Mx',
+		'first_name' => 'Badge',
+		'last_name' => 'Name Test',
+		'address' => '123 Test Street',
+		'city' => 'Testville',
+		'state' => 'MD',
+		'zip' => '21234',
+		'email' => 'badge-name-test-' . $nameLookupBadgeNumber . '@example.invalid',
+		'phone' => '4105551234',
+		'mem_type' => $membershipTypeId,
+		'incep' => date('Y-m-d H:i:s'),
+		'wt_date' => date('Y-m-d'),
+		'remarks' => '[]',
+	])->execute();
+	$assert(
+		backend\models\Badges::getBadgeName($nameLookupBadgeNumber) === 'Badge Name Test',
+		'Resolves badge names directly from the badge record.'
+	);
+	$assert(
+		backend\models\Badges::getBadgeName(0) === 'Admin'
+			&& backend\models\Badges::getBadgeName($nameLookupBadgeNumber + 10000000) === 'Unknown',
+		'Returns the established Admin and Unknown names for special or missing badge numbers.'
+	);
+
 	$renderUpdateForm = static function ($badgeNumber, $permissions) use ($controller, $root) {
 		$controller->permissions = $permissions;
 		$model = new backend\models\Badges();

@@ -17,12 +17,12 @@ use yii\helpers\ArrayHelper;
 
 class AdminController extends \yii\web\Controller {
 
-	public $activeUser;  //badges/get-badge-name
+	public $activeUser;
 
 	public $rootAdminPermission = [
 		'Accounts' => ['accounts/temp','accounts/index','accounts/banned','accounts/add-banned-guest','accounts/create','accounts/update','accounts/view','accounts/delete','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu','params/membershipstatus','params/membershipstatusupdate','params/membershipstatusview','params/membershipstatusdelete','params/discount','params/discountupdate','params/discountview'],
-		'Badges'=>['badges/all','badges/add-certification','badges/api-check','badges/barcode','badges/create','badges/delete-certificate','badges/delete','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/overideprice','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log',],
+		'Badges'=>['badges/all','badges/add-certification','badges/api-check','badges/barcode','badges/create','badges/delete-certificate','badges/delete','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/delete-renewal','badges/overideprice','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log',],
 		'Calendar' =>['calendar/all','calendar/bulkdelete','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/merge-old-events','calendar/open-range','calendar/recheck-future-conflicts','calendar/recur','calendar/republish','calendar/shoot','calendar/showed','calendar/update','calendar/view'],
 		'CalSetup' => ['cal-setup/index','cal-setup/clubs','cal-setup/updateclu','cal-setup/facility','cal-setup/updatefac','cal-setup/rangestatus','cal-setup/updateran','cal-setup/eventstatus','cal-setup/updateeven'],
 		'Clubs' => ['clubs/roles','clubs/role-create','clubs/role-delete','clubs/role-update','clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update','clubs/index','clubs/create','clubs/delete','clubs/update','clubs/view','clubs/badge-rosters'],
@@ -45,7 +45,7 @@ class AdminController extends \yii\web\Controller {
 	public $adminPermission = [
 		'Accounts' => ['accounts/index','accounts/banned','accounts/add-banned-guest','accounts/create','accounts/delete','accounts/update','accounts/view','accounts/reset-password','accounts/request-password-reset'],
 		'Admin' => ['site/admin-menu','params/discount','params/membershipstatus'],
-		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/overideprice','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/delete-renewal','badges/overideprice','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/close','calendar/create','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/merge-old-events','calendar/open-range','calendar/recheck-future-conflicts','calendar/recur','calendar/republish','calendar/shoot','calendar/update'],
 		'MassEmail' => ['mass-email/create','mass-email/index','mass-email/update','mass-email/send','mass-email/process'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
@@ -63,7 +63,7 @@ class AdminController extends \yii\web\Controller {
 	public $adminViewPermission = [
 		'Accounts' => ['accounts/index','accounts/banned','accounts/view'],
 		'Admin' => ['site/admin-menu'],
-		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Clubs' => ['clubs/officers','clubs/officers-create','clubs/officers-delete','clubs/officers-update','clubs/index','clubs/view'],
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all','guest/stats'],
@@ -77,7 +77,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $cashierPermission = [
 		'Accounts' => ['accounts/banned','accounts/add-banned-guest'],
-		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/get-badge-name','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/overideprice','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/barcode','badges/create','badges/delete-certificate','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print','badges/print-rcpt','badges/renew-membership','badges/rename','badges/scan-badge','badges/test','badges/update-renewal','badges/overideprice','badges/delete-renewal','badges/view-certificate','badges/view-certifications-list','badges/update-certificate','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Clubs' => ['clubs/index','clubs/view','clubs/badge-rosters'],
 		'Events' => ['events/all','events/add-att','events/index','events/remove-att','events/update-director','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert','membership-type/index','membership-type/create','membership-type/update','membership-type/view'],
@@ -88,7 +88,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $rsoLeadPermission = [
 		'Accounts' => ['accounts/banned','accounts/add-banned-guest'],
-		'Badges'=>['badges/all','badges/add-certification','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/rso-comment','calendar/showed','calendar/index'],
 		'Events' => ['events/approve','events/index','events/reg','events/return','events/remove-att','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert'],
@@ -100,7 +100,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $rsoPermission = [
 		'Accounts' => ['accounts/banned'],
-		'Badges'=>['badges/all','badges/add-certification','badges/generate-new-sticker','badges/get-badge-name','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/add-certification','badges/generate-new-sticker','badges/get-family-badges','badges/modify','badges/photo-add','badges/photo-crop','badges/post-print-transactions','badges/print-rcpt','badges/renew-membership','badges/test','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/rso-comment','calendar/showed','calendar/index'],
 		'Events' => ['events/approve','events/index','events/reg','events/return','events/view'],
 		'Membership Type'=>['membership-type/ajaxmoney-convert'],
@@ -112,7 +112,7 @@ class AdminController extends \yii\web\Controller {
 
 	public $viewPermission = [
 		'Accounts' => ['accounts/banned'],
-		'Badges'=>['badges/all','badges/get-badge-name','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/get-family-badges','badges/post-print-transactions','badges/print-rcpt','badges/view-certifications-list','badges/view-renewal-history','badges/view-remarks-history','badges/view-subscriptions','badges/view-violations-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/all','calendar/index','calendar/view'],
 		'Events' => ['events/index','events/view'],
 		'Guest' => ['guest/all'],
@@ -125,14 +125,14 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $workcreditPermission = [
-		'Badges'=>['badges/all','badges/get-badge-name','badges/view-certificate','badges/view-certifications-list','badges/view-remarks-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/all','badges/view-certificate','badges/view-certifications-list','badges/view-remarks-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Events' => ['events/index','events/reg','events/view'],
 		'Guest' => ['guest/update'],
 		'Work Credits'=>['work-credits/add'],
 	];
 
 	public $cioPermission = [
-		'Badges'=>['badges/get-badge-name','badges/view-certificate','badges/view-certifications-list','badges/view-remarks-history','badges/view-work-credits','badges/view-work-credits-log'],
+		'Badges'=>['badges/view-certificate','badges/view-certifications-list','badges/view-remarks-history','badges/view-work-credits','badges/view-work-credits-log'],
 		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/get-event-types','calendar/inactive','calendar/open-range','calendar/update'],
 		'Events' => ['events/index','events/add-att','events/reg','events/view'],
 		'Guest' => ['guest/update'],
@@ -144,31 +144,28 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $calendarPermission = [
-		'Badges' => ['badges/get-badge-name'],
 		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update','calendar/view'],
 		'Events' => ['events/add-att','events/index','events/reg','events/view'],
 		'Guest' => ['guest/update'],
 	];
 
 	public $chairmanPermission = [
-		'Badges' => ['badges/get-badge-name'],
 		'Calendar' => ['calendar/close','calendar/recur'],
 		'Events' => ['events/add-att','events/index','events/reg','events/return','events/view'],
 		'Work Credits'=>['work-credits/add'],
 	];
 
 	public $shootPermission = [
-		'Badges' => ['badges/get-badge-name'],
 		'Calendar' => ['calendar/all','calendar/shoot'],
 		'Events' => ['events/add-att','events/index','events/reg','events/view'],
 	];
 
 	public $eventDirector = [
-		'Events' => ['events/add-att','events/index','events/view','badges/get-badge-name'],
+		'Events' => ['events/add-att','events/index','events/view'],
 	];
 
 	public $AllPermission = [
-		'Badges'=>['badges/api-zip','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/index','badges/update','badges/verify-email','badges/view'],
+		'Badges'=>['badges/api-zip','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/get-badge-name','badges/index','badges/update','badges/verify-email','badges/view'],
 		'Calendar' => ['calendar/list','calendar/rss','calendar/viewitem'],
 		'Guest' => ['guest/add','guest/addcredit','guest/check-badge-eligibility','guest/check-banned-name','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'membershiptype'=>['membership-type/fees-by-type'],
@@ -297,7 +294,6 @@ class AdminController extends \yii\web\Controller {
 					else {$_SESSION['badge_number']=0;}
 				$_SESSION['privilege'] = json_decode($activeUser->privilege);
 				$_SESSION['user'] = $activeUser->full_name;
-				$_SESSION['names'] = $this->getBadgeList();
 				$this->setSessionTimeout();
 				if ((isset($activeUser->clubs)) && (is_array(json_decode($activeUser->clubs)))) {
 					$_SESSION['cal_clubs'] = json_decode($activeUser->clubs); }
@@ -366,33 +362,6 @@ class AdminController extends \yii\web\Controller {
 			$activeUser = User::find()->where(['id' =>yii::$app->user->id])->one();
 			return $activeUser;
 		}
-	}
-
-	public function getBadgeList() {
-		$sql = "SELECT badge_number, CONCAT(first_name,' ',last_name) as bname from badges ORDER BY badge_number";
-		$command = Yii::$app->db->createCommand($sql);
-		$myNames = $command->queryAll();
-
-		foreach($myNames as $id){
-			$myNames_a[$id['badge_number']] = $id['badge_number'].','.$id['bname'];
-		}
-		if(isset($myNames_a)) { return base64_encode(implode(";",$myNames_a)); }
-	}
-
-	public function decodeBadgeName($badge_nu) {
-		if($badge_nu==0) {return 'Admin';}
-		if(isset($_SESSION['names'])) {
-			$myNames = explode(';',base64_decode($_SESSION['names']));
-			foreach($myNames as $id){
-				$expNmaes=explode(',',$id);
-				$myNames_a[$expNmaes[0]] = $expNmaes[1];
-			}
-			if (empty($myNames_a[$badge_nu])) {
-				return "Unknown";
-			} else {
-				return $myNames_a[$badge_nu];
-			}
-		} else { return "Unknown"; }
 	}
 
 	public function getNowDigit() {

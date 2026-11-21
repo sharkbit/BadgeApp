@@ -46,7 +46,7 @@ $rpt_nxt = RsoReports::find()->where(['>','date_open',$model->date_open])->order
 					$names='';
 					if($rsos) {
 						foreach ($rsos as $badge) {
-							$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
+							$names .= \backend\models\Badges::getBadgeName((int)$badge).', ';
 						}
 						return $names;
 					} else { return ""; } 

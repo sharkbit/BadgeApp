@@ -63,7 +63,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 				'attribute'=>'mass_created_by',
 				//'format' => 'raw',
 				'value'=>function ($model) {
-					return yii::$app->controller->decodeBadgeName((int)$model->mass_created_by).' ('.$model->mass_created_by.')';
+					return \backend\models\Badges::getBadgeName((int)$model->mass_created_by).' ('.$model->mass_created_by.')';
 				}
 			],
 			[

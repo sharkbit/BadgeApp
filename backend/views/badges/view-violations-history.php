@@ -46,7 +46,7 @@ if(yii::$app->controller->hasPermission('violations/delete')) {
 				'attribute'=>'badge_reporter',
 				//'format' => 'raw',
 				'value'=>function ($model) {
-					return yii::$app->controller->decodeBadgeName((int)$model->badge_reporter).' ('.$model->badge_reporter.')';
+					return \backend\models\Badges::getBadgeName((int)$model->badge_reporter).' ('.$model->badge_reporter.')';
 				}
 			],
 			[
@@ -58,7 +58,7 @@ if(yii::$app->controller->hasPermission('violations/delete')) {
 			[
 				'attribute' => 'badge_involved',
 				'value' => function($model) {
-					return yii::$app->controller->decodeBadgeName((int)$model->badge_involved).' ('.$model->badge_involved.')';
+					return \backend\models\Badges::getBadgeName((int)$model->badge_involved).' ('.$model->badge_involved.')';
 				},
 			],
 			'vi_rules',

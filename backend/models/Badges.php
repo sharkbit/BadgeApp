@@ -18,6 +18,8 @@ use yii\helpers\ArrayHelper;
  * This is the model class for table "badges".
  */
 class Badges extends \yii\db\ActiveRecord {
+	private static $badgeNameCache = [];
+
 	/**
 	 * @inheritdoc
 	 */
@@ -118,6 +120,25 @@ class Badges extends \yii\db\ActiveRecord {
 	public static function getCanRenew($badge_number) {
 		$model = static::findOne(['badge_number' => $badge_number]);
 		return $model !== null && MembershipStatus::getCanRenew($model->status);
+	}
+
+	public static function getBadgeName($badgeNumber) {
+		$badgeNumber = (int)$badgeNumber;
+		if ($badgeNumber === 0) {
+			return 'Admin';
+		}
+		if (!array_key_exists($badgeNumber, self::$badgeNameCache)) {
+			$badge = static::find()
+				->select(['first_name', 'last_name'])
+				->where(['badge_number' => $badgeNumber])
+				->asArray()
+				->one();
+			self::$badgeNameCache[$badgeNumber] = $badge
+				? trim($badge['first_name'] . ' ' . $badge['last_name'])
+				: 'Unknown';
+		}
+
+		return self::$badgeNameCache[$badgeNumber];
 	}
 
 	public function getClubView() {

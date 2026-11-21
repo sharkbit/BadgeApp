@@ -96,7 +96,6 @@ class LoginMemberForm extends \yii\db\ActiveRecord {
 				// does member have privileges?
 				$_SESSION["badge_number"] = $badgeArray->badge_number;
 				$_SESSION["user"] = $badgeArray->first_name.' '.$badgeArray->last_name;
-				$_SESSION['names'] = yii::$app->controller->getBadgeList();
 				unset($_SESSION['login_username']);
 				$userArray = User::find()->where(['badge_number'=> $model->badge])->one();
 				if($userArray) {
@@ -365,7 +364,6 @@ class SiteController extends AdminController {
 					$badgeArray = Badges::find()->where(['badge_number'=>$model->badge_number])->one();
 					$_SESSION["badge_number"] = $badgeArray->badge_number;
 					$_SESSION["user"] = $badgeArray->first_name.' '.$badgeArray->last_name;
-					$_SESSION['names'] = yii::$app->controller->getBadgeList();
 					$_SESSION['privilege']=array(5);
 					$this->setSessionTimeout();
 					Yii::$app->user->login(User::findIdentity(0), 0);

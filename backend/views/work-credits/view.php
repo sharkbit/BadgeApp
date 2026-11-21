@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'attribute' => 'badge_number',
 				'value' => function($model) {
-					return yii::$app->controller->decodeBadgeName((int)$model->badge_number).' ('.$model->badge_number.')';
+					return \backend\models\Badges::getBadgeName((int)$model->badge_number).' ('.$model->badge_number.')';
 				},
 			],
             [    

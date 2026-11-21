@@ -88,7 +88,7 @@ class EventsController extends AdminController {
 							$att_wc->badge_number 	= $person->ea_badge;
 							$att_wc->work_hours 	= $event_issue->credit_hours;
 							$att_wc->project_name	= $event_issue->event_name;
-							$att_wc->supervisor		= yii::$app->controller->decodeBadgeName((int)$event_issue->cal_inst);
+							$att_wc->supervisor		= \backend\models\Badges::getBadgeName((int)$event_issue->cal_inst);
 							$att_wc->remarks	= "Attended Event";
 							$att_wc->status		= 2;
 							$att_wc->work_date	= $event_issue->event_date;

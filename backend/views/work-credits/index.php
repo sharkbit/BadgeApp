@@ -50,9 +50,9 @@ if(yii::$app->controller->hasPermission('work-credits/delete')) {
 				'format' => 'raw',
 				'value' => function($model) {
 					if((yii::$app->controller->hasPermission('badges/all')) || ( $_SESSION['badge_number'] == $model->badge_number )) {
-						$rtn_name = Html::a(yii::$app->controller->decodeBadgeName((int)$model->badge_number),'/badges/view-work-credits?badge_number='.$model->badge_number);
+						$rtn_name = Html::a(\backend\models\Badges::getBadgeName((int)$model->badge_number),'/badges/view-work-credits?badge_number='.$model->badge_number);
 					} else {
-						$rtn_name = yii::$app->controller->decodeBadgeName((int)$model->badge_number);
+						$rtn_name = \backend\models\Badges::getBadgeName((int)$model->badge_number);
 					}
 					return str_pad($model->badge_number, 5, '0', STR_PAD_LEFT).' - '.$rtn_name;
 				},
@@ -107,7 +107,7 @@ if(yii::$app->controller->hasPermission('work-credits/delete')) {
 			[
 				'attribute' => 'created_by',
 				'value' => function($model) {
-					return yii::$app->controller->decodeBadgeName((int)$model->created_by).' ('.$model->created_by.')';
+					return \backend\models\Badges::getBadgeName((int)$model->created_by).' ('.$model->created_by.')';
 				},
 			],
 			[

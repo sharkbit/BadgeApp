@@ -83,7 +83,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			'footer' => "$".number_format($dataProvider->query->sum('amount'), 2, '.', ','),
 		],
 		[ 	'attribute'=>'cashier_badge',
-			'value' => function($model, $attribute) { return yii::$app->controller->decodeBadgeName((int)$model->cashier_badge); },
+			'value' => function($model, $attribute) { return \backend\models\Badges::getBadgeName((int)$model->cashier_badge); },
 			'label' => 'Cashier (Use commas to seperate multiple Cashiers when filtering.',
 			'headerOptions' => ['width' => '300'],
 		],

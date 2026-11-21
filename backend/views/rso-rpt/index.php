@@ -67,7 +67,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 					$names='';
 					if($rsos) {
 						foreach ($rsos as $badge) {
-							$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
+							$names .= \backend\models\Badges::getBadgeName((int)$badge).', ';
 						}
 						return $names;
 					} else { return ""; } 

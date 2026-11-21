@@ -90,9 +90,9 @@ $div_closed=false;
     <h2><?= Html::encode($model->event_date. " - " .$model->event_name) ?></h2>
 <div class="row">
 	<div class="col-xs-6 col-sm-4">
-		<b>Calendar POC:</b> <?= Html::encode("($model->poc_badge) ".yii::$app->controller->decodeBadgeName((int)$model->poc_badge)) ?><br />
+		<b>Calendar POC:</b> <?= Html::encode("($model->poc_badge) ".\backend\models\Badges::getBadgeName((int)$model->poc_badge)) ?><br />
 <?php if (!$model->track_wristbands) { ?>
-		<b>Event Director:</b> <?= Html::encode("($model->cal_inst) ".yii::$app->controller->decodeBadgeName((int)$model->cal_inst)) ?>
+		<b>Event Director:</b> <?= Html::encode("($model->cal_inst) ".\backend\models\Badges::getBadgeName((int)$model->cal_inst)) ?>
 <?php } ?>
 	</div>
 	<div class="col-xs-6 col-sm-4">
@@ -116,7 +116,7 @@ $div_closed=false;
 				$salesOrder = $model->sales_order ?? '';
 				$salesOrderInputId = 'sales-order-' . (int)$model->ea_calendar_id;
 				$directorName = !empty($directorBadge)
-					? yii::$app->controller->decodeBadgeName((int)$directorBadge)
+					? \backend\models\Badges::getBadgeName((int)$directorBadge)
 					: 'Not Found';
 				echo Html::beginForm(['/events/update-director', 'id' => $model->ea_calendar_id], 'post');
 				echo Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken);
@@ -263,7 +263,7 @@ if($att_count>0) {
 		$ba_name = '';
 
 		if($person->ea_badge>0) {
-			$ba_name = yii::$app->controller->decodeBadgeName((int)$person->ea_badge);
+			$ba_name = \backend\models\Badges::getBadgeName((int)$person->ea_badge);
 			echo Html::encode(str_pad($person->ea_badge, 5, '0', STR_PAD_LEFT)." - ".$ba_name);
 
 			if (yii::$app->controller->hasPermission('badges/barcode')) {

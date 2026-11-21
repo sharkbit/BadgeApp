@@ -387,7 +387,7 @@ class RsoRptController extends AdminController {
 			$names='';
 			if($rsos) {
 				foreach ($rsos as $badge) {
-					$names .= yii::$app->controller->decodeBadgeName((int)$badge).', ';
+					$names .= \backend\models\Badges::getBadgeName((int)$badge).', ';
 				}
 			}
 			if($model->shift=='m') { $shift='Morning'; } else { $shift='Evening'; }

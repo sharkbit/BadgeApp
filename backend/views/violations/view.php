@@ -45,14 +45,14 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			[
 				'attribute' => 'badge_reporter',
 				'value' => function($model) {
-					return yii::$app->controller->decodeBadgeName((int)$model->badge_reporter).' ('.$model->badge_reporter.')';
+					return \backend\models\Badges::getBadgeName((int)$model->badge_reporter).' ('.$model->badge_reporter.')';
 				},
 			],
 			[
 				'attribute' => 'badge_involved',
 				'format' => 'raw',
 				'value' => function($model) {
-					return yii::$app->controller->decodeBadgeName((int)$model->badge_involved).' (<a href="/badges/update?badge_number='.$model->badge_involved.'">'.$model->badge_involved.'</a>)';
+					return \backend\models\Badges::getBadgeName((int)$model->badge_involved).' (<a href="/badges/update?badge_number='.$model->badge_involved.'">'.$model->badge_involved.'</a>)';
 				},
 			],
 			[
@@ -77,7 +77,7 @@ echo $this->render('_view-tab-menu').PHP_EOL ?>
 			[
 				'attribute' => 'badge_witness',
 				'value' => function($model) { if($model->badge_witness > 0) {
-					return yii::$app->controller->decodeBadgeName((int)$model->badge_witness).' ('.$model->badge_witness.')';
+					return \backend\models\Badges::getBadgeName((int)$model->badge_witness).' ('.$model->badge_witness.')';
 				} else {return 'None'; } },
 			],
 			'vi_sum',

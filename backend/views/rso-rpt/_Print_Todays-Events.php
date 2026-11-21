@@ -53,10 +53,10 @@ $gridColumns = [
 		'headerOptions' => ['style' => 'width:15%'],
 		'value'=>function($model) {
 			if(!empty($model->cal_inst)) {
-				$poc_name = yii::$app->controller->decodeBadgeName((int)$model->cal_inst);
+				$poc_name = \backend\models\Badges::getBadgeName((int)$model->cal_inst);
 				if (!empty($poc_name)) { return $poc_name; } else { return $model->cal_inst;}
 			} else {
-				return yii::$app->controller->decodeBadgeName((int)$model->poc_badge);
+				return \backend\models\Badges::getBadgeName((int)$model->poc_badge);
 			}
 		},
 	],
