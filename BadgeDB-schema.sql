@@ -1,4 +1,4 @@
--- MySQL dump
+-- MySQL dump -- For BadgeApp v.2.2.4 -------------------
 --
 -- Host: localhost    Database: BadgeDB
 -- ------------------------------------------------------
@@ -1277,7 +1277,7 @@ INSERT INTO `user_privileges` VALUES (1,'Root',1,60,1),(2,'Admin',20,30,1),(3,'R
 /*!40000 ALTER TABLE `user_privileges` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `params` DISABLE KEYS */;
-INSERT INTO `params` (`id`, `sell_date`, `remote_users`, `privs`) VALUES (1, '10-16', 'passwd', '[\"accounts/banned\",\"accounts/index\",\"badges/all\",\"badges/modify\",\"badges/photo-add\",\"badges/photo-crop\",\"badges/view-certifications-list\",\"badges/view-remarks-history\",\"badges/view-renewal-history\",\"badges/view-subscriptions\",\"badges/view-violations-history\",\"badges/view-work-credits\",\"badges/view-work-credits-log\",\"calendar/create\",\"calendar/index\",\"calendar/open-range\",\"calendar/recur\",\"calendar/republish\",\"calendar/shoot\",\"calendar/update\",\"calendar/view\",\"clubs/badge-rosters\",\"clubs/index\",\"clubs/officers\",\"clubs/officers-create\",\"clubs/officers-delete\",\"clubs/officers-update\",\"clubs/view\",\"events/index\",\"events/reg\",\"events/view\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\",\"rules/index\",\"rules/view\",\"violations/index\",\"violations/report\",\"violations/view\"]' );
+INSERT INTO `params` (`id`, `sell_date`, `remote_users`, `privs`) VALUES (1, '10-16', 'passwd', '[\"accounts/banned\",\"accounts/index\",\"accounts/temp\",\"badges/all\",\"badges/modify\",\"badges/photo-add\",\"badges/photo-crop\",\"badges/view-certifications-list\",\"badges/view-remarks-history\",\"badges/view-renewal-history\",\"badges/view-subscriptions\",\"badges/view-violations-history\",\"badges/view-work-credits\",\"badges/view-work-credits-log\",\"calendar/bulkdelete\",\"calendar/conflict\",\"calendar/create\",\"calendar/delete\",\"calendar/get-event-types\",\"calendar/inactive\",\"calendar/index\",\"calendar/open-range\",\"calendar/recur\",\"calendar/republish\",\"calendar/shoot\",\"calendar/update\",\"calendar/view\",\"clubs/badge-rosters\",\"clubs/index\",\"clubs/officers\",\"clubs/officers-create\",\"clubs/officers-delete\",\"clubs/officers-update\",\"clubs/view\",\"events/add-att\",\"events/index\",\"events/reg\",\"events/view\",\"guest/update\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\",\"rules/index\",\"rules/view\",\"violations/index\",\"violations/report\",\"violations/view\"]' );
 /*!40000 ALTER TABLE `params` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;

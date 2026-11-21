@@ -33,18 +33,22 @@ if (!preg_match('/_test$/i', $databaseName)) {
 	);
 }
 
-$schemaFiles = glob($testRoot . '/BadgeDB-v*-schema.sql') ?: [];
-usort($schemaFiles, static function ($left, $right) {
-	preg_match('/BadgeDB-v([0-9.]+)-schema\.sql$/i', basename($left), $leftVersion);
-	preg_match('/BadgeDB-v([0-9.]+)-schema\.sql$/i', basename($right), $rightVersion);
-	return version_compare($rightVersion[1] ?? '0', $leftVersion[1] ?? '0');
-});
+$schemaFile = $testRoot . '/BadgeDB-schema.sql';
+if (!is_file($schemaFile)) {
+	$schemaFiles = glob($testRoot . '/BadgeDB-v*-schema.sql') ?: [];
+	usort($schemaFiles, static function ($left, $right) {
+		preg_match('/BadgeDB-v([0-9.]+)-schema\.sql$/i', basename($left), $leftVersion);
+		preg_match('/BadgeDB-v([0-9.]+)-schema\.sql$/i', basename($right), $rightVersion);
+		return version_compare($rightVersion[1] ?? '0', $leftVersion[1] ?? '0');
+	});
 
-if (!$schemaFiles) {
-	throw new RuntimeException('No versioned BadgeDB schema dump was found in the repository root.');
+	if (!$schemaFiles) {
+		throw new RuntimeException('No BadgeDB schema dump was found in the repository root.');
+	}
+
+	$schemaFile = $schemaFiles[0];
 }
 
-$schemaFile = $schemaFiles[0];
 $sql = file_get_contents($schemaFile);
 if ($sql === false) {
 	throw new RuntimeException('Could not read the latest BadgeDB schema dump.');
@@ -98,6 +102,4 @@ foreach (['user', 'badges', 'account_status', 'membership_type'] as $requiredTab
 
 putenv('BADGEAPP_TEST_SCHEMA_LOADED=1');
 
-preg_match('/BadgeDB-v([0-9.]+)-schema\.sql$/i', basename($schemaFile), $versionMatch);
-echo 'Loaded BadgeDB schema v' . ($versionMatch[1] ?? 'unknown')
-	. ' into the configured test database.' . PHP_EOL;
+echo 'Loaded ' . basename($schemaFile) . ' into the configured test database.' . PHP_EOL;
