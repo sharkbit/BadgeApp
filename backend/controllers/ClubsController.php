@@ -306,7 +306,7 @@ class ClubsController extends AdminController {
 
 			$permissions = $this->getCurrentPermissions();
 			if ($this->normalizeRolePermissions($model, $permissions) && $model->save()) {
-				$this->createLog($this->getNowTime(), $_SESSION['user'], 'New Club Role Created : '.$model->role_id);
+				$this->createLog($this->getNowTime(), $_SESSION['user'], "New Club Role Created : $model->role_name ($model->role_id)");
 				Yii::$app->getSession()->setFlash('success', 'Club Role '.$model->role_name.' has been created');
 				return $this->redirect(['roles']);
 			} else {
@@ -337,18 +337,45 @@ class ClubsController extends AdminController {
 		$permissions = $this->getCurrentPermissions();
 
         if ($model->load(Yii::$app->request->post())
-			&& $this->normalizeRolePermissions($model, $permissions)
-			&& $model->save()) {
-            $this->createLog($this->getNowTime(), $_SESSION['user'], 'Club Role Updated : '.$model->role_id);
-            Yii::$app->getSession()->setFlash('success', 'Club Role '.$model->role_name.' has been updated');
-            return $this->redirect(['role-update', 'id' => $model->role_id]);
-        } else {
-            return $this->render('role-update', [
-                'model' => $model,
-				'permissionGroups' => $this->groupPermissions($permissions),
-            ]);
+			&& $this->normalizeRolePermissions($model, $permissions)) {
+			$changes = $this->formatRoleChanges($model);
+			if ($model->save()) {
+				$this->createLog(
+					$this->getNowTime(),
+					$_SESSION['user'],
+					'Club Role Updated : '.$model->role_id.' '.$changes
+				);
+				Yii::$app->getSession()->setFlash('success', 'Club Role '.$model->role_name.' has been updated');
+				return $this->redirect(['role-update', 'id' => $model->role_id]);
+			}
         }
+
+		return $this->render('role-update', [
+			'model' => $model,
+			'permissionGroups' => $this->groupPermissions($permissions),
+		]);
     }
+
+	private function formatRoleChanges(Roles $model) {
+		$changes = [];
+		$encodeValue = static function ($value) {
+			if (is_string($value)) {
+				$decoded = json_decode($value, true);
+				if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+					$value = $decoded;
+				}
+			}
+
+			return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+		};
+		foreach ($model->getDirtyAttributes() as $attribute => $newValue) {
+			$oldValue = $encodeValue($model->getOldAttribute($attribute));
+			$newValue = $encodeValue($newValue);
+			$changes[] = $model->getAttributeLabel($attribute).': '.$oldValue.' -> '.$newValue;
+		}
+
+		return $changes ? implode('; ', $changes) : 'No field changes';
+	}
 
 	private function getCurrentPermissions() {
 		$params = Params::getParams();

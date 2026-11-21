@@ -27,6 +27,8 @@ class ClubRolePermissionsTestView extends yii\web\View
 
 class ClubRolePermissionsControllerTestDouble extends \backend\controllers\ClubsController
 {
+	public $logs = [];
+
 	public function hasPermission($permission, $id = null)
 	{
 		return true;
@@ -34,7 +36,7 @@ class ClubRolePermissionsControllerTestDouble extends \backend\controllers\Clubs
 
 	public function createLog($isEnabled, $username, $activity, $name = 'activity')
 	{
-		return null;
+		$this->logs[] = $activity;
 	}
 
 	public function getNowTime($offset = null)
@@ -154,9 +156,16 @@ try {
 	Yii::$app->request->setBodyParams($updatePost);
 	$controller->actionRoleUpdate($roleId);
 	$role = \backend\models\Roles::findOne($roleId);
+	$updateLog = end($controller->logs);
+	$roleIdPosition = strpos($updateLog, 'Club Role Updated : '.$roleId);
+	$changesPosition = strpos($updateLog, 'Privileges:');
 	$assert(
-		$role->r_privs === '["clubs/role-update"]',
-		'actionRoleUpdate persists the selected permission toggles.'
+		$role->r_privs === '["clubs/role-update"]'
+			&& $roleIdPosition !== false
+			&& $changesPosition !== false
+			&& $roleIdPosition < $changesPosition
+			&& str_contains($updateLog, '["clubs/roles","events/view"] -> ["clubs/role-update"]'),
+		'actionRoleUpdate persists selected permissions and logs the changes after the role ID.'
 	);
 
 	$invalidPost = [

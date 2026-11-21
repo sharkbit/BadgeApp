@@ -109,6 +109,7 @@ class PrivilegesController extends AdminController {
 				}
 
 				$rolePermissions = [];
+				$permissionExists = in_array($deletePermission, $permissions, true);
 				foreach (Roles::find()->all() as $role) {
 					if ($role->r_privs === null || trim((string)$role->r_privs) === '') {
 						continue;
@@ -174,6 +175,15 @@ class PrivilegesController extends AdminController {
 				}
 
 				if ($deleted) {
+					if ($permissionExists) {
+						$affectedRoleCount = count($rolePermissions);
+						$this->createLog(
+							$this->getNowTime(),
+							$_SESSION['user'] ?? 'Unknown',
+							'Permission Deleted : '.$deletePermission.' (removed from '.$affectedRoleCount
+								.' club role'.($affectedRoleCount === 1 ? '' : 's').')'
+						);
+					}
 					if (Yii::$app->request->isAjax) {
 						Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 						return ['success' => true];
@@ -197,7 +207,8 @@ class PrivilegesController extends AdminController {
 						throw new \UnexpectedValueException('The stored permission list must be a JSON array.');
 					}
 
-					if (!in_array($permission, $permissions, true)) {
+					$permissionAdded = !in_array($permission, $permissions, true);
+					if ($permissionAdded) {
 						$permissions[] = $permission;
 					}
 					sort($permissions, SORT_STRING);
@@ -205,6 +216,13 @@ class PrivilegesController extends AdminController {
 					if (!$model->save(false, ['privs'])) {
 						Yii::$app->session->setFlash('error', 'The permission could not be saved.');
 					} else {
+						if ($permissionAdded) {
+							$this->createLog(
+								$this->getNowTime(),
+								$_SESSION['user'] ?? 'Unknown',
+								'Permission Created : '.$permission
+							);
+						}
 						Yii::$app->session->setFlash('success', 'Permission list updated.');
 						return $this->redirect(['raw']);
 					}

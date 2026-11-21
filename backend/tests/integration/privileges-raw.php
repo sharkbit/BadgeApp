@@ -13,6 +13,7 @@ Yii::setAlias('@backend', $root . '/backend');
 class PrivilegesRawControllerTestDouble extends \backend\controllers\PrivilegesController
 {
 	public $allowDelete = true;
+	public $logs = [];
 
 	public function hasPermission($permission, $id = null)
 	{
@@ -22,6 +23,11 @@ class PrivilegesRawControllerTestDouble extends \backend\controllers\PrivilegesC
 	public function render($view, $params = [])
 	{
 		return ['view' => $view, 'params' => $params];
+	}
+
+	public function createLog($isEnabled, $username, $activity, $name = 'activity')
+	{
+		$this->logs[] = $activity;
 	}
 }
 
@@ -38,6 +44,10 @@ $app = new yii\web\Application([
 		],
 		'response' => ['class' => yii\web\Response::class],
 		'session' => ['class' => yii\web\Session::class],
+	],
+	'params' => [
+		'timeZone' => 'UTC',
+		'env' => 'test',
 	],
 ]);
 
@@ -100,12 +110,18 @@ try {
 			&& $permissions === ['accounts/index', 'events/view', 'params/update'],
 		'actionRaw adds a permission to params record 1 and saves the sorted JSON array.'
 	);
+	$assert(
+		end($controller->logs) === 'Permission Created : params/update',
+		'actionRaw logs a successfully created permission.'
+	);
 
+	$logsBeforeDuplicate = count($controller->logs);
 	Yii::$app->request->setBodyParams(['permission' => 'params/update']);
 	$controller->actionRaw();
 	$permissions = json_decode(\backend\models\Params::findOne(1)->privs, true);
 	$assert(
-		$permissions === ['accounts/index', 'events/view', 'params/update'],
+		$permissions === ['accounts/index', 'events/view', 'params/update']
+			&& count($controller->logs) === $logsBeforeDuplicate,
 		'actionRaw does not add duplicate permissions.'
 	);
 
@@ -149,6 +165,11 @@ try {
 			&& $permissions === ['accounts/index', 'params/update']
 			&& $rolePermissions === ['params/update'],
 		'actionRaw deletes the selected permission from application permissions and club roles.'
+	);
+	$deleteLog = end($controller->logs);
+	$assert(
+		preg_match('/^Permission Deleted : events\/view \(removed from \d+ club roles?\)$/', $deleteLog) === 1,
+		'actionRaw logs a successfully deleted permission and affected club-role count.'
 	);
 
 	$controller->allowDelete = false;
