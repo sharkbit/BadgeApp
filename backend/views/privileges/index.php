@@ -17,6 +17,7 @@ if (isset($_SESSION['pagesize'])) {
 	$pagesize=20;
 }
 $dataProvider->pagination = ['pageSize' => $pagesize];
+$controller = Yii::$app->controller;
 
 echo $this->render('_view-tab-menu').PHP_EOL;
 ?>
@@ -26,7 +27,9 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 		  <h2><?= Html::encode($this->title) ?></h2>
 
 		  <div class="btn btn-group pull-right">
-			 <?= Html::a('Add Privilege', ['create'], ['class' => 'btn btn-success']) ?>
+			 <?php if ($controller->hasPermission('privileges/create')): ?>
+				 <?= Html::a('Add Privilege', ['create'], ['class' => 'btn btn-success']) ?>
+			 <?php endif; ?>
 		  </div >
 
 		  <?php Pjax::begin(); ?>
@@ -45,7 +48,18 @@ echo $this->render('_view-tab-menu').PHP_EOL;
 				],
 				[	'header'=>'Action',
 				    'class' => 'yii\grid\ActionColumn',
-					'template'=>' {update} {delete} ',
+					'template'=>' {view} {update} {delete} ',
+					'visibleButtons' => [
+						'view' => static function ($model, $key, $index) use ($controller) {
+							return $controller->hasPermission('privileges/view');
+						},
+						'update' => static function ($model, $key, $index) use ($controller) {
+							return $controller->hasPermission('privileges/update');
+						},
+						'delete' => static function ($model, $key, $index) use ($controller) {
+							return $controller->hasPermission('privileges/delete');
+						},
+					],
 				],
 			 ],
 		  ]); ?>

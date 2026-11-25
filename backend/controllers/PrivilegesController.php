@@ -78,6 +78,14 @@ class PrivilegesController extends AdminController {
 		}
 	}
 
+	public function actionView($id=1) {
+		$model = $this->findModel($id);
+
+		return $this->render('view', [
+			'model' => $model,
+		]);
+	}
+
 	protected function findModel($id) {
 		if (($model = Privileges::findOne($id)) !== null) {
 			return $model;

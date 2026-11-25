@@ -59,7 +59,7 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 							? implode(', ', array_filter($permissions, 'is_string'))
 							: '';
 					},
-					'visible' => (yii::$app->controller->hasPermission('privileges/index')),
+					//'visible' => (yii::$app->controller->hasPermission('privileges/index')),
 				],
 				[	'header'=>'Action',
 					'class' => 'yii\grid\ActionColumn',
