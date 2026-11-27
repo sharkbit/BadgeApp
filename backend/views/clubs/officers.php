@@ -44,7 +44,15 @@ $dataProvider->pagination = ['pageSize' => $pagesize];
 			'filterModel' => $searchModel,
 			'columns' => [
 				[	'attribute'=>'badge_number',
-					'headerOptions' => ['style' => 'width:15%'],
+					'headerOptions' => ['style' => 'width:15%'],				
+					'format' => 'raw',
+					'value'=>function ($data) {
+						if(yii::$app->controller->hasPermission('badge/create')) {
+							return Html::a(str_pad($data->badge_number, 5, '0', STR_PAD_LEFT),'/badges/update?badge_number='.$data->badge_number);
+						} else {
+							return Html::a(str_pad($data->badge_number, 5, '0', STR_PAD_LEFT),'/badges/view?badge_number='.$data->badge_number);
+						}
+					}
 				],
 				'full_name',
 				[	'attribute' => 'role_name',

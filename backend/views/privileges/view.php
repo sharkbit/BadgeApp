@@ -33,6 +33,12 @@ $this->params['breadcrumbs'][] = $this->title;
 	<div class="col-xs-6 col-sm-4 col-md-2">
 		<?= $form->field($model, 'timeout')->textInput(['maxlength' => true,'readonly'=>true]) ?>
 	</div>
+	<div class="col-xs-6 col-sm-4 col-md-2">
+		<?= $form->field($model, 'restricted')->textInput([
+			'value' => $model->restricted ? 'Yes' : 'No',
+			'readonly' => true,
+		]) ?>
+	</div>
    
 	</div>
 </div>

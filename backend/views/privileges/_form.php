@@ -27,6 +27,12 @@ use backend\models\Params;
 	<div class="col-xs-6 col-sm-4 col-md-2">
 		<?= $form->field($model, 'timeout')->textInput(['maxlength' => true]) ?>
 	</div>
+	<div class="col-xs-6 col-sm-4 col-md-2">
+		<?= $form->field($model, 'restricted')->dropDownList(
+			[1 => 'Yes', 0 => 'No'],
+			['disabled' => !Yii::$app->controller->hasPermission('privileges/raw', 1)]
+		) ?>
+	</div>
     <div class="form-group btn-group pull-right">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     	<?= Html::resetButton('Reset <i class="fa fa-eraser"> </i>', ['class' => 'btn btn-danger']) ?>

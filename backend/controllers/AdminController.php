@@ -147,7 +147,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $calendarPermission = [
-		'Calendar' =>['calendar/create','calendar/index','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update','calendar/view'],
+		'Calendar' =>['calendar/bulkdelete','calendar/create','calendar/index','calendar/conflict','calendar/delete','calendar/get-event-types','calendar/inactive','calendar/index','calendar/open-range','calendar/recur','calendar/republish','calendar/update','calendar/view'],
 		'Events' => ['events/add-att','events/index','events/reg','events/view'],
 		'Guest' => ['guest/update'],
 	];

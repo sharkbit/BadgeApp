@@ -25,7 +25,7 @@ class Privileges extends \yii\db\ActiveRecord {
         return [
             [['privilege', 'priv_sort','timeout'], 'required'],
             [['privilege'], 'string'],
-			[['priv_sort'], 'integer'],
+			[['priv_sort','restricted'], 'integer'],
             [['timeout'], 'integer', 'min'=>2, 'max' => 60],
         ];
     }

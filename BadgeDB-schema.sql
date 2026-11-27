@@ -657,14 +657,13 @@ CREATE TABLE `membership_type` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Temporary view structure for view `officers`
+-- Temporary view structure for view `view_officers`
 --
 
-DROP TABLE IF EXISTS `view_officers`;
-/*!50001 DROP VIEW IF EXISTS `officers`*/;
+/*!50001 DROP VIEW IF EXISTS `view_officers`*/;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `officers` AS SELECT 
+/*!50001 CREATE VIEW `view_officers` AS SELECT
  1 AS `badge_number`,
  1 AS `full_name`,
  1 AS `role`,
@@ -1155,10 +1154,10 @@ CREATE TABLE `work_credits` (
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
--- Final view structure for view `officers`
+-- Final view structure for view `view_officers`
 --
 
-/*!50001 DROP VIEW IF EXISTS `officers`*/;
+/*!50001 DROP VIEW IF EXISTS `view_officers`*/
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
@@ -1167,7 +1166,7 @@ CREATE TABLE `work_credits` (
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `officers` AS select `badge_to_role`.`badge_number` AS `badge_number`,concat(`badges`.`first_name`,' ',`badges`.`last_name`) AS `full_name`,`badge_to_role`.`role` AS `role`,`roles`.`role_name` AS `role_name`,`roles`.`r_timeout` as `timeout`,`roles`.`r_privs` as `privs`,`badge_to_role`.`club` AS `club`,`clubs`.`club_name` AS `club_name`,`clubs`.`short_name` AS `short_name`,`badges`.`email` AS `email`,`badges`.`email_vrfy` AS `email_vrfy` from (((`badge_to_role` join `badges` on((`badges`.`badge_number` = `badge_to_role`.`badge_number`))) join `roles` on((`roles`.`role_id` = `badge_to_role`.`role`))) join `clubs` on((`clubs`.`club_id` = `badge_to_role`.`club`))) */;
+/*!50001 VIEW `view_officers` AS select `badge_to_role`.`badge_number` AS `badge_number`,concat(`badges`.`first_name`,' ',`badges`.`last_name`) AS `full_name`,`badge_to_role`.`role` AS `role`,`roles`.`role_name` AS `role_name`,`roles`.`r_timeout` as `timeout`,`roles`.`r_privs` as `privs`,`badge_to_role`.`club` AS `club`,`clubs`.`club_name` AS `club_name`,`clubs`.`short_name` AS `short_name`,`badges`.`email` AS `email`,`badges`.`email_vrfy` AS `email_vrfy` from (((`badge_to_role` join `badges` on((`badges`.`badge_number` = `badge_to_role`.`badge_number`))) join `roles` on((`roles`.`role_id` = `badge_to_role`.`role`))) join `clubs` on((`clubs`.`club_id` = `badge_to_role`.`club`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1277,7 +1276,7 @@ INSERT INTO `user_privileges` VALUES (1,'Root',1,60,1),(2,'Admin',20,30,1),(3,'R
 /*!40000 ALTER TABLE `user_privileges` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `params` DISABLE KEYS */;
-INSERT INTO `params` (`id`, `sell_date`, `remote_users`, `privs`) VALUES (1, '10-16', 'passwd', '[\"accounts/banned\",\"accounts/index\",\"accounts/temp\",\"badges/all\",\"badges/modify\",\"badges/photo-add\",\"badges/photo-crop\",\"badges/view-certifications-list\",\"badges/view-remarks-history\",\"badges/view-renewal-history\",\"badges/view-subscriptions\",\"badges/view-violations-history\",\"badges/view-work-credits\",\"badges/view-work-credits-log\",\"calendar/bulkdelete\",\"calendar/conflict\",\"calendar/create\",\"calendar/delete\",\"calendar/get-event-types\",\"calendar/inactive\",\"calendar/index\",\"calendar/open-range\",\"calendar/recur\",\"calendar/republish\",\"calendar/shoot\",\"calendar/update\",\"calendar/view\",\"clubs/badge-rosters\",\"clubs/index\",\"clubs/officers\",\"clubs/officers-create\",\"clubs/officers-delete\",\"clubs/officers-update\",\"clubs/view\",\"events/add-att\",\"events/index\",\"events/reg\",\"events/view\",\"guest/update\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\",\"rules/index\",\"rules/view\",\"violations/index\",\"violations/report\",\"violations/view\"]' );
+INSERT INTO `params` (`id`, `sell_date`, `remote_users`, `privs`) VALUES (1, '10-16', 'passwd', '[\"accounts/add-banned-guest\",\"accounts/banned\",\"accounts/index\",\"accounts/view\",\"badges/all\",\"badges/modify\",\"badges/photo-add\",\"badges/photo-crop\",\"badges/view-certifications-list\",\"badges/view-remarks-history\",\"badges/view-renewal-history\",\"badges/view-subscriptions\",\"badges/view-violations-history\",\"badges/view-work-credits\",\"badges/view-work-credits-log\",\"calendar/bulkdelete\",\"calendar/conflict\",\"calendar/create\",\"calendar/delete\",\"calendar/get-event-types\",\"calendar/inactive\",\"calendar/index\",\"calendar/open-range\",\"calendar/recur\",\"calendar/republish\",\"calendar/shoot\",\"calendar/update\",\"calendar/view\",\"clubs/badge-rosters\",\"clubs/index\",\"clubs/officers\",\"clubs/officers-create\",\"clubs/officers-delete\",\"clubs/officers-update\",\"clubs/view\",\"events/add-att\",\"events/index\",\"events/reg\",\"events/view\",\"guest/update\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\",\"rules/index\",\"rules/view\",\"violations/index\",\"violations/report\",\"violations/view\"]' );
 /*!40000 ALTER TABLE `params` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
@@ -1285,7 +1284,17 @@ INSERT INTO `user` VALUES (0,'member','noreply@agcrange.org','',NULL,'[5]',10,0,
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (1,'President',10,15,'[\"calendar/create\",\"calendar/index\",\"calendar/update\",\"calendar/view\",\"clubs/index\",\"clubs/officers\",\"clubs/officers-create\",\"clubs/officers-update\",\"clubs/view\",\"events/index\",\"events/reg\",\"events/view\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),(2,'Vice President',20,10,'[\"events/index\",\"events/reg\",\"events/view\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\",\"violations/index\",\"violations/view\"]'),(3,'Executive Officer',30,10,'[\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),(4,'Treasurer',40,10,'[\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),(5,'Secretary',50,10,'[\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),(6,'Trustee',60,10,'[\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),(7,'Alternate Trustee',70,10,'[\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),(8,'Delegate',80,5,NULL);
+INSERT INTO `roles` VALUES
+	(1,'President',10,15,'[\"badges/view-remarks-history\",\"badges/view-renewal-history\",\"badges/view-subscriptions\",\"badges/view-violations-history\",\"badges/view-work-credits\",\"badges/view-work-credits-log\",\"calendar/create\",\"calendar/index\",\"calendar/update\",\"calendar/view\",\"clubs/index\",\"clubs/officers\",\"clubs/officers-create\",\"clubs/officers-delete\",\"clubs/officers-update\",\"clubs/view\",\"events/index\",\"events/reg\",\"events/view\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),
+	(2,'Vice President',20,10,'[\"events/index\",\"events/reg\",\"events/view\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\",\"violations/index\",\"violations/view\"]'),
+	(3,'Executive Officer',30,10,'[\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),
+	(4,'Treasurer',40,10,'[\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),
+	(5,'Secretary',50,10,'[\"events/index\",\"events/reg\",\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),
+	(6,'Trustee',60,10,'[\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),
+	(7,'Alternate Trustee',70,10,'[\"reports/active-badges\",\"reports/cio-report\",\"reports/events-report\",\"reports/guest-report\",\"reports/index\"]'),
+	(8,'Delegate',90,5,'[]'),
+	(9,'Calendar Coordinator',75,15,'[\"calendar/bulkdelete\",\"calendar/conflict\",\"calendar/create\",\"calendar/delete\",\"calendar/get-event-types\",\"calendar/inactive\",\"calendar/index\",\"calendar/open-range\",\"calendar/recur\",\"calendar/republish\",\"calendar/update\",\"calendar/view\",\"events/add-att\",\"events/index\",\"events/reg\",\"events/view\",\"guest/update\"]'),
+	(10,'Event Director',80,10,'[\"events/add-att\",\"events/index\",\"events/reg\",\"events/view\"]');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `cal_event_status` DISABLE KEYS */;
