@@ -23,6 +23,7 @@ for ($x = 1; $x <= 90; $x++) {
 $YearList = json_decode(str_replace('}{',',',$YearList));
 
 $this->title = 'Register New Member (Self-service)';
+$this->registerJsFile('@web/js/google-address-validation.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="Self-Member-create">
@@ -140,6 +141,14 @@ input[type='checkbox'] {
 
 		<div class="col-xs-6 col-sm-2">
 			<?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates(),['value'=>'MD']) ?>
+		</div>
+		<div class="col-xs-12 google-address-validation">
+			<button type="button" class="btn btn-default js-google-address-validate"
+				data-url="<?= Html::encode(Url::to(['/badges/validate-address'])) ?>"
+				data-street="#badgessm-address" data-zip="#badgessm-zip"
+				data-city="#badgessm-city" data-state="#badgessm-state">Validate address</button>
+			<button type="button" class="btn btn-link js-google-address-apply" style="display:none">Use suggested address</button>
+			<span class="help-block js-google-address-status" aria-live="polite"></span>
 		</div>
 		<div class="col-xs-6 col-sm-2">
 			<p><?=  $form->field($model, 'gender')->radioList([ 'm'=>'Male', 'f'=> 'Female'],['value'=>'m']) ?></p>
@@ -297,10 +306,10 @@ input[type='checkbox'] {
                 method: 'GET',
                 url: <?= json_encode(yii::$app->params['rootUrl'].'/badges/api-zip') ?>,
                 data: { zip: zipcode },
+				dataType: 'json',
                 crossDomain: false,
                 async: true,
                 success: function(responseData, textStatus, jqXHR) {
-                    responseData = JSON.parse(responseData);
                     if(responseData.City) {
 					var mycity = responseData.City.toProperCase();
                     $("#badgessm-city").val(mycity);

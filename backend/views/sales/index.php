@@ -402,10 +402,10 @@ echo $this->render('_view-tab-menu').PHP_EOL; ?>
             jQuery.ajax({
                 method: 'GET',
                 url: '<?=yii::$app->params['rootUrl']?>/badges/api-zip?zip='+zipcode,
+				dataType: 'json',
                 crossDomain: false,
                 async: true,
                 success: function(responseData, textStatus, jqXHR) {
-                    responseData = JSON.parse(responseData);
                     $mycity=responseData.City.toProperCase()
                     $("#sales-city").val($mycity);
                     $("#sales-state").val(responseData.State);

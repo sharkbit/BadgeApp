@@ -17,6 +17,7 @@
         "php": ">=8.3.0",
 		"ext-intl": "*",
 		"ext-mbstring": "*",
+		"ext-curl": "*",
         "yiisoft/yii2": ">2.0.15",
         "yiisoft/yii2-bootstrap": ">2.0.0",
         "kartik-v/yii2-widget-datepicker": "@dev",
@@ -30,7 +31,6 @@
         "kartik-v/yii2-export": "*",
 
 		"phpoffice/phpspreadsheet": "*",
-        "genyaa/usps-php-api": ">=2.0",
         "phpmailer/phpmailer": ">=6.0",
 		"markroland/converge-api-php": ">0.4",
         "bower-asset/fontawesome": ">5.0"

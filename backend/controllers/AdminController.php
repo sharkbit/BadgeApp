@@ -168,7 +168,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $AllPermission = [
-		'Badges'=>['badges/api-zip','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/get-badge-name','badges/index','badges/update','badges/verify-email','badges/view'],
+		'Badges'=>['badges/api-zip','badges/validate-address','badges/api-generate-renaval-fee','badges/api-request-family','badges/get-badge-details','badges/get-badge-name','badges/index','badges/update','badges/verify-email','badges/view'],
 		'Calendar' => ['calendar/list','calendar/rss','calendar/viewitem'],
 		'Guest' => ['guest/add','guest/addcredit','guest/check-badge-eligibility','guest/check-banned-name','guest/create','guest/index','guest/out','guest/sticky-form','guest/view'],
 		'membershiptype'=>['membership-type/fees-by-type'],
@@ -181,7 +181,7 @@ class AdminController extends \yii\web\Controller {
 	];
 
 	public $noLogin = [
-		'noLogin' => ['badges/api-generate-renaval-fee', 'badges/api-request-family', 'badges/api-zip', 'badges/get-badge-name', 'badges/verify-email', 'calendar/list', 'calendar/rss', 'calendar/viewitem', 'clubs/badge-rosters', 'events/reg', 'guest/check-banned-name', 'mass-email/process', 'membership-type/fees-by-type', 'payment/charge', 'site/login', 'site/login-member', 'site/new-member', 'site/no-email', 'site/verify' ],
+		'noLogin' => ['badges/api-generate-renaval-fee', 'badges/api-request-family', 'badges/api-zip', 'badges/validate-address', 'badges/get-badge-name', 'badges/verify-email', 'calendar/list', 'calendar/rss', 'calendar/viewitem', 'clubs/badge-rosters', 'events/reg', 'guest/check-banned-name', 'mass-email/process', 'membership-type/fees-by-type', 'payment/charge', 'site/login', 'site/login-member', 'site/new-member', 'site/no-email', 'site/verify' ],
 		
 	];
 	

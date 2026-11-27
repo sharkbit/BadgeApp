@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\controllers\AdminController;
 use backend\controllers\SalesController;
+use backend\components\GoogleAddressApi;
 use backend\models\AgcCal;
 use backend\models\BadgeCertification;
 use backend\models\BadgeToClubs;
@@ -37,10 +38,6 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
-use USPS\Address;
-use USPS\AddressVerify;
-use USPS\CityStateLookup;
-
 class Phone extends \yii\db\ActiveRecord {
 	// Phone Scrubber (actionApiPhone)
 	public static function tableName() {
@@ -66,6 +63,8 @@ class BadgesController extends AdminController {
 				'class' => VerbFilter::className(),
 				'actions' => [
 					'delete' => ['POST'],
+					'validate-address' => ['POST'],
+					'api-zip' => ['GET'],
 				],
 			],
 		];
@@ -357,64 +356,28 @@ class BadgesController extends AdminController {
 			echo "Phone #'s Cleaned";
 		}
 		elseif(isset($_GET['address']) ) {  //address
-			$params = Params::getParams();
-			if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
-				$verify = new AddressVerify($params->usps_api);
-				$address = new Address;
-
-				$address->setFirmName('some guy');
-				$address->setApt('');
-				$address->setAddress('123 some st');
-				$address->setCity('Elkrdge');
-				$address->setState('MD');
-				$address->setZip5(21075);
-				$address->setZip4('');
-
-				// Add the address object to the address verify class
-				$verify->addAddress($address);
-
-				// Perform the request and return result
-				echo "<br>Verify:<br>";
-				var_dump($verify->verify());
-				echo "<hr>Response:<br>";
-				print_r($verify->getArrayResponse());
-				echo "<hr>other:<br>";
-				var_dump($verify->isError());
-
-				// See if it was successful
-				if($verify->isSuccess()) {
-				  echo '<hr>Done';
-				} else {
-				  echo '<hr>Error: ' . $verify->getErrorMessage();
-				}
-				echo "fin";
-				exit;
+			try {
+				$response = (new GoogleAddressApi($this->getGoogleMapsApiKey()))
+					->validateAddress([
+						'street' => $_GET['address'],
+						'zip' => $_GET['ckh_zip'] ?? '',
+						'city' => $_GET['ckh_city'] ?? '',
+						'state' => $_GET['ckh_state'] ?? '',
+					]);
+				echo Json::encode($response);
+			} catch (\InvalidArgumentException | \yii\base\InvalidConfigException | \RuntimeException $exception) {
+				echo Json::encode(['success' => false, 'message' => $exception->getMessage()]);
 			}
+			exit;
 		}
 		elseif(isset($_GET['ckh_zip']) ) {  //  ./badges/api-check?zip=21075
-			$params = Params::getParams();
-			if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
-				$verify = new CityStateLookup($params->usps_api);
-
-				$verify->addZipCode($_GET['ckh_zip']);
-
-				// Perform the call and print out the results
-
-				$verify->lookup();
-
-				$response = $verify->getArrayResponse();
-
-				// Check if it was completed
-				if ($verify->isSuccess()) {
-					$myzip = $response['CityStateLookupResponse'];
-					echo json_encode($myzip['ZipCode']);
-				} else {
-					echo json_encode('Error: '.$verify->getErrorMessage());
-				}
-			} else {
-				return json_encode(['city'=>'','state'=>'']);
+			try {
+				echo Json::encode((new GoogleAddressApi($this->getGoogleMapsApiKey()))
+					->getCityStateByZip($_GET['ckh_zip']));
+			} catch (\InvalidArgumentException | \yii\base\InvalidConfigException | \RuntimeException $exception) {
+				echo Json::encode(['success' => false, 'message' => $exception->getMessage()]);
 			}
-
+			exit;
 		}
 		elseif(isset($_GET['unpub'])) {    //	./badges/api-check?unpub
 			if($unpub) {$where='club_id='.$unpub.' AND';} else {$where='';}
@@ -479,29 +442,61 @@ class BadgesController extends AdminController {
 	}
 
 	public function actionApiZip($zip) {
-		/* need new USPS API
-		$params = Params::getParams();
-		if((isset($params->usps_api)) && (strlen($params->usps_api)>5)) {
-			$verify = new CityStateLookup($params->usps_api);
-			$verify->addZipCode($zip);
-
-			// Perform the call and print out the results
-
-			$verify->lookup();
-			$response = $verify->getArrayResponse();
-
-			// Check if it was completed
-			if ($verify->isSuccess()) {
-				$myzip = $response['CityStateLookupResponse'];
-				return json_encode($myzip['ZipCode']);
-			} else {
-				return json_encode('Error: '.$verify->getErrorMessage());
-			}
-		} else {
-			return json_encode(['city'=>'','state'=>'']);
+		Yii::$app->response->format = Response::FORMAT_JSON;
+		try {
+			return (new GoogleAddressApi($this->getGoogleMapsApiKey()))
+				->getCityStateByZip($zip);
+		} catch (\InvalidArgumentException $exception) {
+			Yii::$app->response->statusCode = 422;
+			return ['success' => false, 'message' => $exception->getMessage()];
+		} catch (\yii\base\InvalidConfigException $exception) {
+			Yii::$app->response->statusCode = 503;
+			return ['success' => false, 'message' => $exception->getMessage()];
+		} catch (\RuntimeException $exception) {
+			Yii::$app->response->statusCode = 502;
+			return ['success' => false, 'message' => 'ZIP lookup failed. ' . $exception->getMessage()];
 		}
-		*/
-		return json_encode(['Error'=>'need new USPS API']);
+	}
+
+	public function actionValidateAddress() {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+		try {
+			$response = (new GoogleAddressApi($this->getGoogleMapsApiKey()))
+				->validateAddress(Yii::$app->request->post());
+		} catch (\InvalidArgumentException $exception) {
+			Yii::$app->response->statusCode = 422;
+			return ['success' => false, 'message' => $exception->getMessage()];
+		} catch (\yii\base\InvalidConfigException $exception) {
+			Yii::$app->response->statusCode = 503;
+			return ['success' => false, 'message' => $exception->getMessage()];
+		} catch (\RuntimeException $exception) {
+			Yii::$app->response->statusCode = 502;
+			return ['success' => false, 'message' => 'Address validation failed. ' . $exception->getMessage()];
+		}
+
+		$result = $response['result'] ?? [];
+		$address = $result['address'] ?? [];
+		if (!isset($address['postalAddress'])) {
+			Yii::$app->response->statusCode = 502;
+			return ['success' => false, 'message' => 'Google did not return a standardized address.'];
+		}
+		$verdict = $result['verdict'] ?? [];
+		return [
+			'success' => true,
+			'formattedAddress' => $address['formattedAddress'] ?? '',
+			'postalAddress' => $address['postalAddress'] ?? [],
+			'verdict' => [
+				'addressComplete' => (bool)($verdict['addressComplete'] ?? false),
+				'hasInferredComponents' => (bool)($verdict['hasInferredComponents'] ?? false),
+				'hasReplacedComponents' => (bool)($verdict['hasReplacedComponents'] ?? false),
+				'hasUnconfirmedComponents' => (bool)($verdict['hasUnconfirmedComponents'] ?? false),
+				'possibleNextAction' => $verdict['possibleNextAction'] ?? '',
+			],
+		];
+	}
+
+	private function getGoogleMapsApiKey() {
+		return Yii::$app->params['googleMapsApiKey'] ?? null;
 	}
 
 	public function actionCreate() {

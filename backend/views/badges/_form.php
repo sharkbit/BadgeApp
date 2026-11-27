@@ -24,6 +24,7 @@ for ($x = 1; $x <= 90; $x++) {
 $YearList = json_decode(str_replace('}{',',',$YearList));
 
 $confParams  = Params::getParams();
+$this->registerJsFile('@web/js/google-address-validation.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 
 $Club_List = (new clubs)->getClubList(false,false,true);
 if(empty($Club_List)) {
@@ -107,6 +108,14 @@ $myPaymentList = backend\controllers\PaymentController::GetPaymentTypes($confPar
             <div class="col-xs-6 col-sm-2">
                 <?= $form->field($model, 'state')->dropDownList(yii::$app->controller->getStates(),['value'=>'MD']) ?>
             </div>
+			<div class="col-xs-6 col-sm-2 google-address-validation">
+				<button type="button" class="btn btn-default js-google-address-validate"
+					data-url="<?= Html::encode(Url::to(['/badges/validate-address'])) ?>"
+					data-street="#badges-address" data-zip="#badges-zip"
+					data-city="#badges-city" data-state="#badges-state">Validate address</button>
+				<button type="button" class="btn btn-link js-google-address-apply" style="display:none">Use suggested address</button>
+				<span class="help-block js-google-address-status" aria-live="polite"></span>
+			</div>
             <div class="col-xs-6 col-sm-2">
                 <?=  $form->field($model, 'gender')->radioList([ 'm'=>'Male', 'f'=> 'Female'],['value'=>'m']) ?>
             </div>

@@ -33,7 +33,8 @@ Steps to install:
     - ./backend/config/main-local.php
 11. Configure mail settings in:
     - ./backend/config/params.php
-12. Run App by going to  /
+12. Configure `params.googleMapsApiKey` in `common/config/main-local.php`. Enable the Google Address Validation API and Geocoding API for that key; restrict it to those APIs and set an appropriate quota. Do not commit `main-local.php`.
+13. Run App by going to  /
 
 
 Built On: Yii 2 Advanced Project Template

@@ -353,10 +353,10 @@ if((strpos($_SERVER['REQUEST_URI'], 'badges/create')) || (strpos($_SERVER['REQUE
             jQuery.ajax({
                 method: 'GET',
                 url: '<?=yii::$app->params['rootUrl']?>/badges/api-zip?zip='+zipcode,
+				dataType: 'json',
                 crossDomain: false,
                 async: true,
                 success: function(responseData, textStatus, jqXHR) {
-                    responseData = JSON.parse(responseData);
                     if(responseData.City) {
 					$mycity=responseData.City.toProperCase()
                     $("#badges-city").val($mycity);
@@ -1248,22 +1248,20 @@ app.controller('GuestFrom', function($scope) {
             jQuery.ajax({
                 method: 'GET',
                 url: '<?=yii::$app->params['rootUrl']?>/badges/api-zip?zip='+zipcode,
+				dataType: 'json',
                 crossDomain: false,
                 async: true,
                 success: function(responseData, textStatus, jqXHR) {
-                    if(responseData.indexOf("rror")>0) {
-						
-						document.getElementById("zip_check").classList.remove('fa-cogs');
-						document.getElementById("zip_check").classList.add('fa-thumbs-down');
-								
-					} else {
-                        responseData = JSON.parse(responseData);
+                    if(responseData.City) {
                         $mycity=responseData.City.toProperCase()
                         $("#guest-g_city").val($mycity);
                         $("#guest-g_state").val(responseData.State);
 						document.getElementById("zip_check").classList.remove('fa-cogs');
 						document.getElementById("zip_check").classList.add('fa-thumbs-up');
-                    }
+					} else {
+						document.getElementById("zip_check").classList.remove('fa-cogs');
+						document.getElementById("zip_check").classList.add('fa-thumbs-down');
+					}
                 },
                 error: function (responseData, textStatus, errorThrown) {
 					document.getElementById("zip_check").classList.remove('fa-cogs');
